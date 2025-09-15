@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Showcase - Share Your Furry Friends</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #ff7e5f;
+            --accent-color: #6b8c42;
+            --text-color: #333;
+            --light-bg: #f9f9f9;
+            --white: #ffffff;
+            --black: #000000;
+            --focus-outline: 3px solid var(--secondary-color);
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo:focus {
+            outline: var(--focus-outline);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            fill: currentColor;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: var(--focus-outline);
+        }
+
+        .nav-link.current {
+            background-color: var(--secondary-color);
+        }
+
+        /* Mobile Menu Button */
+        .menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .menu-button:focus {
+            outline: var(--focus-outline);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--primary-color);
+            margin: 1rem 0;
+            font-size: 1.4rem;
+        }
+
+        /* Pet Showcase Section */
+        .pet-showcase {
+            margin: 2rem 0;
+        }
+
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .pet-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .pet-card:focus-within {
+            outline: var(--focus-outline);
+            transform: translateY(-5px);
+        }
+
+        .pet-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .pet-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .pet-details {
+            padding: 1.5rem;
+        }
+
+        .pet-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .pet-breed {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-age {
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-fact {
+            font-style: italic;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Add Pet Form */
+        .add-pet-form {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--secondary-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: var(--focus-outline);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-label:hover,
+        .file-label:focus {
+            background-color: #3a5a8f;
+            outline: var(--focus-outline);
+        }
+
+        .file-name {
+            margin-left: 1rem;
+            font-style: italic;
+        }
+
+        .submit-button {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+            min-height: 44px;
+        }
+
+        .submit-button:hover,
+        .submit-button:focus {
+            background-color: #e66b4d;
+            outline: var(--focus-outline);
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: var(--secondary-color);
+            outline: var(--focus-outline);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+            list-style: none;
+        }
+
+        .footer-link {
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .footer-link:hover,
+        .footer-link:focus {
+            text-decoration: underline;
+            outline: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .menu-button {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            nav {
+                width: 100%;
+                display: none;
+                margin-top: 1rem;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0.75rem;
+            }
+
+            .nav-active {
+                display: flex;
+            }
+
+            .pet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19.5,12c0,0.3-0.2,0.5-0.5,0.5h-1.7c-0.4,1.8-2,3.1-3.9,3.1c-1.1,0-2.1-0.5-2.8-1.2c-0.7,0.8-1.8,1.2-2.9,1.2 c-2.1,0-3.8-1.7-3.8-3.8c0-0.3,0.2-0.5,0.5-0.5h15C19.3,11.5,19.5,11.7,19.5,12z M12,6.5c0.3,0,0.5-0.2,0.5-0.5V4.5 c0-0.3-0.2-0.5-0.5-0.5S11.5,4.2,11.5,4.5V6C11.5,6.3,11.7,6.5,12,6.5z M6.5,8C6.8,8,7,7.8,7,7.5V6.2c0-0.3-0.2-0.5-0.5-0.5 S6,5.9,6,6.2v1.3C6,7.8,6.2,8,6.5,8z M17.5,8c0.3,0,0.5-0.2,0.5-0.5V6.2c0-0.3-0.2-0.5-0.5-0.5S17,5.9,17,6.2v1.3 C17,7.8,17.2,8,17.5,8z M8.9,6.5c0.3,0,0.5-0.2,0.5-0.5v-1c0-0.3-0.2-0.5-0.5-0.5S8.4,4.7,8.4,5v1C8.4,6.3,8.6,6.5,8.9,6.5z M15.1,6.5c0.3,0,0.5-0.2,0.5-0.5v-1c0-0.3-0.2-0.5-0.5-0.5s-0.5,0.2-0.5,0.5v1C14.6,6.3,14.8,6.5,15.1,6.5z"></path>
+                </svg>
+                Pet Showcase
+            </a>
+
+            <button class="menu-button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-nav">
+                ☰
+            </button>
+
+            <nav id="main-nav">
+                <ul class="nav-list">
+                    <li><a href="#" class="nav-link current">Home</a></li>
+                    <li><a href="#" class="nav-link">About</a></li>
+                    <li><a href="#" class="nav-link">Services</a></li>
+                    <li><a href="#" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1>Welcome to Pet Showcase</h1>
+        <p>Share your beloved pets with the world! Browse through our collection of adorable pets or add your own furry friend to the showcase.</p>
+
+        <!-- Featured Pets Section -->
+        <section class="pet-showcase" aria-labelledby="featured-pets-heading">
+            <h2 id="featured-pets-heading">Featured Pets</h2>
+            <div class="pet-grid">
+                <!-- Pet Card 1 -->
+                <article class="pet-card" tabindex="0">
+                    <div class="pet-image-container">
+                        <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?w=500&auto=format" alt="Golden Retriever playing in the park" class="pet-image">
+                    </div>
+                    <div class="pet-details">
+                        <h3 class="pet-name">Buddy</h3>
+                        <p class="pet-breed">Golden Retriever</p>
+                        <p class="pet-age">3 years old</p>
+                        <p class="pet-fact">Buddy loves playing fetch and swimming in the lake. His favorite toy is a bright orange frisbee.</p>
+                    </div>
+                </article>
+
+                <!-- Pet Card 2 -->
+                <article class="pet-card" tabindex="0">
+                    <div class="pet-image-container">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format" alt="Gray tabby cat looking at the camera" class="pet-image">
+                    </div>
+                    <div class="pet-details">
+                        <h3 class="pet-name">Whiskers</h3>
+                        <p class="pet-breed">Tabby Cat</p>
+                        <p class="pet-age">5 years old</p>
+                        <p class="pet-fact">Whiskers enjoys sunbathing by the window and chasing laser pointers. She's an expert at knocking things off tables.</p>
+                    </div>
+                </article>
+
+                <!-- Pet Card 3 -->
+                <article class="pet-card" tabindex="0">
+                    <div class="pet-image-container">
+                        <img src="https://images.unsplash.com/photo-1555169062-013468b47731?w=500&auto=format" alt="Small brown rabbit sitting in the grass" class="pet-image">
+                    </div>
+                    <div class="pet-details">
+                        <h3 class="pet-name">Thumper</h3>
+                        <p class="pet-breed">Mini Rex Rabbit</p>
+                        <p class="pet-age">2 years old</p>
+                        <p class="pet-fact">Thumper loves fresh vegetables and will do little jumps when he's excited. His favorite food is cilantro.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Add Pet Form Section -->
+        <section class="add-pet-form" aria-labelledby="add-pet-heading">
+            <h2 id="add-pet-heading">Add Your Pet</h2>
+            <p>Share your pet's information with our community. All fields marked with * are required.</p>
+
+            <form id="pet-form" novalidate>
+                <div class="form-group">
+                    <label for="pet-name" class="required-field">Pet Name</label>
+                    <input type="text" id="pet-name" name="pet-name" required aria-required="true">
+                    <div id="pet-name-error" class="error-message" role="alert">Please enter your pet's name</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pet-breed" class="required-field">Breed</label>
+                    <input type="text" id="pet-breed" name="pet-breed" required aria-required="true">
+                    <div id="pet-breed-error" class="error-message" role="alert">Please enter your pet's breed</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pet-age" class="required-field">Age</label>
+                    <input type="number" id="pet-age" name="pet-age" min="0" max="30" required aria-required="true">
+                    <div id="pet-age-error" class="error-message" role="alert">Please enter a valid age between 0 and 30</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pet-type">Type of Pet</label>
+                    <select id="pet-type" name="pet-type">
+                        <option value="dog">Dog</option>
+                        <option value="cat">Cat</option>
+                        <option value="rabbit">Rabbit</option>
+                        <option value="bird">Bird</option>
+                        <option value="fish">Fish</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pet-fact" class="required-field">Fun Fact About Your Pet</label>
+                    <textarea id="pet-fact" name="pet-fact" rows="3" required aria-required="true"></textarea>
+                    <div id="pet-fact-error" class="error-message" role="alert">Please share a fun fact about your pet</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pet-photo">Pet Photo</label>
+                    <input type="file" id="pet-photo" name="pet-photo" accept="image/*" class="file-input">
+                    <label for="pet-photo" class="file-label">Choose File</label>
+                    <span id="file-name" class="file-name">No file chosen</span>
+                </div>
+
+                <button type="submit" class="submit-button">Add Pet</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="success-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <h2 id="modal-title">Success!</h2>
+            <p id="modal-description">Your pet has been added to our showcase. Thank you for sharing!</p>
+            <button id="modal-close-button" class="submit-button">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2023 Pet Showcase. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                <li><a href="#" class="footer-link">Terms of Service</a></li>
+                <li><a href="#" class="footer-link">Accessibility Statement</a></li>
+                <li><a href="#" class="footer-link">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuButton = document.querySelector('.menu-button');
+        const nav = document.querySelector('nav');
+
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            nav.classList.toggle('nav-active');
+        });
+
+        // Form Validation
+        const form = document.getElementById('pet-form');
+        const petName = document.getElementById('pet-name');
+        const petBreed = document.getElementById('pet-breed');
+        const petAge = document.getElementById('pet-age');
+        const petFact = document.getElementById('pet-fact');
+        const petPhoto = document.getElementById('pet-photo');
+        const fileName = document.getElementById('file-name');
+
+        // Show file name when file is selected
+        petPhoto.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileName.textContent = e.target.files[0].name;
+            } else {
+                fileName.textContent = 'No file chosen';
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            // Validate pet name
+            if (!petName.value.trim()) {
+                document.getElementById('pet-name-error').style.display = 'block';
+                petName.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                document.getElementById('pet-name-error').style.display = 'none';
+                petName.setAttribute('aria-invalid', 'false');
+            }
+
+            // Validate pet breed
+            if (!petBreed.value.trim()) {
+                document.getElementById('pet-breed-error').style.display = 'block';
+                petBreed.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                document.getElementById('pet-breed-error').style.display = 'none';
+                petBreed.setAttribute('aria-invalid', 'false');
+            }
+
+            // Validate pet age
+            if (!petAge.value || isNaN(petAge.value) || petAge.value < 0 || petAge.value > 30) {
+                document.getElementById('pet-age-error').style.display = 'block';
+                petAge.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                document.getElementById('pet-age-error').style.display = 'none';
+                petAge.setAttribute('aria-invalid', 'false');
+            }
+
+            // Validate pet fact
+            if (!petFact.value.trim()) {
+                document.getElementById('pet-fact-error').style.display = 'block';
+                petFact.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                document.getElementById('pet-fact-error').style.display = 'none';
+                petFact.setAttribute('aria-invalid', 'false');
+            }
+
+            if (isValid) {
+                // In a real app, you would send the data to a server here
+                // For this demo, we'll just show a success message
+                showSuccessModal();
+                form.reset();
+                fileName.textContent = 'No file chosen';
+            } else {
+                // Focus on the first invalid field
+                const firstInvalid = form.querySelector('[aria-invalid="true"]');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('success-modal');
+        const modalClose = document.querySelector('.modal-close');
+        const modalCloseButton = document.getElementById('modal-close-button');
+
+        function showSuccessModal() {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            modalCloseButton.focus();
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalCloseButton.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        // Focus management for pet cards
+        const petCards = document.querySelectorAll('.pet-card');
+        petCards.forEach(card => {
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

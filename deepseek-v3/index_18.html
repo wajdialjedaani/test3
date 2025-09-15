@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible User Profile | Interactive Profile Page</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #3a86ff;
+            --primary-dark: #2667cc;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --text-color: #1a1a1a;
+            --text-light: #f8f9fa;
+            --bg-color: #ffffff;
+            --gray-light: #e9ecef;
+            --gray-medium: #adb5bd;
+            --gray-dark: #495057;
+            --success-color: #38b000;
+            --error-color: #e63946;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid white;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1rem 0;
+            color: var(--primary-dark);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Profile Section */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-color);
+            margin: 0 auto 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-title {
+            color: var(--gray-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Follow Button */
+        .follow-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            min-width: 150px;
+            min-height: 44px;
+        }
+
+        .follow-btn:hover,
+        .follow-btn:focus {
+            background-color: var(--primary-dark);
+            outline: 3px solid var(--accent-color);
+        }
+
+        .follow-btn:active {
+            transform: scale(0.98);
+        }
+
+        .follow-btn.following {
+            background-color: var(--success-color);
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-link:hover,
+        .social-link:focus {
+            background-color: var(--primary-color);
+            color: white;
+            outline: 2px solid var(--accent-color);
+        }
+
+        .social-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Profile Bio */
+        .profile-bio {
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .bio-text {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Avatar Gallery */
+        .avatar-gallery {
+            margin: 3rem 0;
+        }
+
+        .gallery-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .gallery-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-btn:hover,
+        .gallery-btn:focus {
+            background-color: var(--primary-dark);
+            outline: 2px solid var(--accent-color);
+        }
+
+        .gallery-btn:disabled {
+            background-color: var(--gray-medium);
+            cursor: not-allowed;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-img,
+        .gallery-item:focus .gallery-img {
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .modal-img {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: var(--border-radius);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            background-color: #c1121f;
+            outline: 2px solid var(--accent-color);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            margin: 3rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-dark);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .footer-link {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover,
+        .footer-link:focus {
+            text-decoration: underline;
+            outline: none;
+        }
+
+        .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Focus Styles */
+        a:focus,
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav {
+                margin-top: 1rem;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-item {
+                margin: 0.5rem 0;
+            }
+
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Accessible Profiles</div>
+            <nav aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Explore</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1>User Profile</h1>
+        
+        <div class="profile-container">
+            <!-- Profile Card -->
+            <section class="profile-card" aria-labelledby="profile-heading">
+                <h2 id="profile-heading" class="visually-hidden">Profile Information</h2>
+                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Profile photo of Jane Smith" class="profile-avatar">
+                <h3 class="profile-name">Jane Smith</h3>
+                <p class="profile-title">UX Designer & Accessibility Specialist</p>
+                
+                <button class="follow-btn" id="followButton" aria-live="polite">
+                    Follow
+                </button>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Twitter profile">
+                        <span class="social-icon" aria-hidden="true">🐦</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="LinkedIn profile">
+                        <span class="social-icon" aria-hidden="true">🔗</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="GitHub profile">
+                        <span class="social-icon" aria-hidden="true">💻</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram profile">
+                        <span class="social-icon" aria-hidden="true">📷</span>
+                    </a>
+                </div>
+            </section>
+            
+            <!-- Profile Bio -->
+            <section class="profile-bio" aria-labelledby="bio-heading">
+                <h2 id="bio-heading">About Me</h2>
+                <div class="bio-text">
+                    <p>Hello! I'm Jane, a passionate UX designer with over 8 years of experience creating accessible digital experiences. I specialize in inclusive design and accessibility compliance, helping organizations build products that everyone can use.</p>
+                    <p>My journey in design began when I realized how many digital products excluded people with disabilities. Since then, I've made it my mission to advocate for accessibility in every project I work on.</p>
+                    <p>When I'm not designing, you can find me hiking in the mountains, reading science fiction, or experimenting with new recipes in the kitchen.</p>
+                </div>
+                
+                <h3>Skills</h3>
+                <ul>
+                    <li>Accessibility Auditing (WCAG 2.2, Section 508)</li>
+                    <li>User Research & Testing</li>
+                    <li>UI/UX Design</li>
+                    <li>HTML/CSS/JavaScript</li>
+                    <li>Assistive Technology Expertise</li>
+                </ul>
+            </section>
+        </div>
+        
+        <!-- Avatar Gallery -->
+        <section class="avatar-gallery" aria-labelledby="gallery-heading">
+            <div class="gallery-title">
+                <h2 id="gallery-heading">Avatar Gallery</h2>
+                <div class="gallery-nav">
+                    <button class="gallery-btn prev-btn" aria-label="Previous image" disabled>
+                        &lt;
+                    </button>
+                    <button class="gallery-btn next-btn" aria-label="Next image">
+                        &gt;
+                    </button>
+                </div>
+            </div>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Images will be added via JavaScript -->
+            </div>
+        </section>
+        
+        <!-- Stats Section -->
+        <section class="stats-section" aria-labelledby="stats-heading">
+            <h2 id="stats-heading">Profile Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="projectsCount">47</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="followersCount">1.2k</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="followingCount">356</div>
+                    <div class="stat-label">Following</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="yearsExp">8</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Modal -->
+        <div class="modal" id="imageModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+            <div class="modal-content">
+                <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+                <h2 id="modalTitle" class="visually-hidden">Image Viewer</h2>
+                <img src="" alt="" class="modal-img" id="modalImage">
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>Accessible Profiles - Making the web inclusive for everyone</p>
+            <nav aria-label="Footer navigation">
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                    <a href="#" class="footer-link">Accessibility Statement</a>
+                    <a href="#" class="footer-link">Contact Us</a>
+                </div>
+            </nav>
+            <p class="copyright">&copy; 2023 Accessible Profiles. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Follow Button Functionality
+            const followButton = document.getElementById('followButton');
+            let isFollowing = false;
+            
+            followButton.addEventListener('click', function() {
+                isFollowing = !isFollowing;
+                if (isFollowing) {
+                    followButton.textContent = 'Following';
+                    followButton.classList.add('following');
+                    followButton.setAttribute('aria-label', 'Unfollow Jane Smith');
+                } else {
+                    followButton.textContent = 'Follow';
+                    followButton.classList.remove('following');
+                    followButton.setAttribute('aria-label', 'Follow Jane Smith');
+                }
+            });
+            
+            // Avatar Gallery
+            const galleryImages = [
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg', alt: 'Jane Smith professional headshot' },
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg?1', alt: 'Jane Smith at a conference speaking' },
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg?2', alt: 'Jane Smith working on a laptop' },
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg?3', alt: 'Jane Smith hiking in the mountains' },
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg?4', alt: 'Jane Smith at a design workshop' },
+                { src: 'https://randomuser.me/api/portraits/women/65.jpg?5', alt: 'Jane Smith with her dog in the park' }
+            ];
+            
+            const galleryGrid = document.getElementById('galleryGrid');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalClose = document.getElementById('modalClose');
+            
+            let currentImageIndex = 0;
+            
+            // Populate gallery
+            galleryImages.forEach((image, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.tabIndex = 0;
+                galleryItem.setAttribute('role', 'button');
+                galleryItem.setAttribute('aria-label', `View ${image.alt}`);
+                
+                const img = document.createElement('img');
+                img.src = image.src;
+                img.alt = image.alt;
+                img.className = 'gallery-img';
+                
+                galleryItem.appendChild(img);
+                galleryGrid.appendChild(galleryItem);
+                
+                // Click handler for gallery items
+                galleryItem.addEventListener('click', () => openModal(index));
+                galleryItem.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openModal(index);
+                    }
+                });
+            });
+            
+            // Modal functions
+            function openModal(index) {
+                currentImageIndex = index;
+                modalImage.src = galleryImages[index].src;
+                modalImage.alt = galleryImages[index].alt;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus trap for modal
+                modalClose.focus();
+            }
+            
+            function closeModal() {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                
+                // Return focus to the gallery item that opened the modal
+                const galleryItems = document.querySelectorAll('.gallery-item');
+                if (galleryItems[currentImageIndex]) {
+                    galleryItems[currentImageIndex].focus();
+                }
+            }
+            
+            function navigateGallery(direction) {
+                if (direction === 'prev' && currentImageIndex > 0) {
+                    currentImageIndex--;
+                } else if (direction === 'next' && currentImageIndex < galleryImages.length - 1) {
+                    currentImageIndex++;
+                }
+                
+                modalImage.src = galleryImages[currentImageIndex].src;
+                modalImage.alt = galleryImages[currentImageIndex].alt;
+                
+                // Update button states
+                prevBtn.disabled = currentImageIndex === 0;
+                nextBtn.disabled = currentImageIndex === galleryImages.length - 1;
+            }
+            
+            // Event listeners
+            modalClose.addEventListener('click', closeModal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (modal.classList.contains('open')) {
+                    if (e.key === 'Escape') {
+                        closeModal();
+                    } else if (e.key === 'ArrowLeft') {
+                        navigateGallery('prev');
+                    } else if (e.key === 'ArrowRight') {
+                        navigateGallery('next');
+                    }
+                }
+            });
+            
+            // Gallery navigation buttons
+            prevBtn.addEventListener('click', () => {
+                if (currentImageIndex > 0) {
+                    currentImageIndex--;
+                    const galleryItems = document.querySelectorAll('.gallery-item');
+                    galleryItems[currentImageIndex].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                    
+                    // Update button states
+                    prevBtn.disabled = currentImageIndex === 0;
+                    nextBtn.disabled = false;
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentImageIndex < galleryImages.length - 1) {
+                    currentImageIndex++;
+                    const galleryItems = document.querySelectorAll('.gallery-item');
+                    galleryItems[currentImageIndex].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                    
+                    // Update button states
+                    nextBtn.disabled = currentImageIndex === galleryImages.length - 1;
+                    prevBtn.disabled = false;
+                }
+            });
+            
+            // Animate stats
+            function animateStats() {
+                const projectsCount = document.getElementById('projectsCount');
+                const followersCount = document.getElementById('followersCount');
+                const followingCount = document.getElementById('followingCount');
+                const yearsExp = document.getElementById('yearsExp');
+                
+                animateValue(projectsCount, 0, 47, 2000);
+                animateValue(followersCount, 0, 1200, 2000);
+                animateValue(followingCount, 0, 356, 2000);
+                animateValue(yearsExp, 0, 8, 2000);
+            }
+            
+            function animateValue(element, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    
+                    if (element === followersCount) {
+                        element.textContent = value >= 1000 ? (value/1000).toFixed(1) + 'k' : value;
+                    } else {
+                        element.textContent = value;
+                    }
+                    
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+            
+            // Initialize animations when stats section is in view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateStats();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(document.querySelector('.stats-section'));
+            
+            // Helper function for visually hidden elements
+            function createVisuallyHidden() {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .visually-hidden {
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        padding: 0;
+                        margin: -1px;
+                        overflow: hidden;
+                        clip: rect(0, 0, 0, 0);
+                        white-space: nowrap;
+                        border: 0;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            createVisuallyHidden();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Share - Upload and Showcase Your Artwork</title>
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #ff7e5f;
+            --accent-color: #6c5ce7;
+            --text-color: #2d3436;
+            --light-text: #f5f6fa;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --error-color: #d63031;
+            --success-color: #00b894;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover, a:focus {
+            text-decoration: underline;
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light-text);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--light-text);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover, .nav-links a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Cards and Grid */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .art-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .art-card:hover, .art-card:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .art-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .art-card-content {
+            padding: 1.5rem;
+        }
+
+        .art-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .art-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .tag {
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Forms */
+        .form-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.3);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+            min-height: 44px;
+        }
+
+        button:hover, button:focus {
+            background-color: #3a5a8f;
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .filter-controls label {
+            margin-bottom: 0;
+            margin-right: 0.5rem;
+        }
+
+        .filter-controls select {
+            min-width: 150px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .nav-links.active {
+                display: flex;
+                margin-top: 1rem;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 1rem;
+                border-radius: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion) {
+            * {
+                transition: none !important;
+            }
+
+            .art-card:hover, .art-card:focus-within {
+                transform: none;
+            }
+        }
+
+        /* High Contrast Mode */
+        @media (prefers-contrast: more) {
+            :root {
+                --primary-color: #0000ff;
+                --secondary-color: #ff0000;
+                --accent-color: #ffff00;
+                --text-color: #000000;
+                --light-text: #ffffff;
+                --bg-color: #ffffff;
+                --card-bg: #ffffff;
+            }
+
+            a, button {
+                text-decoration: underline;
+            }
+
+            button {
+                border: 2px solid #000000;
+            }
+
+            input, textarea, select {
+                border: 2px solid #000000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header with Navigation -->
+    <header>
+        <nav aria-label="Main navigation">
+            <div class="logo">Creative Share</div>
+            <button class="mobile-menu-btn" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
+                ☰
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#featured" class="active">Featured</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#upload">Upload</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section aria-labelledby="hero-heading">
+            <h1 id="hero-heading">Share Your Creative Work with the World</h1>
+            <p>Upload your photos, artwork, and creative projects to showcase your talent and connect with other artists.</p>
+            <button id="open-upload-modal" class="secondary" aria-haspopup="dialog">Upload Your Work</button>
+        </section>
+
+        <!-- Featured Artwork -->
+        <section aria-labelledby="featured-heading" id="featured">
+            <h2 id="featured-heading">Featured Artwork</h2>
+            <div class="gallery">
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?painting,1" alt="Abstract painting with vibrant colors and geometric shapes">
+                    <div class="art-card-content">
+                        <h3>Colorful Abstraction</h3>
+                        <p>An exploration of color and form in abstract expressionism.</p>
+                        <div class="tags">
+                            <span class="tag">Painting</span>
+                            <span class="tag">Abstract</span>
+                            <span class="tag">Colorful</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?photography,1" alt="Black and white portrait of a woman with dramatic lighting">
+                    <div class="art-card-content">
+                        <h3>Portrait Study</h3>
+                        <p>Dramatic black and white portrait capturing raw emotion.</p>
+                        <div class="tags">
+                            <span class="tag">Photography</span>
+                            <span class="tag">Portrait</span>
+                            <span class="tag">Black & White</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?digital,art,1" alt="Digital illustration of a futuristic cityscape">
+                    <div class="art-card-content">
+                        <h3>Digital Dreams</h3>
+                        <p>Futuristic cityscape created with digital painting techniques.</p>
+                        <div class="tags">
+                            <span class="tag">Digital Art</span>
+                            <span class="tag">Sci-Fi</span>
+                            <span class="tag">Concept Art</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Gallery with Filtering -->
+        <section aria-labelledby="gallery-heading" id="gallery">
+            <h2 id="gallery-heading">Community Gallery</h2>
+            
+            <div class="filter-controls">
+                <label for="category-filter">Filter by Category:</label>
+                <select id="category-filter" aria-label="Filter artworks by category">
+                    <option value="all">All Categories</option>
+                    <option value="painting">Painting</option>
+                    <option value="photography">Photography</option>
+                    <option value="digital">Digital Art</option>
+                    <option value="sculpture">Sculpture</option>
+                    <option value="illustration">Illustration</option>
+                </select>
+                
+                <label for="sort-by">Sort By:</label>
+                <select id="sort-by" aria-label="Sort artworks">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="popular">Most Popular</option>
+                </select>
+                
+                <div class="search-box">
+                    <label for="search" class="visually-hidden">Search artworks</label>
+                    <input type="text" id="search" placeholder="Search artworks..." aria-label="Search artworks">
+                </div>
+            </div>
+            
+            <div class="gallery" id="artwork-gallery">
+                <!-- Artwork cards will be dynamically inserted here -->
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?art,2" alt="Mixed media collage with newspaper clippings and paint">
+                    <div class="art-card-content">
+                        <h3>Urban Collage</h3>
+                        <p>Mixed media piece combining newspaper clippings with acrylic paint.</p>
+                        <div class="tags">
+                            <span class="tag">Mixed Media</span>
+                            <span class="tag">Collage</span>
+                            <span class="tag">Urban</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?sculpture,1" alt="Bronze sculpture of abstract human forms">
+                    <div class="art-card-content">
+                        <h3>Bronze Figures</h3>
+                        <p>Abstract human forms cast in bronze with a polished finish.</p>
+                        <div class="tags">
+                            <span class="tag">Sculpture</span>
+                            <span class="tag">Bronze</span>
+                            <span class="tag">Abstract</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?illustration,1" alt="Watercolor illustration of botanical elements">
+                    <div class="art-card-content">
+                        <h3>Botanical Study</h3>
+                        <p>Delicate watercolor illustrations of various plant species.</p>
+                        <div class="tags">
+                            <span class="tag">Illustration</span>
+                            <span class="tag">Watercolor</span>
+                            <span class="tag">Botanical</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?street,art,1" alt="Vibrant street art mural on a brick wall">
+                    <div class="art-card-content">
+                        <h3>Street Mural</h3>
+                        <p>Large-scale mural featuring vibrant colors and social commentary.</p>
+                        <div class="tags">
+                            <span class="tag">Street Art</span>
+                            <span class="tag">Mural</span>
+                            <span class="tag">Public Art</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?ceramic,1" alt="Handcrafted ceramic vase with intricate patterns">
+                    <div class="art-card-content">
+                        <h3>Ceramic Vase</h3>
+                        <p>Hand-thrown ceramic vase with intricate carved patterns.</p>
+                        <div class="tags">
+                            <span class="tag">Ceramics</span>
+                            <span class="tag">Pottery</span>
+                            <span class="tag">Handmade</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="art-card" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?fiber,art,1" alt="Textile art piece with woven fibers and embroidery">
+                    <div class="art-card-content">
+                        <h3>Textile Art</h3>
+                        <p>Experimental fiber art combining weaving and embroidery techniques.</p>
+                        <div class="tags">
+                            <span class="tag">Textile</span>
+                            <span class="tag">Fiber Art</span>
+                            <span class="tag">Experimental</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Upload Modal -->
+        <div class="modal" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+            <div class="modal-content">
+                <button class="close-modal" aria-label="Close upload form">×</button>
+                <h2 id="upload-modal-title">Upload Your Creative Work</h2>
+                
+                <form id="upload-form" aria-describedby="upload-instructions">
+                    <p id="upload-instructions">Fill out the form below to share your artwork with the community. All fields marked with an asterisk (*) are required.</p>
+                    
+                    <div class="form-group">
+                        <label for="art-title" class="required-field">Title</label>
+                        <input type="text" id="art-title" name="title" required aria-required="true">
+                        <div class="error-message" id="title-error">Please enter a title for your artwork.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="art-description">Description</label>
+                        <textarea id="art-description" name="description" aria-describedby="description-help"></textarea>
+                        <p id="description-help">Tell us about your artwork - the inspiration, techniques used, or any special meaning.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="art-category" class="required-field">Category</label>
+                        <select id="art-category" name="category" required aria-required="true">
+                            <option value="">Select a category</option>
+                            <option value="painting">Painting</option>
+                            <option value="photography">Photography</option>
+                            <option value="digital">Digital Art</option>
+                            <option value="sculpture">Sculpture</option>
+                            <option value="illustration">Illustration</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error-message" id="category-error">Please select a category.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="art-tags">Tags (comma separated)</label>
+                        <input type="text" id="art-tags" name="tags" aria-describedby="tags-help">
+                        <p id="tags-help">Add relevant tags to help others discover your work (e.g., abstract, portrait, landscape).</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="art-file" class="required-field">Upload Image</label>
+                        <input type="file" id="art-file" name="file" accept="image/*" required aria-required="true">
+                        <div class="error-message" id="file-error">Please select an image file to upload.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="artist-name">Your Name</label>
+                        <input type="text" id="artist-name" name="artist" aria-describedby="artist-help">
+                        <p id="artist-help">How you'd like to be credited (leave blank for anonymous).</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="artist-website">Website (optional)</label>
+                        <input type="url" id="artist-website" name="website" placeholder="https://example.com">
+                    </div>
+                    
+                    <button type="submit" class="secondary">Upload Artwork</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <h2>Creative Share</h2>
+            <p>A platform for artists to showcase their work and connect with the community.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+            <ul>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#terms">Terms of Service</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <p>&copy; 2023 Creative Share. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
+            navLinks.classList.toggle('active');
+        });
+
+        // Modal Handling
+        const uploadModal = document.getElementById('upload-modal');
+        const openModalBtn = document.getElementById('open-upload-modal');
+        const closeModalBtn = document.querySelector('.close-modal');
+
+        openModalBtn.addEventListener('click', function() {
+            uploadModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            uploadModal.setAttribute('aria-hidden', 'false');
+        });
+
+        closeModalBtn.addEventListener('click', function() {
+            uploadModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            uploadModal.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close modal when clicking outside content
+        uploadModal.addEventListener('click', function(e) {
+            if (e.target === uploadModal) {
+                uploadModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                uploadModal.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // Form Validation
+        const uploadForm = document.getElementById('upload-form');
+        const titleInput = document.getElementById('art-title');
+        const categoryInput = document.getElementById('art-category');
+        const fileInput = document.getElementById('art-file');
+        const titleError = document.getElementById('title-error');
+        const categoryError = document.getElementById('category-error');
+        const fileError = document.getElementById('file-error');
+
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+
+            // Validate title
+            if (titleInput.value.trim() === '') {
+                titleError.style.display = 'block';
+                titleInput.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                titleError.style.display = 'none';
+                titleInput.setAttribute('aria-invalid', 'false');
+            }
+
+            // Validate category
+            if (categoryInput.value === '') {
+                categoryError.style.display = 'block';
+                categoryInput.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                categoryError.style.display = 'none';
+                categoryInput.setAttribute('aria-invalid', 'false');
+            }
+
+            // Validate file
+            if (fileInput.files.length === 0) {
+                fileError.style.display = 'block';
+                fileInput.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                fileError.style.display = 'none';
+                fileInput.setAttribute('aria-invalid', 'false');
+            }
+
+            if (isValid) {
+                // In a real app, you would upload the file here
+                alert('Artwork submitted successfully!');
+                uploadModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                uploadModal.setAttribute('aria-hidden', 'true');
+                uploadForm.reset();
+            }
+        });
+
+        // Filter and Search Functionality
+        const categoryFilter = document.getElementById('category-filter');
+        const sortBy = document.getElementById('sort-by');
+        const searchInput = document.getElementById('search');
+        const artworkGallery = document.getElementById('artwork-gallery');
+
+        // Sample data for demonstration
+        const artworks = [
+            {
+                title: "Urban Collage",
+                description: "Mixed media piece combining newspaper clippings with acrylic paint.",
+                tags: ["Mixed Media", "Collage", "Urban"],
+                category: "other",
+                img: "https://source.unsplash.com/random/600x400/?art,2",
+                alt: "Mixed media collage with newspaper clippings and paint",
+                date: new Date(2023, 5, 15),
+                likes: 42
+            },
+            {
+                title: "Bronze Figures",
+                description: "Abstract human forms cast in bronze with a polished finish.",
+                tags: ["Sculpture", "Bronze", "Abstract"],
+                category: "sculpture",
+                img: "https://source.unsplash.com/random/600x400/?sculpture,1",
+                alt: "Bronze sculpture of abstract human forms",
+                date: new Date(2023, 4, 22),
+                likes: 78
+            },
+            {
+                title: "Botanical Study",
+                description: "Delicate watercolor illustrations of various plant species.",
+                tags: ["Illustration", "Watercolor", "Botanical"],
+                category: "illustration",
+                img: "https://source.unsplash.com/random/600x400/?illustration,1",
+                alt: "Watercolor illustration of botanical elements",
+                date: new Date(2023, 6, 3),
+                likes: 35
+            },
+            {
+                title: "Street Mural",
+                description: "Large-scale mural featuring vibrant colors and social commentary.",
+                tags: ["Street Art", "Mural", "Public Art"],
+                category: "other",
+                img: "https://source.unsplash.com/random/600x400/?street,art,1",
+                alt: "Vibrant street art mural on a brick wall",
+                date: new Date(2023, 3, 18),
+                likes: 112
+            },
+            {
+                title: "Ceramic Vase",
+                description: "Hand-thrown ceramic vase with intricate carved patterns.",
+                tags: ["Ceramics", "Pottery", "Handmade"],
+                category: "sculpture",
+                img: "https://source.unsplash.com/random/600x400/?ceramic,1",
+                alt: "Handcrafted ceramic vase with intricate patterns",
+                date: new Date(2023, 2, 30),
+                likes: 64
+            },
+            {
+                title: "Textile Art",
+                description: "Experimental fiber art combining weaving and embroidery techniques.",
+                tags: ["Textile", "Fiber Art", "Experimental"],
+                category: "other",
+                img: "https://source.unsplash.com/random/600x400/?fiber,art,1",
+                alt: "Textile art piece with woven fibers and embroidery",
+                date: new Date(2023, 1, 14),
+                likes: 29
+            }
+        ];
+
+        // Render artworks
+        function renderArtworks(artworksToRender) {
+            artworkGallery.innerHTML = '';
+            
+            if (artworksToRender.length === 0) {
+                artworkGallery.innerHTML = '<div class="empty-state"><p>No artworks found matching your criteria.</p></div>';
+                return;
+            }
+            
+            artworksToRender.forEach(artwork => {
+                const card = document.createElement('article');
+                card.className = 'art-card';
+                card.tabIndex = 0;
+                
+                card.innerHTML = `
+                    <img src="${artwork.img}" alt="${artwork.alt}">
+                    <div class="art-card-content">
+                        <h3>${artwork.title}</h3>
+                        <p>${artwork.description}</p>
+                        <div class="tags">
+                            ${artwork.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                artworkGallery.appendChild(card);
+            });
+        }
+
+        // Filter and sort artworks
+        function filterAndSortArtworks() {
+            const category = categoryFilter.value;
+            const sortMethod = sortBy.value;
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            let filtered = artworks.filter(artwork => {
+                const matchesCategory = category === 'all' || artwork.category === category;
+                const matchesSearch = artwork.title.toLowerCase().includes(searchTerm) || 
+                                     artwork.description.toLowerCase().includes(searchTerm) ||
+                                     artwork.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                return matchesCategory && matchesSearch;
+            });
+            
+            // Sort artworks
+            if (sortMethod === 'newest') {
+                filtered.sort((a, b) => b.date - a.date);
+            } else if (sortMethod === 'oldest') {
+                filtered.sort((a, b) => a.date - b.date);
+            } else if (sortMethod === 'popular') {
+                filtered.sort((a, b) => b.likes - a.likes);
+            }
+            
+            renderArtworks(filtered);
+        }
+
+        // Event listeners for filtering
+        categoryFilter.addEventListener('change', filterAndSortArtworks);
+        sortBy.addEventListener('change', filterAndSortArtworks);
+        searchInput.addEventListener('input', filterAndSortArtworks);
+
+        // Initial render
+        renderArtworks(artworks);
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', function(e) {
+            if (uploadModal.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    uploadModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                    uploadModal.setAttribute('aria-hidden', 'true');
+                }
+                
+                // Trap focus inside modal when open
+                if (e.key === 'Tab') {
+                    const focusableElements = uploadModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+                    
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstElement) {
+                            lastElement.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastElement) {
+                            firstElement.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

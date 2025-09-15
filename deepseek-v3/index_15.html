@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLife - Eco-Friendly Products Marketplace</title>
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary-green: #2E7D32;
+            --dark-green: #1B5E20;
+            --light-green: #81C784;
+            --lighter-green: #E8F5E9;
+            --white: #FFFFFF;
+            --black: #212121;
+            --gray: #757575;
+            --light-gray: #EEEEEE;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--black);
+            background-color: var(--lighter-green);
+        }
+
+        /* Accessibility Focus Styles */
+        :focus-visible {
+            outline: 3px solid var(--dark-green);
+            outline-offset: 3px;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--dark-green);
+            color: var(--white);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-menu a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a:focus {
+            background-color: var(--dark-green);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2.2rem;
+        }
+
+        /* Filter and Sort Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        .filter-group select,
+        .filter-group button {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-green);
+            border-radius: 4px;
+            background-color: var(--white);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .filter-group select:focus,
+        .filter-group button:focus {
+            border-color: var(--primary-green);
+        }
+
+        .filter-group button {
+            background-color: var(--primary-green);
+            color: var(--white);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .filter-group button:hover {
+            background-color: var(--dark-green);
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--black);
+        }
+
+        .product-category {
+            display: inline-block;
+            background-color: var(--light-green);
+            color: var(--dark-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .quick-view-btn,
+        .add-to-cart-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-view-btn {
+            background-color: var(--light-gray);
+            color: var(--black);
+        }
+
+        .quick-view-btn:hover,
+        .quick-view-btn:focus {
+            background-color: #e0e0e0;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .add-to-cart-btn:hover,
+        .add-to-cart-btn:focus {
+            background-color: var(--dark-green);
+        }
+
+        /* Product Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 8px;
+            overflow-y: auto;
+            position: relative;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            padding: 0.5rem;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: var(--black);
+        }
+
+        .modal-product {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .modal-product-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .modal-product-info h2 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .modal-product-category {
+            display: inline-block;
+            background-color: var(--light-green);
+            color: var(--dark-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin: 1rem 0;
+        }
+
+        .modal-product-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .modal-product-features {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-product-features h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-green);
+        }
+
+        .modal-product-features ul {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+
+        .modal-product-features li {
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover,
+        .footer-section a:focus {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+
+            .modal-product {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-product-image {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .quick-view-btn,
+            .add-to-cart-btn {
+                width: 100%;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+
+            .product-card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link for Keyboard Users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header with Navigation -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="#">GreenLife</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+                ☰
+            </button>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Sustainability</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1 class="page-title">Eco-Friendly Products</h1>
+
+        <!-- Filter and Sort Controls -->
+        <div class="controls">
+            <div class="filter-group">
+                <label for="category-filter">Filter by Category</label>
+                <select id="category-filter" aria-label="Filter products by category">
+                    <option value="all">All Categories</option>
+                    <option value="home">Home & Living</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="bathroom">Bathroom</option>
+                    <option value="garden">Garden</option>
+                    <option value="fashion">Fashion</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-by">Sort By</label>
+                <select id="sort-by" aria-label="Sort products">
+                    <option value="popularity">Popularity</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="apply-filters" class="visually-hidden">Apply Filters</label>
+                <button id="apply-filters">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="products-grid">
+            <!-- Product Card 1 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1602143407151-7111562c207a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Bamboo toothbrush with natural bristles" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Bamboo Toothbrush</h2>
+                    <span class="product-category">Bathroom</span>
+                    <p class="product-price">$4.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Bamboo Toothbrush">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Bamboo Toothbrush to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Reusable stainless steel water bottle" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Stainless Steel Bottle</h2>
+                    <span class="product-category">Kitchen</span>
+                    <p class="product-price">$19.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Stainless Steel Bottle">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Stainless Steel Bottle to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1556909114-44e5b2a71caa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Organic cotton tote bag with plant print" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Organic Cotton Tote</h2>
+                    <span class="product-category">Fashion</span>
+                    <p class="product-price">$12.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Organic Cotton Tote">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Organic Cotton Tote to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 4 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1584735422180-6d5c0fc244f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Beeswax food wraps in various sizes" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Beeswax Food Wraps</h2>
+                    <span class="product-category">Kitchen</span>
+                    <p class="product-price">$14.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Beeswax Food Wraps">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Beeswax Food Wraps to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 5 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Bamboo utensil set in a carrying case" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Bamboo Utensil Set</h2>
+                    <span class="product-category">Kitchen</span>
+                    <p class="product-price">$9.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Bamboo Utensil Set">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Bamboo Utensil Set to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 6 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1574323347407-f5e0d0b3a8f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Reusable silicone food storage bags" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Silicone Food Bags</h2>
+                    <span class="product-category">Kitchen</span>
+                    <p class="product-price">$24.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Silicone Food Bags">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Silicone Food Bags to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 7 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Hemp shopping bag with drawstring closure" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Hemp Shopping Bag</h2>
+                    <span class="product-category">Fashion</span>
+                    <p class="product-price">$15.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Hemp Shopping Bag">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Hemp Shopping Bag to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 8 -->
+            <div class="product-card" tabindex="0">
+                <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
+                     alt="Ceramic compost bin for kitchen counter" 
+                     class="product-image">
+                <div class="product-info">
+                    <h2 class="product-title">Ceramic Compost Bin</h2>
+                    <span class="product-category">Kitchen</span>
+                    <p class="product-price">$29.99</p>
+                    <div class="product-actions">
+                        <button class="quick-view-btn" aria-label="Quick view Ceramic Compost Bin">Quick View</button>
+                        <button class="add-to-cart-btn" aria-label="Add Ceramic Compost Bin to cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div class="modal" id="product-modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Close modal">×</button>
+            <div class="modal-product">
+                <img src="" alt="" class="modal-product-image" id="modal-image">
+                <div class="modal-product-info">
+                    <h2 id="modal-title">Product Title</h2>
+                    <span class="modal-product-category" id="modal-category">Category</span>
+                    <p class="modal-product-price" id="modal-price">$0.00</p>
+                    <p class="modal-product-description" id="modal-description">
+                        This is a detailed description of the product. It includes information about materials, 
+                        sustainability features, and how to use and care for the product.
+                    </p>
+                    <div class="modal-product-features">
+                        <h3>Key Features</h3>
+                        <ul id="modal-features">
+                            <li>100% biodegradable materials</li>
+                            <li>Chemical-free production</li>
+                            <li>Fair trade certified</li>
+                            <li>Vegan and cruelty-free</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="add-to-cart-btn" style="flex: 2;">Add to Cart</button>
+                        <button class="quick-view-btn">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About GreenLife</h3>
+                <ul>
+                    <li><a href="#">Our Mission</a></li>
+                    <li><a href="#">Sustainability Goals</a></li>
+                    <li><a href="#">Team</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Shipping & Returns</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Eco Living Blog</a></li>
+                    <li><a href="#">Zero Waste Tips</a></li>
+                    <li><a href="#">Recycling Guide</a></li>
+                    <li><a href="#">Sustainability Glossary</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 GreenLife. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navMenu = document.querySelector('.nav-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+            mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+            navMenu.classList.toggle('active');
+        });
+
+        // Product Modal Functionality
+        const modal = document.getElementById('product-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalCategory = document.getElementById('modal-category');
+        const modalPrice = document.getElementById('modal-price');
+        const modalDescription = document.getElementById('modal-description');
+        const modalFeatures = document.getElementById('modal-features');
+        const closeModal = document.querySelector('.close-modal');
+        const quickViewBtns = document.querySelectorAll('.quick-view-btn');
+
+        // Sample product data (in a real app, this would come from a database)
+        const products = [
+            {
+                id: 1,
+                title: "Bamboo Toothbrush",
+                category: "Bathroom",
+                price: "$4.99",
+                image: "https://images.unsplash.com/photo-1602143407151-7111562c207a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "Our bamboo toothbrush features a biodegradable bamboo handle and BPA-free bristles. Each brush comes in compostable packaging, making it a perfect zero-waste alternative to plastic toothbrushes.",
+                features: [
+                    "100% biodegradable bamboo handle",
+                    "BPA-free bristles",
+                    "Compostable packaging",
+                    "Natural antimicrobial properties",
+                    "Ergonomic design for better brushing"
+                ]
+            },
+            {
+                id: 2,
+                title: "Stainless Steel Bottle",
+                category: "Kitchen",
+                price: "$19.99",
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "This durable stainless steel water bottle keeps drinks cold for 24 hours or hot for 12 hours. The leak-proof design makes it perfect for daily use, reducing the need for single-use plastic bottles.",
+                features: [
+                    "Double-walled vacuum insulation",
+                    "BPA-free and non-toxic",
+                    "Leak-proof lid",
+                    "Sweat-proof exterior",
+                    "Lifetime warranty"
+                ]
+            },
+            {
+                id: 3,
+                title: "Organic Cotton Tote",
+                category: "Fashion",
+                price: "$12.99",
+                image: "https://images.unsplash.com/photo-1556909114-44e5b2a71caa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "Made from 100% organic cotton, this stylish tote bag is perfect for grocery shopping or everyday use. The sturdy handles and spacious design make it a practical alternative to plastic bags.",
+                features: [
+                    "100% GOTS certified organic cotton",
+                    "Reinforced stitching for durability",
+                    "Machine washable",
+                    "Supports fair trade practices",
+                    "Holds up to 25 lbs"
+                ]
+            },
+            {
+                id: 4,
+                title: "Beeswax Food Wraps",
+                category: "Kitchen",
+                price: "$14.99",
+                image: "https://images.unsplash.com/photo-1584735422180-6d5c0fc244f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "These reusable beeswax wraps are a sustainable alternative to plastic wrap. Made with organic cotton, beeswax, tree resin, and jojoba oil, they're perfect for covering bowls or wrapping food directly.",
+                features: [
+                    "Set of 3 sizes (small, medium, large)",
+                    "100% natural ingredients",
+                    "Washable and reusable",
+                    "Biodegradable at end of life",
+                    "Made in the USA"
+                ]
+            },
+            {
+                id: 5,
+                title: "Bamboo Utensil Set",
+                category: "Kitchen",
+                price: "$9.99",
+                image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "This portable bamboo utensil set includes a fork, spoon, knife, chopsticks, and straw. The carrying case makes it easy to take your zero-waste utensils anywhere, reducing single-use plastic waste.",
+                features: [
+                    "Set of 5 utensils",
+                    "Lightweight bamboo construction",
+                    "Includes carrying case",
+                    "Dishwasher safe",
+                    "Naturally antimicrobial"
+                ]
+            },
+            {
+                id: 6,
+                title: "Silicone Food Bags",
+                category: "Kitchen",
+                price: "$24.99",
+                image: "https://images.unsplash.com/photo-1574323347407-f5e0d0b3a8f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "These reusable silicone food storage bags are a sustainable alternative to single-use plastic bags. They're freezer, microwave, and dishwasher safe, making them perfect for all your food storage needs.",
+                features: [
+                    "Set of 5 bags (various sizes)",
+                    "BPA-free platinum silicone",
+                    "Leak-proof zipper seal",
+                    "Temperature resistant (-40°F to 450°F)",
+                    "Lifetime guarantee"
+                ]
+            },
+            {
+                id: 7,
+                title: "Hemp Shopping Bag",
+                category: "Fashion",
+                price: "$15.99",
+                image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "This durable hemp shopping bag is strong enough to carry heavy groceries while being gentle on the environment. Hemp is one of the most sustainable fibers, requiring minimal water and no pesticides to grow.",
+                features: [
+                    "100% organic hemp fabric",
+                    "Reinforced stitching",
+                    "Drawstring closure",
+                    "Machine washable",
+                    "Supports small farmers"
+                ]
+            },
+            {
+                id: 8,
+                title: "Ceramic Compost Bin",
+                category: "Kitchen",
+                price: "$29.99",
+                image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                description: "This stylish ceramic compost bin makes collecting food scraps easy and odor-free. The included charcoal filter neutralizes odors, while the ceramic construction blends beautifully with any kitchen decor.",
+                features: [
+                    "Ceramic construction with bamboo lid",
+                    "Includes replaceable charcoal filter",
+                    "Easy to clean",
+                    "1.3 gallon capacity",
+                    "Dishwasher safe"
+                ]
+            }
+        ];
+
+        // Open modal with product details
+        quickViewBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                const product = products[index];
+                modalImage.src = product.image;
+                modalImage.alt = product.title;
+                modalTitle.textContent = product.title;
+                modalCategory.textContent = product.category;
+                modalPrice.textContent = product.price;
+                modalDescription.textContent = product.description;
+                
+                // Clear existing features
+                modalFeatures.innerHTML = '';
+                
+                // Add new features
+                product.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    modalFeatures.appendChild(li);
+                });
+                
+                // Show modal
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                modal.setAttribute('aria-hidden', 'false');
+            });
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            modal.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close modal when clicking outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // Filter and Sort Functionality
+        const categoryFilter = document.getElementById('category-filter');
+        const sortBy = document.getElementById('sort-by');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const productCards = document.querySelectorAll('.product-card');
+
+        applyFiltersBtn.addEventListener('click', () => {
+            const selectedCategory = categoryFilter.value;
+            const sortMethod = sortBy.value;
+            
+            // Filter by category
+            productCards.forEach(card => {
+                const category = card.querySelector('.product-category').textContent.toLowerCase();
+                
+                if (selectedCategory === 'all' || category === selectedCategory) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Sort products
+            const visibleProducts = Array.from(productCards).filter(card => card.style.display !== 'none');
+            
+            visibleProducts.sort((a, b) => {
+                const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('$', ''));
+                const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('$', ''));
+                
+                switch(sortMethod) {
+                    case 'price-low':
+                        return priceA - priceB;
+                    case 'price-high':
+                        return priceB - priceA;
+                    case 'popularity':
+                        // In a real app, this would use actual popularity data
+                        return Math.random() - 0.5;
+                    case 'newest':
+                        // In a real app, this would use actual date data
+                        return Math.random() - 0.5;
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Reorder products in DOM
+            const productsGrid = document.querySelector('.products-grid');
+            visibleProducts.forEach(product => {
+                productsGrid.appendChild(product);
+            });
+        });
+
+        // Add to Cart Functionality
+        const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
+        
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const productCard = btn.closest('.product-card');
+                const productName = productCard.querySelector('.product-title').textContent;
+                const productPrice = productCard.querySelector('.product-price').textContent;
+                
+                // In a real app, this would add to a shopping cart system
+                alert(`Added ${productName} (${productPrice}) to your cart!`);
+                
+                // Visual feedback
+                btn.textContent = 'Added!';
+                setTimeout(() => {
+                    btn.textContent = 'Add to Cart';
+                }, 2000);
+            });
+        });
+
+        // Initialize page with filtered/sorted products
+        applyFiltersBtn.click();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Events Hub - Discover Local Activities</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #fff;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            border-radius: 50%;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: block;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid var(--text-light);
+        }
+
+        .nav-link[aria-current="page"] {
+            background-color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .mobile-menu-btn:hover,
+        .mobile-menu-btn:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid var(--text-light);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: var(--text-light);
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.1)" d="M0,0 L100,0 L100,100 L0,100 Z" /></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        /* Search and Filter Section */
+        .search-section {
+            background-color: var(--text-light);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+        }
+
+        .filter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        input,
+        select,
+        button {
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        button:hover,
+        button:focus {
+            background-color: #2980b9;
+            outline: 2px solid var(--primary-color);
+        }
+
+        .clear-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .clear-btn:hover,
+        .clear-btn:focus {
+            background-color: #d5dbdb;
+        }
+
+        /* Events Grid */
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .event-card {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .event-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .event-card:hover .event-image img {
+            transform: scale(1.05);
+        }
+
+        .event-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .event-meta i {
+            font-size: 1rem;
+        }
+
+        .event-description {
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #2980b9;
+            outline: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #d5dbdb;
+            outline: 2px solid var(--primary-color);
+        }
+
+        /* Map Section */
+        .map-section {
+            margin-top: 3rem;
+            background-color: var(--text-light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .map-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-header h2 {
+            color: var(--primary-color);
+        }
+
+        .map-container {
+            height: 400px;
+            width: 100%;
+            background-color: #eee;
+            position: relative;
+        }
+
+        .map-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--text-light);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-50px);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .modal.open .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--text-light);
+            z-index: 1;
+        }
+
+        .modal-header h3 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0.5rem;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--accent-color);
+            outline: 2px solid var(--accent-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-event-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-event-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-event-details div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .modal-event-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-event-description {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            position: sticky;
+            bottom: 0;
+            background-color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            color: var(--secondary-color);
+            text-decoration: underline;
+            outline: none;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover,
+        .social-links a:focus {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            outline: 2px solid var(--text-light);
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Accessibility Features */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-list {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: var(--primary-color);
+                position: absolute;
+                top: 100%;
+                left: 0;
+                padding: 1rem;
+                box-shadow: var(--box-shadow);
+            }
+
+            .nav-list.open {
+                display: flex;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .events-container {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-event-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .event-card:hover {
+                transform: none;
+            }
+
+            .event-image img {
+                transition: none;
+            }
+
+            .modal .modal-content {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50" alt="Community Events Hub logo" width="50" height="50">
+                <h1>Community Events Hub</h1>
+            </div>
+            <nav aria-label="Main navigation">
+                <button class="mobile-menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle menu">
+                    ☰
+                </button>
+                <ul class="nav-list" id="main-nav">
+                    <li class="nav-item"><a href="#" class="nav-link" aria-current="page">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Events</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Calendar</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" aria-labelledby="hero-heading">
+            <h2 id="hero-heading">Discover Exciting Local Events</h2>
+            <p>Find and explore community events, concerts, workshops, and more in your area. Join us for unforgettable experiences!</p>
+            <button class="btn btn-primary" onclick="document.getElementById('search-input').focus()">Find Events</button>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="search-section" aria-labelledby="search-heading">
+            <h2 id="search-heading" class="sr-only">Search and Filter Events</h2>
+            <form class="search-form" role="search">
+                <div class="form-group">
+                    <label for="search-input">Search Events</label>
+                    <input type="search" id="search-input" placeholder="Search by event name, description..." aria-label="Search events">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <div class="filter-section">
+                <div class="form-group">
+                    <label for="category-filter">Category</label>
+                    <select id="category-filter" aria-label="Filter by category">
+                        <option value="">All Categories</option>
+                        <option value="music">Music</option>
+                        <option value="art">Art & Culture</option>
+                        <option value="sports">Sports</option>
+                        <option value="food">Food & Drink</option>
+                        <option value="education">Education</option>
+                        <option value="community">Community</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date-filter">Date</label>
+                    <select id="date-filter" aria-label="Filter by date">
+                        <option value="">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="weekend">This Weekend</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="location-filter">Location</label>
+                    <select id="location-filter" aria-label="Filter by location">
+                        <option value="">All Locations</option>
+                        <option value="downtown">Downtown</option>
+                        <option value="north">North Side</option>
+                        <option value="south">South Side</option>
+                        <option value="east">East End</option>
+                        <option value="west">West End</option>
+                    </select>
+                </div>
+                <button type="button" class="clear-btn">Clear Filters</button>
+            </div>
+        </section>
+
+        <!-- Events Grid -->
+        <section aria-labelledby="events-heading">
+            <h2 id="events-heading">Upcoming Events</h2>
+            <div class="events-container" role="list">
+                <!-- Event cards will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-section" aria-labelledby="map-heading">
+            <div class="map-header">
+                <h2 id="map-heading">Event Locations</h2>
+                <button class="btn btn-secondary" id="refresh-map">Refresh Map</button>
+            </div>
+            <div class="map-container">
+                <div class="map-placeholder" role="img" aria-label="Map showing event locations">
+                    Interactive map would display here with event locations
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Event Modal -->
+    <div class="modal" id="event-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Event Details</h3>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="" class="modal-event-image" id="modal-event-image">
+                <div class="modal-event-details">
+                    <div>
+                        <h4>Date & Time</h4>
+                        <p id="modal-event-date">Loading...</p>
+                    </div>
+                    <div>
+                        <h4>Location</h4>
+                        <p id="modal-event-location">Loading...</p>
+                    </div>
+                    <div>
+                        <h4>Category</h4>
+                        <p id="modal-event-category">Loading...</p>
+                    </div>
+                    <div>
+                        <h4>Price</h4>
+                        <p id="modal-event-price">Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-event-description">
+                    <h4>Description</h4>
+                    <p id="modal-event-description">Loading...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-close-btn">Close</button>
+                <button class="btn btn-primary" id="modal-book-btn">Book Tickets</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>About Us</h3>
+                <p>Community Events Hub connects people with local events and activities to build stronger communities.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Calendar</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <address>
+                    123 Event Street<br>
+                    Cityville, ST 12345<br>
+                    <a href="mailto:info@communityevents.com">info@communityevents.com</a><br>
+                    <a href="tel:+15551234567">(555) 123-4567</a>
+                </address>
+            </div>
+            <div class="footer-column">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><span aria-hidden="true">f</span></a>
+                    <a href="#" aria-label="Twitter"><span aria-hidden="true">t</span></a>
+                    <a href="#" aria-label="Instagram"><span aria-hidden="true">i</span></a>
+                    <a href="#" aria-label="LinkedIn"><span aria-hidden="true">in</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Community Events Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample event data
+        const events = [
+            {
+                id: 1,
+                title: "Summer Music Festival",
+                date: "June 15, 2023 | 3:00 PM",
+                location: "Central Park",
+                category: "Music",
+                price: "$25 - $50",
+                description: "Join us for the annual Summer Music Festival featuring local bands and artists. Food trucks and beverages will be available. All ages welcome!",
+                image: "https://via.placeholder.com/600x400?text=Summer+Music+Festival"
+            },
+            {
+                id: 2,
+                title: "Art in the Park",
+                date: "June 18, 2023 | 10:00 AM - 6:00 PM",
+                location: "Riverside Park",
+                category: "Art",
+                price: "Free",
+                description: "Local artists showcase their work in this outdoor exhibition. Paintings, sculptures, and live art demonstrations throughout the day.",
+                image: "https://via.placeholder.com/600x400?text=Art+in+the+Park"
+            },
+            {
+                id: 3,
+                title: "Community Yoga Day",
+                date: "June 20, 2023 | 8:00 AM",
+                location: "Town Square",
+                category: "Community",
+                price: "Donation",
+                description: "Start your day with a free community yoga session. All skill levels welcome. Bring your own mat and water bottle.",
+                image: "https://via.placeholder.com/600x400?text=Community+Yoga+Day"
+            },
+            {
+                id: 4,
+                title: "Food Truck Festival",
+                date: "June 22, 2023 | 11:00 AM - 9:00 PM",
+                location: "Downtown Market",
+                category: "Food",
+                price: "Varies",
+                description: "Sample delicious food from over 20 local food trucks. Live music and family-friendly activities throughout the day.",
+                image: "https://via.placeholder.com/600x400?text=Food+Truck+Festival"
+            },
+            {
+                id: 5,
+                title: "5K Charity Run",
+                date: "June 25, 2023 | 7:30 AM",
+                location: "City Trail",
+                category: "Sports",
+                price: "$30",
+                description: "Annual charity run to support local schools. All proceeds go to education programs. Prizes for top finishers in each age group.",
+                image: "https://via.placeholder.com/600x400?text=5K+Charity+Run"
+            },
+            {
+                id: 6,
+                title: "Coding Workshop for Teens",
+                date: "June 28, 2023 | 4:00 PM - 6:00 PM",
+                location: "Public Library",
+                category: "Education",
+                price: "Free",
+                description: "Introduction to web development for teens aged 13-18. Learn HTML, CSS, and JavaScript basics. Laptops provided.",
+                image: "https://via.placeholder.com/600x400?text=Coding+Workshop"
+            }
+        ];
+
+        // DOM Elements
+        const eventsContainer = document.querySelector('.events-container');
+        const modal = document.getElementById('event-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalImage = document.getElementById('modal-event-image');
+        const modalDate = document.getElementById('modal-event-date');
+        const modalLocation = document.getElementById('modal-event-location');
+        const modalCategory = document.getElementById('modal-event-category');
+        const modalPrice = document.getElementById('modal-event-price');
+        const modalDescription = document.getElementById('modal-event-description');
+        const closeModalBtn = document.querySelector('.close-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBookBtn = document.getElementById('modal-book-btn');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navList = document.querySelector('.nav-list');
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const dateFilter = document.getElementById('date-filter');
+        const locationFilter = document.getElementById('location-filter');
+        const clearFiltersBtn = document.querySelector('.clear-btn');
+        const refreshMapBtn = document.getElementById('refresh-map');
+
+        // Display events
+        function displayEvents(eventsToDisplay) {
+            eventsContainer.innerHTML = '';
+            
+            if (eventsToDisplay.length === 0) {
+                eventsContainer.innerHTML = '<p class="no-events">No events match your search criteria.</p>';
+                return;
+            }
+            
+            eventsToDisplay.forEach(event => {
+                const eventCard = document.createElement('article');
+                eventCard.className = 'event-card';
+                eventCard.setAttribute('role', 'listitem');
+                eventCard.setAttribute('aria-labelledby', `event-title-${event.id}`);
+                
+                eventCard.innerHTML = `
+                    <div class="event-image">
+                        <img src="${event.image}" alt="${event.title} event image">
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title" id="event-title-${event.id}">${event.title}</h3>
+                        <div class="event-meta">
+                            <span><span aria-hidden="true">📅</span> <span class="sr-only">Date:</span> ${event.date}</span>
+                            <span><span aria-hidden="true">📍</span> <span class="sr-only">Location:</span> ${event.location}</span>
+                            <span><span aria-hidden="true">🏷️</span> <span class="sr-only">Category:</span> ${event.category}</span>
+                        </div>
+                        <p class="event-description">${event.description.substring(0, 100)}...</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary view-details" data-id="${event.id}">View Details</button>
+                            <button class="btn btn-secondary save-event" data-id="${event.id}">Save</button>
+                        </div>
+                    </div>
+                `;
+                
+                eventsContainer.appendChild(eventCard);
+            });
+            
+            // Add event listeners to the new buttons
+            document.querySelectorAll('.view-details').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const eventId = parseInt(e.target.getAttribute('data-id'));
+                    openModal(eventId);
+                });
+            });
+            
+            document.querySelectorAll('.save-event').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const eventId = parseInt(e.target.getAttribute('data-id'));
+                    saveEvent(eventId);
+                });
+            });
+        }
+
+        // Open modal with event details
+        function openModal(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            modalTitle.textContent = event.title;
+            modalImage.src = event.image;
+            modalImage.alt = `${event.title} event image`;
+            modalDate.textContent = event.date;
+            modalLocation.textContent = event.location;
+            modalCategory.textContent = event.category;
+            modalPrice.textContent = event.price;
+            modalDescription.textContent = event.description;
+            
+            modal.setAttribute('aria-hidden', 'false');
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus on the close button when modal opens
+            setTimeout(() => {
+                modalCloseBtn.focus();
+            }, 100);
+        }
+
+        // Close modal
+        function closeModal() {
+            modal.setAttribute('aria-hidden', 'true');
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Save event to favorites
+        function saveEvent(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            alert(`Saved "${event.title}" to your favorites!`);
+        }
+
+        // Filter events based on search and filters
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const category = categoryFilter.value;
+            const date = dateFilter.value;
+            const location = locationFilter.value;
+            
+            let filteredEvents = [...events];
+            
+            // Filter by search term
+            if (searchTerm) {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.title.toLowerCase().includes(searchTerm) || 
+                    event.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Filter by category
+            if (category) {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.category.toLowerCase() === category.toLowerCase()
+                );
+            }
+            
+            // Filter by location
+            if (location) {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.location.toLowerCase().includes(location.toLowerCase())
+                );
+            }
+            
+            // Filter by date (simplified for demo)
+            if (date === 'today') {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.date.includes('June 15')
+                );
+            } else if (date === 'weekend') {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.date.includes('June 15') || event.date.includes('June 16') || event.date.includes('June 17')
+                );
+            } else if (date === 'week') {
+                filteredEvents = filteredEvents.filter(event => 
+                    parseInt(event.date.split(' ')[1]) >= 15 && parseInt(event.date.split(' ')[1]) <= 21
+                );
+            } else if (date === 'month') {
+                // All events are in June for this demo
+            }
+            
+            displayEvents(filteredEvents);
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            searchInput.value = '';
+            categoryFilter.value = '';
+            dateFilter.value = '';
+            locationFilter.value = '';
+            filterEvents();
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+            mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+            navList.classList.toggle('open');
+        }
+
+        // Initialize the page
+        function init() {
+            // Display all events initially
+            displayEvents(events);
+            
+            // Event listeners
+            closeModalBtn.addEventListener('click', closeModal);
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalBookBtn.addEventListener('click', () => {
+                alert('Booking functionality would be implemented here!');
+                closeModal();
+            });
+            
+            // Close modal when clicking outside content
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('open')) {
+                    closeModal();
+                }
+            });
+            
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            
+            // Filter events when search or filters change
+            searchInput.addEventListener('input', filterEvents);
+            categoryFilter.addEventListener('change', filterEvents);
+            dateFilter.addEventListener('change', filterEvents);
+            locationFilter.addEventListener('change', filterEvents);
+            
+            // Clear filters button
+            clearFiltersBtn.addEventListener('click', clearFilters);
+            
+            // Refresh map button
+            refreshMapBtn.addEventListener('click', () => {
+                alert('Map would be refreshed here!');
+            });
+            
+            // Keyboard navigation for mobile menu items
+            navList.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    toggleMobileMenu();
+                    mobileMenuBtn.focus();
+                }
+            });
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

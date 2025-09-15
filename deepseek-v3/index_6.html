@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlavorShare - Accessible Recipe Sharing Platform</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #ff7e5f;
+            --accent-color: #4cb944;
+            --dark-color: #2d3a4a;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--dark-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            color: var(--secondary-color);
+            outline: none;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after,
+        .nav-link:focus::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background-color: var(--secondary-color);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="search"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="search"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        button:hover,
+        button:focus {
+            background-color: var(--dark-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary:hover,
+        button.secondary:focus {
+            background-color: #e56a4a;
+        }
+
+        /* Recipe Grid */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .recipe-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .recipe-description {
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recipe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: var(--warning-color);
+            margin-right: 0.5rem;
+        }
+
+        .star {
+            font-size: 1.2rem;
+        }
+
+        .rating-count {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Recipe Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0.5rem;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: var(--error-color);
+            outline: none;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .ingredients-list,
+        .instructions-list {
+            list-style-type: none;
+        }
+
+        .ingredients-list li,
+        .instructions-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .ingredients-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+        }
+
+        .instructions-list li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            background-color: var(--primary-color);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .instructions-list {
+            counter-reset: step-counter;
+        }
+
+        /* Rating Form */
+        .rating-form {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .rating-form h3 {
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .rating-star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .rating-star:hover,
+        .rating-star:focus {
+            color: var(--warning-color);
+        }
+
+        .rating-star.active {
+            color: var(--warning-color);
+        }
+
+        .rating-star input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Submit Recipe Form */
+        .submit-recipe {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        .ingredient-row,
+        .instruction-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-row input,
+        .instruction-row textarea {
+            flex: 1;
+        }
+
+        .add-btn {
+            background-color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .add-btn:hover,
+        .add-btn:focus {
+            background-color: #3da035;
+        }
+
+        .ingredients-list-edit,
+        .instructions-list-edit {
+            list-style-type: none;
+            margin-bottom: 1rem;
+        }
+
+        .ingredients-list-edit li,
+        .instructions-list-edit li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .remove-btn {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .remove-btn:hover,
+        .remove-btn:focus {
+            background-color: #c0392b;
+            outline: none;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            color: var(--secondary-color);
+            outline: none;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                width: 100%;
+                margin-top: 1rem;
+                display: none;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-item {
+                margin: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-link {
+                display: block;
+                padding: 1rem 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .modal {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            .modal-image {
+                height: 200px;
+            }
+        }
+
+        /* Accessibility Focus Styles */
+        a:focus,
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo" aria-label="FlavorShare - Home">
+                <img src="https://via.placeholder.com/40x40" alt="FlavorShare logo">
+                FlavorShare
+            </a>
+            
+            <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-nav">
+                ☰
+            </button>
+            
+            <nav id="main-nav">
+                <ul class="nav-list" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a href="#" class="nav-link" role="menuitem">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="#recipes" class="nav-link" role="menuitem">Recipes</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="#submit" class="nav-link" role="menuitem">Submit Recipe</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="#about" class="nav-link" role="menuitem">About</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1>Discover and Share Delicious Recipes</h1>
+        
+        <!-- Search Section -->
+        <section class="search-section" aria-labelledby="search-recipes">
+            <h2 id="search-recipes">Search Recipes</h2>
+            <form class="search-form" role="search">
+                <div class="form-group">
+                    <label for="search-term">Search by name or keyword</label>
+                    <input type="search" id="search-term" name="search-term" placeholder="e.g., pasta, vegetarian, quick meals">
+                </div>
+                <div class="form-group">
+                    <label for="ingredient-filter">Filter by ingredient</label>
+                    <input type="text" id="ingredient-filter" name="ingredient-filter" placeholder="e.g., chicken, tomatoes">
+                </div>
+                <div class="form-group">
+                    <label for="category-filter">Category</label>
+                    <select id="category-filter" name="category-filter">
+                        <option value="">All Categories</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                    </select>
+                </div>
+                <button type="submit" class="secondary">Search</button>
+            </form>
+        </section>
+
+        <!-- Recipe Grid -->
+        <section id="recipes" aria-labelledby="featured-recipes">
+            <h2 id="featured-recipes">Featured Recipes</h2>
+            <div class="recipe-grid">
+                <!-- Recipe Card 1 -->
+                <article class="recipe-card" tabindex="0" role="article" aria-labelledby="recipe1-title">
+                    <img src="https://via.placeholder.com/300x200" alt="Vegetable stir fry with noodles" class="recipe-image">
+                    <div class="recipe-content">
+                        <h3 id="recipe1-title" class="recipe-title">Vegetable Stir Fry</h3>
+                        <div class="recipe-meta">
+                            <span>Prep: 15 min</span>
+                            <span>Cook: 10 min</span>
+                        </div>
+                        <div class="rating">
+                            <div class="stars" aria-label="Rating: 4.5 out of 5 stars">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">½</span>
+                            </div>
+                            <span class="rating-count">(24 reviews)</span>
+                        </div>
+                        <p class="recipe-description">A quick and healthy vegetable stir fry with a delicious garlic soy sauce. Perfect for busy weeknights!</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Vegetarian</span>
+                            <span class="tag">Quick</span>
+                            <span class="tag">Asian</span>
+                        </div>
+                        <button class="view-recipe" data-recipe-id="1">View Recipe</button>
+                    </div>
+                </article>
+
+                <!-- Recipe Card 2 -->
+                <article class="recipe-card" tabindex="0" role="article" aria-labelledby="recipe2-title">
+                    <img src="https://via.placeholder.com/300x200" alt="Chocolate chip cookies on a plate" class="recipe-image">
+                    <div class="recipe-content">
+                        <h3 id="recipe2-title" class="recipe-title">Classic Chocolate Chip Cookies</h3>
+                        <div class="recipe-meta">
+                            <span>Prep: 20 min</span>
+                            <span>Cook: 12 min</span>
+                        </div>
+                        <div class="rating">
+                            <div class="stars" aria-label="Rating: 5 out of 5 stars">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <span class="rating-count">(42 reviews)</span>
+                        </div>
+                        <p class="recipe-description">The perfect chocolate chip cookie - crispy edges, chewy center, and loaded with chocolate chips.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Dessert</span>
+                            <span class="tag">Baking</span>
+                            <span class="tag">Family Favorite</span>
+                        </div>
+                        <button class="view-recipe" data-recipe-id="2">View Recipe</button>
+                    </div>
+                </article>
+
+                <!-- Recipe Card 3 -->
+                <article class="recipe-card" tabindex="0" role="article" aria-labelledby="recipe3-title">
+                    <img src="https://via.placeholder.com/300x200" alt="Grilled chicken with roasted vegetables" class="recipe-image">
+                    <div class="recipe-content">
+                        <h3 id="recipe3-title" class="recipe-title">Grilled Chicken & Vegetables</h3>
+                        <div class="recipe-meta">
+                            <span>Prep: 25 min</span>
+                            <span>Cook: 20 min</span>
+                        </div>
+                        <div class="rating">
+                            <div class="stars" aria-label="Rating: 4 out of 5 stars">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">☆</span>
+                            </div>
+                            <span class="rating-count">(18 reviews)</span>
+                        </div>
+                        <p class="recipe-description">Juicy grilled chicken with a mix of seasonal vegetables, perfect for summer barbecues or healthy weeknight dinners.</p>
+                        <div class="recipe-tags">
+                            <span class="tag">Grill</span>
+                            <span class="tag">High Protein</span>
+                            <span class="tag">Low Carb</span>
+                        </div>
+                        <button class="view-recipe" data-recipe-id="3">View Recipe</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Submit Recipe Form -->
+        <section id="submit" class="submit-recipe" aria-labelledby="submit-recipe">
+            <h2 id="submit-recipe">Share Your Recipe</h2>
+            <form id="recipe-form">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="recipe-name">Recipe Name*</label>
+                        <input type="text" id="recipe-name" name="recipe-name" required aria-required="true">
+                    </div>
+                    <div class="form-col">
+                        <label for="recipe-category">Category*</label>
+                        <select id="recipe-category" name="recipe-category" required aria-required="true">
+                            <option value="">Select a category</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="dessert">Dessert</option>
+                            <option value="vegetarian">Vegetarian</option>
+                            <option value="vegan">Vegan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="prep-time">Prep Time (minutes)*</label>
+                        <input type="number" id="prep-time" name="prep-time" required aria-required="true">
+                    </div>
+                    <div class="form-col">
+                        <label for="cook-time">Cook Time (minutes)*</label>
+                        <input type="number" id="cook-time" name="cook-time" required aria-required="true">
+                    </div>
+                    <div class="form-col">
+                        <label for="servings">Servings*</label>
+                        <input type="number" id="servings" name="servings" required aria-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipe-description">Description*</label>
+                    <textarea id="recipe-description" name="recipe-description" required aria-required="true"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipe-image">Image URL</label>
+                    <input type="url" id="recipe-image" name="recipe-image" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="modal-section">
+                    <h3>Ingredients</h3>
+                    <div class="ingredient-row">
+                        <input type="text" id="ingredient-input" placeholder="e.g., 2 cups flour">
+                        <button type="button" class="add-btn" id="add-ingredient">Add Ingredient</button>
+                    </div>
+                    <ul class="ingredients-list-edit" id="ingredients-list">
+                        <!-- Ingredients will be added here -->
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Instructions</h3>
+                    <div class="instruction-row">
+                        <textarea id="instruction-input" placeholder="e.g., Preheat oven to 350°F"></textarea>
+                        <button type="button" class="add-btn" id="add-instruction">Add Step</button>
+                    </div>
+                    <ol class="instructions-list-edit" id="instructions-list">
+                        <!-- Instructions will be added here -->
+                    </ol>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipe-tags">Tags (comma separated)</label>
+                    <input type="text" id="recipe-tags" name="recipe-tags" placeholder="e.g., vegetarian, quick, gluten-free">
+                </div>
+
+                <button type="submit">Submit Recipe</button>
+            </form>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" aria-labelledby="about-flavorshare">
+            <h2 id="about-flavorshare">About FlavorShare</h2>
+            <p>FlavorShare is a community-driven platform where food enthusiasts from around the world can share their favorite recipes, discover new culinary creations, and connect with fellow home cooks.</p>
+            <p>Our mission is to make cooking accessible to everyone, regardless of skill level or dietary preferences. Whether you're looking for quick weeknight meals, special occasion dishes, or healthy alternatives, you'll find inspiration in our growing collection of recipes.</p>
+            <p>Join our community today and start sharing your culinary creations with the world!</p>
+        </section>
+    </main>
+
+    <!-- Recipe Modal -->
+    <div class="modal-overlay" id="recipe-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal">
+            <button class="modal-close" id="modal-close" aria-label="Close recipe">×</button>
+            <div class="modal-header">
+                <h2 id="modal-title" class="modal-title">Vegetable Stir Fry</h2>
+                <div class="modal-meta">
+                    <span>Prep: 15 min | Cook: 10 min | Serves: 4</span>
+                    <span>Category: Vegetarian</span>
+                </div>
+            </div>
+            <img src="https://via.placeholder.com/800x400" alt="Vegetable stir fry with noodles" class="modal-image">
+            
+            <div class="modal-section">
+                <h3>Description</h3>
+                <p>A quick and healthy vegetable stir fry with a delicious garlic soy sauce. Perfect for busy weeknights!</p>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Ingredients</h3>
+                <ul class="ingredients-list">
+                    <li>2 tablespoons vegetable oil</li>
+                    <li>3 cloves garlic, minced</li>
+                    <li>1 tablespoon ginger, grated</li>
+                    <li>1 red bell pepper, sliced</li>
+                    <li>1 carrot, julienned</li>
+                    <li>2 cups broccoli florets</li>
+                    <li>1 cup snap peas</li>
+                    <li>3 tablespoons soy sauce</li>
+                    <li>1 tablespoon honey</li>
+                    <li>1 teaspoon sesame oil</li>
+                    <li>2 green onions, sliced</li>
+                    <li>Sesame seeds for garnish</li>
+                </ul>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Instructions</h3>
+                <ol class="instructions-list">
+                    <li>Heat vegetable oil in a large wok or skillet over medium-high heat.</li>
+                    <li>Add garlic and ginger, stir for 30 seconds until fragrant.</li>
+                    <li>Add bell pepper, carrot, and broccoli. Stir fry for 3-4 minutes.</li>
+                    <li>Add snap peas and continue cooking for 2 more minutes.</li>
+                    <li>In a small bowl, whisk together soy sauce, honey, and sesame oil.</li>
+                    <li>Pour sauce over vegetables and toss to coat evenly.</li>
+                    <li>Cook for another minute until sauce thickens slightly.</li>
+                    <li>Garnish with green onions and sesame seeds before serving.</li>
+                </ol>
+            </div>
+            
+            <div class="modal-section">
+                <h3>Tags</h3>
+                <div class="recipe-tags">
+                    <span class="tag">Vegetarian</span>
+                    <span class="tag">Quick</span>
+                    <span class="tag">Asian</span>
+                    <span class="tag">Healthy</span>
+                </div>
+            </div>
+            
+            <div class="rating-form">
+                <h3>Rate this recipe</h3>
+                <form id="rating-form">
+                    <div class="rating-stars" role="radiogroup" aria-labelledby="rating-label">
+                        <span id="rating-label" class="visually-hidden">Select your rating</span>
+                        <label class="rating-star" aria-label="1 star">
+                            <input type="radio" name="rating" value="1" aria-checked="false">
+                            ★
+                        </label>
+                        <label class="rating-star" aria-label="2 stars">
+                            <input type="radio" name="rating" value="2" aria-checked="false">
+                            ★
+                        </label>
+                        <label class="rating-star" aria-label="3 stars">
+                            <input type="radio" name="rating" value="3" aria-checked="false">
+                            ★
+                        </label>
+                        <label class="rating-star" aria-label="4 stars">
+                            <input type="radio" name="rating" value="4" aria-checked="false">
+                            ★
+                        </label>
+                        <label class="rating-star" aria-label="5 stars">
+                            <input type="radio" name="rating" value="5" aria-checked="false">
+                            ★
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating-comment">Your review (optional)</label>
+                        <textarea id="rating-comment" name="rating-comment"></textarea>
+                    </div>
+                    <button type="submit">Submit Rating</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>FlavorShare</h3>
+                <p>Sharing the joy of cooking with home chefs around the world.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#recipes">Recipes</a></li>
+                    <li><a href="#submit">Submit Recipe</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Breakfast</a></li>
+                    <li><a href="#">Lunch</a></li>
+                    <li><a href="#">Dinner</a></li>
+                    <li><a href="#">Dessert</a></li>
+                    <li><a href="#">Vegetarian</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 FlavorShare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !expanded);
+            nav.classList.toggle('active');
+        });
+
+        // Recipe Modal
+        const modal = document.getElementById('recipe-modal');
+        const modalClose = document.getElementById('modal-close');
+        const viewRecipeBtns = document.querySelectorAll('.view-recipe');
+
+        viewRecipeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const recipeId = this.getAttribute('data-recipe-id');
+                loadRecipeData(recipeId);
+                modal.removeAttribute('hidden');
+                document.body.style.overflow = 'hidden';
+                modal.focus();
+            });
+        });
+
+        modalClose.addEventListener('click', function() {
+            modal.setAttribute('hidden', 'true');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.setAttribute('hidden', 'true');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.hasAttribute('hidden')) {
+                modal.setAttribute('hidden', 'true');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Function to load recipe data (mock data for this example)
+        function loadRecipeData(recipeId) {
+            // In a real app, this would fetch data from an API
+            const recipes = {
+                '1': {
+                    title: 'Vegetable Stir Fry',
+                    prepTime: '15 min',
+                    cookTime: '10 min',
+                    serves: 4,
+                    category: 'Vegetarian',
+                    description: 'A quick and healthy vegetable stir fry with a delicious garlic soy sauce. Perfect for busy weeknights!',
+                    ingredients: [
+                        '2 tablespoons vegetable oil',
+                        '3 cloves garlic, minced',
+                        '1 tablespoon ginger, grated',
+                        '1 red bell pepper, sliced',
+                        '1 carrot, julienned',
+                        '2 cups broccoli florets',
+                        '1 cup snap peas',
+                        '3 tablespoons soy sauce',
+                        '1 tablespoon honey',
+                        '1 teaspoon sesame oil',
+                        '2 green onions, sliced',
+                        'Sesame seeds for garnish'
+                    ],
+                    instructions: [
+                        'Heat vegetable oil in a large wok or skillet over medium-high heat.',
+                        'Add garlic and ginger, stir for 30 seconds until fragrant.',
+                        'Add bell pepper, carrot, and broccoli. Stir fry for 3-4 minutes.',
+                        'Add snap peas and continue cooking for 2 more minutes.',
+                        'In a small bowl, whisk together soy sauce, honey, and sesame oil.',
+                        'Pour sauce over vegetables and toss to coat evenly.',
+                        'Cook for another minute until sauce thickens slightly.',
+                        'Garnish with green onions and sesame seeds before serving.'
+                    ],
+                    tags: ['Vegetarian', 'Quick', 'Asian', 'Healthy']
+                },
+                '2': {
+                    title: 'Classic Chocolate Chip Cookies',
+                    prepTime: '20 min',
+                    cookTime: '12 min',
+                    serves: 24,
+                    category: 'Dessert',
+                    description: 'The perfect chocolate chip cookie - crispy edges, chewy center, and loaded with chocolate chips.',
+                    ingredients: [
+                        '2 1/4 cups all-purpose flour',
+                        '1 teaspoon baking soda',
+                        '1 teaspoon salt',
+                        '1 cup (2 sticks) butter, softened',
+                        '3/4 cup granulated sugar',
+                        '3/4 cup packed brown sugar',
+                        '1 teaspoon vanilla extract',
+                        '2 large eggs',
+                        '2 cups (12-oz. pkg.) semi-sweet chocolate chips'
+                    ],
+                    instructions: [
+                        'Preheat oven to 375°F.',
+                        'Combine flour, baking soda and salt in small bowl.',
+                        'Beat butter, granulated sugar, brown sugar and vanilla in large mixer bowl until creamy.',
+                        'Add eggs one at a time, beating well after each addition.',
+                        'Gradually beat in flour mixture.',
+                        'Stir in chocolate chips.',
+                        'Drop by rounded tablespoon onto ungreased baking sheets.',
+                        'Bake for 9 to 11 minutes or until golden brown.',
+                        'Cool on baking sheets for 2 minutes; remove to wire racks to cool completely.'
+                    ],
+                    tags: ['Dessert', 'Baking', 'Family Favorite']
+                },
+                '3': {
+                    title: 'Grilled Chicken & Vegetables',
+                    prepTime: '25 min',
+                    cookTime: '20 min',
+                    serves: 4,
+                    category: 'Dinner',
+                    description: 'Juicy grilled chicken with a mix of seasonal vegetables, perfect for summer barbecues or healthy weeknight dinners.',
+                    ingredients: [
+                        '4 boneless, skinless chicken breasts',
+                        '2 tablespoons olive oil',
+                        '2 cloves garlic, minced',
+                        '1 teaspoon dried oregano',
+                        '1 teaspoon paprika',
+                        'Salt and pepper to taste',
+                        '1 red bell pepper, sliced',
+                        '1 zucchini, sliced',
+                        '1 yellow squash, sliced',
+                        '1 red onion, cut into wedges',
+                        '2 tablespoons balsamic vinegar'
+                    ],
+                    instructions: [
+                        'Preheat grill to medium-high heat.',
+                        'In a small bowl, combine olive oil, garlic, oregano, paprika, salt, and pepper.',
+                        'Brush chicken breasts with half of the oil mixture.',
+                        'Toss vegetables with remaining oil mixture.',
+                        'Grill chicken for 6-7 minutes per side or until internal temperature reaches 165°F.',
+                        'Grill vegetables in a grill basket for 10-12 minutes, stirring occasionally.',
+                        'Drizzle balsamic vinegar over vegetables before serving.'
+                    ],
+                    tags: ['Grill', 'High Protein', 'Low Carb']
+                }
+            };
+
+            const recipe = recipes[recipeId];
+            if (!recipe) return;
+
+            document.getElementById('modal-title').textContent = recipe.title;
+            document.querySelector('.modal-meta span:first-child').textContent = 
+                `Prep: ${recipe.prepTime} | Cook: ${recipe.cookTime} | Serves: ${recipe.serves}`;
+            document.querySelector('.modal-meta span:last-child').textContent = 
+                `Category: ${recipe.category}`;
+            document.querySelector('.modal-image').alt = recipe.title;
+            document.querySelector('.modal-section:nth-of-type(2) p').textContent = recipe.description;
+
+            const ingredientsList = document.querySelector('.ingredients-list');
+            ingredientsList.innerHTML = '';
+            recipe.ingredients.forEach(ingredient => {
+                const li = document.createElement('li');
+                li.textContent = ingredient;
+                ingredientsList.appendChild(li);
+            });
+
+            const instructionsList = document.querySelector('.instructions-list');
+            instructionsList.innerHTML = '';
+            recipe.instructions.forEach(instruction => {
+                const li = document.createElement('li');
+                li.textContent = instruction;
+                instructionsList.appendChild(li);
+            });
+
+            const tagsContainer = document.querySelector('.modal-section:last-of-type .recipe-tags');
+            tagsContainer.innerHTML = '';
+            recipe.tags.forEach(tag => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.textContent = tag;
+                tagsContainer.appendChild(span);
+            });
+        }
+
+        // Recipe Form - Add Ingredients and Instructions
+        const addIngredientBtn = document.getElementById('add-ingredient');
+        const ingredientInput = document.getElementById('ingredient-input');
+        const ingredientsList = document.getElementById('ingredients-list');
+
+        const addInstructionBtn = document.getElementById('add-instruction');
+        const instructionInput = document.getElementById('instruction-input');
+        const instructionsList = document.getElementById('instructions-list');
+
+        addIngredientBtn.addEventListener('click', function() {
+            const ingredient = ingredientInput.value.trim();
+            if (ingredient) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${ingredient}
+                    <button class="remove-btn" aria-label="Remove ingredient">×</button>
+                `;
+                ingredientsList.appendChild(li);
+                ingredientInput.value = '';
+                
+                // Focus back to input for better UX
+                ingredientInput.focus();
+                
+                // Add event listener to remove button
+                li.querySelector('.remove-btn').addEventListener('click', function() {
+                    li.remove();
+                });
+            }
+        });
+
+        // Allow adding ingredients with Enter key
+        ingredientInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addIngredientBtn.click();
+            }
+        });
+
+        addInstructionBtn.addEventListener('click', function() {
+            const instruction = instructionInput.value.trim();
+            if (instruction) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${instruction}
+                    <button class="remove-btn" aria-label="Remove instruction">×</button>
+                `;
+                instructionsList.appendChild(li);
+                instructionInput.value = '';
+                
+                // Focus back to input for better UX
+                instructionInput.focus();
+                
+                // Add event listener to remove button
+                li.querySelector('.remove-btn').addEventListener('click', function() {
+                    li.remove();
+                });
+            }
+        });
+
+        // Allow adding instructions with Ctrl+Enter
+        instructionInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                addInstructionBtn.click();
+            }
+        });
+
+        // Form Submission
+        const recipeForm = document.getElementById('recipe-form');
+        recipeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.setAttribute('aria-invalid', 'true');
+                    isValid = false;
+                } else {
+                    field.removeAttribute('aria-invalid');
+                }
+            });
+            
+            if (ingredientsList.children.length === 0) {
+                alert('Please add at least one ingredient');
+                isValid = false;
+            }
+            
+            if (instructionsList.children.length === 0) {
+                alert('Please add at least one instruction');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // In a real app, this would submit to a server
+            alert('Recipe submitted successfully!');
+            this.reset();
+            ingredientsList.innerHTML = '';
+            instructionsList.innerHTML = '';
+        });
+
+        // Rating Stars
+        const ratingStars = document.querySelectorAll('.rating-star input');
+        ratingStars.forEach(star => {
+            star.addEventListener('change', function() {
+                const value = this.value;
+                const stars = this.parentNode.parentNode.querySelectorAll('.rating-star');
+                
+                stars.forEach((s, index) => {
+                    if (index < value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Rating Form Submission
+        const ratingForm = document.getElementById('rating-form');
+        if (ratingForm) {
+            ratingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const rating = this.querySelector('input[name="rating"]:checked');
+                if (!rating) {
+                    alert('Please select a rating');
+                    return;
+                }
+                
+                // In a real app, this would submit to a server
+                alert('Thank you for your rating!');
+                this.reset();
+                this.querySelectorAll('.rating-star').forEach(star => {
+                    star.classList.remove('active');
+                });
+            });
+        }
+
+        // Search Form Submission
+        const searchForm = document.querySelector('.search-form');
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real app, this would filter recipes
+            alert('Search functionality would filter recipes in a real implementation');
+        });
+
+        // Focus management for accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set focus to main content if there was a hash in URL
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    setTimeout(() => {
+                        target.setAttribute('tabindex', '-1');
+                        target.focus();
+                    }, 100);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

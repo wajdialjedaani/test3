@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker with Rewards</title>
+    <style>
+        /* Accessibility-focused CSS with focus indicators */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0 0 80px 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header, main, footer {
+            padding: 20px;
+            text-align: center;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        main {
+            background-color: #fff;
+            margin: 20px auto;
+            max-width: 800px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        h1, h2 {
+            margin: 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-bottom: 10px;
+        }
+        input, textarea, button {
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:focus, input:focus, select:focus, textarea:focus, a:focus {
+            outline: 3px solid #0066cc;
+            outline-offset: 2px;
+        }
+        .dark-bg button:focus, .dark-bg a:focus {
+            outline: 3px solid #ffffff;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .task-list li {
+            background-color: #f9f9f9;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-list li button {
+            background-color: #dc3545;
+        }
+        .task-list li button:hover {
+            background-color: #c82333;
+        }
+        .task-list li.completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .reward-section {
+            margin-top: 20px;
+        }
+        .reward-section h2 {
+            margin-bottom: 10px;
+        }
+        .reward-section p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav role="navigation" aria-label="Main navigation">
+            <a href="#main-content" tabindex="1">Skip to main content</a>
+        </nav>
+        <h1>Task Tracker with Rewards</h1>
+    </header>
+    <main id="main-content">
+        <section>
+            <h2>Add a New Task</h2>
+            <form id="task-form">
+                <label for="task-title">Task Title:</label>
+                <input type="text" id="task-title" name="task-title" required>
+                <label for="task-description">Task Description:</label>
+                <textarea id="task-description" name="task-description" required></textarea>
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+        <section>
+            <h2>Task List</h2>
+            <ul class="task-list" id="task-list">
+                <!-- Tasks will be dynamically added here -->
+            </ul>
+        </section>
+        <section class="reward-section">
+            <h2>Rewards</h2>
+            <p id="reward-message">Complete tasks to earn rewards!</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Task Tracker with Rewards. All rights reserved.</p>
+    </footer>
+    <script>
+        // Keyboard-accessible JavaScript functions
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskForm = document.getElementById('task-form');
+            const taskList = document.getElementById('task-list');
+            const rewardMessage = document.getElementById('reward-message');
+
+            let taskCount = 0;
+
+            taskForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const taskTitle = document.getElementById('task-title').value;
+                const taskDescription = document.getElementById('task-description').value;
+
+                if (taskTitle && taskDescription) {
+                    addTask(taskTitle, taskDescription);
+                    taskForm.reset();
+                }
+            });
+
+            function addTask(title, description) {
+                const taskItem = document.createElement('li');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                    <span>${title}</span>
+                    <button type="button" aria-label="Complete task: ${title}">Complete</button>
+                `;
+
+                const taskDescriptionElement = document.createElement('p');
+                taskDescriptionElement.className = 'task-description';
+                taskDescriptionElement.textContent = description;
+                taskItem.appendChild(taskDescriptionElement);
+
+                taskList.appendChild(taskItem);
+
+                const completeButton = taskItem.querySelector('button');
+                completeButton.addEventListener('click', () => {
+                    taskItem.classList.add('completed');
+                    taskCount++;
+                    updateRewardMessage();
+                });
+
+                completeButton.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        completeButton.click();
+                    }
+                });
+            }
+
+            function updateRewardMessage() {
+                if (taskCount > 0) {
+                    rewardMessage.textContent = `You have completed ${taskCount} task${taskCount > 1 ? 's' : ''}. Great job!`;
+                } else {
+                    rewardMessage.textContent = 'Complete tasks to earn rewards!';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

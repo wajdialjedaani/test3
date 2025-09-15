@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - Accessible Dashboard Application</title>
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.5);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 2px;
+        }
+
+        a:hover, a:focus {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--primary-dark);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        nav[aria-label="Main"] {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-color);
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            background-color: var(--primary-light);
+            color: white;
+            outline: none;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .mobile-menu-btn:hover, .mobile-menu-btn:focus {
+            background-color: var(--border-color);
+            outline: none;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .auth-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            outline: none;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-message {
+            font-size: 1.25rem;
+        }
+
+        /* Task Cards */
+        .tasks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .task-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .priority-medium {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+
+        .priority-low {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            min-width: auto;
+            min-height: auto;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover, .btn-outline:focus {
+            background-color: var(--bg-color);
+            outline: none;
+        }
+
+        /* Task Form Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-close:hover, .modal-close:focus {
+            background-color: var(--border-color);
+            outline: none;
+        }
+
+        /* Status Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .footer-link:hover, .footer-link:focus {
+            color: var(--primary-color);
+            outline: none;
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .nav-list {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-md);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+                z-index: 40;
+            }
+
+            .nav-list.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .tasks-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container container">
+            <a href="#" class="logo" aria-label="Task Manager Home">Task Manager</a>
+            
+            <button class="mobile-menu-btn" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">
+                ☰
+            </button>
+            
+            <nav aria-label="Main" id="main-nav">
+                <ul class="nav-list">
+                    <li><a href="#" class="nav-link active" aria-current="page">Dashboard</a></li>
+                    <li><a href="#" class="nav-link">Tasks</a></li>
+                    <li><a href="#" class="nav-link">Calendar</a></li>
+                    <li><a href="#" class="nav-link">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <div class="container">
+            <!-- Login Screen (default view) -->
+            <div id="login-view">
+                <div class="auth-container">
+                    <h1 class="auth-title">Welcome Back</h1>
+                    
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-email">Email Address</label>
+                            <input type="email" id="login-email" name="email" required aria-required="true" autocomplete="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" required aria-required="true" autocomplete="current-password">
+                            <a href="#" style="display: block; margin-top: 0.5rem; font-size: 0.875rem;">Forgot password?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                        
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" id="show-register">Sign up</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Register Screen (hidden by default) -->
+            <div id="register-view" style="display: none;">
+                <div class="auth-container">
+                    <h1 class="auth-title">Create Account</h1>
+                    
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-name">Full Name</label>
+                            <input type="text" id="register-name" name="name" required aria-required="true" autocomplete="name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-email">Email Address</label>
+                            <input type="email" id="register-email" name="email" required aria-required="true" autocomplete="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" name="password" required aria-required="true" autocomplete="new-password" aria-describedby="password-help">
+                            <p id="password-help" class="text-sm" style="margin-top: 0.5rem; color: var(--text-light);">
+                                Password must be at least 8 characters long
+                            </p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-confirm">Confirm Password</label>
+                            <input type="password" id="register-confirm" name="confirm" required aria-required="true" autocomplete="new-password">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                        
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" id="show-login">Log in</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Dashboard Screen (hidden by default) -->
+            <div id="dashboard-view" style="display: none;">
+                <div class="dashboard-header">
+                    <h1>Dashboard</h1>
+                    <button id="add-task-btn" class="btn btn-primary">Add Task</button>
+                </div>
+                
+                <p class="welcome-message">Welcome back, <span id="user-name">User</span>! You have <span id="task-count">3</span> tasks.</p>
+                
+                <div id="task-alerts"></div>
+                
+                <h2>Your Tasks</h2>
+                <div class="tasks-container" id="tasks-list">
+                    <!-- Task cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Modal (hidden by default) -->
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            
+            <h2 id="modal-title">Add New Task</h2>
+            
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-title">Title</label>
+                    <input type="text" id="task-title" name="title" required aria-required="true">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-description">Description</label>
+                    <textarea id="task-description" name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-due-date">Due Date</label>
+                    <input type="date" id="task-due-date" name="dueDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority" name="priority" required aria-required="true">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-status">Status</label>
+                    <select id="task-status" name="status" required aria-required="true">
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+            </div>
+            <p class="copyright">© 2023 Task Manager. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navList = document.querySelector('.nav-list');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                navList.classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.header-container') && navList.classList.contains('active')) {
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    navList.classList.remove('active');
+                }
+            });
+            
+            // Auth view toggles
+            const loginView = document.getElementById('login-view');
+            const registerView = document.getElementById('register-view');
+            const dashboardView = document.getElementById('dashboard-view');
+            const showRegister = document.getElementById('show-register');
+            const showLogin = document.getElementById('show-login');
+            
+            showRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginView.style.display = 'none';
+                registerView.style.display = 'block';
+            });
+            
+            showLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerView.style.display = 'none';
+                loginView.style.display = 'block';
+            });
+            
+            // Login form submission
+            const loginForm = document.getElementById('login-form');
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulate login
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                if (email && password) {
+                    // In a real app, you would validate credentials with a server
+                    loginView.style.display = 'none';
+                    registerView.style.display = 'none';
+                    dashboardView.style.display = 'block';
+                    
+                    // Set user name
+                    document.getElementById('user-name').textContent = email.split('@')[0];
+                    
+                    // Load sample tasks
+                    loadSampleTasks();
+                } else {
+                    showAlert('Please enter both email and password', 'error');
+                }
+            });
+            
+            // Register form submission
+            const registerForm = document.getElementById('register-form');
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                if (password !== confirm) {
+                    showAlert('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    showAlert('Password must be at least 8 characters', 'error');
+                    return;
+                }
+                
+                // In a real app, you would register the user with a server
+                showAlert('Account created successfully! Please log in.', 'success');
+                registerView.style.display = 'none';
+                loginView.style.display = 'block';
+            });
+            
+            // Task modal functionality
+            const taskModal = document.getElementById('task-modal');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const modalClose = document.querySelector('.modal-close');
+            
+            addTaskBtn?.addEventListener('click', function() {
+                taskModal.classList.add('active');
+                document.getElementById('task-title').focus();
+            });
+            
+            modalClose?.addEventListener('click', function() {
+                taskModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            taskModal.addEventListener('click', function(e) {
+                if (e.target === taskModal) {
+                    taskModal.classList.remove('active');
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && taskModal.classList.contains('active')) {
+                    taskModal.classList.remove('active');
+                }
+            });
+            
+            // Task form submission
+            const taskForm = document.getElementById('task-form');
+            taskForm?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('task-title').value;
+                const description = document.getElementById('task-description').value;
+                const dueDate = document.getElementById('task-due-date').value;
+                const priority = document.getElementById('task-priority').value;
+                const status = document.getElementById('task-status').value;
+                
+                if (!title) {
+                    showAlert('Title is required', 'error', 'task-alerts');
+                    return;
+                }
+                
+                // In a real app, you would save the task to a database
+                const newTask = {
+                    id: Date.now(),
+                    title,
+                    description,
+                    dueDate,
+                    priority,
+                    status
+                };
+                
+                addTaskToUI(newTask);
+                showAlert('Task added successfully!', 'success', 'task-alerts');
+                taskModal.classList.remove('active');
+                taskForm.reset();
+                
+                // Update task count
+                updateTaskCount();
+            });
+            
+            // Helper functions
+            function showAlert(message, type, containerId = null) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                alertDiv.setAttribute('role', type === 'error' ? 'alert' : 'status');
+                
+                const container = containerId ? document.getElementById(containerId) : document.body;
+                
+                // Remove existing alerts
+                const existingAlerts = container.querySelectorAll('.alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                container.insertAdjacentElement('afterbegin', alertDiv);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+            
+            function loadSampleTasks() {
+                const sampleTasks = [
+                    {
+                        id: 1,
+                        title: 'Complete project proposal',
+                        description: 'Finish writing the project proposal document and send for review',
+                        dueDate: '2023-12-15',
+                        priority: 'high',
+                        status: 'in-progress'
+                    },
+                    {
+                        id: 2,
+                        title: 'Team meeting',
+                        description: 'Weekly team sync to discuss project progress',
+                        dueDate: '2023-12-10',
+                        priority: 'medium',
+                        status: 'todo'
+                    },
+                    {
+                        id: 3,
+                        title: 'Update documentation',
+                        description: 'Review and update API documentation for new features',
+                        dueDate: '2023-12-20',
+                        priority: 'low',
+                        status: 'todo'
+                    }
+                ];
+                
+                const tasksList = document.getElementById('tasks-list');
+                tasksList.innerHTML = '';
+                
+                sampleTasks.forEach(task => {
+                    addTaskToUI(task);
+                });
+                
+                updateTaskCount();
+            }
+            
+            function addTaskToUI(task) {
+                const tasksList = document.getElementById('tasks-list');
+                
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                taskCard.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <div class="task-meta">
+                        <span>Due: ${task.dueDate || 'No due date'}</span>
+                        <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                    </div>
+                    <p>${task.description || 'No description'}</p>
+                    <div class="task-actions">
+                        <button class="btn btn-sm btn-outline" data-task-id="${task.id}" aria-label="Edit task ${task.title}">Edit</button>
+                        <button class="btn btn-sm btn-outline" data-task-id="${task.id}" aria-label="Delete task ${task.title}">Delete</button>
+                    </div>
+                `;
+                
+                tasksList.appendChild(taskCard);
+            }
+            
+            function updateTaskCount() {
+                const taskCount = document.getElementById('tasks-list').children.length;
+                document.getElementById('task-count').textContent = taskCount;
+            }
+            
+            // Initialize
+            if (window.location.hash === '#register') {
+                loginView.style.display = 'none';
+                registerView.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

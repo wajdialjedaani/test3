@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Product Showcase with Interactive Cards</title>
+    <style>
+        /* Reset and base styles */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #6c757d;
+            --accent-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #2c3e50;
+            --white: #ffffff;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 1.5rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid var(--white);
+        }
+
+        /* Main content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Product cards container */
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Product card */
+        .product-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .product-card:hover,
+        .product-card:focus-within {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image-container {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image,
+        .product-card:focus-within .product-image {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .product-description {
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #004494;
+            outline: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #5a6268;
+            outline: 2px solid var(--secondary-color);
+        }
+
+        /* Rating */
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            margin-right: 0.5rem;
+        }
+
+        .rating-count {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--light-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover,
+        .footer-section a:focus {
+            color: var(--accent-color);
+            text-decoration: underline;
+            outline: none;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .product-card:hover,
+            .product-card:focus-within {
+                transform: none;
+            }
+
+            .product-image {
+                transition: none;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav li {
+                margin: 0.5rem;
+            }
+
+            .products-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-container {
+                grid-template-columns: 1fr;
+            }
+
+            .product-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header with navigation -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Accessible Products</div>
+            <nav aria-label="Main Navigation">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main id="main-content">
+        <h1>Our Featured Products</h1>
+        <p>Discover our high-quality products designed with accessibility in mind. Each product is carefully crafted to meet your needs.</p>
+
+        <section aria-labelledby="featured-products">
+            <h2 id="featured-products">Featured Products</h2>
+            <div class="products-container">
+                <!-- Product Card 1 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+1" alt="Wireless headphones with noise cancellation" class="product-image">
+                        <span class="product-badge">New</span>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Premium Wireless Headphones</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★★</span>
+                            <span class="rating-count">(128 reviews)</span>
+                        </div>
+                        <p class="product-description">Experience crystal-clear sound with our premium wireless headphones featuring active noise cancellation and 30-hour battery life.</p>
+                        <div class="product-actions">
+                            <span class="product-price">$199.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product Card 2 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+2" alt="Ergonomic wireless keyboard with numeric pad" class="product-image">
+                        <span class="product-badge">Best Seller</span>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Ergonomic Wireless Keyboard</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+                            <span class="rating-count">(87 reviews)</span>
+                        </div>
+                        <p class="product-description">Type comfortably all day with our ergonomic wireless keyboard designed to reduce strain and improve productivity.</p>
+                        <div class="product-actions">
+                            <span class="product-price">$89.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product Card 3 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+3" alt="Smartwatch with fitness tracking features" class="product-image">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Fitness Smartwatch</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★★</span>
+                            <span class="rating-count">(215 reviews)</span>
+                        </div>
+                        <p class="product-description">Track your fitness goals with our advanced smartwatch featuring heart rate monitoring, GPS, and 7-day battery life.</p>
+                        <div class="product-actions">
+                            <span class="product-price">$149.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product Card 4 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+4" alt="Portable power bank with multiple charging ports" class="product-image">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">High-Capacity Power Bank</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+                            <span class="rating-count">(64 reviews)</span>
+                        </div>
+                        <p class="product-description">Never run out of power with our 20,000mAh portable charger featuring fast charging and multiple USB ports.</p>
+                        <div class="product-actions">
+                            <span class="product-price">$49.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product Card 5 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+5" alt="Bluetooth speaker with waterproof design" class="product-image">
+                        <span class="product-badge">Sale</span>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Waterproof Bluetooth Speaker</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★★</span>
+                            <span class="rating-count">(142 reviews)</span>
+                        </div>
+                        <p class="product-description">Take your music anywhere with our waterproof Bluetooth speaker featuring 12-hour playtime and deep bass.</p>
+                        <div class="product-actions">
+                            <span class="product-price" aria-label="Original price $129.99, now $99.99"><s>$129.99</s> $99.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product Card 6 -->
+                <article class="product-card" tabindex="0">
+                    <div class="product-image-container">
+                        <img src="https://via.placeholder.com/400x300?text=Product+6" alt="Adjustable laptop stand for ergonomic workspace" class="product-image">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Adjustable Laptop Stand</h3>
+                        <div class="product-rating">
+                            <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+                            <span class="rating-count">(53 reviews)</span>
+                        </div>
+                        <p class="product-description">Improve your posture with our adjustable laptop stand that elevates your screen to eye level for better ergonomics.</p>
+                        <div class="product-actions">
+                            <span class="product-price">$39.99</span>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section aria-labelledby="accessibility-features">
+            <h2 id="accessibility-features">Our Accessibility Commitment</h2>
+            <p>We're dedicated to creating products that are accessible to everyone. Here's how we ensure accessibility:</p>
+            <ul>
+                <li>All products include detailed accessibility documentation</li>
+                <li>Packaging includes braille labels for key information</li>
+                <li>Customer support trained in accessibility best practices</li>
+                <li>Website and documentation meet WCAG 2.2 AAA standards</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#shipping">Shipping Policy</a></li>
+                    <li><a href="#returns">Returns & Exchanges</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#accessibility">Accessibility Statement</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <ul>
+                    <li><a href="#facebook">Facebook</a></li>
+                    <li><a href="#twitter">Twitter</a></li>
+                    <li><a href="#instagram">Instagram</a></li>
+                    <li><a href="#youtube">YouTube</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Information</h3>
+                <address>
+                    123 Accessible Street<br>
+                    Tech City, TC 12345<br>
+                    <a href="tel:+18005551234">(800) 555-1234</a><br>
+                    <a href="mailto:info@accessibleproducts.com">info@accessibleproducts.com</a>
+                </address>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Accessible Products. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Enhance keyboard navigation for product cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const productCards = document.querySelectorAll('.product-card');
+            
+            // Make entire card clickable when pressing Enter
+            productCards.forEach(card => {
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const button = this.querySelector('.btn-primary');
+                        if (button) {
+                            button.click();
+                        }
+                    }
+                });
+                
+                // Ensure focus stays within card when tabbing
+                const lastFocusable = this.querySelector('.btn-primary');
+                if (lastFocusable) {
+                    lastFocusable.addEventListener('keydown', function(e) {
+                        if (e.key === 'Tab' && !e.shiftKey) {
+                            e.preventDefault();
+                            card.focus();
+                        }
+                    });
+                }
+            });
+            
+            // Handle reduced motion preference
+            const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            if (motionQuery.matches) {
+                document.documentElement.style.setProperty('--transition', 'none');
+            }
+            
+            motionQuery.addEventListener('change', () => {
+                if (motionQuery.matches) {
+                    document.documentElement.style.setProperty('--transition', 'none');
+                } else {
+                    document.documentElement.style.setProperty('--transition', 'all 0.3s ease');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

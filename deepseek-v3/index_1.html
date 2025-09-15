@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Budget Calculator | Track Your Monthly Income and Expenses</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --text-color: #333;
+            --text-light: #fff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 2px solid var(--text-light);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--dark-color);
+            margin: 1rem 0;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            max-width: 80ch;
+        }
+
+        /* Budget Calculator Section */
+        .calculator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section, .results-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Forms */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        input, select, button {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, button:focus {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 2px;
+            border-color: var(--secondary-color);
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        button:hover, button:focus {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+
+        .btn-danger:hover, .btn-danger:focus {
+            background-color: #c0392b;
+        }
+
+        .btn-small {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Expense List */
+        .expense-list {
+            list-style: none;
+            margin-top: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-item-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Results Section */
+        .summary-card {
+            background-color: var(--light-color);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .positive {
+            color: var(--success-color);
+        }
+
+        .negative {
+            color: var(--accent-color);
+        }
+
+        /* Chart Section */
+        .chart-container {
+            margin-top: 2rem;
+            height: 300px;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Accessibility Features */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-item {
+                margin-left: 0;
+            }
+
+            main {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            nav, footer {
+                display: none;
+            }
+
+            body {
+                background-color: white;
+                color: black;
+            }
+
+            .calculator-container {
+                grid-template-columns: 1fr;
+            }
+
+            .input-section, .results-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Budget Tracker</div>
+            <nav aria-label="Main Navigation">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Resources</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1>Monthly Budget Calculator</h1>
+        <p>Track your income and expenses to better understand your financial situation. Enter your monthly income and add your expenses to see a breakdown of where your money is going.</p>
+
+        <div class="calculator-container">
+            <!-- Input Section -->
+            <section class="input-section" aria-labelledby="input-section-heading">
+                <h2 id="input-section-heading">Enter Your Budget Details</h2>
+                
+                <form id="budget-form">
+                    <div class="form-group">
+                        <label for="income">Monthly Income ($)</label>
+                        <input type="number" id="income" name="income" min="0" step="0.01" required aria-required="true">
+                    </div>
+
+                    <h3>Add Expenses</h3>
+                    <div class="form-group">
+                        <label for="expense-name">Expense Name</label>
+                        <input type="text" id="expense-name" name="expense-name" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expense-amount">Amount ($)</label>
+                        <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expense-category">Category</label>
+                        <select id="expense-category" name="expense-category" required aria-required="true">
+                            <option value="">Select a category</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Food">Food</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Savings">Savings</option>
+                            <option value="Debt">Debt Payments</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <button type="button" id="add-expense">Add Expense</button>
+                </form>
+
+                <h3>Your Expenses</h3>
+                <ul class="expense-list" id="expense-list" aria-live="polite">
+                    <!-- Expenses will be added here dynamically -->
+                </ul>
+
+                <button type="button" id="calculate-budget" class="btn-danger">Calculate Budget</button>
+                <button type="button" id="reset-budget">Reset</button>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" aria-labelledby="results-section-heading">
+                <h2 id="results-section-heading">Budget Summary</h2>
+                
+                <div class="summary-card">
+                    <h3>Total Income</h3>
+                    <div class="summary-value" id="total-income">$0.00</div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Total Expenses</h3>
+                    <div class="summary-value" id="total-expenses">$0.00</div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Remaining Balance</h3>
+                    <div class="summary-value" id="remaining-balance">$0.00</div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="budget-chart" aria-label="Visual breakdown of expense categories" role="img"></canvas>
+                    <div id="chart-description" class="visually-hidden">
+                        This pie chart shows the percentage breakdown of your expenses by category.
+                    </div>
+                </div>
+
+                <div id="budget-message" aria-live="polite"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2023 Accessible Budget Tracker. All rights reserved.</p>
+            <p>This tool is designed to be fully accessible to all users.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const incomeInput = document.getElementById('income');
+            const expenseNameInput = document.getElementById('expense-name');
+            const expenseAmountInput = document.getElementById('expense-amount');
+            const expenseCategoryInput = document.getElementById('expense-category');
+            const addExpenseBtn = document.getElementById('add-expense');
+            const calculateBtn = document.getElementById('calculate-budget');
+            const resetBtn = document.getElementById('reset-budget');
+            const expenseList = document.getElementById('expense-list');
+            const totalIncomeDisplay = document.getElementById('total-income');
+            const totalExpensesDisplay = document.getElementById('total-expenses');
+            const remainingBalanceDisplay = document.getElementById('remaining-balance');
+            const budgetMessage = document.getElementById('budget-message');
+            const budgetChartCanvas = document.getElementById('budget-chart');
+
+            // Budget Data
+            let budgetData = {
+                income: 0,
+                expenses: [],
+                categories: {}
+            };
+
+            // Chart Instance
+            let budgetChart = null;
+
+            // Initialize the application
+            function init() {
+                loadFromLocalStorage();
+                updateUI();
+                setupEventListeners();
+            }
+
+            // Load data from localStorage
+            function loadFromLocalStorage() {
+                const savedData = localStorage.getItem('budgetData');
+                if (savedData) {
+                    budgetData = JSON.parse(savedData);
+                }
+            }
+
+            // Save data to localStorage
+            function saveToLocalStorage() {
+                localStorage.setItem('budgetData', JSON.stringify(budgetData));
+            }
+
+            // Set up event listeners
+            function setupEventListeners() {
+                addExpenseBtn.addEventListener('click', addExpense);
+                calculateBtn.addEventListener('click', calculateBudget);
+                resetBtn.addEventListener('click', resetBudget);
+
+                // Keyboard support for buttons
+                addExpenseBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        addExpense();
+                    }
+                });
+
+                calculateBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        calculateBudget();
+                    }
+                });
+
+                resetBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        resetBudget();
+                    }
+                });
+
+                // Form submission prevention
+                document.getElementById('budget-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                });
+            }
+
+            // Add an expense to the list
+            function addExpense() {
+                const name = expenseNameInput.value.trim();
+                const amount = parseFloat(expenseAmountInput.value);
+                const category = expenseCategoryInput.value;
+
+                // Validate inputs
+                if (!name || isNaN(amount) || amount <= 0 || !category) {
+                    showError('Please fill in all expense fields with valid values.');
+                    return;
+                }
+
+                // Add expense to data
+                const expense = {
+                    id: Date.now(),
+                    name,
+                    amount,
+                    category
+                };
+
+                budgetData.expenses.push(expense);
+                saveToLocalStorage();
+                updateUI();
+
+                // Clear input fields
+                expenseNameInput.value = '';
+                expenseAmountInput.value = '';
+                expenseCategoryInput.value = '';
+                expenseNameInput.focus();
+
+                // Announce to screen readers
+                announceToScreenReader(`Added expense: ${name} for $${amount.toFixed(2)} under ${category} category.`);
+            }
+
+            // Remove an expense from the list
+            function removeExpense(id) {
+                budgetData.expenses = budgetData.expenses.filter(expense => expense.id !== id);
+                saveToLocalStorage();
+                updateUI();
+            }
+
+            // Calculate the budget summary
+            function calculateBudget() {
+                const income = parseFloat(incomeInput.value);
+
+                // Validate income
+                if (isNaN(income) || income <= 0) {
+                    showError('Please enter a valid income amount.');
+                    return;
+                }
+
+                if (budgetData.expenses.length === 0) {
+                    showError('Please add at least one expense.');
+                    return;
+                }
+
+                budgetData.income = income;
+                saveToLocalStorage();
+
+                // Calculate totals
+                const totalExpenses = budgetData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                const remainingBalance = budgetData.income - totalExpenses;
+
+                // Update UI
+                totalIncomeDisplay.textContent = `$${budgetData.income.toFixed(2)}`;
+                totalExpensesDisplay.textContent = `$${totalExpenses.toFixed(2)}`;
+                remainingBalanceDisplay.textContent = `$${remainingBalance.toFixed(2)}`;
+
+                // Set color based on balance
+                if (remainingBalance >= 0) {
+                    remainingBalanceDisplay.className = 'summary-value positive';
+                    budgetMessage.textContent = 'Good job! You have money left over this month.';
+                } else {
+                    remainingBalanceDisplay.className = 'summary-value negative';
+                    budgetMessage.textContent = 'Warning: You are spending more than you earn this month.';
+                }
+
+                // Update chart
+                updateChart();
+
+                // Announce to screen readers
+                announceToScreenReader(`Budget calculated. Income: $${budgetData.income.toFixed(2)}, Expenses: $${totalExpenses.toFixed(2)}, Remaining: $${remainingBalance.toFixed(2)}. ${budgetMessage.textContent}`);
+            }
+
+            // Reset the budget calculator
+            function resetBudget() {
+                if (confirm('Are you sure you want to reset all budget data? This cannot be undone.')) {
+                    budgetData = {
+                        income: 0,
+                        expenses: [],
+                        categories: {}
+                    };
+                    
+                    incomeInput.value = '';
+                    expenseNameInput.value = '';
+                    expenseAmountInput.value = '';
+                    expenseCategoryInput.value = '';
+                    
+                    saveToLocalStorage();
+                    updateUI();
+                    
+                    // Clear chart if it exists
+                    if (budgetChart) {
+                        budgetChart.destroy();
+                        budgetChart = null;
+                    }
+                    
+                    budgetMessage.textContent = '';
+                    
+                    // Announce to screen readers
+                    announceToScreenReader('Budget calculator has been reset.');
+                }
+            }
+
+            // Update the UI based on current data
+            function updateUI() {
+                // Update income display if it exists
+                if (budgetData.income > 0) {
+                    incomeInput.value = budgetData.income;
+                }
+
+                // Update expense list
+                expenseList.innerHTML = '';
+                
+                if (budgetData.expenses.length === 0) {
+                    const emptyMessage = document.createElement('li');
+                    emptyMessage.textContent = 'No expenses added yet.';
+                    emptyMessage.classList.add('empty-message');
+                    expenseList.appendChild(emptyMessage);
+                } else {
+                    budgetData.expenses.forEach(expense => {
+                        const expenseItem = document.createElement('li');
+                        expenseItem.className = 'expense-item';
+                        expenseItem.innerHTML = `
+                            <div>
+                                <strong>${expense.name}</strong><br>
+                                <span>$${expense.amount.toFixed(2)} - ${expense.category}</span>
+                            </div>
+                            <div class="expense-item-controls">
+                                <button class="btn-danger btn-small" data-id="${expense.id}" aria-label="Remove ${expense.name} expense">×</button>
+                            </div>
+                        `;
+                        
+                        const removeBtn = expenseItem.querySelector('button');
+                        removeBtn.addEventListener('click', () => removeExpense(expense.id));
+                        removeBtn.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                removeExpense(expense.id);
+                            }
+                        });
+                        
+                        expenseList.appendChild(expenseItem);
+                    });
+                }
+            }
+
+            // Update the chart visualization
+            function updateChart() {
+                // Group expenses by category
+                const categories = {};
+                budgetData.expenses.forEach(expense => {
+                    if (!categories[expense.category]) {
+                        categories[expense.category] = 0;
+                    }
+                    categories[expense.category] += expense.amount;
+                });
+
+                // Prepare data for chart
+                const labels = Object.keys(categories);
+                const data = Object.values(categories);
+                const backgroundColors = [
+                    '#3498db', '#e74c3c', '#2ecc71', '#f39c12', 
+                    '#9b59b6', '#1abc9c', '#d35400', '#34495e',
+                    '#7f8c8d', '#27ae60'
+                ];
+
+                // Get or create chart
+                const ctx = budgetChartCanvas.getContext('2d');
+                
+                if (budgetChart) {
+                    budgetChart.data.labels = labels;
+                    budgetChart.data.datasets[0].data = data;
+                    budgetChart.update();
+                } else {
+                    budgetChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Update chart description for screen readers
+                let description = 'Expense breakdown by category: ';
+                labels.forEach((label, index) => {
+                    const value = data[index];
+                    const percentage = Math.round((value / budgetData.expenses.reduce((sum, exp) => sum + exp.amount, 0)) * 100);
+                    description += `${label} accounts for ${percentage}% of expenses, `;
+                });
+                document.getElementById('chart-description').textContent = description.slice(0, -2) + '.';
+            }
+
+            // Show error message
+            function showError(message) {
+                budgetMessage.textContent = message;
+                budgetMessage.style.color = 'var(--accent-color)';
+                
+                // Announce to screen readers
+                announceToScreenReader(`Error: ${message}`);
+            }
+
+            // Announce messages to screen readers
+            function announceToScreenReader(message) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = message;
+                document.body.appendChild(announcement);
+                
+                // Remove after a short delay
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }
+
+            // Initialize the app
+            init();
+        });
+    </script>
+</body>
+</html>

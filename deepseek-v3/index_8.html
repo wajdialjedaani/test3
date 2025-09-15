@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Digital Art Gallery | Explore Contemporary Artworks</title>
+    <meta name="description" content="An interactive digital art gallery featuring contemporary artworks with full accessibility features including keyboard navigation, screen reader support, and dark mode.">
+    <style>
+        /* CSS Reset and Base Styles */
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --text-color: #212529;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --max-width: 1200px;
+            --header-height: 80px;
+            --focus-outline: 3px solid var(--primary-color);
+            --focus-outline-offset: 2px;
+        }
+
+        [data-theme="dark"] {
+            --text-color: #f8f9fa;
+            --bg-color: #212529;
+            --card-bg: #343a40;
+            --border-color: #495057;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 0 20px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 20px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background-color: var(--primary-color);
+            color: white;
+            outline: none;
+        }
+
+        nav a:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        /* Main Content */
+        main {
+            margin-top: var(--header-height);
+            padding: 20px;
+            max-width: var(--max-width);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 15px;
+            color: var(--secondary-color);
+        }
+
+        /* Gallery Controls */
+        .gallery-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        #search:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+            border-color: var(--primary-color);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn:focus {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .filter-btn:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .art-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .art-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .art-card:focus-within {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        .art-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .art-info {
+            padding: 15px;
+        }
+
+        .art-title {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .art-artist {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .art-category {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .art-description {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .view-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .view-btn:hover,
+        .view-btn:focus {
+            background-color: var(--accent-color);
+            outline: none;
+        }
+
+        .view-btn:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: var(--header-height) auto;
+            max-width: 800px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--accent-color);
+            outline: none;
+        }
+
+        .close-btn:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .modal-artist {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .modal-category {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .modal-description {
+            line-height: 1.6;
+        }
+
+        .modal-date {
+            font-style: italic;
+            color: var(--secondary-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg);
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 50px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            color: var(--primary-color);
+            outline: none;
+            text-decoration: underline;
+        }
+
+        .footer-links a:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        /* Accessibility Features */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            
+            .art-card {
+                transition: none;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+            }
+
+            nav {
+                margin-top: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav li {
+                margin: 5px;
+            }
+
+            .gallery-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .theme-toggle {
+                margin: 15px 0 0;
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 20px auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header with Navigation -->
+    <header>
+        <a href="#" class="logo">ArtVision</a>
+        <nav aria-label="Main Navigation">
+            <ul>
+                <li><a href="#featured">Featured</a></li>
+                <li><a href="#paintings">Paintings</a></li>
+                <li><a href="#sculptures">Sculptures</a></li>
+                <li><a href="#photography">Photography</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <h1>Digital Art Gallery</h1>
+        <p>Explore our collection of contemporary artworks from talented artists around the world.</p>
+
+        <!-- Gallery Controls -->
+        <div class="gallery-controls">
+            <div class="search-container">
+                <label for="search" class="sr-only">Search artworks</label>
+                <input type="text" id="search" placeholder="Search artworks..." aria-label="Search artworks">
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="painting">Paintings</button>
+                <button class="filter-btn" data-filter="sculpture">Sculptures</button>
+                <button class="filter-btn" data-filter="photography">Photography</button>
+                <button class="filter-btn" data-filter="digital">Digital Art</button>
+            </div>
+
+            <div class="theme-toggle">
+                <span class="toggle-label">Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="theme-toggle" aria-label="Toggle dark mode">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="art-gallery">
+            <!-- Artwork cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <!-- Artwork Modal -->
+    <div class="modal" id="art-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">Artwork Title</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="" class="modal-image" id="modal-image">
+                <div class="modal-info">
+                    <p class="modal-artist" id="modal-artist">Artist Name</p>
+                    <span class="modal-category" id="modal-category">Category</span>
+                    <p class="modal-date" id="modal-date">2023</p>
+                    <p class="modal-description" id="modal-description">Artwork description goes here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Contact</a>
+            <a href="#">Accessibility Statement</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <p class="copyright">&copy; 2023 ArtVision Gallery. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Artwork Data
+        const artworks = [
+            {
+                id: 1,
+                title: "Sunset Over Mountains",
+                artist: "Maria Gonzalez",
+                category: "painting",
+                description: "A vibrant oil painting capturing the dramatic colors of a mountain sunset. The artist uses bold brush strokes to create texture and movement in the clouds.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?painting,landscape",
+                year: "2022"
+            },
+            {
+                id: 2,
+                title: "Abstract Composition",
+                artist: "James Chen",
+                category: "digital",
+                description: "Digital artwork exploring geometric forms and color relationships. Created using a combination of 3D modeling and digital painting techniques.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?abstract,art",
+                year: "2023"
+            },
+            {
+                id: 3,
+                title: "Marble Sculpture",
+                artist: "Sophia Rossi",
+                category: "sculpture",
+                description: "Hand-carved marble sculpture depicting human figures in motion. The smooth surfaces contrast with the dynamic composition.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?sculpture,marble",
+                year: "2021"
+            },
+            {
+                id: 4,
+                title: "Urban Photography",
+                artist: "David Kim",
+                category: "photography",
+                description: "Black and white street photography capturing the energy of city life. The composition plays with light and shadow to create dramatic contrasts.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?photography,urban",
+                year: "2020"
+            },
+            {
+                id: 5,
+                title: "Portrait Study",
+                artist: "Emma Wilson",
+                category: "painting",
+                description: "Realistic portrait painted in acrylics, focusing on the play of light across facial features. The artist captures subtle emotional expressions.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?portrait,painting",
+                year: "2022"
+            },
+            {
+                id: 6,
+                title: "Digital Fantasy",
+                artist: "Liam Park",
+                category: "digital",
+                description: "Surreal digital painting blending fantasy elements with realistic rendering. The artwork creates a dreamlike atmosphere with vibrant colors.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?fantasy,digital",
+                year: "2023"
+            },
+            {
+                id: 7,
+                title: "Bronze Figure",
+                artist: "Olivia Martin",
+                category: "sculpture",
+                description: "Bronze cast sculpture of a dancing figure, capturing movement and grace. The patina creates interesting surface textures.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?sculpture,bronze",
+                year: "2021"
+            },
+            {
+                id: 8,
+                title: "Nature Photography",
+                artist: "Noah Taylor",
+                category: "photography",
+                description: "Color nature photography showcasing the intricate details of plant life. The macro perspective reveals textures often overlooked.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?nature,photography",
+                year: "2022"
+            },
+            {
+                id: 9,
+                title: "Still Life",
+                artist: "Ava Johnson",
+                category: "painting",
+                description: "Oil painting of a still life arrangement with fruits and glassware. The artist demonstrates mastery of reflective surfaces and transparency.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?still-life,painting",
+                year: "2020"
+            },
+            {
+                id: 10,
+                title: "Digital Collage",
+                artist: "Ethan Brown",
+                category: "digital",
+                description: "Mixed media digital collage combining photography, painting, and typography. The layers create depth and visual interest.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?collage,digital",
+                year: "2023"
+            },
+            {
+                id: 11,
+                title: "Wood Carving",
+                artist: "Isabella Lee",
+                category: "sculpture",
+                description: "Intricate wood carving depicting a forest scene. The artist uses the natural grain of the wood to enhance the composition.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?wood,sculpture",
+                year: "2022"
+            },
+            {
+                id: 12,
+                title: "Architectural Photography",
+                artist: "Mason Clark",
+                category: "photography",
+                description: "Architectural photography emphasizing geometric patterns and symmetry in modern buildings. The perspective creates dynamic compositions.",
+                imageUrl: "https://source.unsplash.com/random/600x400/?architecture,photography",
+                year: "2021"
+            }
+        ];
+
+        // DOM Elements
+        const galleryContainer = document.getElementById('art-gallery');
+        const modal = document.getElementById('art-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalImage = document.getElementById('modal-image');
+        const modalArtist = document.getElementById('modal-artist');
+        const modalCategory = document.getElementById('modal-category');
+        const modalDate = document.getElementById('modal-date');
+        const modalDescription = document.getElementById('modal-description');
+        const closeBtn = document.querySelector('.close-btn');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('search');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Initialize the gallery
+        function initGallery() {
+            renderGallery(artworks);
+            setupEventListeners();
+            checkThemePreference();
+        }
+
+        // Render gallery items
+        function renderGallery(items) {
+            galleryContainer.innerHTML = '';
+            
+            items.forEach(artwork => {
+                const artCard = document.createElement('div');
+                artCard.className = 'art-card';
+                artCard.setAttribute('data-category', artwork.category);
+                artCard.setAttribute('tabindex', '0');
+                
+                artCard.innerHTML = `
+                    <img src="${artwork.imageUrl}" alt="${artwork.title} by ${artwork.artist}" class="art-image">
+                    <div class="art-info">
+                        <h3 class="art-title">${artwork.title}</h3>
+                        <p class="art-artist">${artwork.artist}</p>
+                        <span class="art-category">${capitalizeFirstLetter(artwork.category)}</span>
+                        <p class="art-description">${artwork.description}</p>
+                        <button class="view-btn" data-id="${artwork.id}" aria-label="View details of ${artwork.title}">View Details</button>
+                    </div>
+                `;
+                
+                galleryContainer.appendChild(artCard);
+            });
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterArtworks(button.dataset.filter);
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', () => {
+                filterArtworks(document.querySelector('.filter-btn.active').dataset.filter);
+            });
+
+            // Modal open/close
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('view-btn')) {
+                    const artworkId = parseInt(e.target.dataset.id);
+                    const artwork = artworks.find(art => art.id === artworkId);
+                    openModal(artwork);
+                }
+            });
+
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Keyboard navigation for modal
+            document.addEventListener('keydown', (e) => {
+                if (modal.style.display === 'block' && e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            // Theme toggle
+            themeToggle.addEventListener('change', toggleTheme);
+        }
+
+        // Filter artworks based on category and search term
+        function filterArtworks(category) {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            let filteredArtworks = artworks;
+            
+            if (category !== 'all') {
+                filteredArtworks = filteredArtworks.filter(art => art.category === category);
+            }
+            
+            if (searchTerm) {
+                filteredArtworks = filteredArtworks.filter(art => 
+                    art.title.toLowerCase().includes(searchTerm) || 
+                    art.artist.toLowerCase().includes(searchTerm) ||
+                    art.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderGallery(filteredArtworks);
+        }
+
+        // Open modal with artwork details
+        function openModal(artwork) {
+            modalTitle.textContent = artwork.title;
+            modalImage.src = artwork.imageUrl;
+            modalImage.alt = `${artwork.title} by ${artwork.artist}`;
+            modalArtist.textContent = artwork.artist;
+            modalCategory.textContent = capitalizeFirstLetter(artwork.category);
+            modalDate.textContent = artwork.year;
+            modalDescription.textContent = artwork.description;
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Set focus to modal
+            closeBtn.focus();
+        }
+
+        // Close modal
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            if (themeToggle.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Check for saved theme preference
+        function checkThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                themeToggle.checked = true;
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // Helper function to capitalize first letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Initialize the gallery when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initGallery);
+    </script>
+</body>
+</html>

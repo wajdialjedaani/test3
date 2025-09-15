@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Portfolio | Showcase of Professional Projects</title>
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #333;
+            --text-light: #7f8c8d;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --error: #e74c3c;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover, a:focus {
+            color: var(--accent);
+            text-decoration: underline;
+            outline: 2px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-toggle:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+
+        .nav-link {
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: #c0392b;
+            text-decoration: none;
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background-color: white;
+            color: var(--text);
+            border: 1px solid var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .filter-btn:hover, .filter-btn:focus {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        .filter-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .project-card:hover, .project-card:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-category {
+            display: inline-block;
+            background-color: var(--light);
+            color: var(--text-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-title {
+            margin-bottom: 0.5rem;
+        }
+
+        .project-description {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .project-link::after {
+            content: '→';
+            margin-left: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .project-link:hover::after, .project-link:focus::after {
+            transform: translateX(3px);
+        }
+
+        /* Project Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .modal-close:hover, .modal-close:focus {
+            background-color: var(--light);
+            outline: 2px solid var(--secondary);
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: var(--dark);
+            display: block;
+        }
+
+        .detail-value {
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-link:hover, .social-link:focus {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+            outline: 2px solid white;
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-toggle {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .nav-menu.open {
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 0.5rem 0;
+            }
+
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo">Creative Portfolio</a>
+            
+            <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
+                ☰
+            </button>
+            
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" aria-labelledby="hero-heading">
+            <div class="container">
+                <h1 id="hero-heading">Showcasing Creative Excellence</h1>
+                <p>A curated collection of professional projects demonstrating innovative design and technical expertise across multiple disciplines.</p>
+                <div>
+                    <a href="#projects" class="btn">View Projects</a>
+                    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="container" aria-labelledby="projects-heading">
+            <h2 id="projects-heading">Featured Projects</h2>
+            <p>Explore my creative work across various categories and mediums.</p>
+            
+            <!-- Filter Controls -->
+            <div class="filter-controls" role="group" aria-label="Project filters">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="web">Web Design</button>
+                <button class="filter-btn" data-filter="graphic">Graphic Design</button>
+                <button class="filter-btn" data-filter="photography">Photography</button>
+                <button class="filter-btn" data-filter="illustration">Illustration</button>
+            </div>
+            
+            <!-- Projects Grid -->
+            <div class="projects-grid">
+                <!-- Project 1 -->
+                <article class="project-card" data-category="web" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?webdesign" alt="Modern website design with clean layout" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Web Design</span>
+                        <h3 class="project-title">E-Commerce Platform</h3>
+                        <p class="project-description">A responsive e-commerce solution with intuitive navigation and seamless checkout process.</p>
+                        <a href="#" class="project-link" aria-label="View details for E-Commerce Platform project">View Project</a>
+                    </div>
+                </article>
+                
+                <!-- Project 2 -->
+                <article class="project-card" data-category="graphic" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?branding" alt="Corporate branding package with logo and color scheme" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Graphic Design</span>
+                        <h3 class="project-title">Brand Identity Package</h3>
+                        <p class="project-description">Complete visual identity system including logo, color palette, and brand guidelines.</p>
+                        <a href="#" class="project-link" aria-label="View details for Brand Identity Package project">View Project</a>
+                    </div>
+                </article>
+                
+                <!-- Project 3 -->
+                <article class="project-card" data-category="photography" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?portrait" alt="Professional portrait photography with dramatic lighting" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Photography</span>
+                        <h3 class="project-title">Corporate Portraits</h3>
+                        <p class="project-description">Series of professional headshots for executive team with consistent styling.</p>
+                        <a href="#" class="project-link" aria-label="View details for Corporate Portraits project">View Project</a>
+                    </div>
+                </article>
+                
+                <!-- Project 4 -->
+                <article class="project-card" data-category="illustration" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?illustration" alt="Digital illustration of fantasy landscape with vibrant colors" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Illustration</span>
+                        <h3 class="project-title">Fantasy Book Cover</h3>
+                        <p class="project-description">Custom digital painting for fantasy novel featuring dramatic landscape.</p>
+                        <a href="#" class="project-link" aria-label="View details for Fantasy Book Cover project">View Project</a>
+                    </div>
+                </article>
+                
+                <!-- Project 5 -->
+                <article class="project-card" data-category="web" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?dashboard" alt="Analytics dashboard with data visualization" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Web Design</span>
+                        <h3 class="project-title">Data Visualization Dashboard</h3>
+                        <p class="project-description">Interactive dashboard with real-time data visualization and custom reporting tools.</p>
+                        <a href="#" class="project-link" aria-label="View details for Data Visualization Dashboard project">View Project</a>
+                    </div>
+                </article>
+                
+                <!-- Project 6 -->
+                <article class="project-card" data-category="graphic" tabindex="0">
+                    <img src="https://source.unsplash.com/random/600x400/?packaging" alt="Product packaging design with minimalist aesthetic" class="project-image">
+                    <div class="project-content">
+                        <span class="project-category">Graphic Design</span>
+                        <h3 class="project-title">Product Packaging</h3>
+                        <p class="project-description">Sustainable packaging solution with eye-catching design and functional features.</p>
+                        <a href="#" class="project-link" aria-label="View details for Product Packaging project">View Project</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="container" aria-labelledby="about-heading">
+            <h2 id="about-heading">About the Creator</h2>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: center;">
+                <img src="https://source.unsplash.com/random/400x400/?portrait" alt="Professional headshot of the portfolio creator" style="width: 100%; border-radius: var(--border-radius);">
+                <div>
+                    <p>With over 10 years of experience in the creative industry, I specialize in delivering visually stunning and highly functional design solutions. My approach combines artistic sensibility with technical precision to create work that is both beautiful and effective.</p>
+                    <p>I believe in the power of design to communicate ideas, solve problems, and create meaningful connections between brands and their audiences. Each project in this portfolio represents a unique challenge and an opportunity to push creative boundaries.</p>
+                    <h3>Skills & Expertise</h3>
+                    <ul style="columns: 2; list-style-position: inside;">
+                        <li>UI/UX Design</li>
+                        <li>Brand Identity</li>
+                        <li>Front-end Development</li>
+                        <li>Photography</li>
+                        <li>Digital Illustration</li>
+                        <li>Motion Graphics</li>
+                        <li>Print Design</li>
+                        <li>Art Direction</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="container" aria-labelledby="contact-heading">
+            <h2 id="contact-heading">Get In Touch</h2>
+            <p>Interested in collaborating or learning more about my work? Send me a message using the form below.</p>
+            
+            <form id="contact-form" style="max-width: 600px; margin: 0 auto;">
+                <div style="margin-bottom: 1rem;">
+                    <label for="name" style="display: block; margin-bottom: 0.5rem;">Full Name <span style="color: var(--accent);">*</span></label>
+                    <input type="text" id="name" name="name" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--text-light); border-radius: var(--border-radius);">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="email" style="display: block; margin-bottom: 0.5rem;">Email Address <span style="color: var(--accent);">*</span></label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--text-light); border-radius: var(--border-radius);">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="subject" style="display: block; margin-bottom: 0.5rem;">Subject</label>
+                    <input type="text" id="subject" name="subject" style="width: 100%; padding: 0.75rem; border: 1px solid var(--text-light); border-radius: var(--border-radius);">
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="message" style="display: block; margin-bottom: 0.5rem;">Message <span style="color: var(--accent);">*</span></label>
+                    <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--text-light); border-radius: var(--border-radius);"></textarea>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+            </form>
+        </section>
+
+        <!-- Project Modal -->
+        <div class="modal" id="project-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Close modal">×</button>
+                <img src="" alt="" class="modal-image" id="modal-image">
+                <h2 id="modal-title">Project Title</h2>
+                <div class="modal-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Client:</span>
+                        <span class="detail-value" id="modal-client">Client Name</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Year:</span>
+                        <span class="detail-value" id="modal-year">2023</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value" id="modal-category">Web Design</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tools:</span>
+                        <span class="detail-value" id="modal-tools">Figma, HTML, CSS, JavaScript</span>
+                    </div>
+                </div>
+                <div id="modal-description">
+                    <p>Detailed project description goes here, explaining the challenges, solutions, and outcomes of the project. This section provides context about the creative process and the value delivered to the client.</p>
+                    <p>Additional details about specific features, design decisions, or technical implementations can be included to give a comprehensive overview of the project.</p>
+                </div>
+                <a href="#" class="btn" id="modal-link" style="margin-top: 1.5rem;">Visit Project</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <p>© <span id="year">2023</span> Creative Portfolio. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-link" aria-label="Twitter profile"><span>𝕏</span></a>
+                <a href="#" class="social-link" aria-label="LinkedIn profile"><span>in</span></a>
+                <a href="#" class="social-link" aria-label="Dribbble profile"><span>D</span></a>
+                <a href="#" class="social-link" aria-label="Instagram profile"><span>IG</span></a>
+            </div>
+            <p class="copyright">Designed and developed with accessibility in mind.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Current year for footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile navigation toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        navToggle.addEventListener('click', () => {
+            const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+            navToggle.setAttribute('aria-expanded', !isExpanded);
+            navMenu.classList.toggle('open');
+        });
+
+        // Project filtering
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filterValue = button.getAttribute('data-filter');
+                
+                // Filter projects
+                projectCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Project modal functionality
+        const modal = document.getElementById('project-modal');
+        const modalClose = document.querySelector('.modal-close');
+        const projectLinks = document.querySelectorAll('.project-link');
+
+        // Sample project data (in a real app, this would come from a database)
+        const projects = {
+            'E-Commerce Platform': {
+                image: 'https://source.unsplash.com/random/800x500/?ecommerce',
+                client: 'Retail Brand Inc.',
+                year: '2023',
+                category: 'Web Design',
+                tools: 'Figma, React, Node.js, MongoDB',
+                description: 'Developed a fully responsive e-commerce platform with custom CMS integration. Implemented secure payment processing, inventory management, and personalized recommendation engine. The project resulted in a 35% increase in conversion rates and 20% reduction in cart abandonment.',
+                link: '#'
+            },
+            'Brand Identity Package': {
+                image: 'https://source.unsplash.com/random/800x500/?branding',
+                client: 'Startup Ventures',
+                year: '2022',
+                category: 'Graphic Design',
+                tools: 'Adobe Illustrator, Photoshop, InDesign',
+                description: 'Created comprehensive brand identity system including logo design, color palette, typography system, and brand guidelines. Developed visual language that effectively communicates the company\'s innovative approach while maintaining professional credibility.',
+                link: '#'
+            },
+            'Corporate Portraits': {
+                image: 'https://source.unsplash.com/random/800x500/?executive',
+                client: 'Financial Services Corp.',
+                year: '2023',
+                category: 'Photography',
+                tools: 'Canon EOS R5, Adobe Lightroom',
+                description: 'Produced series of professional headshots for executive leadership team. Developed consistent lighting setup and retouching workflow to maintain brand standards across all portraits while highlighting individual personalities.',
+                link: '#'
+            },
+            'Fantasy Book Cover': {
+                image: 'https://source.unsplash.com/random/800x500/?fantasy',
+                client: 'Publishing House',
+                year: '2021',
+                category: 'Illustration',
+                tools: 'Procreate, Adobe Photoshop',
+                description: 'Illustrated cover artwork for fantasy novel series. Created dynamic composition featuring main characters and key story elements. Developed color palette and lighting to evoke the book\'s magical atmosphere while ensuring readability of title and author name.',
+                link: '#'
+            },
+            'Data Visualization Dashboard': {
+                image: 'https://source.unsplash.com/random/800x500/?dashboard',
+                client: 'Tech Analytics',
+                year: '2022',
+                category: 'Web Design',
+                tools: 'D3.js, Vue.js, Python',
+                description: 'Designed and developed interactive data visualization platform for business intelligence. Implemented custom charting components with real-time data updates and user-configurable reporting. The dashboard enables executives to quickly identify trends and make data-driven decisions.',
+                link: '#'
+            },
+            'Product Packaging': {
+                image: 'https://source.unsplash.com/random/800x500/?packaging',
+                client: 'Eco Goods',
+                year: '2023',
+                category: 'Graphic Design',
+                tools: 'Adobe Illustrator, Dimension',
+                description: 'Designed sustainable packaging solution using recycled materials. Created structural design that reduces material waste while maintaining product protection. Developed visual system that communicates brand values and product benefits through minimalist aesthetic.',
+                link: '#'
+            }
+        };
+
+        // Open modal with project details
+        projectLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const projectTitle = link.closest('.project-card').querySelector('.project-title').textContent;
+                const projectData = projects[projectTitle];
+                
+                if (projectData) {
+                    document.getElementById('modal-title').textContent = projectTitle;
+                    document.getElementById('modal-image').setAttribute('src', projectData.image);
+                    document.getElementById('modal-image').setAttribute('alt', projectTitle);
+                    document.getElementById('modal-client').textContent = projectData.client;
+                    document.getElementById('modal-year').textContent = projectData.year;
+                    document.getElementById('modal-category').textContent = projectData.category;
+                    document.getElementById('modal-tools').textContent = projectData.tools;
+                    document.getElementById('modal-description').innerHTML = `<p>${projectData.description}</p>`;
+                    document.getElementById('modal-link').setAttribute('href', projectData.link);
+                    
+                    modal.classList.add('open');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+
+        // Close modal
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close modal when clicking outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('open')) {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Focus trap for modal
+        const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const firstFocusableElement = modal.querySelectorAll(focusableElements)[0];
+        const focusableContent = modal.querySelectorAll(focusableElements);
+        const lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Tab' || !modal.classList.contains('open')) return;
+
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Form validation
+        const contactForm = document.getElementById('contact-form');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simple validation
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!name || !email || !message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            // In a real app, you would send the form data to a server here
+            alert('Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update URL without jumping
+                    if (history.pushState) {
+                        history.pushState(null, null, targetId);
+                    } else {
+                        location.hash = targetId;
+                    }
+                }
+            });
+        });
+
+        // Lazy loading for images
+        const lazyLoadImages = () => {
+            const images = document.querySelectorAll('img[data-src]');
+            
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src');
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            
+            images.forEach(img => {
+                imageObserver.observe(img);
+            });
+        };
+        
+        // Initialize lazy loading when DOM is loaded
+        document.addEventListener('DOMContentLoaded', lazyLoadImages);
+    </script>
+</body>
+</html>

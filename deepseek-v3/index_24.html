@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendation Engine | Find Your Next Favorite Read</title>
+    <style>
+        /* Reset and Base Styles */
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #2e4a7a;
+            --secondary: #ff7e5f;
+            --accent: #ffb347;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --text: #212529;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --radius: 8px;
+            --focus-outline: 2px solid var(--primary-dark);
+            --focus-outline-offset: 2px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: var(--white);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover, a:focus {
+            color: var(--primary-dark);
+            text-decoration: underline;
+            outline: none;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: var(--white);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--white);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            display: block;
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            outline: var(--focus-outline);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: var(--white);
+        }
+
+        .hero p {
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Book Recommendation Form */
+        .recommendation-form {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: var(--focus-outline);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23212529' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .checkbox-input {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .checkbox-input:focus {
+            outline: var(--focus-outline);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: var(--primary-dark);
+            outline: var(--focus-outline);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: #e06c4d;
+        }
+
+        /* Results Section */
+        .results {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-heading {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .book-details {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .book-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .genre-tag {
+            background-color: var(--light);
+            color: var(--text);
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .book-description {
+            margin-bottom: 1rem;
+        }
+
+        .book-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            background-color: var(--danger);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .footer-link {
+            margin: 0 1rem;
+        }
+
+        .footer-link a {
+            color: var(--white);
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-item {
+                margin: 0.5rem 0;
+            }
+
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .book-card:hover {
+                transform: none;
+            }
+
+            .spinner {
+                animation: none;
+                border-top-color: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <a href="#">BookFinder</a>
+            </div>
+            <nav aria-label="Main Navigation">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#recommend" class="nav-link">Get Recommendations</a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Discover Your Next Favorite Book</h1>
+                <p>Tell us about your reading preferences and we'll recommend books you'll love. Our recommendation engine uses your favorite genres and authors to suggest perfect matches.</p>
+                <a href="#recommend" class="btn btn-secondary">Get Started</a>
+            </div>
+        </section>
+
+        <!-- Recommendation Form -->
+        <section id="recommend" class="container">
+            <h2>Book Recommendation Form</h2>
+            <p>Fill out the form below to get personalized book recommendations based on your preferences.</p>
+            
+            <div class="error-message" role="alert" aria-live="assertive"></div>
+            
+            <form id="recommendation-form" class="recommendation-form">
+                <div class="form-group">
+                    <label for="name" class="form-label">Your Name (Optional)</label>
+                    <input type="text" id="name" class="form-control" aria-describedby="name-help">
+                    <small id="name-help" class="form-text">We'll use this to personalize your recommendations.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="favorite-author" class="form-label">Favorite Author (Optional)</label>
+                    <input type="text" id="favorite-author" class="form-control" aria-describedby="author-help">
+                    <small id="author-help" class="form-text">Enter an author you enjoy to get similar recommendations.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Favorite Genres</label>
+                    <small id="genres-help" class="form-text">Select at least one genre you enjoy.</small>
+                    <div class="checkbox-group" role="group" aria-labelledby="genres-label">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Fantasy"> Fantasy
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Science Fiction"> Science Fiction
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Mystery"> Mystery
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Romance"> Romance
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Thriller"> Thriller
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Historical Fiction"> Historical Fiction
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Biography"> Biography
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="checkbox-input" name="genre" value="Self-Help"> Self-Help
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reading-level" class="form-label">Preferred Reading Level</label>
+                    <select id="reading-level" class="form-control form-select" aria-describedby="level-help">
+                        <option value="">No preference</option>
+                        <option value="easy">Easy Read</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="challenging">Challenging</option>
+                    </select>
+                    <small id="level-help" class="form-text">Select your preferred reading difficulty level.</small>
+                </div>
+                
+                <button type="submit" class="btn">Get Recommendations</button>
+            </form>
+            
+            <div class="loading" aria-live="polite">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Finding your perfect book recommendations...</p>
+            </div>
+            
+            <div id="results" class="results" aria-live="polite">
+                <h2 class="results-heading">Recommended Books For You</h2>
+                <div class="book-grid" id="book-grid">
+                    <!-- Book cards will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about" class="container" style="margin-top: 3rem;">
+            <h2>About Our Recommendation Engine</h2>
+            <p>Our book recommendation system uses sophisticated algorithms to match your reading preferences with books you'll love. We analyze thousands of titles across multiple genres to find the perfect matches for your taste.</p>
+            <p>Whether you're looking for your next beach read, a thought-provoking novel, or an inspiring biography, we'll help you discover books that fit your interests and reading level.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <nav aria-label="Footer Navigation">
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Home</a></li>
+                    <li class="footer-link"><a href="#recommend">Recommendations</a></li>
+                    <li class="footer-link"><a href="#about">About</a></li>
+                    <li class="footer-link"><a href="#contact">Contact</a></li>
+                    <li class="footer-link"><a href="#">Privacy Policy</a></li>
+                </ul>
+            </nav>
+            <p class="copyright">&copy; 2023 BookFinder. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form submission
+            const form = document.getElementById('recommendation-form');
+            const errorMessage = document.querySelector('.error-message');
+            const loading = document.querySelector('.loading');
+            const results = document.getElementById('results');
+            const bookGrid = document.getElementById('book-grid');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                const genres = Array.from(document.querySelectorAll('input[name="genre"]:checked'));
+                if (genres.length === 0) {
+                    showError('Please select at least one genre.');
+                    return;
+                }
+                
+                // Show loading state
+                loading.style.display = 'block';
+                results.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                // Simulate API call with timeout
+                setTimeout(function() {
+                    loading.style.display = 'none';
+                    
+                    // Get form values
+                    const name = document.getElementById('name').value || 'Book Lover';
+                    const favoriteAuthor = document.getElementById('favorite-author').value;
+                    const selectedGenres = genres.map(genre => genre.value);
+                    const readingLevel = document.getElementById('reading-level').value;
+                    
+                    // Generate recommendations
+                    const recommendations = generateRecommendations(name, favoriteAuthor, selectedGenres, readingLevel);
+                    
+                    // Display results
+                    displayRecommendations(recommendations);
+                    results.style.display = 'block';
+                    
+                    // Focus on results for screen readers
+                    results.setAttribute('tabindex', '-1');
+                    results.focus();
+                }, 1500);
+            });
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                errorMessage.focus();
+            }
+            
+            function generateRecommendations(name, favoriteAuthor, genres, readingLevel) {
+                // This is a mock data generator - in a real app, this would be an API call
+                const allBooks = [
+                    {
+                        title: "The Name of the Wind",
+                        author: "Patrick Rothfuss",
+                        genres: ["Fantasy"],
+                        description: "The story of Kvothe, an adventurer and musician, as he recounts his life story to a chronicler.",
+                        cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "moderate"
+                    },
+                    {
+                        title: "Dune",
+                        author: "Frank Herbert",
+                        genres: ["Science Fiction"],
+                        description: "A science fiction novel about the son of a noble family entrusted with the protection of the most valuable asset in the galaxy.",
+                        cover: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "challenging"
+                    },
+                    {
+                        title: "Gone Girl",
+                        author: "Gillian Flynn",
+                        genres: ["Mystery", "Thriller"],
+                        description: "A woman disappears on the day of her fifth wedding anniversary, and her husband becomes the prime suspect.",
+                        cover: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "moderate"
+                    },
+                    {
+                        title: "Pride and Prejudice",
+                        author: "Jane Austen",
+                        genres: ["Romance", "Historical Fiction"],
+                        description: "The romantic clash between the opinionated Elizabeth Bennet and the proud Mr. Darcy.",
+                        cover: "https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "moderate"
+                    },
+                    {
+                        title: "The Silent Patient",
+                        author: "Alex Michaelides",
+                        genres: ["Mystery", "Thriller"],
+                        description: "A woman shoots her husband and then stops speaking, and a criminal psychotherapist tries to unravel the mystery.",
+                        cover: "https://images.unsplash.com/photo-1584824486539-53bb4646bdbc?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "easy"
+                    },
+                    {
+                        title: "Becoming",
+                        author: "Michelle Obama",
+                        genres: ["Biography"],
+                        description: "The memoir of former First Lady Michelle Obama, chronicling her experiences from childhood to her years in the White House.",
+                        cover: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "moderate"
+                    },
+                    {
+                        title: "Atomic Habits",
+                        author: "James Clear",
+                        genres: ["Self-Help"],
+                        description: "A guide to building good habits and breaking bad ones through tiny changes that lead to remarkable results.",
+                        cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "easy"
+                    },
+                    {
+                        title: "The Night Circus",
+                        author: "Erin Morgenstern",
+                        genres: ["Fantasy", "Romance"],
+                        description: "A magical competition between two young illusionists takes place within the confines of a mysterious circus.",
+                        cover: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=600&q=80",
+                        level: "moderate"
+                    }
+                ];
+                
+                // Filter books based on selected genres
+                let filteredBooks = allBooks.filter(book => 
+                    book.genres.some(genre => genres.includes(genre))
+                );
+                
+                // If a favorite author was provided, prioritize their books
+                if (favoriteAuthor) {
+                    const authorBooks = allBooks.filter(book => 
+                        book.author.toLowerCase().includes(favoriteAuthor.toLowerCase())
+                    );
+                    filteredBooks = [...new Set([...authorBooks, ...filteredBooks])];
+                }
+                
+                // Filter by reading level if specified
+                if (readingLevel) {
+                    filteredBooks = filteredBooks.filter(book => book.level === readingLevel);
+                }
+                
+                // Limit to 6 recommendations
+                return filteredBooks.slice(0, 6);
+            }
+            
+            function displayRecommendations(books) {
+                // Clear previous results
+                bookGrid.innerHTML = '';
+                
+                if (books.length === 0) {
+                    bookGrid.innerHTML = '<p>No books match your criteria. Try broadening your search.</p>';
+                    return;
+                }
+                
+                // Create book cards
+                books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <img src="${book.cover}" alt="Cover of ${book.title} by ${book.author}" class="book-image">
+                        <div class="book-details">
+                            <h3 class="book-title">${book.title}</h3>
+                            <p class="book-author">By ${book.author}</p>
+                            <div class="book-genres">
+                                ${book.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                            </div>
+                            <p class="book-description">${book.description}</p>
+                            <a href="#" class="book-link btn btn-secondary">Learn More</a>
+                        </div>
+                    `;
+                    bookGrid.appendChild(bookCard);
+                });
+            }
+            
+            // Focus management for accessibility
+            const skipLink = document.querySelector('.skip-link');
+            skipLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('main-content').focus();
+            });
+        });
+    </script>
+</body>
+</html>

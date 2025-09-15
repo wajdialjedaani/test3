@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenThumb Community - Share Your Garden Photos & Connect with Fellow Gardeners</title>
+    <meta name="description" content="A community platform for gardeners to share photos, get advice, and connect with plant enthusiasts">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary-color: #ff8f00;
+            --secondary-light: #ffc046;
+            --secondary-dark: #c56000;
+            --background-light: #f5f5f5;
+            --background-dark: #263238;
+            --text-light: #f5f5f5;
+            --text-dark: #212121;
+            --error-color: #c62828;
+            --success-color: #2e7d32;
+            --warning-color: #ff8f00;
+            --info-color: #0277bd;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 8px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover, a:focus {
+            color: var(--primary-dark);
+            text-decoration: underline;
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 0;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        /* Navigation */
+        nav[aria-label="Main navigation"] {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-menu a {
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            display: block;
+        }
+
+        .nav-menu a:hover, 
+        .nav-menu a:focus {
+            background-color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .nav-menu a[aria-current="page"] {
+            background-color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .menu-toggle:hover, 
+        .menu-toggle:focus {
+            background-color: var(--primary-light);
+            outline: 2px solid var(--secondary-color);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            color: var(--text-light);
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            font-size: 1.2rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+            text-align: center;
+        }
+
+        .btn:hover, 
+        .btn:focus {
+            background-color: var(--secondary-dark);
+            color: var(--text-light);
+            outline: 2px solid var(--secondary-light);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-light);
+            color: var(--text-light);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Plant Gallery */
+        .gallery-section {
+            margin-bottom: 3rem;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .gallery-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--background-light);
+            border: 1px solid var(--primary-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover, 
+        .filter-btn:focus, 
+        .filter-btn.active {
+            background-color: var(--primary-light);
+            color: var(--text-light);
+            outline: none;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .plant-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .plant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .plant-image {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .plant-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .plant-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .plant-details {
+            padding: 1.5rem;
+        }
+
+        .plant-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .plant-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .plant-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .action-btn:hover, 
+        .action-btn:focus {
+            background-color: rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .action-btn.liked {
+            color: var(--error-color);
+        }
+
+        /* Upload Form */
+        .upload-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 3rem;
+        }
+
+        .upload-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: 2px solid var(--primary-light);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload:hover, 
+        .file-upload:focus {
+            border-color: var(--primary-color);
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .file-upload-text {
+            margin-bottom: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 2rem;
+        }
+
+        .comment-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .comment-item {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .comment-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .comment-form {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-column h3 {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover, 
+        .footer-links a:focus {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover, 
+        .social-links a:focus {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .modal-close:hover, 
+        .modal-close:focus {
+            background-color: rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .menu-toggle {
+                display: block;
+                margin-top: 1rem;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Accessibility Focus Styles */
+        *:focus {
+            outline: 3px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTQ2NCAxMjhIMTZjLTguODQ0IDAtMTYgNy4xNTYtMTYgMTZ2MzJjMCA4Ljg0NCA3LjE1NiAxNiAxNiAxNmg0OGM4Ljg0NCAwIDE2LTcuMTU2IDE2LTE2di0xNmgzODR2MTZjMCA4Ljg0NCA3LjE1NiAxNiAxNiAxNmg0OGM4Ljg0NCAwIDE2LTcuMTU2IDE2LTE2di0zMmMwLTguODQ0LTcuMTU2LTE2LTE2LTE2ek0xNiA0MDBjLTguODQ0IDAtMTYgNy4xNTYtMTYgMTZ2MzJjMCA4Ljg0NCA3LjE1NiAxNiAxNiAxNmg0OGM4Ljg0NCAwIDE2LTcuMTU2IDE2LTE2di0xNmgzODR2MTZjMCA4Ljg0NCA3LjE1NiAxNiAxNiAxNmg0OGM4Ljg0NCAwIDE2LTcuMTU2IDE2LTE2di0zMmMwLTguODQ0LTcuMTU2LTE2LTE2LTE2SDI1NnYtNjRIMHYtMzJoMTI4di02NEgxNnYtMzJoMTEydi02NEgxNnYtMzJoMTI4VjY0aDM1MnYzODRIMTZ6Ii8+PC9zdmc+" alt="GreenThumb Community Logo" />
+                <h1>GreenThumb Community</h1>
+            </div>
+            
+            <button class="menu-toggle" aria-expanded="false" aria-controls="main-menu" aria-label="Toggle navigation menu">
+                ☰
+            </button>
+            
+            <nav aria-label="Main navigation">
+                <ul class="nav-menu" id="main-menu">
+                    <li><a href="#home" aria-current="page">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#upload">Upload</a></li>
+                    <li><a href="#community">Community</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Share Your Gardening Journey</h1>
+                <p>Connect with fellow plant lovers, showcase your garden, and get expert advice from our thriving community of green thumbs.</p>
+                <a href="#upload" class="btn btn-primary">Upload Your Plants</a>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section container" id="gallery">
+            <div class="gallery-header">
+                <h2>Recent Community Uploads</h2>
+                <div class="gallery-filters">
+                    <button class="filter-btn active" data-filter="all">All Plants</button>
+                    <button class="filter-btn" data-filter="flowers">Flowers</button>
+                    <button class="filter-btn" data-filter="vegetables">Vegetables</button>
+                    <button class="filter-btn" data-filter="succulents">Succulents</button>
+                    <button class="filter-btn" data-filter="trees">Trees</button>
+                </div>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- Plant Card 1 -->
+                <article class="plant-card" data-category="flowers">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1526397751294-331021109fbd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Beautiful pink roses in full bloom with green leaves">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">Pink Roses</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By Jane Doe</span>
+                            <span class="plant-date">May 15, 2023</span>
+                        </div>
+                        <p>My first successful rose garden after months of care. These pink roses have a lovely fragrance.</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">24</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">5</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Plant Card 2 -->
+                <article class="plant-card" data-category="vegetables">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1594282416549-945469622b4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Fresh tomatoes growing on vine in home garden">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">Homegrown Tomatoes</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By John Smith</span>
+                            <span class="plant-date">June 2, 2023</span>
+                        </div>
+                        <p>First harvest of the season! These heirloom tomatoes are perfect for salads and sauces.</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">18</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">3</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Plant Card 3 -->
+                <article class="plant-card" data-category="succulents">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1519336056114-a1d2a4ff919e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Collection of colorful succulents in terracotta pots">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">Succulent Collection</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By Maria Garcia</span>
+                            <span class="plant-date">April 28, 2023</span>
+                        </div>
+                        <p>My growing succulent family. Each one has its own personality and care requirements.</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">32</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">7</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Plant Card 4 -->
+                <article class="plant-card" data-category="trees">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1470114716159-e389f8712fda?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Young apple tree with first fruits in orchard">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">First Apple Harvest</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By Robert Chen</span>
+                            <span class="plant-date">September 10, 2023</span>
+                        </div>
+                        <p>Three years of patience paid off! My apple tree has produced its first fruits.</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">41</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">12</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Plant Card 5 -->
+                <article class="plant-card" data-category="flowers">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1527061011665-3652c757a4d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Sunflowers in field with blue sky background">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">Sunflower Field</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By Sarah Johnson</span>
+                            <span class="plant-date">July 22, 2023</span>
+                        </div>
+                        <p>Planted these sunflowers to attract pollinators to my vegetable garden. They've grown taller than me!</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">29</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">6</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Plant Card 6 -->
+                <article class="plant-card" data-category="vegetables">
+                    <div class="plant-image">
+                        <img src="https://images.unsplash.com/photo-1592496431122-2349e0fbc666?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Fresh carrots freshly pulled from garden soil">
+                    </div>
+                    <div class="plant-details">
+                        <h3 class="plant-title">Rainbow Carrots</h3>
+                        <div class="plant-meta">
+                            <span class="plant-author">By David Wilson</span>
+                            <span class="plant-date">August 5, 2023</span>
+                        </div>
+                        <p>Experimented with rainbow carrot varieties this year. The purple ones are my favorite!</p>
+                        <div class="plant-actions">
+                            <button class="action-btn like-btn" aria-label="Like this post">
+                                <span aria-hidden="true">❤️</span> <span class="like-count">15</span>
+                            </button>
+                            <button class="action-btn comment-btn" aria-label="View comments">
+                                <span aria-hidden="true">💬</span> <span class="comment-count">4</span>
+                            </button>
+                            <button class="action-btn share-btn" aria-label="Share this post">
+                                <span aria-hidden="true">↗️</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section container" id="upload">
+            <h2>Share Your Plants</h2>
+            <form class="upload-form" id="plant-upload-form">
+                <div class="form-group">
+                    <label for="plant-name" class="form-label">Plant Name</label>
+                    <input type="text" id="plant-name" class="form-control" required aria-required="true" placeholder="What's the name of your plant?">
+                </div>
+
+                <div class="form-group">
+                    <label for="plant-category" class="form-label">Category</label>
+                    <select id="plant-category" class="form-control" required aria-required="true">
+                        <option value="">Select a category</option>
+                        <option value="flowers">Flowers</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="succulents">Succulents</option>
+                        <option value="trees">Trees</option>
+                        <option value="herbs">Herbs</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="plant-description" class="form-label">Description</label>
+                    <textarea id="plant-description" class="form-control form-textarea" required aria-required="true" placeholder="Tell us about your plant..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Upload Image</label>
+                    <div class="file-upload" id="file-upload-area" tabindex="0">
+                        <div class="file-upload-icon" aria-hidden="true">📷</div>
+                        <p class="file-upload-text">Drag & drop your plant photo here or click to browse</p>
+                        <input type="file" id="plant-image" accept="image/*" required aria-required="true">
+                        <button type="button" class="btn btn-outline">Select File</button>
+                    </div>
+                    <div id="file-name" class="file-name" aria-live="polite"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Plant</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Community Section -->
+        <section class="container" id="community">
+            <h2>Join the Conversation</h2>
+            <div class="comments-section">
+                <h3>Recent Discussions</h3>
+                <ul class="comment-list">
+                    <li class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">Linda Parker</span>
+                            <span class="comment-date">June 12, 2023</span>
+                        </div>
+                        <p>Has anyone tried companion planting with marigolds to deter pests? I'm planning my vegetable garden layout and would love to hear about your experiences.</p>
+                        <button class="btn btn-outline" style="margin-top: 1rem;">Reply</button>
+                    </li>
+                    <li class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">Michael Brown</span>
+                            <span class="comment-date">June 10, 2023</span>
+                        </div>
+                        <p>My indoor plants are struggling with low humidity this winter. Any recommendations for affordable humidifiers that work well for plants?</p>
+                        <button class="btn btn-outline" style="margin-top: 1rem;">Reply</button>
+                    </li>
+                </ul>
+
+                <div class="comment-form">
+                    <h3>Start a New Discussion</h3>
+                    <form id="new-discussion">
+                        <div class="form-group">
+                            <label for="discussion-title" class="form-label">Title</label>
+                            <input type="text" id="discussion-title" class="form-control" required aria-required="true" placeholder="What's your question or topic?">
+                        </div>
+                        <div class="form-group">
+                            <label for="discussion-content" class="form-label">Content</label>
+                            <textarea id="discussion-content" class="form-control form-textarea" required aria-required="true" placeholder="Share your thoughts..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Post Discussion</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-column">
+                <h3>GreenThumb Community</h3>
+                <p>Connecting gardeners worldwide to share knowledge, inspiration, and the joy of growing plants.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Follow us on Facebook">f</a>
+                    <a href="#" aria-label="Follow us on Instagram">📷</a>
+                    <a href="#" aria-label="Follow us on Pinterest">P</a>
+                    <a href="#" aria-label="Follow us on YouTube">▶️</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#upload">Upload</a></li>
+                    <li><a href="#community">Community</a></li>
+                    <li><a href="#about">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Gardening Tips</a></li>
+                    <li><a href="#">Plant Care Guides</a></li>
+                    <li><a href="#">Seasonal Planting</a></li>
+                    <li><a href="#">Pest Control</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul class="footer-links">
+                    <li><a href="mailto:info@greenthumb.com">info@greenthumb.com</a></li>
+                    <li><a href="tel:+18005551234">(800) 555-1234</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 GreenThumb Community. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Accessibility Statement</a></p>
+        </div>
+    </footer>
+
+    <!-- Modal for Image Preview -->
+    <div class="modal" id="image-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title" class="modal-title">Plant Image</h2>
+                <button class="modal-close" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="" style="width: 100%;">
+                <div id="modal-description" class="modal-description"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        menuToggle.addEventListener('click', function() {
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !expanded);
+            navMenu.classList.toggle('active');
+        });
+
+        // Filter Gallery
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const plantCards = document.querySelectorAll('.plant-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                
+                plantCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Like Button Functionality
+        const likeButtons = document.querySelectorAll('.like-btn');
+        
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const likeCount = this.querySelector('.like-count');
+                let count = parseInt(likeCount.textContent);
+                
+                if (this.classList.contains('liked')) {
+                    count--;
+                    this.classList.remove('liked');
+                } else {
+                    count++;
+                    this.classList.add('liked');
+                }
+                
+                likeCount.textContent = count;
+            });
+        });
+
+        // File Upload
+        const fileUpload = document.getElementById('file-upload-area');
+        const fileInput = document.getElementById('plant-image');
+        const fileName = document.getElementById('file-name');
+        
+        fileUpload.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = `Selected file: ${this.files[0].name}`;
+            }
+        });
+        
+        // Drag and Drop
+        fileUpload.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--primary-color)';
+            this.style.backgroundColor = 'rgba(46, 125, 50, 0.1)';
+        });
+        
+        fileUpload.addEventListener('dragleave', function() {
+            this.style.borderColor = '#ddd';
+            this.style.backgroundColor = 'transparent';
+        });
+        
+        fileUpload.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#ddd';
+            this.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = `Selected file: ${e.dataTransfer.files[0].name}`;
+            }
+        });
+
+        // Form Validation
+        const uploadForm = document.getElementById('plant-upload-form');
+        
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simple validation
+            const plantName = document.getElementById('plant-name').value;
+            const plantCategory = document.getElementById('plant-category').value;
+            const plantDescription = document.getElementById('plant-description').value;
+            const plantImage = document.getElementById('plant-image').files.length;
+            
+            if (!plantName || !plantCategory || !plantDescription || !plantImage) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // In a real app, you would upload to a server here
+            alert('Plant uploaded successfully!');
+            this.reset();
+            fileName.textContent = '';
+        });
+
+        // Modal for Image Preview
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalDescription = document.getElementById('modal-description');
+        const modalClose = document.querySelector('.modal-close');
+        const plantImages = document.querySelectorAll('.plant-image img');
+        
+        plantImages.forEach(image => {
+            image.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modalImage.alt = this.alt;
+                modalDescription.textContent = this.alt;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        modalClose.addEventListener('click', function() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Discussion Form
+        const discussionForm = document.getElementById('new-discussion');
+        
+        discussionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('discussion-title').value;
+            const content = document.getElementById('discussion-content').value;
+            
+            if (!title || !content) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // In a real app, you would post to a server here
+            const commentList = document.querySelector('.comment-list');
+            const newComment = document.createElement('li');
+            newComment.className = 'comment-item';
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author">You</span>
+                    <span class="comment-date">Just now</span>
+                </div>
+                <p>${content}</p>
+                <button class="btn btn-outline" style="margin-top: 1rem;">Reply</button>
+            `;
+            
+            commentList.insertBefore(newComment, commentList.firstChild);
+            this.reset();
+        });
+    </script>
+</body>
+</html>
