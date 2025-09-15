@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreativeShare - Upload and Share Your Creative Work</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #2a5298;
+            --primary-dark: #1a3a70;
+            --secondary-color: #6b38a6;
+            --accent-color: #c45e2d;
+            --text-color: #222222;
+            --background-color: #ffffff;
+            --light-bg: #f5f7fa;
+            --error-color: #d32f2f;
+            --success-color: #2e7d32;
+            --border-color: #d1d5db;
+            --focus-outline: 3px solid #4d90fe;
+        }
+
+        /* Respect user preferences for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Typography for AAA Compliance */
+        p, li, label, input, textarea, button {
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 80ch; /* Maximum 80 characters per line */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+            line-height: 1.3;
+            color: var(--text-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        p, ul, ol {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Enhanced Focus States for AAA Compliance */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+            outline: var(--focus-outline);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--primary-color);
+            border-radius: 2px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            transition: top 0.2s;
+            border-radius: 0 0 4px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: none;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .site-title {
+            font-size: 2.5rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .site-description {
+            font-size: 1.2rem;
+            margin: 0.5rem 0 1.5rem;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Navigation Styles */
+        nav {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-list li {
+            margin: 0 0.5rem;
+        }
+
+        .nav-list a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .nav-list a:hover, 
+        .nav-list a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: underline;
+        }
+
+        .nav-list a.active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content Styles */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .upload-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-container {
+            position: relative;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .file-upload-container:hover,
+        .file-upload-container:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .file-upload-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-help {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .file-preview.show {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .tag-text {
+            margin-right: 0.5rem;
+        }
+
+        .tag-remove {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .tag-remove:hover,
+        .tag-remove:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tags-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.5rem;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s, transform 0.1s;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #5a2e8a;
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            margin-bottom: 3rem;
+        }
+
+        .gallery-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn:focus {
+            background-color: #e9ecef;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            background-color: white;
+            position: relative;
+        }
+
+        .gallery-item:hover,
+        .gallery-item:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-image-container {
+            position: relative;
+            padding-top: 75%; /* 4:3 Aspect Ratio */
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .gallery-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover .gallery-image,
+        .gallery-item:focus-within .gallery-image {
+            transform: scale(1.05);
+        }
+
+        .gallery-content {
+            padding: 1.25rem;
+        }
+
+        .gallery-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .gallery-description {
+            color: #666;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .gallery-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .gallery-tag {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .gallery-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .gallery-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            object-fit: cover;
+        }
+
+        .gallery-date {
+            font-style: italic;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background-color: white;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+        }
+
+        .modal-description {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        /* Alert/Notification Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .alert.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            border-left: 4px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .alert-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .alert-message {
+            flex: 1;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .alert-close:hover,
+        .alert-close:focus {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 3rem 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .social-link:hover,
+        .social-link:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                text-align: center;
+            }
+
+            .site-title {
+                font-size: 2rem;
+            }
+
+            .site-description {
+                font-size: 1rem;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-list li {
+                margin: 0.25rem 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-list a {
+                display: block;
+                width: 100%;
+            }
+
+            .gallery-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .filter-container {
+                justify-content: center;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .modal-container {
+                width: 95%;
+            }
+        }
+
+        /* Loading Indicator */
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            display: inline;
+        }
+
+        /* High Contrast Mode */
+        @media (prefers-contrast: more) {
+            :root {
+                --primary-color: #0000ee;
+                --primary-dark: #00008b;
+                --secondary-color: #6a0dad;
+                --accent-color: #b22222;
+                --text-color: #000000;
+                --background-color: #ffffff;
+                --light-bg: #f0f0f0;
+                --border-color: #000000;
+            }
+
+            .btn, .tag, .gallery-tag {
+                border: 2px solid black;
+            }
+
+            .gallery-item, .modal-container {
+                border: 2px solid black;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #f0f0f0;
+                --background-color: #121212;
+                --light-bg: #2a2a2a;
+                --border-color: #444444;
+            }
+
+            .gallery-item, .modal-container {
+                background-color: #1e1e1e;
+            }
+
+            .gallery-title, .modal-title {
+                color: #f0f0f0;
+            }
+
+            .gallery-description, .modal-description {
+                color: #cccccc;
+            }
+
+            .gallery-tag {
+                background-color: #2a2a2a;
+                color: #90caf9;
+            }
+
+            .filter-btn {
+                background-color: #2a2a2a;
+                color: #f0f0f0;
+                border-color: #444444;
+            }
+
+            .filter-btn:hover,
+            .filter-btn:focus {
+                background-color: #3a3a3a;
+            }
+
+            .alert-success {
+                background-color: rgba(46, 125, 50, 0.2);
+                color: #81c784;
+            }
+
+            .alert-error {
+                background-color: rgba(211, 47, 47, 0.2);
+                color: #e57373;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="header-container">
+            <h1 class="site-title">CreativeShare</h1>
+            <p class="site-description">Upload, share, and discover amazing creative work from artists around the world.</p>
+            
+            <nav aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li><a href="#home" class="active" aria-current="page">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#upload">Upload</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- Upload Section -->
+        <section id="upload" class="upload-section" aria-labelledby="upload-heading">
+            <h2 id="upload-heading" class="section-title">Share Your Creative Work</h2>
+            
+            <div id="upload-alert" class="alert" role="alert" aria-live="assertive"></div>
+            
+            <form id="upload-form" class="upload-form" novalidate>
+                <div class="form-group">
+                    <label for="title">Title <span aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                    <input type="text" id="title" name="title" class="form-control" required aria-required="true" aria-describedby="title-help">
+                    <div id="title-help" class="form-text">Give your work a descriptive title (maximum 100 characters)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" aria-describedby="description-help"></textarea>
+                    <div id="description-help" class="form-text">Tell us about your creative work, inspiration, or techniques used</div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="file-upload-label">Upload Image <span aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+                    <div class="file-upload-container" tabindex="0" aria-describedby="file-upload-help">
+                        <label for="file-upload" class="file-upload-label">
+                            <div class="file-upload-icon" aria-hidden="true">📁</div>
+                            <div class="file-upload-text">Click or drag file to upload</div>
+                            <div class="file-upload-help" id="file-upload-help">Supported formats: JPG, PNG, GIF (max 5MB)</div>
+                        </label>
+                        <input type="file" id="file-upload" name="file-upload" class="file-upload-input" accept="image/*" required aria-required="true" aria-labelledby="file-upload-label">
+                    </div>
+                    
+                    <div id="file-preview" class="file-preview">
+                        <img id="preview-image" class="preview-image" src="" alt="Preview of uploaded image">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tags-input">Tags</label>
+                    <div class="tags-input-container" id="tags-container">
+                        <input type="text" id="tags-input" class="tags-input" placeholder="Add tags and press Enter" aria-describedby="tags-help">
+                    </div>
+                    <div id="tags-help" class="form-text">Add relevant tags to help others discover your work (e.g., photography, abstract, nature)</div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="submit-button">
+                        <span id="submit-text">Share Your Work</span>
+                        <span id="loading-indicator" style="display: none;">
+                            <span class="loading-spinner" aria-hidden="true"></span>
+                            <span class="loading-text">Uploading...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </section>
+        
+        <!-- Gallery Section -->
+        <section id="gallery" class="gallery-section" aria-labelledby="gallery-heading">
+            <h2 id="gallery-heading" class="section-title">Creative Gallery</h2>
+            
+            <div class="gallery-controls">
+                <div class="search-container">
+                    <span class="search-icon" aria-hidden="true">🔍</span>
+                    <input type="search" id="gallery-search" class="search-input" placeholder="Search gallery..." aria-label="Search gallery">
+                </div>
+                
+                <div class="filter-container" role="group" aria-label="Filter gallery by category">
+                    <button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+                    <button class="filter-btn" data-filter="photography" aria-pressed="false">Photography</button>
+                    <button class="filter-btn" data-filter="illustration" aria-pressed="false">Illustration</button>
+                    <button class="filter-btn" data-filter="digital" aria-pressed="false">Digital Art</button>
+                    <button class="filter-btn" data-filter="traditional" aria-pressed="false">Traditional</button>
+                </div>
+            </div>
+            
+            <div id="gallery-grid" class="gallery-grid">
+                <!-- Gallery items will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modal for viewing gallery items -->
+    <div id="gallery-modal" class="modal-overlay" role="dialog" aria-labelledby="modal-title" aria-modal="true" tabindex="-1">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modal-title" class="modal-title">Artwork Title</h3>
+                <button id="modal-close" class="modal-close" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <img id="modal-image" class="modal-image" src="" alt="">
+                <p id="modal-description" class="modal-description"></p>
+                <div id="modal-tags" class="modal-tags"></div>
+                <div class="modal-meta">
+                    <div id="modal-author" class="modal-author"></div>
+                    <div id="modal-date" class="modal-date"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About CreativeShare</h3>
+                <p>CreativeShare is a platform for artists and creators to share their work with the world. Join our community to showcase your creativity and discover amazing art.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#upload">Upload</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <p>Follow us on social media for updates and featured artwork.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <span aria-hidden="true">f</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <span aria-hidden="true">t</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <span aria-hidden="true">i</span>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Pinterest">
+                        <span aria-hidden="true">p</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 CreativeShare. All rights reserved. <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample gallery data
+            const galleryData = [
+                {
+                    id: 1,
+                    title: "Mountain Sunrise",
+                    description: "A beautiful sunrise captured from the summit of Mount Rainier during an early morning hike. The colors were absolutely breathtaking.",
+                    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+                    tags: ["photography", "nature", "landscape", "mountains"],
+                    author: "Alex Johnson",
+                    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                    date: "May 15, 2023"
+                },
+                {
+                    id: 2,
+                    title: "Urban Sketching",
+                    description: "A pen and ink sketch of a busy downtown street corner. I love capturing the energy and architecture of urban environments.",
+                    image: "https://images.unsplash.com/photo-1574887427561-d3d5d58c9273?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+                    tags: ["illustration", "traditional", "urban", "sketch"],
+                    author: "Maya Patel",
+                    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                    date: "June 2, 2023"
+                },
+                {
+                    id: 3,
+                    title: "Digital Dreamscape",
+                    description: "A surreal digital painting exploring themes of dreams and consciousness. Created using Procreate on iPad Pro.",
+                    image: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+                    tags: ["digital", "surreal", "illustration", "fantasy"],
+                    author: "Jordan Lee",
+                    avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+                    date: "April 18, 2023"
+                },
+                {
+                    id: 4,
+                    title: "Autumn Forest",
+                    description: "The vibrant colors of fall captured in a local forest. I was amazed by how the light filtered through the leaves.",
+                    image: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80",
+                    tags: ["photography", "nature", "autumn", "forest"],
+                    author: "Emma Wilson",
+                    avatar: "https://randomuser.me/api/portraits/women/29.jpg",
+                    date: "October 10, 2023"
+                },
+                {
+                    id: 5,
+                    title: "Abstract Composition",
+                    description: "An exploration of color and form. This acrylic painting on canvas was inspired by the works of Kandinsky and Miró.",
+                    image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1458&q=80",
+                    tags: ["traditional", "abstract", "painting", "colorful"],
+                    author: "Carlos Rodriguez",
+                    avatar: "https://randomuser.me/api/portraits/men/67.jpg",
+                    date: "March 5, 2023"
+                },
+                {
+                    id: 6,
+                    title: "Coastal Sunset",
+                    description: "The dramatic colors of sunset along the Pacific Coast Highway. I waited hours for the perfect light conditions.",
+                    image: "https://images.unsplash.com/photo-1503803548695-c2a7b4a5b875?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+                    tags: ["photography", "nature", "sunset", "ocean"],
+                    author: "Sophia Chen",
+                    avatar: "https://randomuser.me/api/portraits/women/54.jpg",
+                    date: "July 22, 2023"
+                }
+            ];
+
+            // Initialize the gallery
+            initGallery(galleryData);
+            
+            // Initialize form handling
+            initFormHandling();
+            
+            // Initialize modal functionality
+            initModal();
+            
+            // Initialize navigation
+            initNavigation();
+        });
+
+        // Initialize the gallery with data
+        function initGallery(data) {
+            const galleryGrid = document.getElementById('gallery-grid');
+            const searchInput = document.getElementById('gallery-search');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            // Render initial gallery
+            renderGallery(data);
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const filteredData = data.filter(item => {
+                    return item.title.toLowerCase().includes(searchTerm) || 
+                           item.description.toLowerCase().includes(searchTerm) || 
+                           item.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                });
+                renderGallery(filteredData);
+                
+                // Announce search results to screen readers
+                const resultsCount = filteredData.length;
+                const resultsText = resultsCount === 1 ? '1 result found' : `${resultsCount} results found`;
+                announceToScreenReader(resultsText);
+            });
+            
+            // Filter functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update aria-pressed state
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-pressed', 'false');
+                    });
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    
+                    const filter = this.dataset.filter;
+                    let filteredData;
+                    
+                    if (filter === 'all') {
+                        filteredData = data;
+                    } else {
+                        filteredData = data.filter(item => item.tags.includes(filter));
+                    }
+                    
+                    renderGallery(filteredData);
+                    
+                    // Announce filter results to screen readers
+                    const resultsCount = filteredData.length;
+                    const resultsText = `Filtered by ${filter}. ${resultsCount} ${resultsCount === 1 ? 'item' : 'items'} found.`;
+                    announceToScreenReader(resultsText);
+                });
+            });
+            
+            // Function to render gallery items
+            function renderGallery(items) {
+                galleryGrid.innerHTML = '';
+                
+                if (items.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'No matching items found. Try a different search or filter.';
+                    galleryGrid.appendChild(noResults);
+                    return;
+                }
+                
+                items.forEach(item => {
+                    const galleryItem = document.createElement('article');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.setAttribute('data-id', item.id);
+                    galleryItem.tabIndex = 0; // Make focusable
+                    
+                    // Create image container
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'gallery-image-container';
+                    
+                    const image = document.createElement('img');
+                    image.className = 'gallery-image';
+                    image.src = item.image;
+                    image.alt = item.title; // Use title as alt text
+                    imageContainer.appendChild(image);
+                    
+                    // Create content container
+                    const content = document.createElement('div');
+                    content.className = 'gallery-content';
+                    
+                    const title = document.createElement('h3');
+                    title.className = 'gallery-title';
+                    title.textContent = item.title;
+                    
+                    const description = document.createElement('p');
+                    description.className = 'gallery-description';
+                    description.textContent = item.description;
+                    
+                    const tags = document.createElement('div');
+                    tags.className = 'gallery-tags';
+                    item.tags.forEach(tag => {
+                        const tagSpan = document.createElement('span');
+                        tagSpan.className = 'gallery-tag';
+                        tagSpan.textContent = tag;
+                        tags.appendChild(tagSpan);
+                    });
+                    
+                    const meta = document.createElement('div');
+                    meta.className = 'gallery-meta';
+                    
+                    const author = document.createElement('div');
+                    author.className = 'gallery-author';
+                    
+                    const avatar = document.createElement('img');
+                    avatar.className = 'author-avatar';
+                    avatar.src = item.avatar;
+                    avatar.alt = '';
+                    avatar.setAttribute('role', 'presentation');
+                    
+                    const authorName = document.createElement('span');
+                    authorName.textContent = item.author;
+                    
+                    author.appendChild(avatar);
+                    author.appendChild(authorName);
+                    
+                    const date = document.createElement('div');
+                    date.className = 'gallery-date';
+                    date.textContent = item.date;
+                    
+                    meta.appendChild(author);
+                    meta.appendChild(date);
+                    
+                    content.appendChild(title);
+                    content.appendChild(description);
+                    content.appendChild(tags);
+                    content.appendChild(meta);
+                    
+                    galleryItem.appendChild(imageContainer);
+                    galleryItem.appendChild(content);
+                    
+                    // Add event listeners for opening the modal
+                    galleryItem.addEventListener('click', () => openModal(item));
+                    galleryItem.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openModal(item);
+                        }
+                    });
+                    
+                    galleryGrid.appendChild(galleryItem);
+                });
+            }
+        }
+
+        // Initialize form handling
+        function initFormHandling() {
+            const uploadForm = document.getElementById('upload-form');
+            const fileUpload = document.getElementById('file-upload');
+            const filePreview = document.getElementById('file-preview');
+            const previewImage = document.getElementById('preview-image');
+            const tagsInput = document.getElementById('tags-input');
+            const tagsContainer = document.getElementById('tags-container');
+            const submitButton = document.getElementById('submit-button');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const submitText = document.getElementById('submit-text');
+            const uploadAlert = document.getElementById('upload-alert');
+            const fileUploadContainer = document.querySelector('.file-upload-container');
+            
+            // Tags array to store added tags
+            let tags = [];
+            
+            // File upload preview
+            fileUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        showAlert('Please select a valid image file (JPG, PNG, or GIF).', 'error');
+                        fileUpload.value = '';
+                        return;
+                    }
+                    
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert('File size exceeds 5MB limit. Please select a smaller file.', 'error');
+                        fileUpload.value = '';
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.alt = file.name;
+                        filePreview.classList.add('show');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    filePreview.classList.remove('show');
+                }
+            });
+            
+            // Make the file upload container keyboard accessible
+            fileUploadContainer.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileUpload.click();
+                }
+            });
+            
+            // Tags input handling
+            tagsInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+            
+            tagsInput.addEventListener('blur', function() {
+                addTag();
+            });
+            
+            function addTag() {
+                const tagText = tagsInput.value.trim();
+                
+                if (tagText && !tags.includes(tagText)) {
+                    // Create tag element
+                    const tag = document.createElement('div');
+                    tag.className = 'tag';
+                    
+                    const tagTextSpan = document.createElement('span');
+                    tagTextSpan.className = 'tag-text';
+                    tagTextSpan.textContent = tagText;
+                    
+                    const removeButton = document.createElement('button');
+                    removeButton.className = 'tag-remove';
+                    removeButton.innerHTML = '&times;';
+                    removeButton.setAttribute('aria-label', `Remove tag ${tagText}`);
+                    removeButton.addEventListener('click', function() {
+                        tag.remove();
+                        tags = tags.filter(t => t !== tagText);
+                    });
+                    
+                    tag.appendChild(tagTextSpan);
+                    tag.appendChild(removeButton);
+                    
+                    // Insert tag before the input
+                    tagsContainer.insertBefore(tag, tagsInput);
+                    
+                    // Add to tags array
+                    tags.push(tagText);
+                    
+                    // Clear input
+                    tagsInput.value = '';
+                }
+            }
+            
+            // Form submission
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                const title = document.getElementById('title').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const file = fileUpload.files[0];
+                
+                if (!title) {
+                    showAlert('Please enter a title for your work.', 'error');
+                    document.getElementById('title').focus();
+                    return;
+                }
+                
+                if (!file) {
+                    showAlert('Please select an image to upload.', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                submitButton.disabled = true;
+                submitText.style.display = 'none';
+                loadingIndicator.style.display = 'inline-block';
+                
+                // Simulate form submission (would be an actual API call in production)
+                setTimeout(() => {
+                    // Reset form
+                    uploadForm.reset();
+                    filePreview.classList.remove('show');
+                    
+                    // Remove all tags
+                    const tagElements = document.querySelectorAll('.tag');
+                    tagElements.forEach(tag => tag.remove());
+                    tags = [];
+                    
+                    // Show success message
+                    showAlert('Your work has been successfully uploaded and shared!', 'success');
+                    
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitText.style.display = 'inline';
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Announce success to screen readers
+                    announceToScreenReader('Your work has been successfully uploaded and shared!');
+                    
+                    // Scroll to gallery to see the new addition
+                    document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+                }, 2000);
+            });
+            
+            // Show alert message
+            function showAlert(message, type) {
+                uploadAlert.className = `alert alert-${type} show`;
+                
+                // Create alert content
+                uploadAlert.innerHTML = `
+                    <div class="alert-icon" aria-hidden="true">${type === 'success' ? '✓' : '⚠'}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close" aria-label="Close alert">×</button>
+                `;
+                
+                // Add event listener to close button
+                const closeButton = uploadAlert.querySelector('.alert-close');
+                closeButton.addEventListener('click', () => {
+                    uploadAlert.classList.remove('show');
+                });
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    uploadAlert.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Initialize modal functionality
+        function initModal() {
+            const modal = document.getElementById('gallery-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalImage = document.getElementById('modal-image');
+            const modalDescription = document.getElementById('modal-description');
+            const modalTags = document.getElementById('modal-tags');
+            const modalAuthor = document.getElementById('modal-author');
+            const modalDate = document.getElementById('modal-date');
+            const modalClose = document.getElementById('modal-close');
+            
+            // Close modal when clicking the close button
+            modalClose.addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside the content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+            
+            // Function to open modal with item data
+            window.openModal = function(item) {
+                // Set modal content
+                modalTitle.textContent = item.title;
+                modalImage.src = item.image;
+                modalImage.alt = item.title;
+                modalDescription.textContent = item.description;
+                
+                // Set tags
+                modalTags.innerHTML = '';
+                item.tags.forEach(tag => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.className = 'gallery-tag';
+                    tagSpan.textContent = tag;
+                    modalTags.appendChild(tagSpan);
+                });
+                
+                // Set author and date
+                modalAuthor.textContent = `By ${item.author}`;
+                modalDate.textContent = item.date;
+                
+                // Show modal
+                modal.classList.add('active');
+                
+                // Set focus to modal
+                modal.focus();
+                
+                // Trap focus within modal
+                trapFocus(modal);
+                
+                // Announce to screen readers
+                announceToScreenReader(`Opened image details for ${item.title}`);
+                
+                // Save last focused element to return focus when modal closes
+                window.lastFocusedElement = document.activeElement;
+            };
+            
+            // Function to close modal
+            function closeModal() {
+                modal.classList.remove('active');
+                
+                // Return focus to last focused element
+                if (window.lastFocusedElement) {
+                    window.lastFocusedElement.focus();
+                }
+                
+                // Announce to screen readers
+                announceToScreenReader('Image details closed');
+            }
+            
+            // Function to trap focus within modal
+            function trapFocus(element) {
+                const focusableElements = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstFocusableElement = focusableElements[0];
+                const lastFocusableElement = focusableElements[focusableElements.length - 1];
+                
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        // Shift + Tab
+                        if (e.shiftKey) {
+                            if (document.activeElement === firstFocusableElement) {
+                                e.preventDefault();
+                                lastFocusableElement.focus();
+                            }
+                        } 
+                        // Tab
+                        else {
+                            if (document.activeElement === lastFocusableElement) {
+                                e.preventDefault();
+                                firstFocusableElement.focus();
+                            }
+                        }
+                    }
+                });
+                
+                // Set initial focus
+                firstFocusableElement.focus();
+            }
+        }
+
+        // Initialize navigation
+        function initNavigation() {
+            const navLinks = document.querySelectorAll('.nav-list a');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('active');
+                        navLink.removeAttribute('aria-current');
+                    });
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    this.setAttribute('aria-current', 'page');
+                    
+                    // Get the target section
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    // Scroll to target section
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Announce navigation to screen readers
+                        announceToScreenReader(`Navigated to ${this.textContent} section`);
+                    }
+                });
+            });
+        }
+
+        // Helper function to announce messages to screen readers
+        function announceToScreenReader(message) {
+            // Check if we already have an announcement element
+            let announcer = document.getElementById('screen-reader-announcer');
+            
+            if (!announcer) {
+                // Create the announcer element
+                announcer = document.createElement('div');
+                announcer.id = 'screen-reader-announcer';
+                announcer.setAttribute('aria-live', 'polite');
+                announcer.setAttribute('aria-atomic', 'true');
+                announcer.className = 'sr-only';
+                announcer.style.position = 'absolute';
+                announcer.style.width = '1px';
+                announcer.style.height = '1px';
+                announcer.style.padding = '0';
+                announcer.style.margin = '-1px';
+                announcer.style.overflow = 'hidden';
+                announcer.style.clip = 'rect(0, 0, 0, 0)';
+                announcer.style.whiteSpace = 'nowrap';
+                announcer.style.border = '0';
+                document.body.appendChild(announcer);
+            }
+            
+            // Set the message
+            announcer.textContent = message;
+        }
+    </script>
+</body>
+</html>

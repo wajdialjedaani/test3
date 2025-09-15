@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoShop - Sustainable Products Showcase</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Custom Properties for Theming */
+        :root {
+            --color-primary: #2e7d32;
+            --color-primary-light: #4caf50;
+            --color-primary-dark: #1b5e20;
+            --color-secondary: #81c784;
+            --color-accent: #f1f8e9;
+            --color-text: #212121;
+            --color-text-light: #757575;
+            --color-background: #ffffff;
+            --color-card: #f9f9f9;
+            --color-focus: #2e7d32;
+            --color-error: #c62828;
+            --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            --border-radius: 4px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --transition-standard: 0.3s ease;
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            font-size: 1rem;
+        }
+
+        /* Enhanced Focus Styles */
+        :focus {
+            outline: 3px solid var(--color-focus);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px white;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--color-primary);
+            color: white;
+            padding: var(--spacing-md);
+            z-index: 1000;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+            color: var(--color-text);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* Header */
+        .site-header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: var(--spacing-lg) 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .site-header .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .site-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .site-logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .site-title {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        /* Main Navigation */
+        .main-nav {
+            width: 100%;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-list a {
+            color: white;
+            text-decoration: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius);
+            transition: background-color var(--transition-standard);
+            font-weight: 500;
+        }
+
+        .nav-list a:hover,
+        .nav-list a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-list a.active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: var(--spacing-xl) 0;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .page-subtitle {
+            color: var(--color-text-light);
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background-color: var(--color-accent);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-header {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--color-primary-light);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: white;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--color-primary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-standard);
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            background-color: var(--color-primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: var(--color-primary-light);
+            color: white;
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .btn-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Products Grid */
+        .products-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .products-count {
+            font-weight: 500;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Product Card */
+        .product-card {
+            background-color: var(--color-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-standard), box-shadow var(--transition-standard);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover,
+        .product-card:focus-within {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-image-container {
+            position: relative;
+            padding-top: 75%; /* 4:3 Aspect Ratio */
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-standard);
+        }
+
+        .product-card:hover .product-image,
+        .product-card:focus-within .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: var(--spacing-sm);
+            left: var(--spacing-sm);
+            background-color: var(--color-primary);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1;
+        }
+
+        .product-content {
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-category {
+            color: var(--color-text-light);
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text);
+        }
+
+        .product-description {
+            color: var(--color-text-light);
+            margin-bottom: var(--spacing-md);
+            flex-grow: 1;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .rating-stars {
+            color: #ffc107;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-quickview {
+            flex: 1;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-standard), visibility var(--transition-standard);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-20px);
+            transition: transform var(--transition-standard);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-light);
+            transition: color var(--transition-standard);
+            border-radius: 50%;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: var(--color-text);
+            background-color: #f5f5f5;
+        }
+
+        .modal-body {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        @media (min-width: 768px) {
+            .modal-body {
+                flex-direction: row;
+            }
+        }
+
+        .modal-image {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+        }
+
+        .modal-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-category {
+            color: var(--color-text-light);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .modal-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-primary-dark);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .modal-description {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-features {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .features-list {
+            list-style: none;
+            margin-left: var(--spacing-md);
+        }
+
+        .features-list li {
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            padding-left: var(--spacing-lg);
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+
+        .modal-footer {
+            padding: var(--spacing-lg);
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-xl);
+        }
+
+        .pagination-button {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            color: var(--color-text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-standard);
+        }
+
+        .pagination-button:hover,
+        .pagination-button:focus {
+            background-color: var(--color-accent);
+            border-color: var(--color-primary-light);
+        }
+
+        .pagination-button.active {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .pagination-button[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--color-primary-dark);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            margin-top: var(--spacing-xxl);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .footer-section h3 {
+            color: white;
+            margin-bottom: var(--spacing-md);
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color var(--transition-standard);
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-newsletter p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            min-height: 44px;
+        }
+
+        .footer-bottom {
+            margin-top: var(--spacing-xl);
+            text-align: center;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-standard), visibility var(--transition-standard);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--color-accent);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background-color: var(--color-accent);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .no-results h3 {
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .site-header .container {
+                flex-direction: row;
+            }
+
+            .site-logo {
+                margin-bottom: 0;
+            }
+
+            .filter-controls {
+                flex-direction: row;
+            }
+        }
+
+        /* Accessibility Enhancements */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Enhanced Text Presentation for AAA */
+        body {
+            line-height: 1.8; /* At least 1.5 times font size */
+        }
+
+        p {
+            margin-bottom: 1.8rem; /* At least 1.5 times line height */
+            max-width: 80ch; /* No more than 80 characters per line */
+            text-align: left; /* Text not justified */
+        }
+
+        /* Target Size Enhanced for AAA */
+        button, 
+        a, 
+        input, 
+        select, 
+        .product-card {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="container">
+            <div class="site-logo">
+                <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M12,2L4,5v6.09c0,5.05,3.41,9.76,8,10.91c4.59-1.15,8-5.86,8-10.91V5L12,2z M10.94,15.54L7.4,12l1.41-1.41l2.12,2.12l4.24-4.24l1.41,1.41L10.94,15.54z"/>
+                </svg>
+                <h1 class="site-title">EcoShop</h1>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li><a href="#" class="active">Products</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Sustainability</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="main-content">
+        <div class="container">
+            <header class="page-header">
+                <h1>Eco-Friendly Products</h1>
+                <p class="page-subtitle">Discover our collection of sustainable products that help reduce environmental impact while enhancing your everyday life. Each item is carefully selected for its eco-friendly materials and ethical production.</p>
+            </header>
+
+            <section class="filter-section" aria-labelledby="filter-heading">
+                <h2 id="filter-heading" class="filter-header">Filter Products</h2>
+                <form id="filter-form" class="filter-controls">
+                    <div class="filter-group">
+                        <label for="category-filter">Category</label>
+                        <select id="category-filter" name="category">
+                            <option value="all">All Categories</option>
+                            <option value="home">Home & Kitchen</option>
+                            <option value="personal">Personal Care</option>
+                            <option value="fashion">Sustainable Fashion</option>
+                            <option value="garden">Garden & Outdoors</option>
+                            <option value="office">Office Supplies</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="sort-filter">Sort By</label>
+                        <select id="sort-filter" name="sort">
+                            <option value="featured">Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="newest">Newest Arrivals</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="price-range">Max Price: $<span id="price-value">100</span></label>
+                        <input type="range" id="price-range" name="price" min="0" max="200" value="100" step="10" aria-describedby="price-value">
+                    </div>
+
+                    <div class="filter-buttons">
+                        <button type="submit" class="btn btn-icon">
+                            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                            Apply Filters
+                        </button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </section>
+
+            <div class="products-info">
+                <p class="products-count" aria-live="polite">Showing <span id="product-count">12</span> products</p>
+            </div>
+
+            <div class="products-grid" id="products-container" aria-label="Products grid">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+
+            <div id="no-results" class="no-results" style="display: none;">
+                <h3>No Products Found</h3>
+                <p>Please try adjusting your filters or browse our full collection.</p>
+                <button id="reset-filters" class="btn">Reset Filters</button>
+            </div>
+
+            <nav class="pagination" aria-label="Pagination">
+                <button class="pagination-button" aria-label="Previous page" disabled>
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="pagination-button active" aria-label="Page 1" aria-current="page">1</button>
+                <button class="pagination-button" aria-label="Page 2">2</button>
+                <button class="pagination-button" aria-label="Page 3">3</button>
+                <button class="pagination-button" aria-label="Next page">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </main>
+
+    <div id="modal-overlay" class="modal-overlay" aria-hidden="true">
+        <div id="product-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+            <header class="modal-header">
+                <h2 id="modal-title">Product Details</h2>
+                <button id="modal-close" class="modal-close" aria-label="Close dialog">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </header>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-image" src="" alt="" width="400" height="300">
+                </div>
+                <div class="modal-details">
+                    <p id="modal-category" class="modal-category"></p>
+                    <h3 id="modal-product-title"></h3>
+                    <p id="modal-price" class="modal-price"></p>
+                    <div id="modal-description" class="modal-description"></div>
+                    <div class="modal-features">
+                        <h4>Key Features</h4>
+                        <ul id="modal-features" class="features-list"></ul>
+                    </div>
+                </div>
+            </div>
+            <footer class="modal-footer">
+                <button class="btn btn-secondary" id="modal-close-btn">Close</button>
+                <button class="btn">Add to Cart</button>
+            </footer>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner" role="status" aria-live="polite">
+            <span class="visually-hidden">Loading products...</span>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About EcoShop</h3>
+                    <p>We're dedicated to providing sustainable products that help reduce environmental impact while enhancing your everyday life.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">Sustainability Practices</a></li>
+                        <li><a href="#">Product Certifications</a></li>
+                        <li><a href="#">Shipping & Returns</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section footer-newsletter">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to our newsletter for the latest eco-friendly products and sustainability tips.</p>
+                    <form class="newsletter-form">
+                        <label for="newsletter-email" class="visually-hidden">Email Address</label>
+                        <input type="email" id="newsletter-email" class="newsletter-input" placeholder="Your email address" required>
+                        <button type="submit" class="btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 EcoShop. All rights reserved. Committed to a sustainable future.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Product data
+        const products = [
+            {
+                id: 1,
+                name: "Bamboo Cutlery Set",
+                category: "home",
+                price: 24.99,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1584346133934-a3afd2a33c4c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Portable bamboo cutlery set including fork, knife, spoon, chopsticks, and straw with a carrying case. Perfect for on-the-go meals without single-use plastic.",
+                features: [
+                    "100% organic bamboo",
+                    "Biodegradable and compostable",
+                    "Includes carrying case",
+                    "Dishwasher safe",
+                    "Lightweight and portable"
+                ],
+                badge: "Bestseller"
+            },
+            {
+                id: 2,
+                name: "Reusable Produce Bags",
+                category: "home",
+                price: 15.99,
+                rating: 4.5,
+                image: "https://images.unsplash.com/photo-1610348725531-843dff563e2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Set of 8 mesh produce bags in various sizes for grocery shopping. Replaces single-use plastic bags and keeps your fruits and vegetables fresh longer.",
+                features: [
+                    "Machine washable",
+                    "Transparent mesh for easy scanning",
+                    "Drawstring closure",
+                    "Tare weight on tag",
+                    "BPA-free materials"
+                ],
+                badge: "Popular"
+            },
+            {
+                id: 3,
+                name: "Organic Cotton Tote Bag",
+                category: "fashion",
+                price: 18.50,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1591273577871-16c20544ae49?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Durable organic cotton tote bag with reinforced handles. Perfect for shopping, beach trips, or everyday use as an alternative to plastic bags.",
+                features: [
+                    "100% GOTS certified organic cotton",
+                    "Reinforced stitching",
+                    "Holds up to 30 lbs",
+                    "Machine washable",
+                    "Fair trade certified"
+                ]
+            },
+            {
+                id: 4,
+                name: "Stainless Steel Water Bottle",
+                category: "personal",
+                price: 29.95,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Double-walled insulated stainless steel water bottle that keeps drinks cold for 24 hours or hot for 12 hours. Eliminates the need for single-use plastic bottles.",
+                features: [
+                    "BPA-free and non-toxic",
+                    "Leak-proof design",
+                    "Vacuum insulated",
+                    "Fits standard cup holders",
+                    "Available in multiple colors"
+                ],
+                badge: "Top Rated"
+            },
+            {
+                id: 5,
+                name: "Beeswax Food Wraps",
+                category: "home",
+                price: 19.99,
+                rating: 4.6,
+                image: "https://images.unsplash.com/photo-1621844622820-6a26ab6ef7e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Reusable food wraps made from organic cotton infused with beeswax, jojoba oil, and tree resin. A sustainable alternative to plastic wrap for food storage.",
+                features: [
+                    "Washable and reusable for up to 1 year",
+                    "Naturally antibacterial",
+                    "Biodegradable and compostable",
+                    "Set of 3 different sizes",
+                    "Handmade with organic materials"
+                ]
+            },
+            {
+                id: 6,
+                name: "Recycled Paper Notebook",
+                category: "office",
+                price: 12.50,
+                rating: 4.4,
+                image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Notebook made from 100% post-consumer recycled paper with a hardcover made from recycled cardboard. Features 192 lined pages and a bookmark ribbon.",
+                features: [
+                    "100% recycled materials",
+                    "Acid-free paper",
+                    "Lay-flat binding",
+                    "Elastic closure band",
+                    "Inner pocket for loose papers"
+                ]
+            },
+            {
+                id: 7,
+                name: "Bamboo Toothbrush Set",
+                category: "personal",
+                price: 14.99,
+                rating: 4.3,
+                image: "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Set of 4 biodegradable bamboo toothbrushes with charcoal-infused bristles. Reduces plastic waste from conventional toothbrushes.",
+                features: [
+                    "Biodegradable bamboo handle",
+                    "BPA-free nylon bristles",
+                    "Ergonomic design",
+                    "Naturally antimicrobial",
+                    "Compostable packaging"
+                ]
+            },
+            {
+                id: 8,
+                name: "Solar Power Bank",
+                category: "office",
+                price: 45.00,
+                rating: 4.2,
+                image: "https://images.unsplash.com/photo-1594131431617-93250642f5ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "10,000mAh power bank with integrated solar panel for charging on the go. Includes dual USB ports and LED flashlight for emergencies.",
+                features: [
+                    "Solar and USB charging options",
+                    "Water-resistant design",
+                    "Built-in LED flashlight",
+                    "Charge indicator lights",
+                    "Compatible with all USB devices"
+                ],
+                badge: "New"
+            },
+            {
+                id: 9,
+                name: "Compostable Phone Case",
+                category: "personal",
+                price: 32.99,
+                rating: 4.0,
+                image: "https://images.unsplash.com/photo-1592890288564-76628a30a657?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Protective phone case made from plant-based materials that are fully compostable at end of life. Available for various phone models.",
+                features: [
+                    "100% compostable materials",
+                    "Drop protection up to 6 feet",
+                    "Slim profile design",
+                    "Raised edges for screen protection",
+                    "Available in multiple colors"
+                ]
+            },
+            {
+                id: 10,
+                name: "Organic Herb Garden Kit",
+                category: "garden",
+                price: 34.95,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1562690868-60bbe7293e94?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Complete kit for growing organic herbs at home including basil, parsley, cilantro, and mint. Includes biodegradable pots, organic soil, and seeds.",
+                features: [
+                    "Non-GMO organic seeds",
+                    "Biodegradable growing pots",
+                    "Organic soil discs",
+                    "Detailed growing instructions",
+                    "Wooden plant markers"
+                ]
+            },
+            {
+                id: 11,
+                name: "Recycled Plastic Outdoor Rug",
+                category: "home",
+                price: 79.99,
+                rating: 4.5,
+                image: "https://images.unsplash.com/photo-1576354302919-96748cb8299e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Durable outdoor rug made from recycled plastic bottles. UV-resistant and easy to clean, perfect for patios, decks, or balconies.",
+                features: [
+                    "Made from 100% recycled PET bottles",
+                    "UV and weather resistant",
+                    "Reversible design",
+                    "Easy to clean with garden hose",
+                    "Available in multiple sizes and patterns"
+                ]
+            },
+            {
+                id: 12,
+                name: "Natural Loofah Scrubbers",
+                category: "home",
+                price: 9.99,
+                rating: 4.1,
+                image: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                description: "Set of 3 natural loofah sponges for kitchen and bathroom cleaning. Biodegradable alternative to synthetic scrubbers.",
+                features: [
+                    "100% natural plant-based material",
+                    "Biodegradable and compostable",
+                    "Naturally antibacterial",
+                    "Effective on tough stains",
+                    "Includes hanging string for drying"
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const productsContainer = document.getElementById('products-container');
+        const productCountElement = document.getElementById('product-count');
+        const filterForm = document.getElementById('filter-form');
+        const categoryFilter = document.getElementById('category-filter');
+        const sortFilter = document.getElementById('sort-filter');
+        const priceRange = document.getElementById('price-range');
+        const priceValue = document.getElementById('price-value');
+        const resetFiltersBtn = document.getElementById('reset-filters');
+        const noResultsElement = document.getElementById('no-results');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const productModal = document.getElementById('product-modal');
+        const modalClose = document.getElementById('modal-close');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const modalProductTitle = document.getElementById('modal-product-title');
+        const modalImage = document.getElementById('modal-image');
+        const modalCategory = document.getElementById('modal-category');
+        const modalPrice = document.getElementById('modal-price');
+        const modalDescription = document.getElementById('modal-description');
+        const modalFeatures = document.getElementById('modal-features');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+            setupEventListeners();
+        });
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Filter form submission
+            filterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                applyFilters();
+            });
+
+            // Price range input
+            priceRange.addEventListener('input', () => {
+                priceValue.textContent = priceRange.value;
+            });
+
+            // Reset filters button
+            resetFiltersBtn.addEventListener('click', () => {
+                filterForm.reset();
+                priceValue.textContent = priceRange.value;
+                applyFilters();
+            });
+
+            // Modal close buttons
+            modalClose.addEventListener('click', closeModal);
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+
+            // Keyboard events for modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Render products to the page
+        function renderProducts(productsToRender) {
+            // Show loading state
+            showLoading();
+
+            // Clear existing products
+            productsContainer.innerHTML = '';
+
+            // Update product count
+            productCountElement.textContent = productsToRender.length;
+
+            // Check if no products match filters
+            if (productsToRender.length === 0) {
+                noResultsElement.style.display = 'block';
+            } else {
+                noResultsElement.style.display = 'none';
+            }
+
+            // Create product cards
+            productsToRender.forEach(product => {
+                const productCard = createProductCard(product);
+                productsContainer.appendChild(productCard);
+            });
+
+            // Hide loading state after a short delay (simulating network request)
+            setTimeout(() => {
+                hideLoading();
+            }, 500);
+        }
+
+        // Create a product card element
+        function createProductCard(product) {
+            const card = document.createElement('article');
+            card.className = 'product-card';
+            card.setAttribute('data-product-id', product.id);
+
+            // Create the HTML structure for the card
+            card.innerHTML = `
+                <div class="product-image-container">
+                    <img src="${product.image}" alt="${product.name}" class="product-image" width="300" height="225">
+                    ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                </div>
+                <div class="product-content">
+                    <p class="product-category">${getCategoryName(product.category)}</p>
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-description">${truncateText(product.description, 80)}</p>
+                    <div class="product-meta">
+                        <span class="product-price">$${product.price.toFixed(2)}</span>
+                        <div class="product-rating" aria-label="Product rated ${product.rating} out of 5 stars">
+                            <span class="rating-stars">${getStarRating(product.rating)}</span>
+                            <span>${product.rating.toFixed(1)}</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-quickview" data-product-id="${product.id}" aria-label="Quick view ${product.name}">Quick View</button>
+                    </div>
+                </div>
+            `;
+
+            // Add event listener for quick view button
+            const quickViewBtn = card.querySelector('.btn-quickview');
+            quickViewBtn.addEventListener('click', () => {
+                openProductModal(product);
+            });
+
+            return card;
+        }
+
+        // Apply filters to products
+        function applyFilters() {
+            // Show loading state
+            showLoading();
+
+            // Get filter values
+            const category = categoryFilter.value;
+            const sortBy = sortFilter.value;
+            const maxPrice = parseInt(priceRange.value);
+
+            // Filter products
+            let filteredProducts = [...products];
+
+            // Filter by category
+            if (category !== 'all') {
+                filteredProducts = filteredProducts.filter(product => product.category === category);
+            }
+
+            // Filter by price
+            filteredProducts = filteredProducts.filter(product => product.price <= maxPrice);
+
+            // Sort products
+            switch (sortBy) {
+                case 'price-low':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    filteredProducts.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'newest':
+                    // For demo purposes, we'll just reverse the array
+                    filteredProducts.reverse();
+                    break;
+                default:
+                    // 'featured' - no sorting needed
+                    break;
+            }
+
+            // Render filtered products
+            renderProducts(filteredProducts);
+        }
+
+        // Open product modal
+        function openProductModal(product) {
+            // Set modal content
+            modalTitle.textContent = 'Product Details';
+            modalProductTitle.textContent = product.name;
+            modalImage.src = product.image;
+            modalImage.alt = product.name;
+            modalCategory.textContent = getCategoryName(product.category);
+            modalPrice.textContent = `$${product.price.toFixed(2)}`;
+            modalDescription.textContent = product.description;
+
+            // Clear and populate features list
+            modalFeatures.innerHTML = '';
+            product.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                modalFeatures.appendChild(li);
+            });
+
+            // Show modal
+            modalOverlay.classList.add('active');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+            
+            // Set focus to modal close button
+            modalClose.focus();
+
+            // Trap focus within modal
+            trapFocus(productModal);
+        }
+
+        // Close product modal
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+            
+            // Return focus to the element that opened the modal
+            const activeProductId = modalProductTitle.getAttribute('data-product-id');
+            if (activeProductId) {
+                const quickViewBtn = document.querySelector(`.btn-quickview[data-product-id="${activeProductId}"]`);
+                if (quickViewBtn) {
+                    quickViewBtn.focus();
+                }
+            }
+        }
+
+        // Show loading overlay
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        // Helper function to get category display name
+        function getCategoryName(categoryCode) {
+            const categories = {
+                'home': 'Home & Kitchen',
+                'personal': 'Personal Care',
+                'fashion': 'Sustainable Fashion',
+                'garden': 'Garden & Outdoors',
+                'office': 'Office Supplies'
+            };
+            return categories[categoryCode] || categoryCode;
+        }
+
+        // Helper function to truncate text
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        // Helper function to generate star rating HTML
+        function getStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            
+            let starsHTML = '';
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '★';
+            }
+            
+            // Half star
+            if (halfStar) {
+                starsHTML += '★';
+            }
+            
+            // Empty stars
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '☆';
+            }
+            
+            return starsHTML;
+        }
+
+        // Focus trap for modal
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstFocusableElement = focusableElements[0];
+            const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+            element.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    // If shift + tab and on first element, go to last element
+                    if (e.shiftKey && document.activeElement === firstFocusableElement) {
+                        e.preventDefault();
+                        lastFocusableElement.focus();
+                    }
+                    // If tab and on last element, go to first element
+                    else if (!e.shiftKey && document.activeElement === lastFocusableElement) {
+                        e.preventDefault();
+                        firstFocusableElement.focus();
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

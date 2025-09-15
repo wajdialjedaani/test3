@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Interactive Product Cards - Eco-Friendly Home Products</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #0056b3;
+            --primary-dark: #003d7a;
+            --secondary-color: #28a745;
+            --secondary-dark: #1e7e34;
+            --text-color: #212529;
+            --light-text: #f8f9fa;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #dee2e6;
+            --focus-color: #ff8800;
+            --focus-outline: 3px solid var(--focus-color);
+            --transition-speed: 0.3s;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            /* AAA requirement for line spacing */
+            line-height: 1.8;
+        }
+
+        /* Enhanced focus styles for all interactive elements */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+            outline: var(--focus-outline);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 3px rgba(255, 136, 0, 0.4);
+            border-radius: 2px;
+            text-decoration: underline;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+        }
+
+        /* Header styles */
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* Navigation styles */
+        nav {
+            background-color: var(--primary-dark);
+            padding: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color var(--transition-speed);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        nav a:hover, nav a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: underline;
+        }
+
+        /* Main content area */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .intro {
+            margin-bottom: 2rem;
+            /* AAA requirement for paragraph spacing */
+            margin-top: 2.4rem;
+        }
+
+        .intro h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .intro p {
+            /* AAA requirement for line width */
+            max-width: 80ch;
+            /* AAA requirement for paragraph spacing */
+            margin-bottom: 1.8rem;
+        }
+
+        /* Filter controls */
+        .filter-controls {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .filter-controls h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .filter-button {
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .filter-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Card grid layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Card styles with enhanced accessibility */
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Interactive card with hover/focus effects */
+        .card:hover, .card:focus-within {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image-container {
+            position: relative;
+            padding-top: 66.67%; /* 3:2 aspect ratio */
+            overflow: hidden;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-speed);
+        }
+
+        .card:hover .card-image, .card:focus-within .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .card-description {
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .card-price {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .card-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .card-button:hover, .card-button:focus {
+            background-color: var(--primary-dark);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .modal-image {
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-description {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-features {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-features h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-features ul {
+            padding-left: 1.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-price {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--secondary-color);
+        }
+
+        .modal-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .modal-button:hover, .modal-button:focus {
+            background-color: var(--secondary-dark);
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--light-text);
+            padding: 2rem 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+            /* Ensure minimum touch target size (AAA requirement) */
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover, .footer-links a:focus {
+            color: #adb5bd;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading state */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform var(--transition-speed), opacity var(--transition-speed);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (forced-colors: active) {
+            .card {
+                border: 2px solid CanvasText;
+            }
+            
+            .card-button, .modal-button, .filter-button {
+                border: 2px solid CanvasText;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <h1>Eco-Friendly Home Products</h1>
+    </header>
+
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#" aria-current="page">Home</a></li>
+            <li><a href="#">Products</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Sustainability</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <section class="intro">
+            <h2>Sustainable Products for a Greener Home</h2>
+            <p>Discover our collection of eco-friendly products designed to help you reduce your environmental footprint while enhancing your living space. Each item is carefully selected for its sustainability, durability, and aesthetic appeal.</p>
+            <p>Our products are made from renewable resources, recycled materials, or designed to minimize waste. We believe that sustainable living shouldn't compromise on quality or style.</p>
+        </section>
+
+        <section class="filter-controls" aria-labelledby="filter-heading">
+            <h3 id="filter-heading">Filter Products</h3>
+            <div class="filter-buttons" role="group" aria-label="Product category filters">
+                <button class="filter-button active" data-category="all" aria-pressed="true">All Products</button>
+                <button class="filter-button" data-category="kitchen" aria-pressed="false">Kitchen</button>
+                <button class="filter-button" data-category="bathroom" aria-pressed="false">Bathroom</button>
+                <button class="filter-button" data-category="living" aria-pressed="false">Living Room</button>
+                <button class="filter-button" data-category="bedroom" aria-pressed="false">Bedroom</button>
+            </div>
+        </section>
+
+        <div class="loading" aria-live="polite" id="loading-indicator">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <p>Loading products...</p>
+        </div>
+
+        <div class="card-grid" id="product-grid">
+            <!-- Card 1 -->
+            <article class="card" data-category="kitchen">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8a2l0Y2hlbixlY298fHx8fHwxNjk2MzQ2MjQ3&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Bamboo kitchen utensil set with wooden spoons, spatulas, and serving tools" class="card-image">
+                    <span class="card-badge">Bestseller</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Bamboo Kitchen Utensil Set</h3>
+                    <p class="card-description">Complete set of durable bamboo kitchen tools, naturally antibacterial and sustainable. Includes 6 essential utensils for all your cooking needs.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$34.99</span>
+                        <button class="card-button" aria-label="View details of Bamboo Kitchen Utensil Set" data-product-id="1">View Details</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="card" data-category="bathroom">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1620733723572-11c53f73a416?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmF0aHJvb20sZWNvfHx8fHx8MTY5NjM0NjMxMQ&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Organic cotton towel set in natural beige color" class="card-image">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Organic Cotton Towel Set</h3>
+                    <p class="card-description">Luxuriously soft towels made from 100% organic cotton. Highly absorbent, quick-drying, and free from harmful chemicals and dyes.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$49.99</span>
+                        <button class="card-button" aria-label="View details of Organic Cotton Towel Set" data-product-id="2">View Details</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="card" data-category="living">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8bGl2aW5nLHJvb20sZWNvfHx8fHx8MTY5NjM0NjM3Nw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Recycled wool throw blanket in earth tones" class="card-image">
+                    <span class="card-badge">New</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Recycled Wool Throw Blanket</h3>
+                    <p class="card-description">Cozy throw blanket made from recycled wool fibers. Perfect for cool evenings, this eco-friendly blanket adds warmth and style to any living space.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$59.99</span>
+                        <button class="card-button" aria-label="View details of Recycled Wool Throw Blanket" data-product-id="3">View Details</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 4 -->
+            <article class="card" data-category="bedroom">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmVkcm9vbSxlY298fHx8fHwxNjk2MzQ2NDI5&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Organic linen bedding set in soft sage green" class="card-image">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Organic Linen Bedding Set</h3>
+                    <p class="card-description">Breathable, temperature-regulating bedding made from 100% organic linen. Gets softer with each wash and is perfect for year-round comfort.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$129.99</span>
+                        <button class="card-button" aria-label="View details of Organic Linen Bedding Set" data-product-id="4">View Details</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 5 -->
+            <article class="card" data-category="kitchen">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1584589167171-541ce45f1eea?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8a2l0Y2hlbixjb21wb3N0fHx8fHx8MTY5NjM0NjQ4Nw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Countertop compost bin made of stainless steel" class="card-image">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Countertop Compost Bin</h3>
+                    <p class="card-description">Stylish stainless steel compost bin with charcoal filter to eliminate odors. Perfect for collecting kitchen scraps for composting.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$39.99</span>
+                        <button class="card-button" aria-label="View details of Countertop Compost Bin" data-product-id="5">View Details</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 6 -->
+            <article class="card" data-category="bathroom">
+                <div class="card-image-container">
+                    <img src="https://images.unsplash.com/photo-1618355776464-8666794d2520?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmF0aHJvb20sc3VzdGFpbmFibGV8fHx8fHwxNjk2MzQ2NTQ1&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900" alt="Zero waste bathroom kit with bamboo toothbrushes, soap, and cotton rounds" class="card-image">
+                    <span class="card-badge">Popular</span>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Zero Waste Bathroom Kit</h3>
+                    <p class="card-description">Complete set of plastic-free bathroom essentials including bamboo toothbrushes, solid shampoo bar, natural loofah, and reusable cotton rounds.</p>
+                    <div class="card-meta">
+                        <span class="card-price">$45.99</span>
+                        <button class="card-button" aria-label="View details of Zero Waste Bathroom Kit" data-product-id="6">View Details</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="product-modal" aria-labelledby="modal-title" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close product details" id="modal-close">&times;</button>
+            <h2 id="modal-title">Product Details</h2>
+            <img src="" alt="" class="modal-image" id="modal-image">
+            <div class="modal-description" id="modal-description"></div>
+            <div class="modal-features">
+                <h4>Key Features</h4>
+                <ul id="modal-features"></ul>
+            </div>
+            <div class="modal-actions">
+                <span class="modal-price" id="modal-price"></span>
+                <button class="modal-button" id="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification" role="status" aria-live="polite"></div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>We're dedicated to providing sustainable products that help reduce environmental impact without compromising on quality or style.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Sustainability Practices</a></li>
+                    <li><a href="#">Product Care</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><a href="mailto:info@ecofriendlyhome.com">info@ecofriendlyhome.com</a></li>
+                    <li><a href="tel:+18005551234">1-800-555-1234</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Eco-Friendly Home Products. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Product data
+        const products = {
+            1: {
+                title: "Bamboo Kitchen Utensil Set",
+                image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8a2l0Y2hlbixlY298fHx8fHwxNjk2MzQ2MjQ3&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Bamboo kitchen utensil set with wooden spoons, spatulas, and serving tools",
+                description: "Our premium bamboo kitchen utensil set includes everything you need for sustainable cooking. Made from 100% organic bamboo, these tools are naturally antibacterial, won't scratch your cookware, and are free from harmful chemicals found in plastic utensils.",
+                features: [
+                    "Made from sustainable, renewable bamboo",
+                    "Naturally antibacterial and odor-resistant",
+                    "Heat-resistant and won't scratch cookware",
+                    "Includes spatula, slotted spoon, mixing spoon, serving spoon, tongs, and pasta server",
+                    "Handcrafted with smooth, splinter-free finish",
+                    "Biodegradable at end of life"
+                ],
+                price: "$34.99",
+                category: "kitchen"
+            },
+            2: {
+                title: "Organic Cotton Towel Set",
+                image: "https://images.unsplash.com/photo-1620733723572-11c53f73a416?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmF0aHJvb20sZWNvfHx8fHx8MTY5NjM0NjMxMQ&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Organic cotton towel set in natural beige color",
+                description: "Experience the luxury of our organic cotton towel set. Made from 100% GOTS-certified organic cotton, these towels are incredibly soft, highly absorbent, and free from harmful chemicals and synthetic dyes. The set includes bath towels, hand towels, and washcloths.",
+                features: [
+                    "100% GOTS-certified organic cotton",
+                    "Free from harmful chemicals and synthetic dyes",
+                    "Highly absorbent and quick-drying",
+                    "Includes 2 bath towels, 2 hand towels, and 4 washcloths",
+                    "Natural, undyed fibers safe for sensitive skin",
+                    "Gets softer with each wash"
+                ],
+                price: "$49.99",
+                category: "bathroom"
+            },
+            3: {
+                title: "Recycled Wool Throw Blanket",
+                image: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8bGl2aW5nLHJvb20sZWNvfHx8fHx8MTY5NjM0NjM3Nw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Recycled wool throw blanket in earth tones",
+                description: "Add warmth and style to your living space with our recycled wool throw blanket. Made from post-consumer wool fibers that would otherwise end up in landfills, this blanket is both eco-friendly and cozy. Perfect for cool evenings or as a decorative accent.",
+                features: [
+                    "Made from 80% recycled wool and 20% recycled nylon for durability",
+                    "Diverts textile waste from landfills",
+                    "Naturally temperature-regulating properties of wool",
+                    "Measures 50\" x 60\" - perfect for couches and chairs",
+                    "Earth-tone colors created with low-impact dyes",
+                    "Handcrafted by artisans using traditional techniques"
+                ],
+                price: "$59.99",
+                category: "living"
+            },
+            4: {
+                title: "Organic Linen Bedding Set",
+                image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmVkcm9vbSxlY298fHx8fHwxNjk2MzQ2NDI5&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Organic linen bedding set in soft sage green",
+                description: "Transform your bedroom with our luxurious organic linen bedding set. Linen is naturally temperature-regulating, keeping you cool in summer and warm in winter. Our linen is grown without pesticides and processed without harmful chemicals, making it better for you and the planet.",
+                features: [
+                    "100% organic linen from flax grown without pesticides",
+                    "Naturally temperature-regulating for year-round comfort",
+                    "Gets softer with each wash while maintaining durability",
+                    "Includes fitted sheet, flat sheet, and 2 pillowcases",
+                    "OEKO-TEX certified - free from harmful substances",
+                    "Available in 6 natural, plant-dyed colors"
+                ],
+                price: "$129.99",
+                category: "bedroom"
+            },
+            5: {
+                title: "Countertop Compost Bin",
+                image: "https://images.unsplash.com/photo-1584589167171-541ce45f1eea?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8a2l0Y2hlbixjb21wb3N0fHx8fHx8MTY5NjM0NjQ4Nw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Countertop compost bin made of stainless steel",
+                description: "Make composting easy with our stylish countertop compost bin. Designed to sit conveniently on your kitchen counter, this stainless steel bin includes a charcoal filter that eliminates odors, allowing you to collect food scraps for days before emptying.",
+                features: [
+                    "Made from durable stainless steel that won't absorb odors",
+                    "Includes 2 replaceable charcoal filters that last up to 6 months",
+                    "1.3-gallon capacity - perfect for daily food scraps",
+                    "Dishwasher-safe for easy cleaning",
+                    "Stylish design complements modern kitchens",
+                    "Helps reduce household waste sent to landfills"
+                ],
+                price: "$39.99",
+                category: "kitchen"
+            },
+            6: {
+                title: "Zero Waste Bathroom Kit",
+                image: "https://images.unsplash.com/photo-1618355776464-8666794d2520?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=600&ixid=MnwxfDB8MXxyYW5kb218MHx8YmF0aHJvb20sc3VzdGFpbmFibGV8fHx8fHwxNjk2MzQ2NTQ1&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=900",
+                imageAlt: "Zero waste bathroom kit with bamboo toothbrushes, soap, and cotton rounds",
+                description: "Transform your bathroom routine with our comprehensive zero waste kit. This set includes everything you need to eliminate plastic from your daily hygiene routine while enjoying high-quality, natural products that are better for you and the environment.",
+                features: [
+                    "4 bamboo toothbrushes with plant-based bristles",
+                    "Solid shampoo and conditioner bars (equivalent to 2-3 bottles each)",
+                    "Natural loofah and cotton washcloth",
+                    "12 reusable organic cotton rounds with mesh washing bag",
+                    "Plastic-free dental floss in refillable glass container",
+                    "Safety razor with 10 replacement blades"
+                ],
+                price: "$45.99",
+                category: "bathroom"
+            }
+        };
+
+        // DOM Elements
+        const productGrid = document.getElementById('product-grid');
+        const modal = document.getElementById('product-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalImage = document.getElementById('modal-image');
+        const modalDescription = document.getElementById('modal-description');
+        const modalFeatures = document.getElementById('modal-features');
+        const modalPrice = document.getElementById('modal-price');
+        const modalClose = document.getElementById('modal-close');
+        const addToCartBtn = document.getElementById('add-to-cart');
+        const notification = document.getElementById('notification');
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to all product cards
+            const productButtons = document.querySelectorAll('.card-button');
+            productButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const productId = this.getAttribute('data-product-id');
+                    openProductModal(productId);
+                });
+            });
+
+            // Close modal when clicking the close button
+            modalClose.addEventListener('click', closeModal);
+
+            // Close modal when pressing Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    closeModal();
+                }
+            });
+
+            // Close modal when clicking outside the modal content
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Add to cart button functionality
+            addToCartBtn.addEventListener('click', function() {
+                const productTitle = modalTitle.textContent;
+                showNotification(`${productTitle} added to your cart!`);
+                closeModal();
+            });
+
+            // Filter buttons functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterProducts(category);
+                    
+                    // Update aria-pressed state for all buttons
+                    filterButtons.forEach(btn => {
+                        btn.setAttribute('aria-pressed', 'false');
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Set this button as pressed
+                    this.setAttribute('aria-pressed', 'true');
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        // Function to open product modal
+        function openProductModal(productId) {
+            const product = products[productId];
+            if (!product) return;
+            
+            // Set modal content
+            modalTitle.textContent = product.title;
+            modalImage.src = product.image;
+            modalImage.alt = product.imageAlt;
+            modalDescription.textContent = product.description;
+            modalPrice.textContent = product.price;
+            
+            // Clear and populate features list
+            modalFeatures.innerHTML = '';
+            product.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                modalFeatures.appendChild(li);
+            });
+            
+            // Show modal
+            modal.style.display = 'flex';
+            
+            // Set focus to close button for accessibility
+            setTimeout(() => {
+                modalClose.focus();
+            }, 100);
+            
+            // Store the button that opened the modal to return focus later
+            modal.dataset.opener = document.activeElement.id || 'unknown';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            modal.style.display = 'none';
+            
+            // Return focus to the element that opened the modal
+            const openerId = modal.dataset.opener;
+            if (openerId && openerId !== 'unknown') {
+                const opener = document.getElementById(openerId);
+                if (opener) opener.focus();
+            }
+        }
+
+        // Function to show notification
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Function to filter products
+        function filterProducts(category) {
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            productGrid.style.opacity = '0.5';
+            
+            // Simulate loading delay for better user experience
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.card');
+                
+                cards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                productGrid.style.opacity = '1';
+                
+                // Announce to screen readers that content has been updated
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.setAttribute('aria-atomic', 'true');
+                liveRegion.classList.add('sr-only');
+                liveRegion.textContent = category === 'all' 
+                    ? 'Showing all products' 
+                    : `Showing ${category} products`;
+                document.body.appendChild(liveRegion);
+                
+                // Remove the live region after announcement
+                setTimeout(() => {
+                    document.body.removeChild(liveRegion);
+                }, 1000);
+                
+            }, 500); // Short delay to show loading state
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Events Showcase - Discover and Explore Events in Your Area</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Variables for consistent theming and enhanced contrast */
+        :root {
+            --primary-color: #0056b3;
+            --primary-dark: #003a75;
+            --secondary-color: #6a0dad;
+            --accent-color: #e63946;
+            --background-color: #f8f9fa;
+            --text-color: #212529;
+            --light-text: #f8f9fa;
+            --border-color: #495057;
+            --success-color: #2a9d8f;
+            --warning-color: #e76f51;
+            --info-color: #4361ee;
+            --focus-outline: 3px solid #ffc107;
+            --card-background: #ffffff;
+            --header-background: #003a75;
+            --footer-background: #212529;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --line-height: 1.6;
+            --paragraph-spacing: 1.5rem;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: var(--line-height);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        p {
+            margin-bottom: var(--paragraph-spacing);
+            max-width: 80ch;
+        }
+
+        /* Enhanced Focus Styles */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+            outline: var(--focus-outline);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5);
+            border-radius: 2px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            background: var(--accent-color);
+            color: white;
+            padding: var(--spacing-md);
+            z-index: 100;
+            transition: top 0.3s ease;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--header-background);
+            color: var(--light-text);
+            padding: var(--spacing-lg) var(--spacing-md);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .site-title {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .site-title a {
+            color: var(--light-text);
+            text-decoration: none;
+        }
+
+        .site-title a:hover, .site-title a:focus {
+            text-decoration: underline;
+        }
+
+        /* Navigation */
+        nav {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .main-nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+            min-height: 44px;
+            min-width: 44px;
+            line-height: 44px;
+            text-align: center;
+        }
+
+        .main-nav a:hover, .main-nav a:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: underline;
+        }
+
+        .main-nav a.active {
+            background-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: var(--spacing-xl) var(--spacing-md);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: var(--spacing-sm);
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            background-color: var(--card-background);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-xl);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1 1 200px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            min-height: 44px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            min-height: 44px;
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .button:hover, .button:focus {
+            background-color: var(--primary-dark);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .button-secondary:hover, .button-secondary:focus {
+            background-color: #4b0973;
+        }
+
+        .button-accent {
+            background-color: var(--accent-color);
+        }
+
+        .button-accent:hover, .button-accent:focus {
+            background-color: #c42836;
+        }
+
+        /* Events Grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .event-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .event-card:hover, .event-card:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .event-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .event-category {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .event-details {
+            padding: var(--spacing-lg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-date {
+            color: var(--accent-color);
+            font-weight: 500;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .event-date svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .event-title {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-color);
+        }
+
+        .event-location {
+            color: var(--text-color);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .event-location svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .event-description {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-color);
+            flex: 1;
+        }
+
+        .event-actions {
+            margin-top: auto;
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .event-actions .button {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        /* Map Section */
+        .map-section {
+            margin-top: var(--spacing-xxl);
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .map-container {
+            height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: var(--spacing-xl);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-close:hover, .modal-close:focus {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-md);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .modal-image {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .modal-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+        }
+
+        .modal-info {
+            flex: 1 1 300px;
+        }
+
+        .modal-map {
+            flex: 1 1 300px;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-background);
+            color: var(--light-text);
+            padding: var(--spacing-xl) var(--spacing-md);
+            margin-top: var(--spacing-xxl);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .footer-section h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--light-text);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            display: inline-block;
+            min-height: 44px;
+            line-height: 44px;
+        }
+
+        .footer-links a:hover, .footer-links a:focus {
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--light-text);
+            text-decoration: none;
+        }
+
+        .social-links a:hover, .social-links a:focus {
+            background-color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 100;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background-color: var(--accent-color);
+        }
+
+        .notification.info {
+            background-color: var(--info-color);
+        }
+
+        /* Loading Indicator */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: var(--spacing-md);
+            }
+
+            .main-nav ul {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+
+            .main-nav a {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .filter-form {
+                flex-direction: column;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                width: 95%;
+                padding: var(--spacing-md);
+            }
+
+            .modal-details {
+                flex-direction: column;
+            }
+        }
+
+        /* Enhanced Accessibility Styles */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* High Contrast Mode Support */
+        @media (forced-colors: active) {
+            .button, .event-category, .social-links a {
+                border: 2px solid currentColor;
+            }
+            
+            .event-card {
+                border: 1px solid currentColor;
+            }
+        }
+
+        /* No Animation Mode */
+        .no-animation * {
+            animation: none !important;
+            transition: none !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="header-container">
+            <h1 class="site-title"><a href="#">Local Events Showcase</a></h1>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul>
+                    <li><a href="#" class="active" aria-current="page">Home</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">Venues</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="intro-section">
+            <h2>Discover Local Events</h2>
+            <p>Welcome to our local events showcase! Find and explore exciting events happening in your area. From concerts and art exhibitions to workshops and community gatherings, there's something for everyone.</p>
+        </section>
+
+        <section class="filter-section" aria-labelledby="filter-heading">
+            <h2 id="filter-heading" class="section-heading">Find Events</h2>
+            <div class="filter-controls">
+                <form class="filter-form" id="filter-form">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category">
+                            <option value="">All Categories</option>
+                            <option value="music">Music</option>
+                            <option value="art">Art & Culture</option>
+                            <option value="food">Food & Drink</option>
+                            <option value="sports">Sports</option>
+                            <option value="community">Community</option>
+                            <option value="education">Education</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="Enter city or venue">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="button" id="filter-button">
+                            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Search Events</span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button type="reset" class="button button-secondary" id="reset-button">
+                            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4V9H4.58152M19.9381 11C19.446 7.05369 16.0796 4 12 4C8.64262 4 5.76829 6.06817 4.58152 9M4.58152 9H9M20 20V15H19.4185M19.4185 15C18.2317 17.9318 15.3574 20 12 20C7.92038 20 4.55399 16.9463 4.06189 13M19.4185 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Reset Filters</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="events-section" aria-labelledby="events-heading">
+            <h2 id="events-heading" class="section-heading">Upcoming Events</h2>
+            <div class="events-grid" id="events-grid">
+                <!-- Event cards will be dynamically generated here -->
+            </div>
+        </section>
+
+        <section class="map-section" aria-labelledby="map-heading">
+            <h2 id="map-heading" class="section-heading">Event Locations</h2>
+            <p>Explore event venues on the map below. Click on a marker to see event details.</p>
+            <div class="map-container" id="map">
+                <!-- Map will be loaded here -->
+                <p id="map-placeholder">Interactive map loading... Please wait.</p>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="event-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal">
+            <button class="modal-close" id="modal-close" aria-label="Close modal">
+                <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="modal-content" id="modal-content">
+                <!-- Modal content will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification" role="status" aria-live="polite"></div>
+
+    <div class="loading" id="loading" aria-hidden="true">
+        <div class="loading-spinner" aria-label="Loading content"></div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Local Events Showcase helps you discover and explore exciting events in your community. Our mission is to connect people with local experiences.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Events Calendar</a></li>
+                    <li><a href="#">Submit an Event</a></li>
+                    <li><a href="#">Venues</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <address>
+                    <p>123 Main Street<br>Anytown, ST 12345</p>
+                    <p>Email: <a href="mailto:info@localevents.example">info@localevents.example</a></p>
+                    <p>Phone: <a href="tel:+15551234567">(555) 123-4567</a></p>
+                </address>
+                <div class="social-links">
+                    <a href="#" aria-label="Follow us on Facebook">
+                        <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Follow us on Twitter">
+                        <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23 3C22.0424 3.67548 20.9821 4.19211 19.86 4.53C19.2577 3.83751 18.4573 3.34669 17.567 3.12393C16.6767 2.90116 15.7395 2.9572 14.8821 3.28445C14.0247 3.61171 13.2884 4.1944 12.773 4.95372C12.2575 5.71303 11.9877 6.61234 12 7.53V8.53C10.2426 8.57557 8.50127 8.18581 6.93101 7.39545C5.36074 6.60508 4.01032 5.43864 3 4C3 4 -1 13 8 17C5.94053 18.398 3.48716 19.0989 1 19C10 24 21 19 21 7.5C20.9991 7.22145 20.9723 6.94359 20.92 6.67C21.9406 5.66349 22.6608 4.39271 23 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Follow us on Instagram">
+                        <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 2H7C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 11.37C16.1234 12.2022 15.9813 13.0522 15.5938 13.799C15.2063 14.5458 14.5932 15.1514 13.8416 15.5297C13.0901 15.9079 12.2385 16.0396 11.4078 15.9059C10.5771 15.7723 9.80977 15.3801 9.21485 14.7852C8.61993 14.1902 8.22774 13.4229 8.09408 12.5922C7.96042 11.7615 8.09208 10.9099 8.47034 10.1584C8.8486 9.40685 9.4542 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87659 12.63 8C13.4789 8.12588 14.2649 8.52146 14.8717 9.12831C15.4785 9.73515 15.8741 10.5211 16 11.37Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17.5 6.5H17.51" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Local Events Showcase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Event data - in a real application, this would come from a server
+        const eventsData = [
+            {
+                id: 1,
+                title: "Summer Music Festival",
+                description: "Join us for a weekend of amazing live music performances featuring local and international artists across multiple stages.",
+                longDescription: "The Summer Music Festival is the highlight of the season, bringing together music lovers from all over the region. With three stages featuring different genres, food vendors, art installations, and activities for all ages, this is an event you won't want to miss. This year's lineup includes award-winning artists and exciting newcomers in the music scene.",
+                date: "2023-07-15",
+                time: "12:00 PM - 10:00 PM",
+                location: "Central Park",
+                address: "123 Park Avenue, Cityville",
+                category: "music",
+                image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7812, lng: -73.9665 },
+                ticketPrice: "$45",
+                organizer: "Cityville Music Association",
+                contact: "info@citymusicfest.example",
+                accessibility: "Wheelchair accessible, ASL interpreters available"
+            },
+            {
+                id: 2,
+                title: "Local Art Exhibition",
+                description: "Explore the creative works of local artists showcasing paintings, sculptures, and multimedia installations.",
+                longDescription: "The Local Art Exhibition brings together the most talented artists from our community, showcasing their latest works across various mediums. This year's theme is 'Urban Nature,' exploring the relationship between city life and the natural world. The exhibition includes interactive installations, artist talks, and workshops for visitors of all ages.",
+                date: "2023-06-22",
+                time: "10:00 AM - 6:00 PM",
+                location: "Community Art Gallery",
+                address: "456 Main Street, Cityville",
+                category: "art",
+                image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7580, lng: -73.9855 },
+                ticketPrice: "Free",
+                organizer: "Cityville Arts Council",
+                contact: "gallery@cityarts.example",
+                accessibility: "Wheelchair accessible, audio descriptions available"
+            },
+            {
+                id: 3,
+                title: "Food & Wine Festival",
+                description: "Sample delicious cuisine and fine wines from local restaurants, wineries, and food artisans.",
+                longDescription: "The annual Food & Wine Festival celebrates the culinary diversity of our region with over 50 vendors offering tastings of their signature dishes and drinks. Meet renowned chefs, attend cooking demonstrations, and enjoy live music while sampling the best food and wine our area has to offer. Special dietary options including vegetarian, vegan, and gluten-free will be available.",
+                date: "2023-08-05",
+                time: "11:00 AM - 8:00 PM",
+                location: "Riverfront Plaza",
+                address: "789 River Road, Cityville",
+                category: "food",
+                image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7527, lng: -73.9772 },
+                ticketPrice: "$35",
+                organizer: "Cityville Culinary Association",
+                contact: "taste@cityfoodfest.example",
+                accessibility: "Wheelchair accessible, service animals welcome"
+            },
+            {
+                id: 4,
+                title: "Community Sports Tournament",
+                description: "Join or cheer for local teams competing in various sports including basketball, soccer, and volleyball.",
+                longDescription: "The Community Sports Tournament brings together athletes of all ages and skill levels for a weekend of friendly competition. Sports include basketball, soccer, volleyball, tennis, and more. Teams from neighboring communities will participate, making this a regional celebration of sportsmanship and athletic achievement. Food vendors and family activities will be available throughout the event.",
+                date: "2023-07-29",
+                time: "9:00 AM - 6:00 PM",
+                location: "City Sports Complex",
+                address: "101 Athletic Drive, Cityville",
+                category: "sports",
+                image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7680, lng: -73.9800 },
+                ticketPrice: "$10",
+                organizer: "Cityville Parks & Recreation",
+                contact: "sports@cityparks.example",
+                accessibility: "Wheelchair accessible seating areas, accessible restrooms"
+            },
+            {
+                id: 5,
+                title: "Tech Innovation Workshop",
+                description: "Learn about the latest technology trends and participate in hands-on workshops led by industry experts.",
+                longDescription: "The Tech Innovation Workshop is a full-day event featuring keynote speakers, panel discussions, and interactive sessions on emerging technologies. Topics include artificial intelligence, blockchain, virtual reality, and sustainable tech solutions. Participants will have opportunities to network with industry professionals and gain practical skills through hands-on activities. Perfect for students, professionals, and tech enthusiasts.",
+                date: "2023-06-18",
+                time: "9:00 AM - 5:00 PM",
+                location: "Innovation Hub",
+                address: "202 Tech Boulevard, Cityville",
+                category: "education",
+                image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7500, lng: -73.9700 },
+                ticketPrice: "$25",
+                organizer: "Cityville Tech Alliance",
+                contact: "workshop@citytech.example",
+                accessibility: "Wheelchair accessible, assistive listening devices available"
+            },
+            {
+                id: 6,
+                title: "Farmers Market",
+                description: "Shop for fresh, locally grown produce, handmade crafts, and artisanal food products from regional vendors.",
+                longDescription: "The weekly Farmers Market features over 30 local farmers and artisans selling fresh produce, baked goods, handcrafted items, and specialty foods. This community gathering offers live music, cooking demonstrations using seasonal ingredients, and activities for children. Support local agriculture and small businesses while enjoying the vibrant atmosphere of this beloved community tradition.",
+                date: "2023-07-08",
+                time: "8:00 AM - 1:00 PM",
+                location: "Town Square",
+                address: "303 Market Street, Cityville",
+                category: "community",
+                image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                coordinates: { lat: 40.7550, lng: -73.9650 },
+                ticketPrice: "Free",
+                organizer: "Cityville Farmers Association",
+                contact: "market@cityfarmers.example",
+                accessibility: "Wheelchair accessible pathways, accessible restrooms"
+            }
+        ];
+
+        // DOM Elements
+        const eventsGrid = document.getElementById('events-grid');
+        const filterForm = document.getElementById('filter-form');
+        const resetButton = document.getElementById('reset-button');
+        const eventModal = document.getElementById('event-modal');
+        const modalClose = document.getElementById('modal-close');
+        const modalContent = document.getElementById('modal-content');
+        const notification = document.getElementById('notification');
+        const loading = document.getElementById('loading');
+        const mapPlaceholder = document.getElementById('map-placeholder');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Display events
+            renderEvents(eventsData);
+            
+            // Initialize map (simulated)
+            initMap();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Check for reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.body.classList.add('no-animation');
+            }
+            
+            // Show notification
+            showNotification('Welcome to Local Events Showcase! Explore events in your area.', 'info');
+        });
+
+        // Render events to the grid
+        function renderEvents(events) {
+            // Show loading indicator
+            showLoading(true);
+            
+            // Clear existing events
+            eventsGrid.innerHTML = '';
+            
+            // Check if there are events to display
+            if (events.length === 0) {
+                eventsGrid.innerHTML = `
+                    <div class="no-events">
+                        <h3>No events found</h3>
+                        <p>Try adjusting your filters or check back later for new events.</p>
+                    </div>
+                `;
+                showLoading(false);
+                return;
+            }
+            
+            // Create event cards
+            events.forEach(event => {
+                const eventCard = document.createElement('article');
+                eventCard.className = 'event-card';
+                eventCard.setAttribute('data-event-id', event.id);
+                
+                // Format date for display
+                const eventDate = new Date(event.date);
+                const formattedDate = eventDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                eventCard.innerHTML = `
+                    <div class="event-image">
+                        <img src="${event.image}" alt="${event.title} - Event visual representation" loading="lazy">
+                        <span class="event-category">${getCategoryName(event.category)}</span>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-date">
+                            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <h3 class="event-title">${event.title}</h3>
+                        <div class="event-location">
+                            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>${event.location}</span>
+                        </div>
+                        <p class="event-description">${event.description}</p>
+                        <div class="event-actions">
+                            <button class="button view-details-btn" data-event-id="${event.id}" aria-label="View details for ${event.title}">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                eventsGrid.appendChild(eventCard);
+            });
+            
+            // Hide loading indicator after a short delay
+            setTimeout(() => {
+                showLoading(false);
+            }, 500);
+        }
+
+        // Filter events based on form inputs
+        function filterEvents() {
+            const category = document.getElementById('category').value;
+            const date = document.getElementById('date').value;
+            const location = document.getElementById('location').value.toLowerCase();
+            
+            // Filter the events
+            const filteredEvents = eventsData.filter(event => {
+                const categoryMatch = category === '' || event.category === category;
+                const dateMatch = date === '' || event.date === date;
+                const locationMatch = location === '' || 
+                    event.location.toLowerCase().includes(location) || 
+                    event.address.toLowerCase().includes(location);
+                
+                return categoryMatch && dateMatch && locationMatch;
+            });
+            
+            // Render the filtered events
+            renderEvents(filteredEvents);
+            
+            // Update map markers
+            updateMapMarkers(filteredEvents);
+            
+            // Show notification with filter results
+            showNotification(`Found ${filteredEvents.length} event${filteredEvents.length !== 1 ? 's' : ''} matching your criteria.`, 'info');
+        }
+
+        // Show event details in modal
+        function showEventDetails(eventId) {
+            // Find the event
+            const event = eventsData.find(e => e.id === parseInt(eventId));
+            
+            if (!event) {
+                showNotification('Event not found.', 'error');
+                return;
+            }
+            
+            // Format date for display
+            const eventDate = new Date(event.date);
+            const formattedDate = eventDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Populate modal content
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2 id="modal-title">${event.title}</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="${event.image}" alt="${event.title} event" loading="lazy">
+                    </div>
+                    <div class="modal-details">
+                        <div class="modal-info">
+                            <h3>Event Details</h3>
+                            <p>${event.longDescription}</p>
+                            <h4>Date & Time</h4>
+                            <p>${formattedDate}<br>${event.time}</p>
+                            <h4>Location</h4>
+                            <p>${event.location}<br>${event.address}</p>
+                            <h4>Category</h4>
+                            <p>${getCategoryName(event.category)}</p>
+                            <h4>Ticket Price</h4>
+                            <p>${event.ticketPrice}</p>
+                            <h4>Organizer</h4>
+                            <p>${event.organizer}</p>
+                            <h4>Contact</h4>
+                            <p><a href="mailto:${event.contact}">${event.contact}</a></p>
+                            <h4>Accessibility</h4>
+                            <p>${event.accessibility}</p>
+                        </div>
+                        <div class="modal-map" id="event-map-${event.id}" aria-label="Map showing location of ${event.location}">
+                            <p>Map loading...</p>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="button" id="register-btn">Register for Event</button>
+                        <button class="button button-secondary" id="share-btn">Share Event</button>
+                        <button class="button button-accent" id="save-btn">Save to Calendar</button>
+                    </div>
+                </div>
+            `;
+            
+            // Show the modal
+            eventModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Set focus to the modal
+            setTimeout(() => {
+                modalClose.focus();
+            }, 100);
+            
+            // Simulate loading the event map
+            setTimeout(() => {
+                const eventMapElement = document.getElementById(`event-map-${event.id}`);
+                if (eventMapElement) {
+                    eventMapElement.innerHTML = `
+                        <div style="background-color: #e9ecef; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem;">
+                            <div>
+                                <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p><strong>${event.location}</strong></p>
+                                <p>${event.address}</p>
+                                <p>Coordinates: ${event.coordinates.lat.toFixed(4)}, ${event.coordinates.lng.toFixed(4)}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }, 500);
+            
+            // Set up modal action buttons
+            setupModalButtons(event);
+        }
+
+        // Set up modal action buttons
+        function setupModalButtons(event) {
+            const registerBtn = document.getElementById('register-btn');
+            const shareBtn = document.getElementById('share-btn');
+            const saveBtn = document.getElementById('save-btn');
+            
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    showNotification(`Registration for "${event.title}" initiated. Check your email for confirmation.`, 'success');
+                });
+            }
+            
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    showNotification(`Share options for "${event.title}" are now available.`, 'info');
+                });
+            }
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    showNotification(`"${event.title}" has been saved to your calendar.`, 'success');
+                });
+            }
+        }
+
+        // Close the modal
+        function closeModal() {
+            eventModal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Return focus to the element that opened the modal
+            const lastClickedButton = document.querySelector('.view-details-btn[data-last-clicked="true"]');
+            if (lastClickedButton) {
+                lastClickedButton.focus();
+                lastClickedButton.removeAttribute('data-last-clicked');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            notification.classList.add('show');
+            
+            // Announce for screen readers
+            notification.setAttribute('aria-live', 'assertive');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                // Reset aria-live to polite after notification is hidden
+                setTimeout(() => {
+                    notification.setAttribute('aria-live', 'polite');
+                }, 300);
+            }, 5000);
+        }
+
+        // Show/hide loading indicator
+        function showLoading(show) {
+            if (show) {
+                loading.classList.add('active');
+                loading.setAttribute('aria-hidden', 'false');
+            } else {
+                loading.classList.remove('active');
+                loading.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        // Initialize map (simulated)
+        function initMap() {
+            // In a real application, this would initialize a map library like Google Maps or Leaflet
+            setTimeout(() => {
+                mapPlaceholder.innerHTML = `
+                    <div style="background-color: #e9ecef; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem;">
+                        <div>
+                            <h3>Interactive Map</h3>
+                            <p>This is a placeholder for the interactive map that would show event locations.</p>
+                            <p>In a production environment, this would be implemented with a mapping library like Google Maps or Leaflet.</p>
+                            <p>All ${eventsData.length} events are currently displayed on the map.</p>
+                        </div>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        // Update map markers (simulated)
+        function updateMapMarkers(events) {
+            // In a real application, this would update the markers on the map
+            setTimeout(() => {
+                mapPlaceholder.innerHTML = `
+                    <div style="background-color: #e9ecef; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem;">
+                        <div>
+                            <h3>Interactive Map</h3>
+                            <p>This is a placeholder for the interactive map that would show event locations.</p>
+                            <p>In a production environment, this would be implemented with a mapping library like Google Maps or Leaflet.</p>
+                            <p>${events.length} event${events.length !== 1 ? 's' : ''} currently displayed on the map.</p>
+                        </div>
+                    </div>
+                `;
+            }, 500);
+        }
+
+        // Get category name from category code
+        function getCategoryName(categoryCode) {
+            const categories = {
+                'music': 'Music',
+                'art': 'Art & Culture',
+                'food': 'Food & Drink',
+                'sports': 'Sports',
+                'community': 'Community',
+                'education': 'Education'
+            };
+            
+            return categories[categoryCode] || categoryCode;
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Filter form submission
+            filterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                filterEvents();
+            });
+            
+            // Reset button
+            resetButton.addEventListener('click', () => {
+                filterForm.reset();
+                renderEvents(eventsData);
+                updateMapMarkers(eventsData);
+                showNotification('Filters have been reset.', 'info');
+            });
+            
+            // Event delegation for view details buttons
+            eventsGrid.addEventListener('click', (e) => {
+                const viewDetailsBtn = e.target.closest('.view-details-btn');
+                if (viewDetailsBtn) {
+                    const eventId = viewDetailsBtn.getAttribute('data-event-id');
+                    
+                    // Mark this button as the last clicked for focus management
+                    document.querySelectorAll('.view-details-btn[data-last-clicked="true"]')
+                        .forEach(btn => btn.removeAttribute('data-last-clicked'));
+                    viewDetailsBtn.setAttribute('data-last-clicked', 'true');
+                    
+                    showEventDetails(eventId);
+                }
+            });
+            
+            // Close modal button
+            modalClose.addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside
+            eventModal.addEventListener('click', (e) => {
+                if (e.target === eventModal) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && eventModal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+            
+            // Trap focus in modal when open
+            eventModal.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && eventModal.classList.contains('active')) {
+                    const focusableElements = eventModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+                    
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            });
+            
+            // Reduced motion preference change
+            window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+                if (e.matches) {
+                    document.body.classList.add('no-animation');
+                } else {
+                    document.body.classList.remove('no-animation');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

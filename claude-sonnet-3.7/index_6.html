@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Explorer: Interactive Space Journey</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Enhanced Focus Styles for AAA Compliance */
+        :focus {
+            outline: 3px solid #4fc3f7;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px #000, 0 0 0 4px #4fc3f7;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001s !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0a1a;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Typography with AAA contrast (7:1 minimum) */
+        h1, h2, h3, h4, h5, h6 {
+            margin: 1.5em 0 0.75em;
+            line-height: 1.2;
+            font-weight: 700;
+            color: #ffffff; /* High contrast against dark background */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0.5em;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        p, li {
+            font-size: 1.125rem;
+            margin-bottom: 1.5em;
+            max-width: 80ch; /* AAA requirement: no more than 80 characters per line */
+            line-height: 1.8; /* AAA requirement: line spacing at least 1.5 times font size */
+        }
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #4fc3f7;
+            color: #000000;
+            padding: 8px;
+            z-index: 100;
+            font-weight: bold;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Container styles */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgba(10, 10, 30, 0.9);
+            padding: 1rem 0;
+            position: relative;
+            border-bottom: 2px solid #4fc3f7;
+        }
+
+        .site-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .site-title svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Navigation styles */
+        nav {
+            margin-top: 1rem;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-list li a {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            min-height: 44px;
+            min-width: 44px;
+            line-height: 44px;
+            text-align: center;
+        }
+
+        .nav-list li a:hover,
+        .nav-list li a:focus {
+            background-color: rgba(79, 195, 247, 0.2);
+            text-decoration: underline;
+        }
+
+        /* Main content area */
+        main {
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        /* Star background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(rgba(10, 10, 30, 0.7), rgba(10, 10, 30, 0.9));
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin: 0 auto 1.5rem;
+            max-width: 800px;
+        }
+
+        /* Constellation section */
+        .constellation-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: rgba(10, 10, 30, 0.7);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .constellation-map {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 2rem 0;
+            border: 2px solid #4fc3f7;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .constellation {
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .constellation-point {
+            width: 44px;
+            height: 44px;
+            background-color: rgba(79, 195, 247, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s, background-color 0.3s;
+            position: relative;
+        }
+
+        .constellation-point:hover,
+        .constellation-point:focus {
+            transform: scale(1.2);
+            background-color: rgba(79, 195, 247, 1);
+        }
+
+        .constellation-point::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000000;
+        }
+
+        .constellation-info {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(10, 10, 30, 0.95);
+            border: 2px solid #4fc3f7;
+            border-radius: 8px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.5);
+        }
+
+        .constellation-info.active {
+            display: block;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #4fc3f7;
+        }
+
+        /* Planet gallery */
+        .planet-gallery {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: rgba(10, 10, 30, 0.7);
+            border-radius: 8px;
+        }
+
+        .gallery-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+        }
+
+        .gallery-btn {
+            background-color: #4fc3f7;
+            color: #000000;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-btn:hover,
+        .gallery-btn:focus {
+            background-color: #81d4fa;
+        }
+
+        .gallery-btn:disabled {
+            background-color: #555555;
+            cursor: not-allowed;
+        }
+
+        .planets-container {
+            display: flex;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            margin: 0 auto;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .planet-card {
+            flex: 0 0 100%;
+            padding: 1rem;
+            transition: transform 0.3s;
+            scroll-snap-align: start;
+        }
+
+        .planet-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(20, 20, 50, 0.8);
+            border-radius: 8px;
+            padding: 2rem;
+            height: 100%;
+            border: 1px solid #4fc3f7;
+        }
+
+        .planet-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            object-fit: cover;
+            border: 3px solid #4fc3f7;
+        }
+
+        .planet-facts {
+            margin-top: 1.5rem;
+        }
+
+        .planet-facts ul {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+
+        .planet-facts li {
+            margin-bottom: 0.75rem;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: rgba(10, 10, 30, 0.9);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 2px solid #4fc3f7;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer-section {
+            flex: 1 1 300px;
+        }
+
+        .footer-section h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #4fc3f7;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #4fc3f7;
+            text-decoration: none;
+            display: inline-block;
+            min-height: 44px;
+            line-height: 44px;
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Accessibility features */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .constellation-map {
+                height: 400px;
+            }
+            
+            .planet-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        /* High contrast mode */
+        @media (forced-colors: active) {
+            .constellation-point,
+            .gallery-btn,
+            .nav-list li a,
+            .footer-links a {
+                forced-color-adjust: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Star background (decorative) -->
+    <div class="stars" aria-hidden="true"></div>
+
+    <header>
+        <div class="container">
+            <div class="site-title">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="40" height="40">
+                    <circle cx="12" cy="12" r="10" fill="#4fc3f7" />
+                    <circle cx="12" cy="12" r="6" fill="#0a0a1a" />
+                    <circle cx="12" cy="12" r="2" fill="#4fc3f7" />
+                </svg>
+                <h1>Cosmic Explorer</h1>
+            </div>
+            
+            <nav aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li><a href="#main-content">Home</a></li>
+                    <li><a href="#constellations">Constellations</a></li>
+                    <li><a href="#planets">Planets</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero">
+            <div class="container">
+                <h2>Explore the Wonders of Our Universe</h2>
+                <p>Welcome to Cosmic Explorer, your interactive guide to the stars, planets, and constellations that make up our fascinating universe. Click on constellations to learn more about them and browse through our planet gallery to discover interesting facts about our solar system.</p>
+            </div>
+        </section>
+
+        <section id="constellations" class="constellation-section">
+            <div class="container">
+                <h2>Interactive Constellation Map</h2>
+                <p>Explore the night sky by clicking on the constellations below. Each constellation has its own unique story and significance in astronomy. Use keyboard navigation (Tab key) to move between constellations and press Enter to learn more.</p>
+                
+                <div class="constellation-map" aria-label="Interactive constellation map with clickable points">
+                    <!-- Constellation points will be added by JavaScript -->
+                </div>
+
+                <!-- Constellation information modals -->
+                <div id="orion-info" class="constellation-info" role="dialog" aria-labelledby="orion-title" aria-hidden="true">
+                    <button class="close-btn" aria-label="Close information">×</button>
+                    <h3 id="orion-title">Orion (The Hunter)</h3>
+                    <p>Orion is one of the most recognizable constellations in the night sky. Named after a hunter in Greek mythology, it contains the bright stars Betelgeuse and Rigel, as well as the famous Orion's Belt - three stars in a straight line.</p>
+                    <p>Orion is visible throughout the world and is one of the most prominent and recognizable constellations in the night sky. It was named after Orion, a hunter in Greek mythology.</p>
+                    <p>Key features include:</p>
+                    <ul>
+                        <li>Betelgeuse - a red supergiant star marking Orion's shoulder</li>
+                        <li>Rigel - a blue-white supergiant marking the hunter's foot</li>
+                        <li>Orion's Belt - three bright stars in a straight line</li>
+                        <li>Orion Nebula - a diffuse nebula situated in Orion's sword</li>
+                    </ul>
+                </div>
+
+                <div id="ursa-major-info" class="constellation-info" role="dialog" aria-labelledby="ursa-major-title" aria-hidden="true">
+                    <button class="close-btn" aria-label="Close information">×</button>
+                    <h3 id="ursa-major-title">Ursa Major (The Great Bear)</h3>
+                    <p>Ursa Major, also known as the Great Bear, is one of the most famous constellations in the northern sky. It contains the asterism known as the Big Dipper or the Plough, which is used to locate the North Star (Polaris).</p>
+                    <p>Ursa Major is the third largest constellation in the sky and has been recognized as a bear by many different cultures throughout history.</p>
+                    <p>Key features include:</p>
+                    <ul>
+                        <li>The Big Dipper - a prominent asterism of seven bright stars</li>
+                        <li>Dubhe and Merak - the "pointer stars" that help locate Polaris</li>
+                        <li>Mizar and Alcor - a famous double star visible to the naked eye</li>
+                        <li>Several galaxies including M81 and M82</li>
+                    </ul>
+                </div>
+
+                <div id="cassiopeia-info" class="constellation-info" role="dialog" aria-labelledby="cassiopeia-title" aria-hidden="true">
+                    <button class="close-btn" aria-label="Close information">×</button>
+                    <h3 id="cassiopeia-title">Cassiopeia (The Queen)</h3>
+                    <p>Cassiopeia is a prominent constellation in the northern sky, named after the vain queen in Greek mythology. It is easily recognizable due to its distinctive W or M shape formed by five bright stars.</p>
+                    <p>Cassiopeia is circumpolar in most of the northern hemisphere, meaning it never sets below the horizon for most northern observers.</p>
+                    <p>Key features include:</p>
+                    <ul>
+                        <li>The distinctive W or M shape formed by five bright stars</li>
+                        <li>Several open star clusters including M52 and NGC 7789</li>
+                        <li>The Cassiopeia A supernova remnant - the strongest radio source in the sky outside our solar system</li>
+                        <li>Located in the Milky Way, it contains many rich star fields</li>
+                    </ul>
+                </div>
+
+                <div id="cygnus-info" class="constellation-info" role="dialog" aria-labelledby="cygnus-title" aria-hidden="true">
+                    <button class="close-btn" aria-label="Close information">×</button>
+                    <h3 id="cygnus-title">Cygnus (The Swan)</h3>
+                    <p>Cygnus is a prominent constellation in the northern sky, also known as the Northern Cross. It represents a swan flying along the Milky Way and contains the bright star Deneb, which forms part of the Summer Triangle.</p>
+                    <p>Cygnus lies along the path of the Milky Way and contains many interesting deep-sky objects.</p>
+                    <p>Key features include:</p>
+                    <ul>
+                        <li>Deneb - one of the brightest stars in the night sky and part of the Summer Triangle</li>
+                        <li>Albireo - a beautiful double star with contrasting colors (blue and gold)</li>
+                        <li>The Northern Cross - an asterism formed by the brightest stars</li>
+                        <li>The Cygnus Loop - a large supernova remnant containing the Veil Nebula</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="planets" class="planet-gallery">
+            <div class="container">
+                <h2>Planet Gallery</h2>
+                <p>Explore the planets of our solar system. Use the navigation buttons to scroll through the gallery or use keyboard navigation with the Tab key and arrow keys.</p>
+                
+                <div class="gallery-controls">
+                    <button id="prev-planet" class="gallery-btn" aria-label="Previous planet" disabled>
+                        <span aria-hidden="true">←</span> Previous
+                    </button>
+                    <button id="next-planet" class="gallery-btn" aria-label="Next planet">
+                        Next <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+                
+                <div class="planets-container" aria-live="polite">
+                    <article class="planet-card" id="mercury">
+                        <div class="planet-content">
+                            <h3>Mercury</h3>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%23a5a5a5' /%3E%3Ccircle cx='70' cy='80' r='20' fill='%23808080' /%3E%3Ccircle cx='120' cy='60' r='15' fill='%23808080' /%3E%3Ccircle cx='130' cy='130' r='25' fill='%23808080' /%3E%3C/svg%3E" 
+                                alt="Illustration of Mercury, a small gray planet with a cratered surface" 
+                                class="planet-image">
+                            <div class="planet-facts">
+                                <h4>Fun Facts About Mercury</h4>
+                                <ul>
+                                    <li>Mercury is the smallest planet in our solar system and the closest to the Sun.</li>
+                                    <li>A day on Mercury (one rotation) is equivalent to 59 Earth days.</li>
+                                    <li>Mercury has no atmosphere, which means it has extreme temperature variations from day to night.</li>
+                                    <li>Despite being closest to the Sun, Venus is actually hotter than Mercury due to its thick atmosphere.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="planet-card" id="venus">
+                        <div class="planet-content">
+                            <h3>Venus</h3>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%23e6c171' /%3E%3Cpath d='M50,100 Q100,50 150,100 Q100,150 50,100' fill='%23d4af37' fill-opacity='0.7' /%3E%3Cpath d='M30,80 Q100,20 170,80 Q100,140 30,80' fill='%23d4af37' fill-opacity='0.5' /%3E%3C/svg%3E" 
+                                alt="Illustration of Venus, a yellowish planet with swirling cloud patterns" 
+                                class="planet-image">
+                            <div class="planet-facts">
+                                <h4>Fun Facts About Venus</h4>
+                                <ul>
+                                    <li>Venus is often called Earth's "sister planet" due to their similar size and proximity.</li>
+                                    <li>It rotates in the opposite direction to most planets, meaning the Sun rises in the west and sets in the east.</li>
+                                    <li>Venus has the longest day of any planet, lasting about 243 Earth days.</li>
+                                    <li>With surface temperatures around 900°F (475°C), Venus is the hottest planet in our solar system.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="planet-card" id="earth">
+                        <div class="planet-content">
+                            <h3>Earth</h3>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%231a75ff' /%3E%3Cpath d='M40,70 Q70,40 100,70 Q130,100 160,70 Q130,130 100,160 Q70,130 40,70' fill='%2300b300' /%3E%3Cpath d='M60,40 Q100,60 140,40 Q100,80 60,40' fill='%2300b300' /%3E%3Ccircle cx='160' cy='60' r='15' fill='%23ffffff' fill-opacity='0.8' /%3E%3C/svg%3E" 
+                                alt="Illustration of Earth, showing blue oceans, green continents, and white cloud formations" 
+                                class="planet-image">
+                            <div class="planet-facts">
+                                <h4>Fun Facts About Earth</h4>
+                                <ul>
+                                    <li>Earth is the only planet known to support life and the only one with liquid water on its surface.</li>
+                                    <li>Our planet's atmosphere is composed of 78% nitrogen, 21% oxygen, and 1% other gases.</li>
+                                    <li>Earth's magnetic field protects us from harmful solar radiation.</li>
+                                    <li>About 71% of Earth's surface is covered by water, mostly in oceans.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="planet-card" id="mars">
+                        <div class="planet-content">
+                            <h3>Mars</h3>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%23c1440e' /%3E%3Ccircle cx='70' cy='80' r='20' fill='%23a62f00' /%3E%3Ccircle cx='130' cy='60' r='15' fill='%23a62f00' /%3E%3Cellipse cx='100' cy='30' rx='30' ry='15' fill='%23ffffff' fill-opacity='0.8' /%3E%3Cellipse cx='100' cy='170' rx='30' ry='15' fill='%23ffffff' fill-opacity='0.8' /%3E%3C/svg%3E" 
+                                alt="Illustration of Mars, the red planet, with polar ice caps and darker surface features" 
+                                class="planet-image">
+                            <div class="planet-facts">
+                                <h4>Fun Facts About Mars</h4>
+                                <ul>
+                                    <li>Mars is known as the "Red Planet" due to iron oxide (rust) on its surface.</li>
+                                    <li>It has the largest volcano in the solar system, Olympus Mons, which is three times taller than Mount Everest.</li>
+                                    <li>Mars has two small moons, Phobos and Deimos, which may be captured asteroids.</li>
+                                    <li>Evidence suggests Mars once had flowing water and may have been habitable in the past.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="planet-card" id="jupiter">
+                        <div class="planet-content">
+                            <h3>Jupiter</h3>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%23e0a95e' /%3E%3Cpath d='M10,100 L190,100' stroke='%23b8732e' stroke-width='20' /%3E%3Cpath d='M10,70 L190,70' stroke='%23b8732e' stroke-width='15' /%3E%3Cpath d='M10,130 L190,130' stroke='%23b8732e' stroke-width='15' /%3E%3Ccircle cx='150' cy='80' r='25' fill='%23cc3333' /%3E%3C/svg%3E" 
+                                alt="Illustration of Jupiter, showing its distinctive bands and the Great Red Spot" 
+                                class="planet-image">
+                            <div class="planet-facts">
+                                <h4>Fun Facts About Jupiter</h4>
+                                <ul>
+                                    <li>Jupiter is the largest planet in our solar system, with a mass more than twice that of all other planets combined.</li>
+                                    <li>The Great Red Spot is a giant storm that has been raging for at least 400 years.</li>
+                                    <li>Jupiter has at least 79 moons, including the four large Galilean moons: Io, Europa, Ganymede, and Callisto.</li>
+                                    <li>If Jupiter had been about 80 times more massive, it would have become a star rather than a planet.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="container">
+            <h2>About Cosmic Explorer</h2>
+            <p>Cosmic Explorer is an educational resource designed to make astronomy accessible and engaging for everyone. Our interactive tools help you explore the wonders of space from the comfort of your own device.</p>
+            <p>Whether you're a student, teacher, or simply curious about the universe, we hope our content inspires you to learn more about the cosmos and our place within it.</p>
+        </section>
+
+        <section id="contact" class="container">
+            <h2>Contact Us</h2>
+            <p>Have questions, suggestions, or feedback? We'd love to hear from you! Fill out the form below to get in touch with our team.</p>
+            
+            <form action="#" method="post" aria-label="Contact form">
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required aria-required="true">
+                </div>
+                
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required aria-required="true" autocomplete="email">
+                </div>
+                
+                <div>
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required aria-required="true"></textarea>
+                </div>
+                
+                <button type="submit" class="gallery-btn">Send Message</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="#main-content">Home</a></li>
+                        <li><a href="#constellations">Constellations</a></li>
+                        <li><a href="#planets">Planets</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" aria-label="Learn more about astronomy basics">Astronomy Basics</a></li>
+                        <li><a href="#" aria-label="View our space image gallery">Space Gallery</a></li>
+                        <li><a href="#" aria-label="Read our latest astronomy news">Latest Discoveries</a></li>
+                        <li><a href="#" aria-label="Access educational resources">Educational Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Accessibility</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" aria-label="View our accessibility statement">Accessibility Statement</a></li>
+                        <li><a href="#" aria-label="View keyboard shortcuts">Keyboard Shortcuts</a></li>
+                        <li><a href="#" aria-label="Contact us about accessibility issues">Report Accessibility Issue</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Cosmic Explorer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal overlay for constellation info -->
+    <div class="modal-overlay" id="modal-overlay" aria-hidden="true">
+        <!-- Content will be cloned here by JavaScript -->
+    </div>
+
+    <script>
+        // Create stars in the background (decorative)
+        document.addEventListener('DOMContentLoaded', function() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 200;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random size between 1px and 3px
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random opacity for twinkling effect
+                star.style.opacity = Math.random();
+                
+                starsContainer.appendChild(star);
+            }
+
+            // Create constellation points
+            const constellationMap = document.querySelector('.constellation-map');
+            const constellations = [
+                { id: 'orion', name: 'Orion', x: 25, y: 30 },
+                { id: 'ursa-major', name: 'Ursa Major', x: 70, y: 20 },
+                { id: 'cassiopeia', name: 'Cassiopeia', x: 40, y: 70 },
+                { id: 'cygnus', name: 'Cygnus', x: 75, y: 60 }
+            ];
+            
+            constellations.forEach(constellation => {
+                const point = document.createElement('div');
+                point.classList.add('constellation');
+                point.style.left = `${constellation.x}%`;
+                point.style.top = `${constellation.y}%`;
+                
+                const button = document.createElement('button');
+                button.classList.add('constellation-point');
+                button.setAttribute('data-name', constellation.name);
+                button.setAttribute('data-target', `${constellation.id}-info`);
+                button.setAttribute('aria-label', `Learn about ${constellation.name} constellation`);
+                
+                point.appendChild(button);
+                constellationMap.appendChild(point);
+            });
+
+            // Constellation info modal functionality
+            const constellationPoints = document.querySelectorAll('.constellation-point');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const closeButtons = document.querySelectorAll('.close-btn');
+            
+            constellationPoints.forEach(point => {
+                point.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const infoElement = document.getElementById(targetId);
+                    
+                    if (infoElement) {
+                        // Clone the info element to the modal overlay
+                        const clone = infoElement.cloneNode(true);
+                        modalOverlay.innerHTML = '';
+                        modalOverlay.appendChild(clone);
+                        
+                        // Show the modal
+                        modalOverlay.classList.add('active');
+                        modalOverlay.setAttribute('aria-hidden', 'false');
+                        
+                        // Set focus to the close button
+                        const closeBtn = modalOverlay.querySelector('.close-btn');
+                        if (closeBtn) {
+                            closeBtn.focus();
+                            
+                            // Add event listener to the cloned close button
+                            closeBtn.addEventListener('click', closeModal);
+                        }
+                        
+                        // Trap focus in modal
+                        trapFocus(modalOverlay);
+                    }
+                });
+            });
+            
+            // Close modal when clicking close button
+            closeButtons.forEach(button => {
+                button.addEventListener('click', closeModal);
+            });
+            
+            // Close modal when pressing Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal when clicking outside the content
+            modalOverlay.addEventListener('click', function(event) {
+                if (event.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+            
+            function closeModal() {
+                const activeModal = modalOverlay.querySelector('.constellation-info');
+                if (activeModal) {
+                    modalOverlay.classList.remove('active');
+                    modalOverlay.setAttribute('aria-hidden', 'true');
+                    
+                    // Return focus to the constellation point that was clicked
+                    const targetId = activeModal.id;
+                    const trigger = document.querySelector(`[data-target="${targetId}"]`);
+                    if (trigger) {
+                        trigger.focus();
+                    }
+                }
+            }
+            
+            // Planet gallery navigation
+            const planetsContainer = document.querySelector('.planets-container');
+            const planetCards = document.querySelectorAll('.planet-card');
+            const prevButton = document.getElementById('prev-planet');
+            const nextButton = document.getElementById('next-planet');
+            let currentIndex = 0;
+            
+            // Update button states
+            function updateButtons() {
+                prevButton.disabled = currentIndex === 0;
+                nextButton.disabled = currentIndex === planetCards.length - 1;
+            }
+            
+            // Scroll to a specific planet
+            function scrollToPlanet(index) {
+                if (index >= 0 && index < planetCards.length) {
+                    currentIndex = index;
+                    planetCards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+                    updateButtons();
+                    
+                    // Announce to screen readers which planet is now displayed
+                    const planetName = planetCards[index].querySelector('h3').textContent;
+                    const liveRegion = document.createElement('div');
+                    liveRegion.setAttribute('aria-live', 'polite');
+                    liveRegion.classList.add('visually-hidden');
+                    liveRegion.textContent = `Now displaying: ${planetName}`;
+                    document.body.appendChild(liveRegion);
+                    
+                    // Remove the live region after announcement
+                    setTimeout(() => {
+                        document.body.removeChild(liveRegion);
+                    }, 1000);
+                }
+            }
+            
+            // Button event listeners
+            prevButton.addEventListener('click', () => {
+                scrollToPlanet(currentIndex - 1);
+            });
+            
+            nextButton.addEventListener('click', () => {
+                scrollToPlanet(currentIndex + 1);
+            });
+            
+            // Keyboard navigation for planet gallery
+            planetsContainer.addEventListener('keydown', function(event) {
+                if (event.key === 'ArrowLeft') {
+                    scrollToPlanet(currentIndex - 1);
+                    event.preventDefault();
+                } else if (event.key === 'ArrowRight') {
+                    scrollToPlanet(currentIndex + 1);
+                    event.preventDefault();
+                }
+            });
+            
+            // Initialize button states
+            updateButtons();
+            
+            // Form validation with accessible error messages
+            const contactForm = document.querySelector('form');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    let isValid = true;
+                    const formElements = contactForm.elements;
+                    
+                    // Remove any existing error messages
+                    const existingErrors = contactForm.querySelectorAll('.error-message');
+                    existingErrors.forEach(error => error.remove());
+                    
+                    // Reset aria-invalid attributes
+                    for (let i = 0; i < formElements.length; i++) {
+                        if (formElements[i].hasAttribute('aria-invalid')) {
+                            formElements[i].setAttribute('aria-invalid', 'false');
+                            formElements[i].removeAttribute('aria-describedby');
+                        }
+                    }
+                    
+                    // Validate each required field
+                    for (let i = 0; i < formElements.length; i++) {
+                        const element = formElements[i];
+                        
+                        if (element.hasAttribute('required') && !element.value.trim()) {
+                            isValid = false;
+                            
+                            // Create error message
+                            const errorId = `error-${element.id}`;
+                            const errorMessage = document.createElement('div');
+                            errorMessage.id = errorId;
+                            errorMessage.classList.add('error-message');
+                            errorMessage.style.color = '#ff6b6b';
+                            errorMessage.style.marginTop = '0.5rem';
+                            errorMessage.textContent = `Please enter your ${element.name}.`;
+                            
+                            // Set ARIA attributes
+                            element.setAttribute('aria-invalid', 'true');
+                            element.setAttribute('aria-describedby', errorId);
+                            
+                            // Insert error message after the input
+                            element.parentNode.appendChild(errorMessage);
+                        }
+                        
+                        // Additional validation for email
+                        if (element.type === 'email' && element.value.trim()) {
+                            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (!emailPattern.test(element.value)) {
+                                isValid = false;
+                                
+                                // Create error message
+                                const errorId = `error-${element.id}`;
+                                const errorMessage = document.createElement('div');
+                                errorMessage.id = errorId;
+                                errorMessage.classList.add('error-message');
+                                errorMessage.style.color = '#ff6b6b';
+                                errorMessage.style.marginTop = '0.5rem';
+                                errorMessage.textContent = 'Please enter a valid email address.';
+                                
+                                // Set ARIA attributes
+                                element.setAttribute('aria-invalid', 'true');
+                                element.setAttribute('aria-describedby', errorId);
+                                
+                                // Insert error message after the input
+                                element.parentNode.appendChild(errorMessage);
+                            }
+                        }
+                    }
+                    
+                    if (isValid) {
+                        // Show success message
+                        const successMessage = document.createElement('div');
+                        successMessage.setAttribute('role', 'alert');
+                        successMessage.style.backgroundColor = '#4caf50';
+                        successMessage.style.color = '#ffffff';
+                        successMessage.style.padding = '1rem';
+                        successMessage.style.borderRadius = '4px';
+                        successMessage.style.marginTop = '1rem';
+                        successMessage.textContent = 'Thank you for your message! We will get back to you soon.';
+                        
+                        contactForm.appendChild(successMessage);
+                        
+                        // Reset form
+                        contactForm.reset();
+                        
+                        // Remove success message after 5 seconds
+                        setTimeout(() => {
+                            contactForm.removeChild(successMessage);
+                        }, 5000);
+                    }
+                });
+            }
+            
+            // Function to trap focus within a modal
+            function trapFocus(element) {
+                const focusableElements = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstFocusableElement = focusableElements[0];
+                const lastFocusableElement = focusableElements[focusableElements.length - 1];
+                
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        // If Shift+Tab and focus is on first element, move to last element
+                        if (e.shiftKey && document.activeElement === firstFocusableElement) {
+                            lastFocusableElement.focus();
+                            e.preventDefault();
+                        }
+                        // If Tab and focus is on last element, move to first element
+                        else if (!e.shiftKey && document.activeElement === lastFocusableElement) {
+                            firstFocusableElement.focus();
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+            
+            // Add twinkling animation to stars
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                // Only apply animation if user hasn't requested reduced motion
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    setInterval(() => {
+                        star.style.opacity = Math.random();
+                    }, Math.random() * 5000 + 1000);
+                }
+            });
+            
+            // Add styles to form elements for better accessibility
+            const formInputs = document.querySelectorAll('input, textarea');
+            formInputs.forEach(input => {
+                input.style.display = 'block';
+                input.style.width = '100%';
+                input.style.padding = '0.75rem';
+                input.style.marginTop = '0.5rem';
+                input.style.marginBottom = '1.5rem';
+                input.style.borderRadius = '4px';
+                input.style.border = '2px solid #4fc3f7';
+                input.style.backgroundColor = 'rgba(10, 10, 30, 0.8)';
+                input.style.color = '#ffffff';
+                input.style.fontSize = '1rem';
+            });
+            
+            // Style form labels
+            const formLabels = document.querySelectorAll('label');
+            formLabels.forEach(label => {
+                label.style.fontWeight = 'bold';
+                label.style.fontSize = '1.1rem';
+            });
+        });
+    </script>
+</body>
+</html>

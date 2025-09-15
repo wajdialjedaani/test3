@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Accessible Calorie and Fitness Tracking</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --warning-color: #dc2626;
+            --warning-dark: #b91c1c;
+            --text-color: #0f172a;
+            --text-light: #334155;
+            --background-color: #f8fafc;
+            --card-color: #ffffff;
+            --border-color: #cbd5e1;
+            --focus-color: #2563eb;
+            --focus-outline: 3px solid #93c5fd;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            /* Enhanced readability for AAA compliance */
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+            word-spacing: 0.05em;
+        }
+
+        /* Enhanced Focus Styles for AAA compliance */
+        :focus {
+            outline: var(--focus-outline);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: var(--focus-outline);
+            outline-offset: 2px;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            font-weight: bold;
+            text-decoration: none;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography with enhanced readability */
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 0;
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.875rem;
+            margin-top: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            max-width: 80ch; /* For optimal readability */
+            line-height: 1.6; /* AAA compliance for line spacing */
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            background-color: var(--card-color);
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .logo svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover, nav a:focus {
+            background-color: rgba(37, 99, 235, 0.1);
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 1rem 0 3rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0;
+        }
+
+        footer {
+            background-color: var(--card-color);
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        /* Forms with enhanced accessibility */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--warning-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-color);
+            background-color: var(--card-color);
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--focus-color);
+            outline: var(--focus-outline);
+        }
+
+        input[type="checkbox"], input[type="radio"] {
+            width: auto;
+            margin-right: 0.5rem;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        .checkbox-group, .radio-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .error-message {
+            display: block;
+            color: var(--warning-color);
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Buttons with enhanced accessibility */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover, .btn-outline:focus {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-icon svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        /* Tables with enhanced accessibility */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: rgba(37, 99, 235, 0.05);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        tr:hover {
+            background-color: rgba(37, 99, 235, 0.02);
+        }
+
+        caption {
+            font-weight: 600;
+            padding: 0.75rem;
+            text-align: left;
+            caption-side: top;
+        }
+
+        /* Tabs with enhanced accessibility */
+        .tabs {
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-list {
+            display: flex;
+            list-style: none;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tab-list::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tab-list::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+            min-width: 44px;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab[aria-selected="true"] {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab[aria-selected="true"]::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .tab-panel[aria-hidden="false"] {
+            display: block;
+        }
+
+        /* Modal with enhanced accessibility */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover, .modal-close:focus {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Utility classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-5 {
+            margin-bottom: 2rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .mt-5 {
+            margin-top: 2rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 1rem;
+        }
+
+        .gap-4 {
+            gap: 1.5rem;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        /* App-specific styles */
+        .summary-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .calorie-positive {
+            color: var(--secondary-color);
+        }
+
+        .calorie-negative {
+            color: var(--warning-color);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .food-list, .activity-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .food-item, .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .food-item:last-child, .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .food-details, .activity-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-name, .activity-name {
+            font-weight: 500;
+        }
+
+        .food-calories, .activity-calories {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .food-actions, .activity-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            border-radius: 4px;
+        }
+
+        .action-btn:hover, .action-btn:focus {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-color);
+        }
+
+        .action-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .delete-btn {
+            color: var(--warning-color);
+        }
+
+        .delete-btn:hover, .delete-btn:focus {
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--warning-dark);
+        }
+
+        .edit-btn {
+            color: var(--primary-color);
+        }
+
+        .edit-btn:hover, .edit-btn:focus {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .goal-card {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            nav a {
+                display: block;
+                padding: 0.75rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo" aria-label="NutriTrack Home">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+                        <path d="M7 2v20"></path>
+                        <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+                    </svg>
+                    <span class="logo-text">NutriTrack</span>
+                </a>
+                <nav aria-label="Main navigation">
+                    <ul>
+                        <li><a href="#" aria-current="page">Dashboard</a></li>
+                        <li><a href="#">Food Log</a></li>
+                        <li><a href="#">Activity Log</a></li>
+                        <li><a href="#">Goals</a></li>
+                        <li><a href="#">Reports</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="container">
+            <h1>Your Calorie Tracker Dashboard</h1>
+            <p>Track your daily nutrition and fitness goals. Add meals and activities to monitor your progress throughout the day.</p>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="card-title">Today's Summary</h2>
+                    <span id="current-date" aria-live="polite">June 15, 2023</span>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-item">
+                        <span class="summary-label">Calories Consumed</span>
+                        <span class="summary-value" id="calories-consumed">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Calories Burned</span>
+                        <span class="summary-value" id="calories-burned">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Net Calories</span>
+                        <span class="summary-value" id="net-calories">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Daily Goal</span>
+                        <span class="summary-value" id="daily-goal">2000</span>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span>Progress toward goal</span>
+                            <span id="goal-percentage">0%</span>
+                        </div>
+                        <div class="progress-container" aria-label="Calorie goal progress">
+                            <div class="progress-bar" id="goal-progress" style="width: 0%;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Calorie tracking sections">
+                <ul class="tab-list">
+                    <li><button id="tab-food" class="tab" role="tab" aria-selected="true" aria-controls="panel-food">Food Log</button></li>
+                    <li><button id="tab-activity" class="tab" role="tab" aria-selected="false" aria-controls="panel-activity">Activity Log</button></li>
+                    <li><button id="tab-goals" class="tab" role="tab" aria-selected="false" aria-controls="panel-goals">Goals & Settings</button></li>
+                </ul>
+
+                <div id="panel-food" class="tab-panel" role="tabpanel" aria-labelledby="tab-food" aria-hidden="false">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2>Today's Food Log</h2>
+                        <button id="add-food-btn" class="btn btn-primary btn-icon" aria-label="Add food entry">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+                            Add Food
+                        </button>
+                    </div>
+
+                    <div class="card mb-4">
+                        <ul class="food-list" id="food-list" aria-label="List of food entries">
+                            <li class="food-item" id="no-food-message">
+                                <p>No food entries yet. Add your first meal!</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="panel-activity" class="tab-panel" role="tabpanel" aria-labelledby="tab-activity" aria-hidden="true">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2>Today's Activity Log</h2>
+                        <button id="add-activity-btn" class="btn btn-secondary btn-icon" aria-label="Add activity entry">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+                            Add Activity
+                        </button>
+                    </div>
+
+                    <div class="card mb-4">
+                        <ul class="activity-list" id="activity-list" aria-label="List of activity entries">
+                            <li class="activity-item" id="no-activity-message">
+                                <p>No activity entries yet. Add your first workout!</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="panel-goals" class="tab-panel" role="tabpanel" aria-labelledby="tab-goals" aria-hidden="true">
+                    <h2>Your Fitness Goals</h2>
+                    <p>Set and manage your nutrition and fitness goals.</p>
+
+                    <div class="card goal-card mb-4">
+                        <h3>Daily Calorie Goal</h3>
+                        <form id="calorie-goal-form" class="mt-3">
+                            <div class="form-group">
+                                <label for="daily-calorie-goal" class="required-field">Daily Calorie Target</label>
+                                <input 
+                                    type="number" 
+                                    id="daily-calorie-goal" 
+                                    name="daily-calorie-goal" 
+                                    min="1000" 
+                                    max="5000" 
+                                    step="50" 
+                                    value="2000" 
+                                    required 
+                                    aria-required="true"
+                                    aria-describedby="calorie-goal-help"
+                                >
+                                <span id="calorie-goal-help" class="help-text">Set your daily calorie target between 1000-5000 calories</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="weight-goal">Weight Goal</label>
+                                <select id="weight-goal" name="weight-goal">
+                                    <option value="lose">Lose Weight</option>
+                                    <option value="maintain" selected>Maintain Weight</option>
+                                    <option value="gain">Gain Weight</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="activity-level">Activity Level</label>
+                                <select id="activity-level" name="activity-level">
+                                    <option value="sedentary">Sedentary (little or no exercise)</option>
+                                    <option value="light" selected>Lightly active (light exercise 1-3 days/week)</option>
+                                    <option value="moderate">Moderately active (moderate exercise 3-5 days/week)</option>
+                                    <option value="active">Active (hard exercise 6-7 days/week)</option>
+                                    <option value="very-active">Very active (very hard exercise & physical job)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Goals</button>
+                        </form>
+                    </div>
+
+                    <div class="card mb-4">
+                        <h3>Personal Information</h3>
+                        <form id="personal-info-form" class="mt-3">
+                            <div class="form-group">
+                                <label for="age">Age</label>
+                                <input 
+                                    type="number" 
+                                    id="age" 
+                                    name="age" 
+                                    min="13" 
+                                    max="120" 
+                                    autocomplete="age"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" autocomplete="sex">
+                                    <option value="">Prefer not to say</option>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="non-binary">Non-binary</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (cm)</label>
+                                <input 
+                                    type="number" 
+                                    id="height" 
+                                    name="height" 
+                                    min="100" 
+                                    max="250"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="weight">Weight (kg)</label>
+                                <input 
+                                    type="number" 
+                                    id="weight" 
+                                    name="weight" 
+                                    min="30" 
+                                    max="300" 
+                                    step="0.1"
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Information</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Food Entry Modal -->
+    <div id="food-modal" class="modal" role="dialog" aria-labelledby="food-modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="food-modal-title" class="modal-title">Add Food Entry</h2>
+                <button class="modal-close" aria-label="Close modal" id="close-food-modal">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="food-form">
+                    <div class="form-group">
+                        <label for="food-name" class="required-field">Food Name</label>
+                        <input 
+                            type="text" 
+                            id="food-name" 
+                            name="food-name" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="food-name-help"
+                        >
+                        <span id="food-name-help" class="help-text">Enter the name of the food item</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="food-calories" class="required-field">Calories</label>
+                        <input 
+                            type="number" 
+                            id="food-calories" 
+                            name="food-calories" 
+                            min="0" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="food-calories-help"
+                        >
+                        <span id="food-calories-help" class="help-text">Enter the number of calories</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="food-serving">Serving Size</label>
+                        <input 
+                            type="text" 
+                            id="food-serving" 
+                            name="food-serving" 
+                            placeholder="e.g., 1 cup, 100g"
+                            aria-describedby="food-serving-help"
+                        >
+                        <span id="food-serving-help" class="help-text">Optional: Enter the serving size</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="meal-type">Meal Type</label>
+                        <select id="meal-type" name="meal-type">
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="snack">Snack</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="food-id" name="food-id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-food-btn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-food-btn">Save Food</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Entry Modal -->
+    <div id="activity-modal" class="modal" role="dialog" aria-labelledby="activity-modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="activity-modal-title" class="modal-title">Add Activity Entry</h2>
+                <button class="modal-close" aria-label="Close modal" id="close-activity-modal">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="activity-form">
+                    <div class="form-group">
+                        <label for="activity-name" class="required-field">Activity Name</label>
+                        <input 
+                            type="text" 
+                            id="activity-name" 
+                            name="activity-name" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="activity-name-help"
+                        >
+                        <span id="activity-name-help" class="help-text">Enter the name of the activity</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-calories" class="required-field">Calories Burned</label>
+                        <input 
+                            type="number" 
+                            id="activity-calories" 
+                            name="activity-calories" 
+                            min="0" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="activity-calories-help"
+                        >
+                        <span id="activity-calories-help" class="help-text">Enter the number of calories burned</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-duration" class="required-field">Duration (minutes)</label>
+                        <input 
+                            type="number" 
+                            id="activity-duration" 
+                            name="activity-duration" 
+                            min="1" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="activity-duration-help"
+                        >
+                        <span id="activity-duration-help" class="help-text">Enter the duration in minutes</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity-intensity">Intensity</label>
+                        <select id="activity-intensity" name="activity-intensity">
+                            <option value="low">Low</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="activity-id" name="activity-id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-activity-btn">Cancel</button>
+                <button type="button" class="btn btn-secondary" id="save-activity-btn">Save Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" role="dialog" aria-labelledby="delete-modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="delete-modal-title" class="modal-title">Confirm Deletion</h2>
+                <button class="modal-close" aria-label="Close modal" id="close-delete-modal">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="delete-message">Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+                <button type="button" class="btn btn-warning" id="confirm-delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h2>NutriTrack</h2>
+                    <p>Your personal nutrition and fitness tracking assistant.</p>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <nav aria-label="Footer navigation">
+                        <ul>
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">Food Database</a></li>
+                            <li><a href="#">Activity Calculator</a></li>
+                            <li><a href="#">Help & Support</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div>
+                    <h3>Contact Us</h3>
+                    <p>Have questions or feedback? <a href="mailto:support@nutritrack.com">Email our support team</a>.</p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p>&copy; 2023 NutriTrack. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize data
+            let foodEntries = [];
+            let activityEntries = [];
+            let dailyCalorieGoal = 2000;
+            let currentItemToDelete = null;
+
+            // Set current date
+            const today = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', dateOptions);
+
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update aria-selected state
+                    tabs.forEach(t => {
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    tab.setAttribute('aria-selected', 'true');
+
+                    // Show the selected panel
+                    const panelId = tab.getAttribute('aria-controls');
+                    tabPanels.forEach(panel => {
+                        panel.setAttribute('aria-hidden', 'true');
+                    });
+                    document.getElementById(panelId).setAttribute('aria-hidden', 'false');
+                });
+
+                // Keyboard navigation for tabs
+                tab.addEventListener('keydown', (e) => {
+                    const tabsArray = Array.from(tabs);
+                    const index = tabsArray.indexOf(tab);
+                    let nextTab;
+
+                    switch (e.key) {
+                        case 'ArrowRight':
+                            nextTab = tabsArray[(index + 1) % tabsArray.length];
+                            nextTab.focus();
+                            nextTab.click();
+                            e.preventDefault();
+                            break;
+                        case 'ArrowLeft':
+                            nextTab = tabsArray[(index - 1 + tabsArray.length) % tabsArray.length];
+                            nextTab.focus();
+                            nextTab.click();
+                            e.preventDefault();
+                            break;
+                        case 'Home':
+                            tabsArray[0].focus();
+                            tabsArray[0].click();
+                            e.preventDefault();
+                            break;
+                        case 'End':
+                            tabsArray[tabsArray.length - 1].focus();
+                            tabsArray[tabsArray.length - 1].click();
+                            e.preventDefault();
+                            break;
+                    }
+                });
+            });
+
+            // Modal functionality
+            const foodModal = document.getElementById('food-modal');
+            const activityModal = document.getElementById('activity-modal');
+            const deleteModal = document.getElementById('delete-modal');
+
+            // Food modal buttons
+            document.getElementById('add-food-btn').addEventListener('click', openFoodModal);
+            document.getElementById('close-food-modal').addEventListener('click', closeFoodModal);
+            document.getElementById('cancel-food-btn').addEventListener('click', closeFoodModal);
+            document.getElementById('save-food-btn').addEventListener('click', saveFood);
+
+            // Activity modal buttons
+            document.getElementById('add-activity-btn').addEventListener('click', openActivityModal);
+            document.getElementById('close-activity-modal').addEventListener('click', closeActivityModal);
+            document.getElementById('cancel-activity-btn').addEventListener('click', closeActivityModal);
+            document.getElementById('save-activity-btn').addEventListener('click', saveActivity);
+
+            // Delete modal buttons
+            document.getElementById('close-delete-modal').addEventListener('click', closeDeleteModal);
+            document.getElementById('cancel-delete-btn').addEventListener('click', closeDeleteModal);
+            document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
+
+            // Form submissions
+            document.getElementById('calorie-goal-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                dailyCalorieGoal = parseInt(document.getElementById('daily-calorie-goal').value);
+                document.getElementById('daily-goal').textContent = dailyCalorieGoal;
+                updateCalorieSummary();
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'alert alert-success';
+                successMessage.setAttribute('role', 'alert');
+                successMessage.textContent = 'Your goals have been updated successfully!';
+                
+                const form = this;
+                form.insertAdjacentElement('beforebegin', successMessage);
+                
+                // Remove message after 3 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 3000);
+            });
+
+            document.getElementById('personal-info-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'alert alert-success';
+                successMessage.setAttribute('role', 'alert');
+                successMessage.textContent = 'Your personal information has been saved!';
+                
+                const form = this;
+                form.insertAdjacentElement('beforebegin', successMessage);
+                
+                // Remove message after 3 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 3000);
+            });
+
+            // Modal functions
+            function openFoodModal() {
+                // Reset form
+                document.getElementById('food-form').reset();
+                document.getElementById('food-id').value = '';
+                document.getElementById('food-modal-title').textContent = 'Add Food Entry';
+                
+                // Open modal
+                foodModal.classList.add('is-active');
+                foodModal.setAttribute('aria-hidden', 'false');
+                
+                // Focus first input
+                document.getElementById('food-name').focus();
+                
+                // Trap focus in modal
+                trapFocus(foodModal);
+            }
+
+            function closeFoodModal() {
+                foodModal.classList.remove('is-active');
+                foodModal.setAttribute('aria-hidden', 'true');
+                
+                // Return focus to the button that opened the modal
+                document.getElementById('add-food-btn').focus();
+            }
+
+            function openActivityModal() {
+                // Reset form
+                document.getElementById('activity-form').reset();
+                document.getElementById('activity-id').value = '';
+                document.getElementById('activity-modal-title').textContent = 'Add Activity Entry';
+                
+                // Open modal
+                activityModal.classList.add('is-active');
+                activityModal.setAttribute('aria-hidden', 'false');
+                
+                // Focus first input
+                document.getElementById('activity-name').focus();
+                
+                // Trap focus in modal
+                trapFocus(activityModal);
+            }
+
+            function closeActivityModal() {
+                activityModal.classList.remove('is-active');
+                activityModal.setAttribute('aria-hidden', 'true');
+                
+                // Return focus to the button that opened the modal
+                document.getElementById('add-activity-btn').focus();
+            }
+
+            function openDeleteModal(item, type) {
+                currentItemToDelete = { item, type };
+                
+                // Set delete message
+                const itemName = type === 'food' ? item.name : item.name;
+                document.getElementById('delete-message').textContent = `Are you sure you want to delete "${itemName}"? This action cannot be undone.`;
+                
+                // Open modal
+                deleteModal.classList.add('is-active');
+                deleteModal.setAttribute('aria-hidden', 'false');
+                
+                // Focus confirm button
+                document.getElementById('confirm-delete-btn').focus();
+                
+                // Trap focus in modal
+                trapFocus(deleteModal);
+            }
+
+            function closeDeleteModal() {
+                deleteModal.classList.remove('is-active');
+                deleteModal.setAttribute('aria-hidden', 'true');
+                currentItemToDelete = null;
+            }
+
+            function confirmDelete() {
+                if (!currentItemToDelete) return;
+                
+                const { item, type } = currentItemToDelete;
+                
+                if (type === 'food') {
+                    foodEntries = foodEntries.filter(entry => entry.id !== item.id);
+                    renderFoodList();
+                } else {
+                    activityEntries = activityEntries.filter(entry => entry.id !== item.id);
+                    renderActivityList();
+                }
+                
+                updateCalorieSummary();
+                closeDeleteModal();
+                
+                // Announce deletion to screen readers
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.textContent = `${item.name} has been deleted.`;
+                document.body.appendChild(liveRegion);
+                
+                // Remove announcement after it's read
+                setTimeout(() => {
+                    document.body.removeChild(liveRegion);
+                }, 3000);
+            }
+
+            // Save food entry
+            function saveFood() {
+                const foodForm = document.getElementById('food-form');
+                
+                // Form validation
+                if (!foodForm.checkValidity()) {
+                    foodForm.reportValidity();
+                    return;
+                }
+                
+                const foodId = document.getElementById('food-id').value;
+                const foodName = document.getElementById('food-name').value;
+                const foodCalories = parseInt(document.getElementById('food-calories').value);
+                const foodServing = document.getElementById('food-serving').value;
+                const mealType = document.getElementById('meal-type').value;
+                
+                if (foodId) {
+                    // Update existing entry
+                    const index = foodEntries.findIndex(entry => entry.id === foodId);
+                    if (index !== -1) {
+                        foodEntries[index] = {
+                            ...foodEntries[index],
+                            name: foodName,
+                            calories: foodCalories,
+                            serving: foodServing,
+                            mealType: mealType
+                        };
+                    }
+                } else {
+                    // Add new entry
+                    const newFood = {
+                        id: generateId(),
+                        name: foodName,
+                        calories: foodCalories,
+                        serving: foodServing,
+                        mealType: mealType,
+                        timestamp: new Date()
+                    };
+                    
+                    foodEntries.push(newFood);
+                }
+                
+                renderFoodList();
+                updateCalorieSummary();
+                closeFoodModal();
+                
+                // Announce to screen readers
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.textContent = `Food entry ${foodId ? 'updated' : 'added'}: ${foodName}, ${foodCalories} calories.`;
+                document.body.appendChild(liveRegion);
+                
+                // Remove announcement after it's read
+                setTimeout(() => {
+                    document.body.removeChild(liveRegion);
+                }, 3000);
+            }
+
+            // Save activity entry
+            function saveActivity() {
+                const activityForm = document.getElementById('activity-form');
+                
+                // Form validation
+                if (!activityForm.checkValidity()) {
+                    activityForm.reportValidity();
+                    return;
+                }
+                
+                const activityId = document.getElementById('activity-id').value;
+                const activityName = document.getElementById('activity-name').value;
+                const activityCalories = parseInt(document.getElementById('activity-calories').value);
+                const activityDuration = parseInt(document.getElementById('activity-duration').value);
+                const activityIntensity = document.getElementById('activity-intensity').value;
+                
+                if (activityId) {
+                    // Update existing entry
+                    const index = activityEntries.findIndex(entry => entry.id === activityId);
+                    if (index !== -1) {
+                        activityEntries[index] = {
+                            ...activityEntries[index],
+                            name: activityName,
+                            calories: activityCalories,
+                            duration: activityDuration,
+                            intensity: activityIntensity
+                        };
+                    }
+                } else {
+                    // Add new entry
+                    const newActivity = {
+                        id: generateId(),
+                        name: activityName,
+                        calories: activityCalories,
+                        duration: activityDuration,
+                        intensity: activityIntensity,
+                        timestamp: new Date()
+                    };
+                    
+                    activityEntries.push(newActivity);
+                }
+                
+                renderActivityList();
+                updateCalorieSummary();
+                closeActivityModal();
+                
+                // Announce to screen readers
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.textContent = `Activity entry ${activityId ? 'updated' : 'added'}: ${activityName}, ${activityCalories} calories burned.`;
+                document.body.appendChild(liveRegion);
+                
+                // Remove announcement after it's read
+                setTimeout(() => {
+                    document.body.removeChild(liveRegion);
+                }, 3000);
+            }
+
+            // Edit food entry
+            function editFood(foodId) {
+                const food = foodEntries.find(entry => entry.id === foodId);
+                if (!food) return;
+                
+                document.getElementById('food-id').value = food.id;
+                document.getElementById('food-name').value = food.name;
+                document.getElementById('food-calories').value = food.calories;
+                document.getElementById('food-serving').value = food.serving || '';
+                document.getElementById('meal-type').value = food.mealType;
+                
+                document.getElementById('food-modal-title').textContent = 'Edit Food Entry';
+                
+                foodModal.classList.add('is-active');
+                foodModal.setAttribute('aria-hidden', 'false');
+                document.getElementById('food-name').focus();
+                trapFocus(foodModal);
+            }
+
+            // Edit activity entry
+            function editActivity(activityId) {
+                const activity = activityEntries.find(entry => entry.id === activityId);
+                if (!activity) return;
+                
+                document.getElementById('activity-id').value = activity.id;
+                document.getElementById('activity-name').value = activity.name;
+                document.getElementById('activity-calories').value = activity.calories;
+                document.getElementById('activity-duration').value = activity.duration;
+                document.getElementById('activity-intensity').value = activity.intensity;
+                
+                document.getElementById('activity-modal-title').textContent = 'Edit Activity Entry';
+                
+                activityModal.classList.add('is-active');
+                activityModal.setAttribute('aria-hidden', 'false');
+                document.getElementById('activity-name').focus();
+                trapFocus(activityModal);
+            }
+
+            // Render food list
+            function renderFoodList() {
+                const foodList = document.getElementById('food-list');
+                foodList.innerHTML = '';
+                
+                if (foodEntries.length === 0) {
+                    const noFoodMessage = document.createElement('li');
+                    noFoodMessage.className = 'food-item';
+                    noFoodMessage.id = 'no-food-message';
+                    noFoodMessage.innerHTML = '<p>No food entries yet. Add your first meal!</p>';
+                    foodList.appendChild(noFoodMessage);
+                    return;
+                }
+                
+                // Sort entries by timestamp (newest first)
+                const sortedEntries = [...foodEntries].sort((a, b) => b.timestamp - a.timestamp);
+                
+                sortedEntries.forEach(food => {
+                    const foodItem = document.createElement('li');
+                    foodItem.className = 'food-item';
+                    foodItem.setAttribute('data-id', food.id);
+                    
+                    const foodDetails = document.createElement('div');
+                    foodDetails.className = 'food-details';
+                    
+                    const foodName = document.createElement('span');
+                    foodName.className = 'food-name';
+                    foodName.textContent = food.name;
+                    
+                    const foodInfo = document.createElement('span');
+                    foodInfo.className = 'food-calories';
+                    foodInfo.textContent = `${food.calories} calories`;
+                    if (food.serving) {
+                        foodInfo.textContent += ` | ${food.serving}`;
+                    }
+                    foodInfo.textContent += ` | ${formatMealType(food.mealType)}`;
+                    
+                    foodDetails.appendChild(foodName);
+                    foodDetails.appendChild(foodInfo);
+                    
+                    const foodActions = document.createElement('div');
+                    foodActions.className = 'food-actions';
+                    
+                    const editButton = document.createElement('button');
+                    editButton.className = 'action-btn edit-btn';
+                    editButton.setAttribute('aria-label', `Edit ${food.name}`);
+                    editButton.innerHTML = `
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                            <path d="m15 5 4 4"></path>
+                        </svg>
+                    `;
+                    editButton.addEventListener('click', () => editFood(food.id));
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'action-btn delete-btn';
+                    deleteButton.setAttribute('aria-label', `Delete ${food.name}`);
+                    deleteButton.innerHTML = `
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        </svg>
+                    `;
+                    deleteButton.addEventListener('click', () => openDeleteModal(food, 'food'));
+                    
+                    foodActions.appendChild(editButton);
+                    foodActions.appendChild(deleteButton);
+                    
+                    foodItem.appendChild(foodDetails);
+                    foodItem.appendChild(foodActions);
+                    
+                    foodList.appendChild(foodItem);
+                });
+            }
+
+            // Render activity list
+            function renderActivityList() {
+                const activityList = document.getElementById('activity-list');
+                activityList.innerHTML = '';
+                
+                if (activityEntries.length === 0) {
+                    const noActivityMessage = document.createElement('li');
+                    noActivityMessage.className = 'activity-item';
+                    noActivityMessage.id = 'no-activity-message';
+                    noActivityMessage.innerHTML = '<p>No activity entries yet. Add your first workout!</p>';
+                    activityList.appendChild(noActivityMessage);
+                    return;
+                }
+                
+                // Sort entries by timestamp (newest first)
+                const sortedEntries = [...activityEntries].sort((a, b) => b.timestamp - a.timestamp);
+                
+                sortedEntries.forEach(activity => {
+                    const activityItem = document.createElement('li');
+                    activityItem.className = 'activity-item';
+                    activityItem.setAttribute('data-id', activity.id);
+                    
+                    const activityDetails = document.createElement('div');
+                    activityDetails.className = 'activity-details';
+                    
+                    const activityName = document.createElement('span');
+                    activityName.className = 'activity-name';
+                    activityName.textContent = activity.name;
+                    
+                    const activityInfo = document.createElement('span');
+                    activityInfo.className = 'activity-calories';
+                    activityInfo.textContent = `${activity.calories} calories burned | ${activity.duration} minutes | ${formatIntensity(activity.intensity)} intensity`;
+                    
+                    activityDetails.appendChild(activityName);
+                    activityDetails.appendChild(activityInfo);
+                    
+                    const activityActions = document.createElement('div');
+                    activityActions.className = 'activity-actions';
+                    
+                    const editButton = document.createElement('button');
+                    editButton.className = 'action-btn edit-btn';
+                    editButton.setAttribute('aria-label', `Edit ${activity.name}`);
+                    editButton.innerHTML = `
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                            <path d="m15 5 4 4"></path>
+                        </svg>
+                    `;
+                    editButton.addEventListener('click', () => editActivity(activity.id));
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'action-btn delete-btn';
+                    deleteButton.setAttribute('aria-label', `Delete ${activity.name}`);
+                    deleteButton.innerHTML = `
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        </svg>
+                    `;
+                    deleteButton.addEventListener('click', () => openDeleteModal(activity, 'activity'));
+                    
+                    activityActions.appendChild(editButton);
+                    activityActions.appendChild(deleteButton);
+                    
+                    activityItem.appendChild(activityDetails);
+                    activityItem.appendChild(activityActions);
+                    
+                    activityList.appendChild(activityItem);
+                });
+            }
+
+            // Update calorie summary
+            function updateCalorieSummary() {
+                const caloriesConsumed = foodEntries.reduce((total, food) => total + food.calories, 0);
+                const caloriesBurned = activityEntries.reduce((total, activity) => total + activity.calories, 0);
+                const netCalories = caloriesConsumed - caloriesBurned;
+                
+                document.getElementById('calories-consumed').textContent = caloriesConsumed;
+                document.getElementById('calories-burned').textContent = caloriesBurned;
+                document.getElementById('net-calories').textContent = netCalories;
+                document.getElementById('daily-goal').textContent = dailyCalorieGoal;
+                
+                // Calculate percentage of goal
+                const percentageOfGoal = Math.min(100, Math.round((netCalories / dailyCalorieGoal) * 100));
+                document.getElementById('goal-percentage').textContent = `${percentageOfGoal}%`;
+                
+                // Update progress bar
+                const progressBar = document.getElementById('goal-progress');
+                progressBar.style.width = `${percentageOfGoal}%`;
+                progressBar.setAttribute('aria-valuenow', percentageOfGoal);
+                
+                // Update color based on percentage
+                if (percentageOfGoal > 100) {
+                    progressBar.style.backgroundColor = 'var(--warning-color)';
+                } else if (percentageOfGoal > 85) {
+                    progressBar.style.backgroundColor = 'var(--secondary-color)';
+                } else {
+                    progressBar.style.backgroundColor = 'var(--primary-color)';
+                }
+                
+                // Update net calories color
+                const netCaloriesElement = document.getElementById('net-calories');
+                if (netCalories > dailyCalorieGoal) {
+                    netCaloriesElement.className = 'summary-value calorie-negative';
+                } else {
+                    netCaloriesElement.className = 'summary-value calorie-positive';
+                }
+            }
+
+            // Helper functions
+            function generateId() {
+                return Math.random().toString(36).substr(2, 9);
+            }
+
+            function formatMealType(mealType) {
+                return mealType.charAt(0).toUpperCase() + mealType.slice(1);
+            }
+
+            function formatIntensity(intensity) {
+                return intensity.charAt(0).toUpperCase() + intensity.slice(1);
+            }
+
+            function trapFocus(element) {
+                const focusableElements = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        // Close the modal when Escape is pressed
+                        if (element === foodModal) {
+                            closeFoodModal();
+                        } else if (element === activityModal) {
+                            closeActivityModal();
+                        } else if (element === deleteModal) {
+                            closeDeleteModal();
+                        }
+                    }
+                    
+                    if (e.key === 'Tab') {
+                        // Handle tab navigation
+                        if (e.shiftKey && document.activeElement === firstElement) {
+                            e.preventDefault();
+                            lastElement.focus();
+                        } else if (!e.shiftKey && document.activeElement === lastElement) {
+                            e.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                });
+            }
+
+            // Initialize the app
+            renderFoodList();
+            renderActivityList();
+            updateCalorieSummary();
+
+            // Add sample data for demonstration
+            function addSampleData() {
+                // Sample food entries
+                foodEntries = [
+                    {
+                        id: generateId(),
+                        name: "Oatmeal with Berries",
+                        calories: 350,
+                        serving: "1 bowl",
+                        mealType: "breakfast",
+                        timestamp: new Date(today.setHours(8, 30))
+                    },
+                    {
+                        id: generateId(),
+                        name: "Grilled Chicken Salad",
+                        calories: 450,
+                        serving: "1 large bowl",
+                        mealType: "lunch",
+                        timestamp: new Date(today.setHours(12, 15))
+                    },
+                    {
+                        id: generateId(),
+                        name: "Protein Bar",
+                        calories: 200,
+                        serving: "1 bar",
+                        mealType: "snack",
+                        timestamp: new Date(today.setHours(15, 0))
+                    }
+                ];
+                
+                // Sample activity entries
+                activityEntries = [
+                    {
+                        id: generateId(),
+                        name: "Morning Jog",
+                        calories: 320,
+                        duration: 30,
+                        intensity: "moderate",
+                        timestamp: new Date(today.setHours(7, 0))
+                    },
+                    {
+                        id: generateId(),
+                        name: "Weight Training",
+                        calories: 250,
+                        duration: 45,
+                        intensity: "high",
+                        timestamp: new Date(today.setHours(18, 0))
+                    }
+                ];
+                
+                renderFoodList();
+                renderActivityList();
+                updateCalorieSummary();
+            }
+            
+            // Add sample data for demonstration purposes
+            addSampleData();
+        });
+    </script>
+</body>
+</html>

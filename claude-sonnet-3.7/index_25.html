@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annual Community Gathering - RSVP Form</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Root Variables for Consistent Theming */
+        :root {
+            /* Color Palette with 7:1+ contrast ratios */
+            --primary-color: #0056b3;
+            --primary-dark: #003a75;
+            --primary-light: #4d8edb;
+            --secondary-color: #6a3093;
+            --accent-color: #005e20;
+            --background-color: #ffffff;
+            --background-alt: #f8f9fa;
+            --text-color: #121212;
+            --text-light: #333333;
+            --error-color: #a50000;
+            --success-color: #005e20;
+            --warning-color: #7d4200;
+            --border-color: #595959;
+            --focus-color: #ff8c00;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --font-size-base: 1rem;
+            --line-height-base: 1.5;
+        }
+
+        /* Reduced Motion Preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Enhanced Focus Styles */
+        :focus {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: var(--spacing-md);
+            z-index: 100;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+            color: var(--text-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        p, ul, ol {
+            margin-bottom: var(--spacing-md);
+            max-width: 80ch; /* Maximum 80 characters per line */
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+
+        /* Header */
+        .site-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--spacing-lg) 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .site-header h1 {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .site-header p {
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        /* Navigation */
+        .main-nav {
+            background-color: var(--primary-dark);
+            padding: var(--spacing-md) 0;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-list li {
+            margin: 0 var(--spacing-md);
+        }
+
+        .nav-list a {
+            color: white;
+            text-decoration: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 4px;
+            display: inline-block;
+            min-height: 44px;
+            min-width: 44px;
+            line-height: 44px;
+            text-align: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-list a:hover,
+        .nav-list a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: underline;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+            padding: var(--spacing-xl) 0;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* RSVP Form */
+        .rsvp-form {
+            background-color: var(--background-alt);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.5;
+            min-height: 44px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        .form-control.error {
+            border-color: var(--error-color);
+        }
+
+        .form-help {
+            display: block;
+            margin-top: var(--spacing-xs);
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-weight: bold;
+            margin-top: var(--spacing-xs);
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+        }
+
+        .checkbox-group {
+            margin-top: var(--spacing-sm);
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: var(--spacing-sm);
+            min-width: 22px;
+            min-height: 22px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            min-width: 44px;
+            min-height: 44px;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            background-color: #552677;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover,
+        .btn-success:focus {
+            background-color: #004518;
+        }
+
+        /* Attendee List */
+        .attendee-list {
+            background-color: var(--background-alt);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .attendee-list h2 {
+            margin-top: 0;
+        }
+
+        .attendees {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .attendee-item {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attendee-item:last-child {
+            border-bottom: none;
+        }
+
+        .attendee-name {
+            font-weight: bold;
+        }
+
+        .attendee-details {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .status-message.success {
+            background-color: rgba(0, 94, 32, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+            display: block;
+        }
+
+        .status-message.error {
+            background-color: rgba(165, 0, 0, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+            display: block;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            padding: var(--spacing-lg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .modal-title {
+            margin: 0;
+        }
+
+        .modal-body {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        /* Tabs */
+        .tabs {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .tab-list {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 44px;
+            text-align: center;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+
+        .tab[aria-selected="true"] {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab:hover,
+        .tab:focus {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: var(--spacing-lg) 0;
+        }
+
+        .tab-panel[aria-hidden="false"] {
+            display: block;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .accordion-item {
+            border: 1px solid #ddd;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .accordion-header {
+            padding: 0;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+        }
+
+        .accordion-header:hover,
+        .accordion-header:focus {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-panel {
+            padding: 0 var(--spacing-md);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-panel[aria-hidden="false"] {
+            max-height: 500px;
+            padding: var(--spacing-md);
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            margin-top: var(--spacing-xxl);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .footer-section h3 {
+            margin-top: 0;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            min-height: 44px;
+            line-height: 44px;
+        }
+
+        .footer-links a:hover,
+        .footer-links a:focus {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 767px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .attendee-list {
+                margin-top: var(--spacing-xl);
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-list li {
+                margin: var(--spacing-xs) 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            .tab-list {
+                flex-direction: column;
+            }
+            
+            .tab {
+                width: 100%;
+                text-align: left;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: var(--spacing-lg);
+        }
+
+        .loading-container.visible {
+            display: block;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: var(--spacing-xs);
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: var(--spacing-md);
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--text-color) transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text,
+        .tooltip:focus-within .tooltip-text,
+        .tooltip-icon:focus + .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Print Styles */
+        @media print {
+            .site-header, .main-nav, .site-footer, .btn, .tabs, .modal-overlay {
+                display: none;
+            }
+            
+            body, .container, .main-content {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .main-content {
+                display: block;
+            }
+            
+            .rsvp-form, .attendee-list {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="site-header">
+        <div class="container">
+            <h1>Annual Community Gathering</h1>
+            <p>Join us for a day of connection, learning, and celebration on September 15, 2023, at Community Center Plaza</p>
+        </div>
+    </header>
+    
+    <nav class="main-nav" aria-label="Main navigation">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#event-details">Event Details</a></li>
+                <li><a href="#rsvp-form">RSVP Form</a></li>
+                <li><a href="#attendees">Attendees</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main id="main-content" class="container">
+        <div class="main-content">
+            <section class="rsvp-section">
+                <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+                
+                <div class="tabs" role="tablist" aria-label="Event information">
+                    <div class="tab-list" role="tablist">
+                        <button id="tab-details" class="tab" role="tab" aria-selected="true" aria-controls="panel-details">Event Details</button>
+                        <button id="tab-rsvp" class="tab" role="tab" aria-selected="false" aria-controls="panel-rsvp">RSVP Form</button>
+                        <button id="tab-faq" class="tab" role="tab" aria-selected="false" aria-controls="panel-faq">FAQ</button>
+                    </div>
+                    
+                    <div id="panel-details" class="tab-panel" role="tabpanel" aria-labelledby="tab-details" aria-hidden="false">
+                        <h2 id="event-details">Event Details</h2>
+                        <p>Join us for our Annual Community Gathering, a celebration of community spirit and connection. This year's event promises to be our best yet, with activities for all ages, inspiring speakers, and delicious food.</p>
+                        
+                        <h3>When and Where</h3>
+                        <p>Date: September 15, 2023<br>
+                        Time: 10:00 AM - 4:00 PM<br>
+                        Location: Community Center Plaza, 123 Main Street</p>
+                        
+                        <h3>What to Expect</h3>
+                        <ul>
+                            <li>Interactive workshops on community building</li>
+                            <li>Local food vendors showcasing regional cuisine</li>
+                            <li>Live music and cultural performances</li>
+                            <li>Children's activities and family-friendly entertainment</li>
+                            <li>Networking opportunities with community leaders</li>
+                        </ul>
+                        
+                        <h3>Accessibility Information</h3>
+                        <p>Our venue is fully wheelchair accessible with ramps and elevators. We will have sign language interpreters for main presentations, accessible restrooms, and designated quiet spaces. If you have specific accessibility needs, please indicate them in the RSVP form.</p>
+                        
+                        <button class="btn" id="open-rsvp-tab">RSVP Now</button>
+                    </div>
+                    
+                    <div id="panel-rsvp" class="tab-panel" role="tabpanel" aria-labelledby="tab-rsvp" aria-hidden="true">
+                        <h2 id="rsvp-form">RSVP Form</h2>
+                        <p>Please fill out the form below to confirm your attendance. All fields marked with an asterisk (*) are required.</p>
+                        
+                        <form id="rsvp-form" class="rsvp-form" novalidate>
+                            <div class="form-group">
+                                <label for="full-name" class="required-field">Full Name</label>
+                                <input type="text" id="full-name" name="full-name" class="form-control" required aria-required="true" aria-describedby="name-help">
+                                <span id="name-help" class="form-help">Please enter your first and last name</span>
+                                <div id="name-error" class="error-message" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="required-field">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-control" required aria-required="true" aria-describedby="email-help" autocomplete="email">
+                                <span id="email-help" class="form-help">We'll send your confirmation to this address</span>
+                                <div id="email-error" class="error-message" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="required-field">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-control" required aria-required="true" aria-describedby="phone-help" autocomplete="tel">
+                                <span id="phone-help" class="form-help">Format: (123) 456-7890</span>
+                                <div id="phone-error" class="error-message" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="guests">Number of Guests (including yourself)</label>
+                                <div class="tooltip">
+                                    <button type="button" class="tooltip-icon" aria-label="More information about guest limits" tabindex="0">?</button>
+                                    <span class="tooltip-text">Maximum 4 guests per RSVP</span>
+                                </div>
+                                <input type="number" id="guests" name="guests" class="form-control" min="1" max="4" value="1" aria-describedby="guests-help">
+                                <span id="guests-help" class="form-help">Maximum 4 guests per RSVP</span>
+                                <div id="guests-error" class="error-message" aria-live="polite"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <fieldset>
+                                    <legend>Dietary Preferences</legend>
+                                    <div class="checkbox-group">
+                                        <label for="vegetarian">
+                                            <input type="checkbox" id="vegetarian" name="dietary" value="vegetarian">
+                                            Vegetarian
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <label for="vegan">
+                                            <input type="checkbox" id="vegan" name="dietary" value="vegan">
+                                            Vegan
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <label for="gluten-free">
+                                            <input type="checkbox" id="gluten-free" name="dietary" value="gluten-free">
+                                            Gluten-Free
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <label for="no-restrictions">
+                                            <input type="checkbox" id="no-restrictions" name="dietary" value="none">
+                                            No Dietary Restrictions
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="accessibility-needs">Accessibility Needs</label>
+                                <textarea id="accessibility-needs" name="accessibility-needs" class="form-control" rows="3" aria-describedby="accessibility-help"></textarea>
+                                <span id="accessibility-help" class="form-help">Please let us know if you have any specific accessibility requirements</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <fieldset>
+                                    <legend class="required-field">Will you attend the evening reception?</legend>
+                                    <div class="checkbox-group">
+                                        <label for="reception-yes">
+                                            <input type="radio" id="reception-yes" name="reception" value="yes" required aria-required="true">
+                                            Yes, I will attend
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <label for="reception-no">
+                                            <input type="radio" id="reception-no" name="reception" value="no" required aria-required="true">
+                                            No, I cannot attend
+                                        </label>
+                                    </div>
+                                    <div id="reception-error" class="error-message" aria-live="polite"></div>
+                                </fieldset>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <label for="terms" class="required-field">
+                                        <input type="checkbox" id="terms" name="terms" required aria-required="true">
+                                        I agree to the <button type="button" class="btn-link" id="open-terms-modal">terms and conditions</button>
+                                    </label>
+                                    <div id="terms-error" class="error-message" aria-live="polite"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success" id="submit-rsvp">Submit RSVP</button>
+                                <button type="reset" class="btn">Clear Form</button>
+                            </div>
+                        </form>
+                        
+                        <div id="loading-container" class="loading-container" aria-live="polite">
+                            <div class="spinner" aria-hidden="true"></div>
+                            <p>Processing your RSVP...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="panel-faq" class="tab-panel" role="tabpanel" aria-labelledby="tab-faq" aria-hidden="true">
+                        <h2 id="faq">Frequently Asked Questions</h2>
+                        
+                        <div class="accordion">
+                            <div class="accordion-item">
+                                <button id="accordion1" class="accordion-header" aria-expanded="false" aria-controls="panel1">
+                                    <span>Is there a cost to attend?</span>
+                                    <span class="accordion-icon" aria-hidden="true">▼</span>
+                                </button>
+                                <div id="panel1" class="accordion-panel" aria-labelledby="accordion1" aria-hidden="true">
+                                    <p>No, the event is completely free to attend. We welcome donations to support our community initiatives, but they are not required.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <button id="accordion2" class="accordion-header" aria-expanded="false" aria-controls="panel2">
+                                    <span>What should I bring?</span>
+                                    <span class="accordion-icon" aria-hidden="true">▼</span>
+                                </button>
+                                <div id="panel2" class="accordion-panel" aria-labelledby="accordion2" aria-hidden="true">
+                                    <p>We recommend bringing a reusable water bottle, comfortable shoes, and weather-appropriate clothing. All activities and materials will be provided.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <button id="accordion3" class="accordion-header" aria-expanded="false" aria-controls="panel3">
+                                    <span>Is parking available?</span>
+                                    <span class="accordion-icon" aria-hidden="true">▼</span>
+                                </button>
+                                <div id="panel3" class="accordion-panel" aria-labelledby="accordion3" aria-hidden="true">
+                                    <p>Yes, free parking is available at the Community Center garage. We also encourage carpooling or using public transportation when possible.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <button id="accordion4" class="accordion-header" aria-expanded="false" aria-controls="panel4">
+                                    <span>Can I update my RSVP after submitting?</span>
+                                    <span class="accordion-icon" aria-hidden="true">▼</span>
+                                </button>
+                                <div id="panel4" class="accordion-panel" aria-labelledby="accordion4" aria-hidden="true">
+                                    <p>Yes, you can update your RSVP by contacting our event coordinator at events@community.org or by calling (555) 123-4567.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 id="contact">Contact Information</h3>
+                        <p>If you have any questions that aren't answered above, please contact us:</p>
+                        <p>Email: events@community.org<br>
+                        Phone: (555) 123-4567<br>
+                        Hours: Monday-Friday, 9:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
+            </section>
+            
+            <aside class="attendee-list">
+                <h2 id="attendees">Current Attendees</h2>
+                <p>Join these community members who have already RSVP'd to the event:</p>
+                
+                <ul class="attendees" id="attendee-list" aria-live="polite">
+                    <li class="attendee-item">
+                        <div>
+                            <span class="attendee-name">Sarah Johnson</span>
+                            <div class="attendee-details">Guests: 2 | Dietary: Vegetarian</div>
+                        </div>
+                    </li>
+                    <li class="attendee-item">
+                        <div>
+                            <span class="attendee-name">Michael Chen</span>
+                            <div class="attendee-details">Guests: 1 | Dietary: None</div>
+                        </div>
+                    </li>
+                    <li class="attendee-item">
+                        <div>
+                            <span class="attendee-name">Aisha Patel</span>
+                            <div class="attendee-details">Guests: 3 | Dietary: Gluten-Free</div>
+                        </div>
+                    </li>
+                    <li class="attendee-item">
+                        <div>
+                            <span class="attendee-name">Robert Garcia</span>
+                            <div class="attendee-details">Guests: 2 | Dietary: None</div>
+                        </div>
+                    </li>
+                    <li class="attendee-item">
+                        <div>
+                            <span class="attendee-name">Emma Wilson</span>
+                            <div class="attendee-details">Guests: 1 | Dietary: Vegan</div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <p>Total attendees so far: <span id="attendee-count">9</span></p>
+                
+                <button class="btn btn-secondary" id="refresh-attendees">Refresh List</button>
+            </aside>
+        </div>
+    </main>
+    
+    <div class="modal-overlay" id="terms-modal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+            <button class="close-modal" aria-label="Close modal" id="close-modal">&times;</button>
+            
+            <div class="modal-header">
+                <h2 id="modal-title">Terms and Conditions</h2>
+            </div>
+            
+            <div class="modal-body">
+                <h3>Event Participation Agreement</h3>
+                <p>By registering for the Annual Community Gathering, you agree to the following terms:</p>
+                
+                <ol>
+                    <li>Your contact information will only be used for event-related communications.</li>
+                    <li>Photographs and videos may be taken during the event for promotional purposes.</li>
+                    <li>You agree to follow all venue safety guidelines and protocols.</li>
+                    <li>Cancellations should be made at least 48 hours before the event.</li>
+                    <li>The organizers reserve the right to modify the event schedule if necessary.</li>
+                </ol>
+                
+                <h3>Privacy Policy</h3>
+                <p>We respect your privacy and will not share your personal information with third parties without your consent. Your email will only be used to send event confirmations and updates.</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn" id="accept-terms">I Accept</button>
+                <button class="btn" id="decline-terms">I Decline</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>The Annual Community Gathering is organized by the Community Connection Coalition, a non-profit dedicated to building stronger, more inclusive communities through events and initiatives.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#event-details">Event Details</a></li>
+                        <li><a href="#rsvp-form">RSVP Form</a></li>
+                        <li><a href="#attendees">Attendees</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" aria-label="Visit our Facebook page">Facebook</a></li>
+                        <li><a href="#" aria-label="Visit our Twitter page">Twitter</a></li>
+                        <li><a href="#" aria-label="Visit our Instagram page">Instagram</a></li>
+                        <li><a href="#" aria-label="Subscribe to our newsletter">Newsletter</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Community Connection Coalition. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            function setActiveTab(tabId) {
+                // Update tab states
+                tabs.forEach(tab => {
+                    const isSelected = tab.id === tabId;
+                    tab.setAttribute('aria-selected', isSelected);
+                    
+                    // Update panel visibility
+                    const panelId = tab.getAttribute('aria-controls');
+                    const panel = document.getElementById(panelId);
+                    panel.setAttribute('aria-hidden', !isSelected);
+                });
+            }
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    setActiveTab(this.id);
+                });
+                
+                tab.addEventListener('keydown', function(e) {
+                    // Handle keyboard navigation
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        
+                        const tabList = Array.from(tabs);
+                        const currentIndex = tabList.indexOf(this);
+                        let newIndex;
+                        
+                        if (e.key === 'ArrowLeft') {
+                            newIndex = currentIndex === 0 ? tabList.length - 1 : currentIndex - 1;
+                        } else {
+                            newIndex = currentIndex === tabList.length - 1 ? 0 : currentIndex + 1;
+                        }
+                        
+                        tabList[newIndex].focus();
+                        setActiveTab(tabList[newIndex].id);
+                    }
+                });
+            });
+            
+            // Open RSVP tab button
+            document.getElementById('open-rsvp-tab').addEventListener('click', function() {
+                setActiveTab('tab-rsvp');
+                document.getElementById('tab-rsvp').focus();
+            });
+            
+            // Accordion functionality
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    
+                    const panelId = this.getAttribute('aria-controls');
+                    const panel = document.getElementById(panelId);
+                    panel.setAttribute('aria-hidden', isExpanded);
+                });
+            });
+            
+            // Modal functionality
+            const modalOverlay = document.getElementById('terms-modal');
+            const openModalBtn = document.getElementById('open-terms-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const acceptTermsBtn = document.getElementById('accept-terms');
+            const declineTermsBtn = document.getElementById('decline-terms');
+            const termsCheckbox = document.getElementById('terms');
+            
+            function openModal() {
+                modalOverlay.classList.add('active');
+                modalOverlay.setAttribute('aria-hidden', 'false');
+                
+                // Set focus to the modal
+                document.querySelector('.modal').focus();
+                
+                // Store the element that had focus before opening the modal
+                openModal.lastFocus = document.activeElement;
+                
+                // Trap focus in modal
+                document.addEventListener('keydown', trapFocus);
+            }
+            
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                modalOverlay.setAttribute('aria-hidden', 'true');
+                
+                // Return focus to the element that had focus before opening the modal
+                if (openModal.lastFocus) {
+                    openModal.lastFocus.focus();
+                }
+                
+                // Remove focus trap
+                document.removeEventListener('keydown', trapFocus);
+            }
+            
+            function trapFocus(e) {
+                // If Escape key is pressed, close the modal
+                if (e.key === 'Escape') {
+                    closeModal();
+                    return;
+                }
+                
+                // Only trap focus if Tab key is pressed
+                if (e.key !== 'Tab') return;
+                
+                // Get all focusable elements in the modal
+                const focusableElements = modalOverlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                // If Shift+Tab and focus is on first element, move to last element
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                }
+                // If Tab and focus is on last element, move to first element
+                else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+            
+            openModalBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            acceptTermsBtn.addEventListener('click', function() {
+                termsCheckbox.checked = true;
+                closeModal();
+                // Clear any previous error message
+                document.getElementById('terms-error').textContent = '';
+                document.getElementById('terms-error').classList.remove('visible');
+            });
+            
+            declineTermsBtn.addEventListener('click', function() {
+                termsCheckbox.checked = false;
+                closeModal();
+            });
+            
+            // Close modal when clicking outside
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+            
+            // Form validation
+            const rsvpForm = document.getElementById('rsvp-form');
+            const fullNameInput = document.getElementById('full-name');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const guestsInput = document.getElementById('guests');
+            const receptionRadios = document.querySelectorAll('input[name="reception"]');
+            const statusMessage = document.getElementById('status-message');
+            const loadingContainer = document.getElementById('loading-container');
+            
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate name
+                if (!fullNameInput.value.trim()) {
+                    showError('name-error', 'Please enter your full name');
+                    isValid = false;
+                } else {
+                    clearError('name-error');
+                }
+                
+                // Validate email
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailInput.value.trim()) {
+                    showError('email-error', 'Please enter your email address');
+                    isValid = false;
+                } else if (!emailPattern.test(emailInput.value.trim())) {
+                    showError('email-error', 'Please enter a valid email address');
+                    isValid = false;
+                } else {
+                    clearError('email-error');
+                }
+                
+                // Validate phone
+                const phonePattern = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                if (!phoneInput.value.trim()) {
+                    showError('phone-error', 'Please enter your phone number');
+                    isValid = false;
+                } else if (!phonePattern.test(phoneInput.value.trim())) {
+                    showError('phone-error', 'Please enter a valid phone number: (123) 456-7890');
+                    isValid = false;
+                } else {
+                    clearError('phone-error');
+                }
+                
+                // Validate guests
+                const guestsValue = parseInt(guestsInput.value);
+                if (isNaN(guestsValue) || guestsValue < 1 || guestsValue > 4) {
+                    showError('guests-error', 'Please enter a number between 1 and 4');
+                    isValid = false;
+                } else {
+                    clearError('guests-error');
+                }
+                
+                // Validate reception attendance
+                let receptionSelected = false;
+                receptionRadios.forEach(radio => {
+                    if (radio.checked) {
+                        receptionSelected = true;
+                    }
+                });
+                
+                if (!receptionSelected) {
+                    showError('reception-error', 'Please indicate whether you will attend the reception');
+                    isValid = false;
+                } else {
+                    clearError('reception-error');
+                }
+                
+                // Validate terms
+                if (!termsCheckbox.checked) {
+                    showError('terms-error', 'You must accept the terms and conditions');
+                    isValid = false;
+                } else {
+                    clearError('terms-error');
+                }
+                
+                return isValid;
+            }
+            
+            function showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.classList.add('visible');
+                
+                // Also add error class to the related input
+                const inputId = elementId.replace('-error', '');
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    inputElement.classList.add('error');
+                    inputElement.setAttribute('aria-invalid', 'true');
+                }
+            }
+            
+            function clearError(elementId) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = '';
+                errorElement.classList.remove('visible');
+                
+                // Remove error class from the related input
+                const inputId = elementId.replace('-error', '');
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    inputElement.classList.remove('error');
+                    inputElement.setAttribute('aria-invalid', 'false');
+                }
+            }
+            
+            function showStatusMessage(type, message) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message ' + type;
+                
+                // Ensure the message is visible
+                statusMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    statusMessage.className = 'status-message';
+                }, 5000);
+            }
+            
+            // Form submission
+            rsvpForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    // Show loading indicator
+                    loadingContainer.classList.add('visible');
+                    
+                    // Simulate form submission (would be an API call in a real app)
+                    setTimeout(() => {
+                        loadingContainer.classList.remove('visible');
+                        
+                        // Add the new attendee to the list
+                        addAttendee();
+                        
+                        // Show success message
+                        showStatusMessage('success', 'Thank you! Your RSVP has been successfully submitted.');
+                        
+                        // Reset the form
+                        rsvpForm.reset();
+                        
+                        // Switch back to the details tab
+                        setActiveTab('tab-details');
+                    }, 1500);
+                }
+            });
+            
+            // Add new attendee to the list
+            function addAttendee() {
+                const attendeeList = document.getElementById('attendee-list');
+                const attendeeCount = document.getElementById('attendee-count');
+                
+                // Get dietary preferences
+                const dietaryPreferences = [];
+                document.querySelectorAll('input[name="dietary"]:checked').forEach(checkbox => {
+                    dietaryPreferences.push(checkbox.value);
+                });
+                
+                const dietaryText = dietaryPreferences.length > 0 ? dietaryPreferences.join(', ') : 'None';
+                
+                // Create new attendee item
+                const newAttendee = document.createElement('li');
+                newAttendee.className = 'attendee-item fade-in';
+                
+                newAttendee.innerHTML = `
+                    <div>
+                        <span class="attendee-name">${fullNameInput.value}</span>
+                        <div class="attendee-details">Guests: ${guestsInput.value} | Dietary: ${dietaryText}</div>
+                    </div>
+                `;
+                
+                // Add to the beginning of the list
+                attendeeList.insertBefore(newAttendee, attendeeList.firstChild);
+                
+                // Update the count
+                const currentCount = parseInt(attendeeCount.textContent);
+                const newCount = currentCount + parseInt(guestsInput.value);
+                attendeeCount.textContent = newCount;
+            }
+            
+            // Refresh attendees button
+            document.getElementById('refresh-attendees').addEventListener('click', function() {
+                const attendeeList = document.getElementById('attendee-list');
+                
+                // Show loading indicator
+                this.disabled = true;
+                this.textContent = 'Refreshing...';
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Re-enable button
+                    this.disabled = false;
+                    this.textContent = 'Refresh List';
+                    
+                    // Show success message
+                    showStatusMessage('success', 'Attendee list has been refreshed.');
+                }, 1000);
+            });
+            
+            // Input validation on blur
+            fullNameInput.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    showError('name-error', 'Please enter your full name');
+                } else {
+                    clearError('name-error');
+                }
+            });
+            
+            emailInput.addEventListener('blur', function() {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!this.value.trim()) {
+                    showError('email-error', 'Please enter your email address');
+                } else if (!emailPattern.test(this.value.trim())) {
+                    showError('email-error', 'Please enter a valid email address');
+                } else {
+                    clearError('email-error');
+                }
+            });
+            
+            phoneInput.addEventListener('blur', function() {
+                const phonePattern = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                if (!this.value.trim()) {
+                    showError('phone-error', 'Please enter your phone number');
+                } else if (!phonePattern.test(this.value.trim())) {
+                    showError('phone-error', 'Please enter a valid phone number: (123) 456-7890');
+                } else {
+                    clearError('phone-error');
+                }
+            });
+            
+            guestsInput.addEventListener('blur', function() {
+                const guestsValue = parseInt(this.value);
+                if (isNaN(guestsValue) || guestsValue < 1 || guestsValue > 4) {
+                    showError('guests-error', 'Please enter a number between 1 and 4');
+                } else {
+                    clearError('guests-error');
+                }
+            });
+            
+            // Format phone number as user types
+            phoneInput.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, ''); // Remove non-digits
+                
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        this.value = `(${value}`;
+                    } else if (value.length <= 6) {
+                        this.value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                    } else {
+                        this.value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                    }
+                }
+            });
+            
+            // Ensure only one dietary checkbox can be checked if "No Restrictions" is selected
+            const dietaryCheckboxes = document.querySelectorAll('input[name="dietary"]');
+            const noRestrictionsCheckbox = document.getElementById('no-restrictions');
+            
+            dietaryCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.id === 'no-restrictions' && this.checked) {
+                        // Uncheck all other options
+                        dietaryCheckboxes.forEach(cb => {
+                            if (cb.id !== 'no-restrictions') {
+                                cb.checked = false;
+                            }
+                        });
+                    } else if (this.checked && noRestrictionsCheckbox.checked) {
+                        // Uncheck "No Restrictions" if another option is selected
+                        noRestrictionsCheckbox.checked = false;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

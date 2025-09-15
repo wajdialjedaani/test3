@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Alex Morgan | Professional Photographer</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #6c3483;
+            --text-color: #333333;
+            --background-color: #f8f9fa;
+            --light-accent: #e9ecef;
+            --dark-accent: #343a40;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --focus-color: #ff8800;
+            --link-color: #0056b3;
+            --link-visited: #6c3483;
+        }
+
+        /* Support for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* User-selectable colors (WCAG 2.2 AAA: 1.4.8) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #f8f9fa;
+                --background-color: #121212;
+                --light-accent: #2d2d2d;
+                --dark-accent: #e9ecef;
+                --link-color: #90caf9;
+                --link-visited: #ce93d8;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            /* WCAG 2.2 AAA: 1.4.8 - Visual Presentation */
+            line-height: 1.5;
+            letter-spacing: 0.12px;
+            word-spacing: 0.16px;
+        }
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--focus-color);
+            color: #000;
+            padding: 8px;
+            z-index: 100;
+            font-weight: bold;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        /* Enhanced focus styles (WCAG 2.2 AAA: 2.4.13) */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 5px var(--focus-color);
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-title {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        /* Navigation styles */
+        nav {
+            padding: 1rem 0;
+            background-color: var(--light-accent);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-list li a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-list li a:hover {
+            text-decoration: underline;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-list li a:visited {
+            color: var(--link-visited);
+        }
+
+        /* Main content styles */
+        main {
+            padding: 2rem 0;
+        }
+
+        /* Profile section */
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-location, .profile-joined {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dark-accent);
+        }
+
+        .profile-bio {
+            margin-bottom: 1.5rem;
+            /* WCAG 2.2 AAA: 1.4.8 - Text not justified, max 80 characters */
+            max-width: 80ch;
+            text-align: left;
+        }
+
+        /* Avatar section */
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .current-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-gallery {
+            margin-top: 1rem;
+        }
+
+        .avatar-gallery h3 {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .avatar-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .avatar-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s;
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .avatar-option:hover, .avatar-option:focus {
+            border-color: var(--primary-color);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--success-color);
+        }
+
+        /* Follow button */
+        .follow-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 1rem 0;
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .follow-button:hover, .follow-button:focus {
+            background-color: #004494;
+        }
+
+        .follow-button.following {
+            background-color: var(--success-color);
+        }
+
+        /* Social media section */
+        .social-section {
+            margin-top: 2rem;
+        }
+
+        .social-section h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 10px 15px;
+            background-color: var(--light-accent);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: background-color 0.3s;
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .social-link:hover, .social-link:focus {
+            background-color: #ddd;
+        }
+
+        .social-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Stats section */
+        .stats-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--light-accent);
+            border-radius: 8px;
+        }
+
+        .stats-section h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--dark-accent);
+            font-weight: 500;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--dark-accent);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover, .footer-links a:focus {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            /* Minimum target size (WCAG 2.2 AAA: 2.5.5) */
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        /* Status message */
+        .status-message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Accessibility enhancements */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="container header-content">
+            <h1 class="site-title">ProfileHub</h1>
+            <button id="theme-toggle" class="follow-button" aria-label="Toggle dark mode">
+                Toggle Theme
+            </button>
+        </div>
+    </header>
+
+    <nav aria-label="Main navigation">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#" aria-current="page">Home</a></li>
+                <li><a href="#">Discover</a></li>
+                <li><a href="#">Messages</a></li>
+                <li><a href="#">Notifications</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main id="main-content" class="container">
+        <section class="profile-section" aria-labelledby="profile-title">
+            <div class="avatar-section">
+                <img id="current-avatar" class="current-avatar" src="https://via.placeholder.com/200" alt="Alex Morgan's profile picture showing a professional photographer with a camera" />
+                
+                <button id="follow-button" class="follow-button" aria-pressed="false">
+                    Follow
+                </button>
+                
+                <div class="avatar-gallery" aria-labelledby="gallery-title">
+                    <h3 id="gallery-title">Avatar Gallery</h3>
+                    <div class="avatar-options" role="radiogroup" aria-label="Select profile picture">
+                        <img 
+                            id="avatar1" 
+                            class="avatar-option selected" 
+                            src="https://via.placeholder.com/80/3498db/ffffff?text=1" 
+                            alt="Profile picture option 1: Professional headshot with neutral background" 
+                            tabindex="0"
+                            role="radio"
+                            aria-checked="true"
+                            aria-label="Select profile picture 1: Professional headshot"
+                        />
+                        <img 
+                            id="avatar2" 
+                            class="avatar-option" 
+                            src="https://via.placeholder.com/80/e74c3c/ffffff?text=2" 
+                            alt="Profile picture option 2: Casual outdoor portrait with camera" 
+                            tabindex="0"
+                            role="radio"
+                            aria-checked="false"
+                            aria-label="Select profile picture 2: Casual outdoor portrait"
+                        />
+                        <img 
+                            id="avatar3" 
+                            class="avatar-option" 
+                            src="https://via.placeholder.com/80/2ecc71/ffffff?text=3" 
+                            alt="Profile picture option 3: Studio portrait with photography equipment" 
+                            tabindex="0"
+                            role="radio"
+                            aria-checked="false"
+                            aria-label="Select profile picture 3: Studio portrait"
+                        />
+                        <img 
+                            id="avatar4" 
+                            class="avatar-option" 
+                            src="https://via.placeholder.com/80/f39c12/ffffff?text=4" 
+                            alt="Profile picture option 4: Black and white artistic self-portrait" 
+                            tabindex="0"
+                            role="radio"
+                            aria-checked="false"
+                            aria-label="Select profile picture 4: Black and white artistic self-portrait"
+                        />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <div class="profile-header">
+                    <h1 id="profile-title">Alex Morgan</h1>
+                    <p>Professional Photographer</p>
+                </div>
+                
+                <div class="profile-meta">
+                    <div class="profile-location">
+                        <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>San Francisco, CA</span>
+                    </div>
+                    
+                    <div class="profile-joined">
+                        <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>Joined January 2020</span>
+                    </div>
+                </div>
+                
+                <div class="profile-bio">
+                    <h2>About Me</h2>
+                    <p>Award-winning photographer specializing in landscape and portrait photography. With over 10 years of experience capturing moments that tell stories, I've developed a unique style that blends natural light with dramatic composition.</p>
+                    <p>My work has been featured in National Geographic, Vogue, and various international exhibitions. I'm passionate about teaching photography and regularly host workshops for aspiring photographers.</p>
+                    <p>When I'm not behind the camera, you'll find me hiking in national parks or experimenting with new cooking recipes.</p>
+                </div>
+                
+                <div class="social-section">
+                    <h2>Connect with me</h2>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Visit Alex's Instagram profile">
+                            <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                            Instagram
+                        </a>
+                        <a href="#" class="social-link" aria-label="Visit Alex's Twitter profile">
+                            <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                            Twitter
+                        </a>
+                        <a href="#" class="social-link" aria-label="Visit Alex's LinkedIn profile">
+                            <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                            LinkedIn
+                        </a>
+                        <a href="#" class="social-link" aria-label="Visit Alex's personal website">
+                            <svg class="social-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            Website
+                        </a>
+                    </div>
+                </div>
+                
+                <button id="contact-button" class="follow-button" aria-haspopup="dialog">
+                    Contact Me
+                </button>
+                
+                <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+        
+        <section class="stats-section" aria-labelledby="stats-title">
+            <h2 id="stats-title">Profile Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">15.2K</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">843</div>
+                    <div class="stat-label">Following</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1.3M</div>
+                    <div class="stat-label">Post Views</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">426</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="modal" role="dialog" aria-labelledby="contact-modal-title" aria-modal="true" hidden>
+        <div class="modal-content">
+            <button id="close-modal" class="close-modal" aria-label="Close contact form">×</button>
+            <h2 id="contact-modal-title" class="modal-title">Contact Alex</h2>
+            <form id="contact-form">
+                <div>
+                    <label for="name">Your Name (required)</label>
+                    <input type="text" id="name" name="name" required aria-required="true" autocomplete="name">
+                </div>
+                <div>
+                    <label for="email">Your Email (required)</label>
+                    <input type="email" id="email" name="email" required aria-required="true" autocomplete="email">
+                </div>
+                <div>
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" autocomplete="off">
+                </div>
+                <div>
+                    <label for="message">Message (required)</label>
+                    <textarea id="message" name="message" rows="5" required aria-required="true"></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="follow-button">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>About ProfileHub</h3>
+                <p>Connect with creative professionals from around the world. Share your work, find inspiration, and build your network.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Help Center</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><a href="mailto:support@profilehub.com">support@profilehub.com</a></li>
+                    <li><a href="tel:+18005551234">1-800-555-1234</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 ProfileHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const followButton = document.getElementById('follow-button');
+        const contactButton = document.getElementById('contact-button');
+        const contactModal = document.getElementById('contact-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const contactForm = document.getElementById('contact-form');
+        const statusMessage = document.getElementById('status-message');
+        const avatarOptions = document.querySelectorAll('.avatar-option');
+        const currentAvatar = document.getElementById('current-avatar');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Follow button functionality
+        followButton.addEventListener('click', function() {
+            const isFollowing = this.getAttribute('aria-pressed') === 'true';
+            
+            if (isFollowing) {
+                this.textContent = 'Follow';
+                this.classList.remove('following');
+                this.setAttribute('aria-pressed', 'false');
+                showStatusMessage('You have unfollowed Alex Morgan', 'success');
+            } else {
+                this.textContent = 'Following';
+                this.classList.add('following');
+                this.setAttribute('aria-pressed', 'true');
+                showStatusMessage('You are now following Alex Morgan', 'success');
+            }
+        });
+
+        // Contact modal functionality
+        contactButton.addEventListener('click', function() {
+            contactModal.style.display = 'flex';
+            contactModal.removeAttribute('hidden');
+            
+            // Set focus to first form field
+            setTimeout(() => {
+                document.getElementById('name').focus();
+            }, 100);
+            
+            // Save last active element to return focus when modal closes
+            this.setAttribute('data-last-focus', 'true');
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside content
+        contactModal.addEventListener('click', function(e) {
+            if (e.target === contactModal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !contactModal.hasAttribute('hidden')) {
+                closeModal();
+            }
+        });
+
+        // Trap focus in modal when open
+        contactModal.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                const focusableElements = contactModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                } else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        });
+
+        // Contact form submission
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Form validation
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const message = document.getElementById('message');
+            
+            let isValid = true;
+            
+            if (!name.value.trim()) {
+                name.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                name.removeAttribute('aria-invalid');
+            }
+            
+            if (!email.value.trim() || !isValidEmail(email.value)) {
+                email.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                email.removeAttribute('aria-invalid');
+            }
+            
+            if (!message.value.trim()) {
+                message.setAttribute('aria-invalid', 'true');
+                isValid = false;
+            } else {
+                message.removeAttribute('aria-invalid');
+            }
+            
+            if (isValid) {
+                // Simulate form submission
+                closeModal();
+                showStatusMessage('Your message has been sent to Alex Morgan', 'success');
+                this.reset();
+            } else {
+                showStatusMessage('Please fill out all required fields correctly', 'error');
+            }
+        });
+
+        // Avatar gallery functionality
+        avatarOptions.forEach(avatar => {
+            // Handle click events
+            avatar.addEventListener('click', function() {
+                selectAvatar(this);
+            });
+            
+            // Handle keyboard events for accessibility
+            avatar.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    selectAvatar(this);
+                }
+            });
+        });
+
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            localStorage.setItem('darkTheme', isDarkTheme);
+            
+            // Update button text for accessibility
+            this.setAttribute('aria-label', isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme');
+            showStatusMessage(isDarkTheme ? 'Dark theme enabled' : 'Light theme enabled', 'success');
+        });
+
+        // Helper Functions
+        function closeModal() {
+            contactModal.style.display = 'none';
+            contactModal.setAttribute('hidden', 'true');
+            
+            // Return focus to the element that opened the modal
+            const lastFocusedElement = document.querySelector('[data-last-focus="true"]');
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+                lastFocusedElement.removeAttribute('data-last-focus');
+            }
+        }
+
+        function showStatusMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message';
+            statusMessage.classList.add(type);
+            statusMessage.style.display = 'block';
+            
+            // Automatically hide the message after 5 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function selectAvatar(selectedAvatar) {
+            // Update selected state for all avatars
+            avatarOptions.forEach(avatar => {
+                avatar.classList.remove('selected');
+                avatar.setAttribute('aria-checked', 'false');
+            });
+            
+            // Mark the clicked avatar as selected
+            selectedAvatar.classList.add('selected');
+            selectedAvatar.setAttribute('aria-checked', 'true');
+            
+            // Update the main avatar
+            currentAvatar.src = selectedAvatar.src.replace('80', '200');
+            currentAvatar.alt = selectedAvatar.alt.replace('option', 'current');
+            
+            // Announce the change
+            showStatusMessage('Profile picture updated', 'success');
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Initialize theme from localStorage
+        function initTheme() {
+            const savedTheme = localStorage.getItem('darkTheme');
+            if (savedTheme === 'true') {
+                document.body.classList.add('dark-theme');
+                themeToggle.setAttribute('aria-label', 'Switch to light theme');
+            } else {
+                themeToggle.setAttribute('aria-label', 'Switch to dark theme');
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+        });
+    </script>
+</body>
+</html>

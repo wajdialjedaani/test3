@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager Dashboard - Secure Login and Task Management</title>
+  
+  <!-- React CDN Links -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    /* CSS Reset with accessibility enhancements */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Global Variables */
+    :root {
+      /* Color scheme with 7:1+ contrast ratios */
+      --primary-color: #0056b3;
+      --primary-dark: #003a75;
+      --primary-light: #4d8edb;
+      --secondary-color: #6a3093;
+      --accent-color: #005e3a;
+      --text-color: #121212;
+      --text-light: #333333;
+      --background-color: #ffffff;
+      --background-alt: #f8f9fa;
+      --error-color: #c42b2b;
+      --success-color: #2e7d32;
+      --warning-color: #8a5d00;
+      --border-color: #565656;
+      --focus-color: #2474cc;
+      --focus-outline: 3px solid var(--focus-color);
+      
+      /* Spacing */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      
+      /* Typography */
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --font-size-base: 1rem;
+      --line-height-base: 1.5;
+    }
+    
+    /* Enhanced focus styles (WCAG 2.2 AAA: 2.4.13) */
+    *:focus {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+    }
+    
+    /* Base styles */
+    html {
+      font-size: 100%;
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-base);
+      color: var(--text-color);
+      background-color: var(--background-color);
+      min-height: 100vh;
+      /* WCAG 2.2 AAA: 1.4.8 Visual Presentation */
+      line-height: 1.5;
+      letter-spacing: 0.01em;
+      word-spacing: 0.05em;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      margin-bottom: var(--spacing-md);
+      line-height: 1.2;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-top: var(--spacing-xl);
+    }
+    
+    h2 {
+      font-size: 2rem;
+      margin-top: var(--spacing-lg);
+    }
+    
+    h3 {
+      font-size: 1.75rem;
+      margin-top: var(--spacing-md);
+    }
+    
+    p {
+      margin-bottom: var(--spacing-md);
+      max-width: 80ch; /* WCAG 2.2 AAA: 1.4.8 */
+    }
+    
+    /* Links */
+    a {
+      color: var(--primary-color);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      transition: color 0.2s ease;
+    }
+    
+    a:hover, a:focus {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--primary-color);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      z-index: 100;
+      transition: top 0.2s ease;
+    }
+    
+    .skip-link:focus {
+      top: 0;
+    }
+    
+    /* Layout */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+    
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: var(--spacing-md) 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .logo a {
+      color: white;
+      text-decoration: none;
+    }
+    
+    main {
+      flex: 1;
+      padding: var(--spacing-xl) 0;
+    }
+    
+    footer {
+      background-color: var(--background-alt);
+      padding: var(--spacing-lg) 0;
+      margin-top: auto;
+      border-top: 1px solid #ddd;
+    }
+    
+    /* Navigation */
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: var(--spacing-md);
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    
+    nav a:hover, nav a:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    /* Forms */
+    .form-group {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      font-weight: 600;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: var(--spacing-md);
+      font-size: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: border-color 0.2s ease;
+      line-height: 1.5;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--focus-color);
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px; /* WCAG 2.2 AAA: 2.5.5 Target Size */
+      padding: var(--spacing-sm) var(--spacing-lg);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      position: relative;
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-secondary:hover, .btn-secondary:focus {
+      background-color: #5a2780;
+    }
+    
+    .btn-danger {
+      background-color: var(--error-color);
+      color: white;
+    }
+    
+    .btn-danger:hover, .btn-danger:focus {
+      background-color: #a52424;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-success:hover, .btn-success:focus {
+      background-color: #236a29;
+    }
+    
+    /* Cards */
+    .card {
+      background-color: var(--background-color);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .card-header {
+      margin-bottom: var(--spacing-md);
+      border-bottom: 1px solid #eee;
+      padding-bottom: var(--spacing-sm);
+    }
+    
+    /* Login/Register Forms */
+    .auth-container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: var(--spacing-lg);
+      border-bottom: 2px solid #eee;
+    }
+    
+    .auth-tab {
+      padding: var(--spacing-md) var(--spacing-lg);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-light);
+      min-width: 44px;
+      min-height: 44px;
+    }
+    
+    .auth-tab.active {
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
+    }
+    
+    /* Dashboard */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-lg);
+    }
+    
+    @media (min-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr 2fr;
+      }
+    }
+    
+    .dashboard-sidebar {
+      background-color: var(--background-alt);
+      border-radius: 8px;
+      padding: var(--spacing-lg);
+    }
+    
+    .dashboard-main {
+      background-color: var(--background-color);
+    }
+    
+    /* Task List */
+    .task-list {
+      list-style: none;
+    }
+    
+    .task-item {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .task-item:last-child {
+      border-bottom: none;
+    }
+    
+    .task-checkbox {
+      min-width: 24px;
+      min-height: 24px;
+      margin-right: var(--spacing-md);
+    }
+    
+    .task-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+    
+    .task-completed {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+    
+    /* Task Form */
+    .task-form {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .task-input {
+      flex: 1;
+    }
+    
+    /* Status Messages */
+    .status {
+      padding: var(--spacing-md);
+      border-radius: 4px;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .status-error {
+      background-color: #ffebee;
+      color: var(--error-color);
+      border: 1px solid #ffcdd2;
+    }
+    
+    .status-success {
+      background-color: #e8f5e9;
+      color: var(--success-color);
+      border: 1px solid #c8e6c9;
+    }
+    
+    .status-warning {
+      background-color: #fff8e1;
+      color: var(--warning-color);
+      border: 1px solid #ffecb3;
+    }
+    
+    /* Loading State */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg);
+    }
+    
+    .loading-spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background-color: var(--background-color);
+      border-radius: 8px;
+      padding: var(--spacing-lg);
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Utility Classes */
+    .text-center {
+      text-align: center;
+    }
+    
+    .mt-1 { margin-top: var(--spacing-sm); }
+    .mt-2 { margin-top: var(--spacing-md); }
+    .mt-3 { margin-top: var(--spacing-lg); }
+    .mt-4 { margin-top: var(--spacing-xl); }
+    
+    .mb-1 { margin-bottom: var(--spacing-sm); }
+    .mb-2 { margin-bottom: var(--spacing-md); }
+    .mb-3 { margin-bottom: var(--spacing-lg); }
+    .mb-4 { margin-bottom: var(--spacing-xl); }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+      }
+      
+      nav ul {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .task-form {
+        flex-direction: column;
+      }
+    }
+    
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* User-selectable colors (WCAG 2.2 AAA: 1.4.8) */
+    .high-contrast {
+      --primary-color: #0000c8;
+      --primary-dark: #00008a;
+      --text-color: #000000;
+      --background-color: #ffffff;
+      --border-color: #000000;
+    }
+    
+    .dark-mode {
+      --text-color: #ffffff;
+      --text-light: #cccccc;
+      --background-color: #121212;
+      --background-alt: #1e1e1e;
+      --border-color: #aaaaaa;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <div id="root">
+    <!-- React will render here -->
+    <div aria-live="polite" aria-atomic="true" class="loading">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p>Loading application, please wait...</p>
+    </div>
+  </div>
+  
+  <script type="text/babel">
+    // React Components
+    
+    // Context for authentication
+    const AuthContext = React.createContext();
+    
+    // Main App Component
+    function App() {
+      const [user, setUser] = React.useState(null);
+      const [loading, setLoading] = React.useState(false);
+      const [error, setError] = React.useState(null);
+      const [preferences, setPreferences] = React.useState({
+        highContrast: false,
+        darkMode: false,
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      });
+      
+      // Simulate authentication
+      const login = (email, password) => {
+        setLoading(true);
+        setError(null);
+        
+        // Simulate API call
+        setTimeout(() => {
+          if (email === 'user@example.com' && password === 'password123') {
+            setUser({
+              id: 1,
+              name: 'Demo User',
+              email: 'user@example.com',
+              role: 'user'
+            });
+            setLoading(false);
+          } else {
+            setError('Invalid email or password. For demo, use user@example.com / password123');
+            setLoading(false);
+          }
+        }, 1000);
+      };
+      
+      const register = (name, email, password) => {
+        setLoading(true);
+        setError(null);
+        
+        // Simulate API call
+        setTimeout(() => {
+          setUser({
+            id: 1,
+            name: name,
+            email: email,
+            role: 'user'
+          });
+          setLoading(false);
+        }, 1000);
+      };
+      
+      const logout = () => {
+        setUser(null);
+      };
+      
+      const updatePreferences = (newPrefs) => {
+        setPreferences({...preferences, ...newPrefs});
+        
+        // Apply classes to body based on preferences
+        if (newPrefs.highContrast !== undefined) {
+          document.body.classList.toggle('high-contrast', newPrefs.highContrast);
+        }
+        
+        if (newPrefs.darkMode !== undefined) {
+          document.body.classList.toggle('dark-mode', newPrefs.darkMode);
+        }
+      };
+      
+      // Apply initial preferences
+      React.useEffect(() => {
+        document.body.classList.toggle('high-contrast', preferences.highContrast);
+        document.body.classList.toggle('dark-mode', preferences.darkMode);
+      }, []);
+      
+      return (
+        <AuthContext.Provider value={{ user, login, register, logout, loading, error }}>
+          <div className="app">
+            <Header preferences={preferences} updatePreferences={updatePreferences} />
+            <main id="main-content">
+              <div className="container">
+                {user ? <Dashboard /> : <Auth />}
+              </div>
+            </main>
+            <Footer />
+          </div>
+        </AuthContext.Provider>
+      );
+    }
+    
+    // Header Component
+    function Header({ preferences, updatePreferences }) {
+      const { user, logout } = React.useContext(AuthContext);
+      const [showMenu, setShowMenu] = React.useState(false);
+      const [showPreferences, setShowPreferences] = React.useState(false);
+      
+      const toggleMenu = () => {
+        setShowMenu(!showMenu);
+      };
+      
+      const togglePreferences = () => {
+        setShowPreferences(!showPreferences);
+      };
+      
+      return (
+        <header>
+          <div className="container">
+            <div className="header-content">
+              <div className="logo">
+                <a href="#" onClick={(e) => e.preventDefault()}>Task Manager</a>
+              </div>
+              
+              <nav aria-label="Main navigation">
+                <ul>
+                  <li>
+                    <a href="#" onClick={(e) => e.preventDefault()}>Home</a>
+                  </li>
+                  {user ? (
+                    <>
+                      <li>
+                        <a href="#" onClick={(e) => e.preventDefault()}>My Tasks</a>
+                      </li>
+                      <li>
+                        <a href="#" onClick={(e) => {
+                          e.preventDefault();
+                          togglePreferences();
+                        }}>Preferences</a>
+                      </li>
+                      <li>
+                        <a href="#" onClick={(e) => {
+                          e.preventDefault();
+                          logout();
+                        }}>Logout</a>
+                      </li>
+                    </>
+                  ) : (
+                    <li>
+                      <a href="#" onClick={(e) => e.preventDefault()}>About</a>
+                    </li>
+                  )}
+                </ul>
+              </nav>
+            </div>
+          </div>
+          
+          {showPreferences && (
+            <PreferencesModal 
+              preferences={preferences} 
+              updatePreferences={updatePreferences} 
+              onClose={togglePreferences} 
+            />
+          )}
+        </header>
+      );
+    }
+    
+    // Footer Component
+    function Footer() {
+      return (
+        <footer>
+          <div className="container">
+            <div className="footer-content">
+              <p>&copy; {new Date().getFullYear()} Task Manager. All rights reserved.</p>
+              <nav aria-label="Footer navigation">
+                <ul>
+                  <li>
+                    <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => e.preventDefault()}>Terms of Service</a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => e.preventDefault()}>Contact Us</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+    
+    // Authentication Component
+    function Auth() {
+      const [activeTab, setActiveTab] = React.useState('login');
+      
+      return (
+        <div className="auth-container">
+          <h1>Welcome to Task Manager</h1>
+          
+          <div className="auth-tabs" role="tablist">
+            <button 
+              className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
+              onClick={() => setActiveTab('login')}
+              role="tab"
+              aria-selected={activeTab === 'login'}
+              aria-controls="login-panel"
+              id="login-tab"
+            >
+              Login
+            </button>
+            <button 
+              className={`auth-tab ${activeTab === 'register' ? 'active' : ''}`}
+              onClick={() => setActiveTab('register')}
+              role="tab"
+              aria-selected={activeTab === 'register'}
+              aria-controls="register-panel"
+              id="register-tab"
+            >
+              Register
+            </button>
+          </div>
+          
+          {activeTab === 'login' ? (
+            <div 
+              id="login-panel" 
+              role="tabpanel" 
+              aria-labelledby="login-tab"
+            >
+              <LoginForm />
+            </div>
+          ) : (
+            <div 
+              id="register-panel" 
+              role="tabpanel" 
+              aria-labelledby="register-tab"
+            >
+              <RegisterForm />
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    // Login Form Component
+    function LoginForm() {
+      const { login, loading, error } = React.useContext(AuthContext);
+      const [email, setEmail] = React.useState('');
+      const [password, setPassword] = React.useState('');
+      const [formErrors, setFormErrors] = React.useState({});
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Validate form
+        const errors = {};
+        if (!email) {
+          errors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+          errors.email = 'Email is invalid';
+        }
+        
+        if (!password) {
+          errors.password = 'Password is required';
+        }
+        
+        if (Object.keys(errors).length > 0) {
+          setFormErrors(errors);
+          return;
+        }
+        
+        // Clear errors and submit
+        setFormErrors({});
+        login(email, password);
+      };
+      
+      return (
+        <div className="card">
+          <h2>Login to Your Account</h2>
+          
+          {error && (
+            <div className="status status-error" role="alert">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.email}
+                aria-describedby={formErrors.email ? "email-error" : undefined}
+                autoComplete="email"
+              />
+              {formErrors.email && (
+                <div id="email-error" className="status status-error mt-1" role="alert">
+                  {formErrors.email}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.password}
+                aria-describedby={formErrors.password ? "password-error" : undefined}
+                autoComplete="current-password"
+              />
+              {formErrors.password && (
+                <div id="password-error" className="status status-error mt-1" role="alert">
+                  {formErrors.password}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                disabled={loading}
+                aria-busy={loading}
+              >
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+            </div>
+            
+            <div className="form-group">
+              <p>
+                <a href="#" onClick={(e) => e.preventDefault()}>Forgot your password?</a>
+              </p>
+              <p>
+                Demo credentials: user@example.com / password123
+              </p>
+            </div>
+          </form>
+        </div>
+      );
+    }
+    
+    // Register Form Component
+    function RegisterForm() {
+      const { register, loading, error } = React.useContext(AuthContext);
+      const [name, setName] = React.useState('');
+      const [email, setEmail] = React.useState('');
+      const [password, setPassword] = React.useState('');
+      const [confirmPassword, setConfirmPassword] = React.useState('');
+      const [formErrors, setFormErrors] = React.useState({});
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Validate form
+        const errors = {};
+        if (!name) {
+          errors.name = 'Name is required';
+        }
+        
+        if (!email) {
+          errors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+          errors.email = 'Email is invalid';
+        }
+        
+        if (!password) {
+          errors.password = 'Password is required';
+        } else if (password.length < 8) {
+          errors.password = 'Password must be at least 8 characters';
+        }
+        
+        if (password !== confirmPassword) {
+          errors.confirmPassword = 'Passwords do not match';
+        }
+        
+        if (Object.keys(errors).length > 0) {
+          setFormErrors(errors);
+          return;
+        }
+        
+        // Clear errors and submit
+        setFormErrors({});
+        register(name, email, password);
+      };
+      
+      return (
+        <div className="card">
+          <h2>Create a New Account</h2>
+          
+          {error && (
+            <div className="status status-error" role="alert">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.name}
+                aria-describedby={formErrors.name ? "name-error" : undefined}
+                autoComplete="name"
+              />
+              {formErrors.name && (
+                <div id="name-error" className="status status-error mt-1" role="alert">
+                  {formErrors.name}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="register-email">Email Address</label>
+              <input
+                type="email"
+                id="register-email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.email}
+                aria-describedby={formErrors.email ? "register-email-error" : undefined}
+                autoComplete="email"
+              />
+              {formErrors.email && (
+                <div id="register-email-error" className="status status-error mt-1" role="alert">
+                  {formErrors.email}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="register-password">Password</label>
+              <input
+                type="password"
+                id="register-password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.password}
+                aria-describedby="password-help register-password-error"
+                autoComplete="new-password"
+              />
+              <div id="password-help" className="mt-1">
+                Password must be at least 8 characters long.
+              </div>
+              {formErrors.password && (
+                <div id="register-password-error" className="status status-error mt-1" role="alert">
+                  {formErrors.password}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="confirm-password">Confirm Password</label>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                aria-required="true"
+                aria-invalid={!!formErrors.confirmPassword}
+                aria-describedby={formErrors.confirmPassword ? "confirm-password-error" : undefined}
+                autoComplete="new-password"
+              />
+              {formErrors.confirmPassword && (
+                <div id="confirm-password-error" className="status status-error mt-1" role="alert">
+                  {formErrors.confirmPassword}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                disabled={loading}
+                aria-busy={loading}
+              >
+                {loading ? 'Creating Account...' : 'Create Account'}
+              </button>
+            </div>
+          </form>
+        </div>
+      );
+    }
+    
+    // Dashboard Component
+    function Dashboard() {
+      const { user } = React.useContext(AuthContext);
+      const [tasks, setTasks] = React.useState([
+        { id: 1, title: 'Complete project proposal', completed: false, priority: 'high', dueDate: '2023-12-15' },
+        { id: 2, title: 'Review team updates', completed: true, priority: 'medium', dueDate: '2023-12-10' },
+        { id: 3, title: 'Schedule client meeting', completed: false, priority: 'high', dueDate: '2023-12-12' },
+        { id: 4, title: 'Update documentation', completed: false, priority: 'low', dueDate: '2023-12-20' },
+      ]);
+      const [newTask, setNewTask] = React.useState('');
+      const [editingTask, setEditingTask] = React.useState(null);
+      const [filter, setFilter] = React.useState('all');
+      const [statusMessage, setStatusMessage] = React.useState(null);
+      
+      // Filter tasks based on current filter
+      const filteredTasks = React.useMemo(() => {
+        switch (filter) {
+          case 'completed':
+            return tasks.filter(task => task.completed);
+          case 'active':
+            return tasks.filter(task => !task.completed);
+          case 'high':
+            return tasks.filter(task => task.priority === 'high');
+          default:
+            return tasks;
+        }
+      }, [tasks, filter]);
+      
+      // Add new task
+      const addTask = (e) => {
+        e.preventDefault();
+        
+        if (!newTask.trim()) {
+          setStatusMessage({
+            type: 'error',
+            text: 'Task title cannot be empty'
+          });
+          return;
+        }
+        
+        const task = {
+          id: Date.now(),
+          title: newTask,
+          completed: false,
+          priority: 'medium',
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        };
+        
+        setTasks([...tasks, task]);
+        setNewTask('');
+        setStatusMessage({
+          type: 'success',
+          text: 'Task added successfully'
+        });
+        
+        // Clear status message after 3 seconds
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 3000);
+      };
+      
+      // Toggle task completion
+      const toggleTask = (id) => {
+        setTasks(tasks.map(task => 
+          task.id === id ? { ...task, completed: !task.completed } : task
+        ));
+      };
+      
+      // Delete task
+      const deleteTask = (id) => {
+        setTasks(tasks.filter(task => task.id !== id));
+        setStatusMessage({
+          type: 'success',
+          text: 'Task deleted successfully'
+        });
+        
+        // Clear status message after 3 seconds
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 3000);
+      };
+      
+      // Edit task
+      const openEditModal = (task) => {
+        setEditingTask({...task});
+      };
+      
+      // Update task
+      const updateTask = () => {
+        if (!editingTask.title.trim()) {
+          return;
+        }
+        
+        setTasks(tasks.map(task => 
+          task.id === editingTask.id ? editingTask : task
+        ));
+        
+        setEditingTask(null);
+        setStatusMessage({
+          type: 'success',
+          text: 'Task updated successfully'
+        });
+        
+        // Clear status message after 3 seconds
+        setTimeout(() => {
+          setStatusMessage(null);
+        }, 3000);
+      };
+      
+      return (
+        <div>
+          <h1>Welcome, {user.name}</h1>
+          
+          {statusMessage && (
+            <div className={`status status-${statusMessage.type}`} role="alert">
+              {statusMessage.text}
+            </div>
+          )}
+          
+          <div className="dashboard">
+            <div className="dashboard-sidebar">
+              <div className="card">
+                <h2>Task Filters</h2>
+                <div className="form-group">
+                  <label htmlFor="task-filter">Filter Tasks</label>
+                  <select 
+                    id="task-filter" 
+                    value={filter} 
+                    onChange={(e) => setFilter(e.target.value)}
+                    aria-label="Filter tasks by status"
+                  >
+                    <option value="all">All Tasks</option>
+                    <option value="active">Active Tasks</option>
+                    <option value="completed">Completed Tasks</option>
+                    <option value="high">High Priority</option>
+                  </select>
+                </div>
+                
+                <div className="mt-3">
+                  <h3>Task Summary</h3>
+                  <p>Total Tasks: {tasks.length}</p>
+                  <p>Completed: {tasks.filter(task => task.completed).length}</p>
+                  <p>Pending: {tasks.filter(task => !task.completed).length}</p>
+                  <p>High Priority: {tasks.filter(task => task.priority === 'high').length}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="dashboard-main">
+              <div className="card">
+                <h2>My Tasks</h2>
+                
+                <form onSubmit={addTask} className="task-form">
+                  <div className="task-input">
+                    <label htmlFor="new-task" className="visually-hidden">New Task</label>
+                    <input
+                      type="text"
+                      id="new-task"
+                      placeholder="Add a new task..."
+                      value={newTask}
+                      onChange={(e) => setNewTask(e.target.value)}
+                      aria-label="Enter a new task"
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">Add Task</button>
+                </form>
+                
+                {filteredTasks.length > 0 ? (
+                  <ul className="task-list" aria-label="Task list">
+                    {filteredTasks.map(task => (
+                      <li key={task.id} className="task-item">
+                        <div>
+                          <input
+                            type="checkbox"
+                            id={`task-${task.id}`}
+                            className="task-checkbox"
+                            checked={task.completed}
+                            onChange={() => toggleTask(task.id)}
+                            aria-label={`Mark "${task.title}" as ${task.completed ? 'incomplete' : 'complete'}`}
+                          />
+                          <label 
+                            htmlFor={`task-${task.id}`}
+                            className={task.completed ? 'task-completed' : ''}
+                          >
+                            {task.title}
+                            <span className="task-meta">
+                              {task.priority === 'high' && (
+                                <span className="task-priority" aria-label="High priority"> (High Priority)</span>
+                              )}
+                              <span className="task-due-date" aria-label={`Due date: ${task.dueDate}`}> - Due: {task.dueDate}</span>
+                            </span>
+                          </label>
+                        </div>
+                        <div className="task-actions">
+                          <button 
+                            className="btn btn-secondary"
+                            onClick={() => openEditModal(task)}
+                            aria-label={`Edit task: ${task.title}`}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="btn btn-danger"
+                            onClick={() => deleteTask(task.id)}
+                            aria-label={`Delete task: ${task.title}`}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center mt-3">
+                    <p>No tasks found. Add a new task to get started!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {editingTask && (
+            <EditTaskModal 
+              task={editingTask} 
+              setTask={setEditingTask} 
+              onSave={updateTask} 
+              onClose={() => setEditingTask(null)} 
+            />
+          )}
+        </div>
+      );
+    }
+    
+    // Edit Task Modal Component
+    function EditTaskModal({ task, setTask, onSave, onClose }) {
+      const modalRef = React.useRef(null);
+      const titleInputRef = React.useRef(null);
+      
+      // Focus on title input when modal opens
+      React.useEffect(() => {
+        if (titleInputRef.current) {
+          titleInputRef.current.focus();
+        }
+        
+        // Save previous active element to restore focus when modal closes
+        const previousActiveElement = document.activeElement;
+        
+        // Handle escape key to close modal
+        const handleKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        };
+        
+        document.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+          // Restore focus when component unmounts
+          if (previousActiveElement) {
+            previousActiveElement.focus();
+          }
+        };
+      }, [onClose]);
+      
+      // Handle clicks outside modal to close it
+      const handleOutsideClick = (e) => {
+        if (modalRef.current && !modalRef.current.contains(e.target)) {
+          onClose();
+        }
+      };
+      
+      const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setTask({
+          ...task,
+          [name]: type === 'checkbox' ? checked : value
+        });
+      };
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave();
+      };
+      
+      return (
+        <div 
+          className="modal-backdrop" 
+          onClick={handleOutsideClick}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-task-title"
+        >
+          <div className="modal" ref={modalRef}>
+            <div className="modal-header">
+              <h2 id="edit-task-title">Edit Task</h2>
+              <button 
+                className="modal-close" 
+                onClick={onClose}
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="edit-task-title-input">Task Title</label>
+                <input
+                  type="text"
+                  id="edit-task-title-input"
+                  name="title"
+                  value={task.title}
+                  onChange={handleChange}
+                  ref={titleInputRef}
+                  aria-required="true"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="edit-task-priority">Priority</label>
+                <select
+                  id="edit-task-priority"
+                  name="priority"
+                  value={task.priority}
+                  onChange={handleChange}
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="edit-task-due-date">Due Date</label>
+                <input
+                  type="date"
+                  id="edit-task-due-date"
+                  name="dueDate"
+                  value={task.dueDate}
+                  onChange={handleChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="completed"
+                    checked={task.completed}
+                    onChange={handleChange}
+                  />
+                  Mark as completed
+                </label>
+              </div>
+              
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">Save Changes</button>
+                <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+    
+    // Preferences Modal Component
+    function PreferencesModal({ preferences, updatePreferences, onClose }) {
+      const modalRef = React.useRef(null);
+      
+      // Handle clicks outside modal to close it
+      const handleOutsideClick = (e) => {
+        if (modalRef.current && !modalRef.current.contains(e.target)) {
+          onClose();
+        }
+      };
+      
+      // Handle preference changes
+      const handleChange = (e) => {
+        const { name, checked } = e.target;
+        updatePreferences({ [name]: checked });
+      };
+      
+      // Focus trap and keyboard handling
+      React.useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        };
+        
+        document.addEventListener('keydown', handleKeyDown);
+        
+        // Save previous active element to restore focus when modal closes
+        const previousActiveElement = document.activeElement;
+        
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+          // Restore focus when component unmounts
+          if (previousActiveElement) {
+            previousActiveElement.focus();
+          }
+        };
+      }, [onClose]);
+      
+      return (
+        <div 
+          className="modal-backdrop" 
+          onClick={handleOutsideClick}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="preferences-title"
+        >
+          <div className="modal" ref={modalRef}>
+            <div className="modal-header">
+              <h2 id="preferences-title">Accessibility Preferences</h2>
+              <button 
+                className="modal-close" 
+                onClick={onClose}
+                aria-label="Close preferences modal"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="highContrast"
+                  checked={preferences.highContrast}
+                  onChange={handleChange}
+                />
+                High Contrast Mode
+              </label>
+              <div id="high-contrast-help" className="mt-1">
+                Increases contrast for better readability.
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="darkMode"
+                  checked={preferences.darkMode}
+                  onChange={handleChange}
+                />
+                Dark Mode
+              </label>
+              <div id="dark-mode-help" className="mt-1">
+                Uses dark background with light text.
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="reducedMotion"
+                  checked={preferences.reducedMotion}
+                  onChange={handleChange}
+                />
+                Reduced Motion
+              </label>
+              <div id="reduced-motion-help" className="mt-1">
+                Minimizes animations and transitions.
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <button type="button" className="btn btn-primary" onClick={onClose}>Save Preferences</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Render the App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

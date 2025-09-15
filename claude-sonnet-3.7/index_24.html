@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Book Recommendations - Find Your Next Great Read</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #2b4c7e;
+            --primary-dark: #1a3a6e;
+            --secondary-color: #567ebb;
+            --accent-color: #e67e22;
+            --accent-dark: #d35400;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --light-text: #ffffff;
+            --error-color: #c0392b;
+            --success-color: #27ae60;
+            --border-color: #cbd5e0;
+            --focus-outline: 3px solid #4299e1;
+            --card-background: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Respect user preference for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            /* Enhanced readability per WCAG 2.2 AAA */
+            line-height: 1.8;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-color);
+            color: var(--light-text);
+            padding: 8px 16px;
+            z-index: 100;
+            transition: top 0.3s;
+            border-radius: 0 0 4px 0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: var(--focus-outline);
+        }
+
+        /* Enhanced focus styles for all interactive elements */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus {
+            outline: var(--focus-outline);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--secondary-color);
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--light-text);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--primary-dark);
+            padding: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 1.5rem;
+            padding: 0;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover, nav a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: underline;
+        }
+
+        nav a.active {
+            background-color: var(--accent-color);
+            color: var(--light-text);
+        }
+
+        /* Main Content Area */
+        main {
+            padding: 2rem;
+            min-height: 70vh;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            max-width: 80ch; /* For optimal readability */
+        }
+
+        /* Form Styles with Enhanced Accessibility */
+        .form-container {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-intro {
+            margin-bottom: 1.5rem;
+        }
+
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        legend {
+            font-weight: bold;
+            color: var(--primary-color);
+            padding: 0 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        select:hover,
+        textarea:hover {
+            border-color: var(--secondary-color);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-group {
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: 20px;
+            height: 20px;
+        }
+
+        .checkbox-option label {
+            margin-bottom: 0;
+            display: inline;
+        }
+
+        .help-text {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        button:hover, button:focus {
+            background-color: var(--primary-dark);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            background-color: #6c757d;
+        }
+
+        button.secondary:hover, button.secondary:focus {
+            background-color: #5a6268;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Error and validation styles */
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        input:invalid, select:invalid, textarea:invalid {
+            border-color: var(--error-color);
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .book-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-card:hover, .book-card:focus-within {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .book-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .book-author {
+            color: var(--secondary-color);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .book-description {
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .book-genre {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-link {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: auto;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .book-link:hover, .book-link:focus {
+            background-color: var(--accent-dark);
+        }
+
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Accordion for FAQ section */
+        .accordion {
+            margin-bottom: 2rem;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background-color: var(--card-background);
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .accordion-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.5rem;
+            background-color: var(--card-background);
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .accordion-button:hover, .accordion-button:focus {
+            background-color: #f0f4f8;
+        }
+
+        .accordion-button::after {
+            content: "+";
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .accordion-button[aria-expanded="true"]::after {
+            content: "−";
+        }
+
+        .accordion-content {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: var(--card-background);
+        }
+
+        .accordion-content-inner {
+            padding: 1rem 0 1.5rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--light-text);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            padding: 0 1rem;
+        }
+
+        .footer-section h3 {
+            color: var(--light-text);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover, .footer-links a:focus {
+            color: var(--light-text);
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover, .close-modal:focus {
+            background-color: #f0f0f0;
+            color: var(--error-color);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .footer-section {
+                margin-bottom: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            header, nav, footer, .form-container, button {
+                display: none;
+            }
+
+            body, main {
+                background-color: white;
+                color: black;
+                font-size: 12pt;
+            }
+
+            .results-container {
+                display: block !important;
+            }
+
+            .book-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <h1>BookMatch: Your Personalized Reading Recommendations</h1>
+        <p>Discover your next favorite book based on your reading preferences and interests</p>
+    </header>
+
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#" class="active" aria-current="page">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Book Categories</a></li>
+            <li><a href="#">Reading Lists</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <section aria-labelledby="intro-heading">
+            <h2 id="intro-heading">Find Your Perfect Book Match</h2>
+            <p>Tell us about your reading preferences, and we'll suggest books tailored just for you. Our recommendation engine analyzes your favorite genres, authors, and reading history to find books you'll love.</p>
+            
+            <div class="form-container">
+                <div class="form-intro">
+                    <h3>Your Reading Preferences</h3>
+                    <p>Fill out the form below to get personalized book recommendations. The more information you provide, the better our suggestions will be!</p>
+                </div>
+                
+                <form id="recommendation-form" aria-labelledby="form-heading">
+                    <h3 id="form-heading" class="visually-hidden">Book Recommendation Form</h3>
+                    
+                    <fieldset>
+                        <legend>Personal Information</legend>
+                        
+                        <div class="form-group">
+                            <label for="name" class="required-field">Your Name</label>
+                            <input type="text" id="name" name="name" required aria-required="true" autocomplete="name">
+                            <span id="name-error" class="error-message" aria-live="polite"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address (optional)</label>
+                            <input type="email" id="email" name="email" autocomplete="email">
+                            <span id="email-help" class="help-text">We'll use this to send your recommendations if you prefer</span>
+                            <span id="email-error" class="error-message" aria-live="polite"></span>
+                        </div>
+                    </fieldset>
+                    
+                    <fieldset>
+                        <legend>Reading Preferences</legend>
+                        
+                        <div class="form-group">
+                            <label for="favorite-author" class="required-field">Favorite Author</label>
+                            <input type="text" id="favorite-author" name="favorite-author" required aria-required="true">
+                            <span id="author-help" class="help-text">Enter an author whose writing style you enjoy</span>
+                            <span id="author-error" class="error-message" aria-live="polite"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label id="genres-label" class="required-field">Preferred Genres (select at least one)</label>
+                            <div class="checkbox-group" role="group" aria-labelledby="genres-label">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-fiction" name="genres" value="fiction">
+                                    <label for="genre-fiction">Fiction</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-mystery" name="genres" value="mystery">
+                                    <label for="genre-mystery">Mystery & Thriller</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-scifi" name="genres" value="scifi">
+                                    <label for="genre-scifi">Science Fiction</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-fantasy" name="genres" value="fantasy">
+                                    <label for="genre-fantasy">Fantasy</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-romance" name="genres" value="romance">
+                                    <label for="genre-romance">Romance</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-nonfiction" name="genres" value="nonfiction">
+                                    <label for="genre-nonfiction">Non-Fiction</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-biography" name="genres" value="biography">
+                                    <label for="genre-biography">Biography & Memoir</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="genre-history" name="genres" value="history">
+                                    <label for="genre-history">History</label>
+                                </div>
+                            </div>
+                            <span id="genres-error" class="error-message" aria-live="polite"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reading-pace">Reading Pace</label>
+                            <select id="reading-pace" name="reading-pace">
+                                <option value="">Select your typical reading pace</option>
+                                <option value="casual">Casual (1-2 books per month)</option>
+                                <option value="moderate">Moderate (3-5 books per month)</option>
+                                <option value="avid">Avid (6+ books per month)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="additional-info">Additional Information</label>
+                            <textarea id="additional-info" name="additional-info" rows="4" placeholder="Tell us about books you've recently enjoyed or specific themes you're interested in"></textarea>
+                        </div>
+                    </fieldset>
+                    
+                    <div class="button-group">
+                        <button type="submit" id="submit-button">Get Recommendations</button>
+                        <button type="reset" class="secondary">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <div id="loading" class="loading" aria-live="polite">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <p>Finding the perfect books for you...</p>
+        </div>
+        
+        <section id="results" class="results-container" aria-labelledby="results-heading">
+            <h2 id="results-heading">Your Personalized Book Recommendations</h2>
+            <p id="results-intro">Based on your preferences, we think you'll enjoy these books:</p>
+            
+            <div id="book-list" class="book-list">
+                <!-- Book recommendations will be inserted here by JavaScript -->
+            </div>
+            
+            <div id="no-results" class="no-results" style="display: none;">
+                <h3>No Matches Found</h3>
+                <p>We couldn't find any books matching your specific criteria. Try adjusting your preferences or contact us for personalized assistance.</p>
+            </div>
+        </section>
+        
+        <section aria-labelledby="faq-heading">
+            <h2 id="faq-heading">Frequently Asked Questions</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button" aria-expanded="false" aria-controls="faq1-content">
+                            How does the recommendation system work?
+                        </button>
+                    </h3>
+                    <div id="faq1-content" class="accordion-content" hidden>
+                        <div class="accordion-content-inner">
+                            <p>Our recommendation system analyzes your preferred genres, favorite authors, and reading habits to suggest books you might enjoy. We consider writing style, themes, and narrative elements to find the best matches for your taste.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button" aria-expanded="false" aria-controls="faq2-content">
+                            Can I save my recommendations for later?
+                        </button>
+                    </h3>
+                    <div id="faq2-content" class="accordion-content" hidden>
+                        <div class="accordion-content-inner">
+                            <p>Yes! If you provide your email address, we can send your personalized recommendations to you. You can also print your recommendations using your browser's print function or bookmark this page to return later.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button" aria-expanded="false" aria-controls="faq3-content">
+                            How often are new books added to the database?
+                        </button>
+                    </h3>
+                    <div id="faq3-content" class="accordion-content" hidden>
+                        <div class="accordion-content-inner">
+                            <p>We update our book database weekly with new releases and classics. Our team of librarians and book enthusiasts constantly reviews and adds books to ensure our recommendations stay current and diverse.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button" aria-expanded="false" aria-controls="faq4-content">
+                            What if I don't like the recommendations?
+                        </button>
+                    </h3>
+                    <div id="faq4-content" class="accordion-content" hidden>
+                        <div class="accordion-content-inner">
+                            <p>You can adjust your preferences and try again, or contact our team for personalized assistance. We're always working to improve our recommendation algorithm based on user feedback.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section aria-labelledby="help-heading">
+            <h2 id="help-heading">Need Help?</h2>
+            <p>If you're looking for specific book recommendations or have questions about using our service, our team of book enthusiasts is here to help!</p>
+            <button id="contact-button" aria-haspopup="dialog">Contact Our Book Experts</button>
+        </section>
+    </main>
+    
+    <div id="contact-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <h2 id="modal-title">Contact Our Book Experts</h2>
+            <button class="close-modal" aria-label="Close dialog">&times;</button>
+            
+            <p>Have a specific question about books or need personalized recommendations? Fill out this form and one of our book experts will get back to you within 24 hours.</p>
+            
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="contact-name" class="required-field">Your Name</label>
+                    <input type="text" id="contact-name" name="contact-name" required aria-required="true" autocomplete="name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-email" class="required-field">Email Address</label>
+                    <input type="email" id="contact-email" name="contact-email" required aria-required="true" autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-message" class="required-field">Your Question</label>
+                    <textarea id="contact-message" name="contact-message" rows="4" required aria-required="true"></textarea>
+                </div>
+                
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About BookMatch</h3>
+                <p>BookMatch helps readers discover their next favorite books through personalized recommendations based on reading preferences and interests.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <ul class="footer-links">
+                    <li><a href="#" aria-label="Visit our Facebook page">Facebook</a></li>
+                    <li><a href="#" aria-label="Visit our Twitter page">Twitter</a></li>
+                    <li><a href="#" aria-label="Visit our Instagram page">Instagram</a></li>
+                    <li><a href="#" aria-label="Subscribe to our newsletter">Newsletter</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 BookMatch. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation and submission
+            const recommendationForm = document.getElementById('recommendation-form');
+            const loadingIndicator = document.getElementById('loading');
+            const resultsSection = document.getElementById('results');
+            const bookList = document.getElementById('book-list');
+            const noResults = document.getElementById('no-results');
+            
+            // Sample book data (in a real application, this would come from a database or API)
+            const bookDatabase = [
+                {
+                    title: "The Midnight Library",
+                    author: "Matt Haig",
+                    genres: ["fiction", "fantasy"],
+                    description: "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.",
+                    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#midnight-library"
+                },
+                {
+                    title: "Project Hail Mary",
+                    author: "Andy Weir",
+                    genres: ["scifi"],
+                    description: "A lone astronaut must save the earth from disaster in this incredible new science-based thriller from the #1 New York Times bestselling author of The Martian.",
+                    image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#project-hail-mary"
+                },
+                {
+                    title: "The Silent Patient",
+                    author: "Alex Michaelides",
+                    genres: ["mystery", "fiction"],
+                    description: "A woman shoots her husband five times and then never speaks another word. A criminal psychotherapist is determined to get her to talk and unravel the mystery.",
+                    image: "https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#silent-patient"
+                },
+                {
+                    title: "Educated",
+                    author: "Tara Westover",
+                    genres: ["biography", "nonfiction"],
+                    description: "A memoir about a young girl who, kept out of school, leaves her survivalist family and goes on to earn a PhD from Cambridge University.",
+                    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#educated"
+                },
+                {
+                    title: "The House in the Cerulean Sea",
+                    author: "TJ Klune",
+                    genres: ["fantasy", "fiction"],
+                    description: "A magical island. A dangerous task. A burning secret. An enchanting love story, masterfully told, The House in the Cerulean Sea is about the profound experience of discovering an unlikely family.",
+                    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#cerulean-sea"
+                },
+                {
+                    title: "Sapiens: A Brief History of Humankind",
+                    author: "Yuval Noah Harari",
+                    genres: ["nonfiction", "history"],
+                    description: "A groundbreaking narrative of humanity's creation and evolution that explores the ways in which biology and history have defined us.",
+                    image: "https://images.unsplash.com/photo-1555116505-38ab61800975?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#sapiens"
+                },
+                {
+                    title: "The Seven Husbands of Evelyn Hugo",
+                    author: "Taylor Jenkins Reid",
+                    genres: ["fiction", "romance"],
+                    description: "The epic journey of a reclusive Hollywood movie icon who, nearing the end of her life, decides to reveal the truth about her glamorous and scandalous life.",
+                    image: "https://images.unsplash.com/photo-1518744386442-2d48ac47a7eb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#evelyn-hugo"
+                },
+                {
+                    title: "The Thursday Murder Club",
+                    author: "Richard Osman",
+                    genres: ["mystery", "fiction"],
+                    description: "Four septuagenarians with a few tricks up their sleeves, a female cop with her first big case, and a brutal murder. In a peaceful retirement village, four unlikely friends meet weekly to discuss unsolved crimes.",
+                    image: "https://images.unsplash.com/photo-1587876931567-564ce588bfbd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                    link: "#thursday-murder"
+                }
+            ];
+            
+            // Form validation
+            recommendationForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Reset error messages
+                document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+                
+                let isValid = true;
+                
+                // Validate name
+                const nameInput = document.getElementById('name');
+                if (!nameInput.value.trim()) {
+                    document.getElementById('name-error').textContent = 'Please enter your name';
+                    isValid = false;
+                }
+                
+                // Validate email format if provided
+                const emailInput = document.getElementById('email');
+                if (emailInput.value.trim() && !isValidEmail(emailInput.value)) {
+                    document.getElementById('email-error').textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+                
+                // Validate favorite author
+                const authorInput = document.getElementById('favorite-author');
+                if (!authorInput.value.trim()) {
+                    document.getElementById('author-error').textContent = 'Please enter a favorite author';
+                    isValid = false;
+                }
+                
+                // Validate at least one genre is selected
+                const genreCheckboxes = document.querySelectorAll('input[name="genres"]:checked');
+                if (genreCheckboxes.length === 0) {
+                    document.getElementById('genres-error').textContent = 'Please select at least one genre';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+                    
+                    // Simulate API call delay
+                    setTimeout(function() {
+                        // Process form data and generate recommendations
+                        generateRecommendations();
+                        
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        
+                        // Show results section
+                        resultsSection.style.display = 'block';
+                        
+                        // Scroll to results
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 1500);
+                }
+            });
+            
+            // Email validation helper function
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Generate book recommendations based on form input
+            function generateRecommendations() {
+                // Get selected genres
+                const selectedGenres = Array.from(document.querySelectorAll('input[name="genres"]:checked')).map(cb => cb.value);
+                
+                // Get favorite author
+                const favoriteAuthor = document.getElementById('favorite-author').value.trim().toLowerCase();
+                
+                // Filter books based on selected genres and author similarity
+                let recommendedBooks = bookDatabase.filter(book => {
+                    // Check if any of the book's genres match the selected genres
+                    const genreMatch = book.genres.some(genre => selectedGenres.includes(genre));
+                    
+                    // For demo purposes, we'll do a simple author name check
+                    // In a real app, this would use more sophisticated author similarity algorithms
+                    const authorMatch = book.author.toLowerCase().includes(favoriteAuthor) || 
+                                        favoriteAuthor.includes(book.author.toLowerCase());
+                    
+                    // Return books that match either genre or author
+                    return genreMatch || authorMatch;
+                });
+                
+                // If no exact matches, return some books from selected genres
+                if (recommendedBooks.length === 0) {
+                    recommendedBooks = bookDatabase.filter(book => {
+                        return book.genres.some(genre => selectedGenres.includes(genre));
+                    });
+                }
+                
+                // Display recommendations
+                displayRecommendations(recommendedBooks);
+            }
+            
+            // Display book recommendations in the results section
+            function displayRecommendations(books) {
+                // Clear previous results
+                bookList.innerHTML = '';
+                
+                if (books.length === 0) {
+                    // Show no results message
+                    noResults.style.display = 'block';
+                    return;
+                }
+                
+                // Hide no results message if showing books
+                noResults.style.display = 'none';
+                
+                // Create and append book cards
+                books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    
+                    const genreHTML = book.genres.map(genre => 
+                        `<span class="book-genre">${genre.charAt(0).toUpperCase() + genre.slice(1)}</span>`
+                    ).join('');
+                    
+                    bookCard.innerHTML = `
+                        <img src="${book.image}" alt="Book cover for ${book.title} by ${book.author}" class="book-image">
+                        <div class="book-info">
+                            <h3 class="book-title">${book.title}</h3>
+                            <p class="book-author">by ${book.author}</p>
+                            <p class="book-description">${book.description}</p>
+                            <div class="book-genres">
+                                ${genreHTML}
+                            </div>
+                            <a href="${book.link}" class="book-link">Learn More</a>
+                        </div>
+                    `;
+                    
+                    bookList.appendChild(bookCard);
+                });
+                
+                // Update results intro text
+                document.getElementById('results-intro').textContent = 
+                    `Based on your preferences, we found ${books.length} book${books.length === 1 ? '' : 's'} you might enjoy:`;
+            }
+            
+            // Accordion functionality
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Toggle aria-expanded attribute
+                    const expanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !expanded);
+                    
+                    // Get the content panel
+                    const contentId = this.getAttribute('aria-controls');
+                    const content = document.getElementById(contentId);
+                    
+                    // Toggle hidden attribute
+                    if (expanded) {
+                        content.setAttribute('hidden', '');
+                    } else {
+                        content.removeAttribute('hidden');
+                    }
+                    
+                    // Animate content height
+                    if (!expanded) {
+                        // Opening the accordion
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    } else {
+                        // Closing the accordion
+                        content.style.maxHeight = '0';
+                    }
+                });
+            });
+            
+            // Modal functionality
+            const contactButton = document.getElementById('contact-button');
+            const contactModal = document.getElementById('contact-modal');
+            const closeModal = document.querySelector('.close-modal');
+            
+            contactButton.addEventListener('click', function() {
+                // Show modal
+                contactModal.style.display = 'block';
+                contactModal.setAttribute('aria-hidden', 'false');
+                
+                // Set focus to first input in modal
+                document.getElementById('contact-name').focus();
+                
+                // Save the element that had focus before opening modal
+                this.setAttribute('data-return-focus', 'true');
+            });
+            
+            closeModal.addEventListener('click', function() {
+                closeContactModal();
+            });
+            
+            // Close modal when clicking outside content
+            contactModal.addEventListener('click', function(event) {
+                if (event.target === contactModal) {
+                    closeContactModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && contactModal.style.display === 'block') {
+                    closeContactModal();
+                }
+            });
+            
+            function closeContactModal() {
+                contactModal.style.display = 'none';
+                contactModal.setAttribute('aria-hidden', 'true');
+                
+                // Return focus to the element that opened the modal
+                const returnFocusElement = document.querySelector('[data-return-focus="true"]');
+                if (returnFocusElement) {
+                    returnFocusElement.focus();
+                    returnFocusElement.removeAttribute('data-return-focus');
+                }
+            }
+            
+            // Trap focus within modal when open
+            contactModal.addEventListener('keydown', function(event) {
+                if (event.key !== 'Tab') return;
+                
+                const focusableElements = contactModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                // If shift+tab on first element, move to last element
+                if (event.shiftKey && document.activeElement === firstElement) {
+                    event.preventDefault();
+                    lastElement.focus();
+                }
+                // If tab on last element, move to first element
+                else if (!event.shiftKey && document.activeElement === lastElement) {
+                    event.preventDefault();
+                    firstElement.focus();
+                }
+            });
+            
+            // Contact form submission
+            const contactForm = document.getElementById('contact-form');
+            
+            contactForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // In a real application, you would send the form data to a server
+                // For this demo, we'll just show a success message and close the modal
+                
+                alert('Thank you for your message! Our book experts will contact you soon.');
+                closeContactModal();
+                contactForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>

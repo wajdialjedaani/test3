@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Interactive Form with Validation</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+            --background-color: #f8fafc;
+            --text-color: #0f172a;
+            --border-color: #cbd5e1;
+            --focus-outline: 3px solid #93c5fd;
+        }
+
+        /* Respect user preferences for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .required-indicator {
+            color: var(--error-color);
+            margin-left: 0.25rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            min-height: 44px; /* AAA target size */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        .input-help {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            color: #64748b;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Validation states */
+        input.valid {
+            border-color: var(--success-color);
+        }
+
+        input.invalid {
+            border-color: var(--error-color);
+        }
+
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .strength-meter {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-text {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Loading indicator */
+        .loading-indicator {
+            display: none;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(203, 213, 225, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 24px;
+            height: 24px;
+            margin-right: 0.75rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success message */
+        .form-success {
+            display: none;
+            background-color: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-success h2 {
+            color: var(--success-color);
+            margin-top: 0;
+        }
+
+        /* Enhanced focus indicators for AAA compliance */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus {
+            outline: var(--focus-outline);
+            outline-offset: 2px;
+        }
+
+        /* Visual presentation requirements for AAA compliance */
+        p, label, input, button {
+            line-height: 1.5; /* At least 1.5 times font size */
+        }
+
+        p {
+            margin-bottom: 1.5em; /* At least 1.5 times line spacing */
+            max-width: 80ch; /* No more than 80 characters per line */
+            text-align: left; /* Text not justified */
+        }
+
+        /* High contrast icons for validation */
+        .validation-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    
+    <div class="container">
+        <header>
+            <h1>Account Registration Form</h1>
+        </header>
+        
+        <main id="main">
+            <section class="form-container">
+                <h2>Personal Information</h2>
+                <p>Please fill out the form below to create your account. All fields marked with an asterisk (*) are required.</p>
+                
+                <form id="registration-form" novalidate>
+                    <div class="form-group">
+                        <label for="name">Full Name <span class="required-indicator">*</span></label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            autocomplete="name" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="name-help name-error"
+                        >
+                        <div id="name-help" class="input-help">Enter your full name (first and last name).</div>
+                        <div id="name-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required-indicator">*</span></label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            autocomplete="email" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="email-help email-error"
+                        >
+                        <div id="email-help" class="input-help">Enter a valid email address (e.g., name@example.com).</div>
+                        <div id="email-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password <span class="required-indicator">*</span></label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            autocomplete="new-password" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="password-help password-error password-strength-text"
+                        >
+                        <div id="password-help" class="input-help">
+                            Password must be at least 8 characters and include:
+                            <ul>
+                                <li>At least one uppercase letter</li>
+                                <li>At least one lowercase letter</li>
+                                <li>At least one number</li>
+                                <li>At least one special character (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-meter-fill" id="strength-meter-fill"></div>
+                            </div>
+                            <div id="password-strength-text" class="strength-text"></div>
+                        </div>
+                        <div id="password-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required-indicator">*</span></label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            autocomplete="tel" 
+                            required 
+                            aria-required="true"
+                            aria-describedby="phone-help phone-error"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                        >
+                        <div id="phone-help" class="input-help">Enter your phone number in the format: 123-456-7890.</div>
+                        <div id="phone-error" class="error-message" aria-live="polite"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" id="submit-button">Create Account</button>
+                    </div>
+                    
+                    <div class="loading-indicator" id="loading-indicator" aria-live="polite">
+                        <div class="loading-spinner" aria-hidden="true"></div>
+                        <span>Processing your submission...</span>
+                    </div>
+                </form>
+                
+                <div class="form-success" id="form-success" aria-live="polite">
+                    <h2>Registration Successful!</h2>
+                    <p>Thank you for registering. Your account has been created successfully.</p>
+                    <p>We've sent a confirmation email to your provided email address with further instructions.</p>
+                </div>
+            </section>
+            
+            <section class="help-section">
+                <h2>Need Help?</h2>
+                <p>If you're having trouble with the registration form, please contact our support team at <a href="mailto:support@example.com">support@example.com</a> or call us at <a href="tel:+18001234567">1-800-123-4567</a>.</p>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Example Company. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get form elements
+            const form = document.getElementById('registration-form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const phoneInput = document.getElementById('phone');
+            const submitButton = document.getElementById('submit-button');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const formSuccess = document.getElementById('form-success');
+            
+            // Get error message elements
+            const nameError = document.getElementById('name-error');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            const phoneError = document.getElementById('phone-error');
+            
+            // Password strength elements
+            const strengthMeterFill = document.getElementById('strength-meter-fill');
+            const strengthText = document.getElementById('password-strength-text');
+            
+            // Validation patterns
+            const patterns = {
+                name: /^[a-zA-Z]+ [a-zA-Z]+$/,
+                email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                phone: /^\d{3}-\d{3}-\d{4}$/
+            };
+            
+            // Error messages
+            const errorMessages = {
+                name: {
+                    required: 'Please enter your full name.',
+                    pattern: 'Please enter your first and last name separated by a space.'
+                },
+                email: {
+                    required: 'Please enter your email address.',
+                    pattern: 'Please enter a valid email address (e.g., name@example.com).'
+                },
+                password: {
+                    required: 'Please enter a password.',
+                    pattern: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.'
+                },
+                phone: {
+                    required: 'Please enter your phone number.',
+                    pattern: 'Please enter a valid phone number in the format: 123-456-7890.'
+                }
+            };
+            
+            // Format phone number as user types
+            phoneInput.addEventListener('input', function(e) {
+                // Get only digits from the input
+                let digits = this.value.replace(/\D/g, '');
+                
+                // Format with hyphens
+                if (digits.length > 0) {
+                    if (digits.length <= 3) {
+                        this.value = digits;
+                    } else if (digits.length <= 6) {
+                        this.value = digits.slice(0, 3) + '-' + digits.slice(3);
+                    } else {
+                        this.value = digits.slice(0, 3) + '-' + digits.slice(3, 6) + '-' + digits.slice(6, 10);
+                    }
+                }
+                
+                // Validate after formatting
+                validateInput(phoneInput, patterns.phone, phoneError, errorMessages.phone);
+            });
+            
+            // Add input event listeners for real-time validation
+            nameInput.addEventListener('input', function() {
+                validateInput(nameInput, patterns.name, nameError, errorMessages.name);
+            });
+            
+            emailInput.addEventListener('input', function() {
+                validateInput(emailInput, patterns.email, emailError, errorMessages.email);
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                validateInput(passwordInput, patterns.password, passwordError, errorMessages.password);
+                updatePasswordStrength(passwordInput.value);
+            });
+            
+            // Validate input function
+            function validateInput(input, pattern, errorElement, errorMessage) {
+                // Check if the field is required and empty
+                if (input.required && !input.value.trim()) {
+                    setInvalid(input, errorElement, errorMessage.required);
+                    return false;
+                }
+                
+                // If there's a value, check against the pattern
+                if (input.value.trim() && !pattern.test(input.value)) {
+                    setInvalid(input, errorElement, errorMessage.pattern);
+                    return false;
+                }
+                
+                // If we get here, the input is valid
+                setValid(input, errorElement);
+                return true;
+            }
+            
+            // Set invalid state
+            function setInvalid(input, errorElement, message) {
+                input.classList.add('invalid');
+                input.classList.remove('valid');
+                input.setAttribute('aria-invalid', 'true');
+                errorElement.textContent = message;
+            }
+            
+            // Set valid state
+            function setValid(input, errorElement) {
+                input.classList.add('valid');
+                input.classList.remove('invalid');
+                input.setAttribute('aria-invalid', 'false');
+                errorElement.textContent = '';
+            }
+            
+            // Update password strength indicator
+            function updatePasswordStrength(password) {
+                let strength = 0;
+                let feedback = '';
+                
+                if (password.length >= 8) strength += 1;
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/[a-z]/.test(password)) strength += 1;
+                if (/[0-9]/.test(password)) strength += 1;
+                if (/[!@#$%^&*]/.test(password)) strength += 1;
+                
+                // Calculate percentage (0-5 scale to 0-100%)
+                const percentage = (strength / 5) * 100;
+                
+                // Update the visual meter
+                strengthMeterFill.style.width = `${percentage}%`;
+                
+                // Set color based on strength
+                if (strength <= 2) {
+                    strengthMeterFill.style.backgroundColor = '#ef4444'; // Red
+                    feedback = 'Weak password';
+                } else if (strength <= 3) {
+                    strengthMeterFill.style.backgroundColor = '#f59e0b'; // Amber
+                    feedback = 'Moderate password';
+                } else if (strength <= 4) {
+                    strengthMeterFill.style.backgroundColor = '#10b981'; // Green
+                    feedback = 'Strong password';
+                } else {
+                    strengthMeterFill.style.backgroundColor = '#047857'; // Dark green
+                    feedback = 'Very strong password';
+                }
+                
+                strengthText.textContent = feedback;
+            }
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                const isNameValid = validateInput(nameInput, patterns.name, nameError, errorMessages.name);
+                const isEmailValid = validateInput(emailInput, patterns.email, emailError, errorMessages.email);
+                const isPasswordValid = validateInput(passwordInput, patterns.password, passwordError, errorMessages.password);
+                const isPhoneValid = validateInput(phoneInput, patterns.phone, phoneError, errorMessages.phone);
+                
+                // If all fields are valid, submit the form
+                if (isNameValid && isEmailValid && isPasswordValid && isPhoneValid) {
+                    // Show loading indicator
+                    submitButton.disabled = true;
+                    loadingIndicator.style.display = 'flex';
+                    
+                    // Simulate form submission (replace with actual submission)
+                    setTimeout(function() {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        
+                        // Hide form and show success message
+                        form.style.display = 'none';
+                        formSuccess.style.display = 'block';
+                        
+                        // Set focus to success message for screen readers
+                        formSuccess.focus();
+                    }, 2000);
+                } else {
+                    // Focus the first invalid field
+                    if (!isNameValid) nameInput.focus();
+                    else if (!isEmailValid) emailInput.focus();
+                    else if (!isPasswordValid) passwordInput.focus();
+                    else if (!isPhoneValid) phoneInput.focus();
+                    
+                    // Announce error for screen readers
+                    const firstError = document.querySelector('.error-message:not(:empty)');
+                    if (firstError) {
+                        firstError.setAttribute('role', 'alert');
+                    }
+                }
+            });
+            
+            // Add blur event listeners for validation when leaving fields
+            nameInput.addEventListener('blur', function() {
+                validateInput(nameInput, patterns.name, nameError, errorMessages.name);
+            });
+            
+            emailInput.addEventListener('blur', function() {
+                validateInput(emailInput, patterns.email, emailError, errorMessages.email);
+            });
+            
+            passwordInput.addEventListener('blur', function() {
+                validateInput(passwordInput, patterns.password, passwordError, errorMessages.password);
+            });
+            
+            phoneInput.addEventListener('blur', function() {
+                validateInput(phoneInput, patterns.phone, phoneError, errorMessages.phone);
+            });
+            
+            // Initialize password strength meter
+            updatePasswordStrength('');
+        });
+    </script>
+</body>
+</html>

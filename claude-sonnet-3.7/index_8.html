@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Color Palette Mixer - Create Custom Color Themes</title>
+    <style>
+        /* Base Styles with Enhanced Accessibility */
+        :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #4a148c;
+            --accent-color: #b71c1c;
+            --text-color: #212121;
+            --background-color: #f5f5f5;
+            --light-text: #f5f5f5;
+            --focus-outline-color: #000000;
+            --error-color: #d50000;
+            --success-color: #1b5e20;
+            --border-color: #424242;
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+            /* Enhanced readability per WCAG 2.2 AAA */
+            line-height: 1.8;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Enhanced focus indicators for all interactive elements */
+        a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+            outline: 3px solid var(--focus-outline-color);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Typography with enhanced readability */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 1em;
+            color: var(--text-color);
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 0.5em;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 1em;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 1em;
+        }
+
+        p {
+            margin-bottom: 1.5em;
+            max-width: 80ch; /* Optimal reading width */
+        }
+
+        /* Enhanced link styles */
+        a {
+            color: var(--primary-color);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+            font-weight: bold;
+        }
+
+        a:hover, a:focus {
+            text-decoration: none;
+            background-color: rgba(13, 71, 161, 0.1);
+        }
+
+        a:visited {
+            color: var(--secondary-color);
+        }
+
+        /* Header styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            color: white;
+            margin: 0;
+        }
+
+        /* Navigation styles */
+        nav {
+            background-color: #002171; /* Darker shade for contrast */
+            padding: 0.5rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        nav a:hover, nav a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            text-decoration: underline;
+        }
+
+        /* Main content area */
+        main {
+            padding: 2rem;
+        }
+
+        /* Section styling */
+        section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Color mixer controls */
+        .color-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .color-slider-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .color-slider {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 2rem;
+        }
+
+        input[type="number"] {
+            width: 5rem;
+            padding: 0.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Color preview area */
+        .color-preview {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .color-box {
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .color-value {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: black;
+        }
+
+        /* Palette section */
+        .palette-section {
+            margin-top: 2rem;
+        }
+
+        .saved-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .palette-color {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+        }
+
+        .palette-color-code {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 0.3rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: black;
+        }
+
+        /* Buttons with enhanced accessibility */
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            min-height: 44px;
+            min-width: 44px;
+            font-weight: bold;
+        }
+
+        button:hover, button:focus {
+            background-color: #002171;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+
+        button.secondary:hover, button.secondary:focus {
+            background-color: #2a0064;
+        }
+
+        button.danger {
+            background-color: var(--accent-color);
+        }
+
+        button.danger:hover, button.danger:focus {
+            background-color: #7f0000;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        /* Theme preview section */
+        .theme-preview {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .theme-preview-header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .theme-preview-content {
+            padding: 1rem;
+            background-color: white;
+        }
+
+        .theme-preview-button {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        /* Form in theme preview */
+        .theme-form {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .theme-form input[type="text"],
+        .theme-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Modal dialog */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Palette name input */
+        .palette-name-group {
+            margin-bottom: 1.5rem;
+        }
+
+        #palette-name {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Saved palettes list */
+        .saved-palettes-list {
+            margin-top: 2rem;
+        }
+
+        .palette-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .palette-colors {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .palette-color-small {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: white;
+        }
+
+        /* Accessibility info */
+        .accessibility-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+        }
+
+        /* Help section */
+        .help-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #e8eaf6;
+            border-radius: 8px;
+        }
+
+        .help-section h2 {
+            color: var(--secondary-color);
+        }
+
+        /* Accordion for help content */
+        .accordion {
+            margin-top: 1rem;
+        }
+
+        .accordion-item {
+            margin-bottom: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .accordion-header {
+            padding: 1rem;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .accordion-content {
+            padding: 1rem;
+            display: none;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        /* Status messages */
+        .status-message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-success {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .status-error {
+            background-color: #ffebee;
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 768px) {
+            .color-controls {
+                flex-direction: column;
+            }
+            
+            .color-slider-group, .color-preview {
+                width: 100%;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .palette-color {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        /* Enhanced contrast mode toggle */
+        .contrast-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* High contrast mode */
+        .high-contrast {
+            --primary-color: #000000;
+            --secondary-color: #000000;
+            --accent-color: #000000;
+            --text-color: #000000;
+            --background-color: #ffffff;
+            --light-text: #ffffff;
+            --border-color: #000000;
+        }
+
+        .high-contrast button {
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        .high-contrast a {
+            color: #000000;
+        }
+
+        .high-contrast header, 
+        .high-contrast nav, 
+        .high-contrast footer {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .high-contrast .theme-preview-header {
+            background-color: #000000;
+        }
+
+        .high-contrast .accordion-header {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text,
+        .tooltip:focus .tooltip-text,
+        .tooltip:focus-within .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header>
+        <h1>Accessible Color Palette Mixer</h1>
+        <p>Create custom color palettes and preview design themes with full accessibility</p>
+    </header>
+    
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#color-mixer">Color Mixer</a></li>
+            <li><a href="#saved-palettes">Saved Palettes</a></li>
+            <li><a href="#theme-preview">Theme Preview</a></li>
+            <li><a href="#help">Help & Tips</a></li>
+        </ul>
+    </nav>
+    
+    <main id="main-content">
+        <section id="color-mixer" aria-labelledby="mixer-heading">
+            <h2 id="mixer-heading">Color Mixer</h2>
+            <p>Adjust the sliders to create your custom color. The preview will update in real-time, showing both the visual color and its code values.</p>
+            
+            <div class="color-controls">
+                <div class="color-slider-group">
+                    <div class="color-slider">
+                        <label for="red-slider">Red (0-255):</label>
+                        <input type="range" id="red-slider" min="0" max="255" value="0" aria-describedby="red-value">
+                        <input type="number" id="red-value" min="0" max="255" value="0" aria-label="Red value">
+                    </div>
+                    
+                    <div class="color-slider">
+                        <label for="green-slider">Green (0-255):</label>
+                        <input type="range" id="green-slider" min="0" max="255" value="0" aria-describedby="green-value">
+                        <input type="number" id="green-value" min="0" max="255" value="0" aria-label="Green value">
+                    </div>
+                    
+                    <div class="color-slider">
+                        <label for="blue-slider">Blue (0-255):</label>
+                        <input type="range" id="blue-slider" min="0" max="255" value="0" aria-describedby="blue-value">
+                        <input type="number" id="blue-value" min="0" max="255" value="0" aria-label="Blue value">
+                    </div>
+                </div>
+                
+                <div class="color-preview">
+                    <h3>Color Preview</h3>
+                    <div id="current-color" class="color-box" style="background-color: rgb(0, 0, 0);">
+                        <span id="color-code" class="color-value">#000000</span>
+                    </div>
+                    
+                    <div class="contrast-info">
+                        <p>Contrast ratio with white: <span id="white-contrast">21:1</span></p>
+                        <p>Contrast ratio with black: <span id="black-contrast">1:1</span></p>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="add-to-palette" aria-describedby="add-to-palette-desc">Add to Palette</button>
+                        <span id="add-to-palette-desc" class="sr-only">Adds the current color to your palette</span>
+                        
+                        <button id="random-color" class="secondary" aria-describedby="random-color-desc">Random Color</button>
+                        <span id="random-color-desc" class="sr-only">Generates a random color</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="status-message" class="status-message" role="status" aria-live="polite" style="display: none;"></div>
+            
+            <div class="accessibility-info">
+                <h3>Accessibility Information</h3>
+                <p>For text to be readable, it needs sufficient contrast with its background. WCAG 2.2 AAA requires:</p>
+                <ul>
+                    <li>Normal text: 7:1 contrast ratio</li>
+                    <li>Large text: 4.5:1 contrast ratio</li>
+                    <li>UI components: 3:1 contrast ratio</li>
+                </ul>
+                <p>The contrast values above show if your color would be accessible against white or black backgrounds.</p>
+            </div>
+        </section>
+        
+        <section id="saved-palettes" aria-labelledby="palettes-heading">
+            <h2 id="palettes-heading">Your Color Palettes</h2>
+            <p>Save and organize your color combinations. Each palette can be named and used in the theme preview.</p>
+            
+            <div class="palette-section">
+                <h3>Current Palette</h3>
+                <div id="current-palette" class="saved-palette">
+                    <!-- Palette colors will be added here dynamically -->
+                    <p id="empty-palette-message">No colors added yet. Use the color mixer above to create and add colors.</p>
+                </div>
+                
+                <div class="button-group">
+                    <button id="save-palette" aria-describedby="save-palette-desc">Save Palette</button>
+                    <span id="save-palette-desc" class="sr-only">Save your current palette with a name</span>
+                    
+                    <button id="clear-palette" class="danger" aria-describedby="clear-palette-desc">Clear Palette</button>
+                    <span id="clear-palette-desc" class="sr-only">Remove all colors from the current palette</span>
+                    
+                    <button id="apply-to-theme" class="secondary" aria-describedby="apply-to-theme-desc">Apply to Theme</button>
+                    <span id="apply-to-theme-desc" class="sr-only">Use this palette in the theme preview section</span>
+                </div>
+            </div>
+            
+            <div class="saved-palettes-list">
+                <h3>Saved Palettes</h3>
+                <div id="palettes-list">
+                    <!-- Saved palettes will be displayed here -->
+                    <p id="no-saved-palettes">No palettes saved yet.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="theme-preview" aria-labelledby="theme-heading">
+            <h2 id="theme-heading">Theme Preview</h2>
+            <p>See how your colors work together in a real design. This preview shows your palette applied to common UI elements.</p>
+            
+            <div class="theme-preview">
+                <div id="preview-header" class="theme-preview-header">
+                    <h3>Sample Website Header</h3>
+                    <p>This shows how your primary color looks as a header background</p>
+                </div>
+                
+                <div class="theme-preview-content">
+                    <h3>Content Area</h3>
+                    <p>This is how your text would appear against the background color. Good contrast is essential for readability.</p>
+                    
+                    <div class="button-group">
+                        <button id="preview-primary" class="theme-preview-button">Primary Button</button>
+                        <button id="preview-secondary" class="theme-preview-button">Secondary Button</button>
+                        <button id="preview-accent" class="theme-preview-button">Accent Button</button>
+                    </div>
+                    
+                    <div class="theme-form">
+                        <h4>Sample Form</h4>
+                        <div class="form-group">
+                            <label for="sample-name">Name:</label>
+                            <input type="text" id="sample-name" placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="sample-message">Message:</label>
+                            <textarea id="sample-message" rows="3" placeholder="Enter your message"></textarea>
+                        </div>
+                        <button id="preview-submit" class="theme-preview-button">Submit</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="theme-controls">
+                <h3>Theme Settings</h3>
+                <p>Adjust which colors from your palette are used for different elements:</p>
+                
+                <div class="form-group">
+                    <label for="primary-color-select">Primary Color (headers, buttons):</label>
+                    <select id="primary-color-select" aria-describedby="primary-color-help">
+                        <option value="">Select a color</option>
+                    </select>
+                    <p id="primary-color-help" class="help-text">This color will be used for main elements like headers and primary buttons</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="secondary-color-select">Secondary Color (accents, highlights):</label>
+                    <select id="secondary-color-select" aria-describedby="secondary-color-help">
+                        <option value="">Select a color</option>
+                    </select>
+                    <p id="secondary-color-help" class="help-text">This color will be used for secondary elements and highlights</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="text-color-select">Text Color:</label>
+                    <select id="text-color-select" aria-describedby="text-color-help">
+                        <option value="">Select a color</option>
+                    </select>
+                    <p id="text-color-help" class="help-text">This color will be used for text content</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="background-color-select">Background Color:</label>
+                    <select id="background-color-select" aria-describedby="background-color-help">
+                        <option value="">Select a color</option>
+                    </select>
+                    <p id="background-color-help" class="help-text">This color will be used for the page background</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="help" aria-labelledby="help-heading" class="help-section">
+            <h2 id="help-heading">Help & Tips</h2>
+            <p>Learn how to create effective and accessible color palettes for your designs.</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false" aria-controls="color-theory-content">
+                        Color Theory Basics
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div id="color-theory-content" class="accordion-content">
+                        <h3>Understanding Color Relationships</h3>
+                        <p>Color theory helps you create harmonious combinations:</p>
+                        <ul>
+                            <li><strong>Complementary colors:</strong> Colors opposite each other on the color wheel create high contrast</li>
+                            <li><strong>Analogous colors:</strong> Colors next to each other on the color wheel create harmony</li>
+                            <li><strong>Triadic colors:</strong> Three colors equally spaced on the color wheel create balance</li>
+                            <li><strong>Monochromatic colors:</strong> Different shades of the same color create unity</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false" aria-controls="accessibility-content">
+                        Accessibility Guidelines
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div id="accessibility-content" class="accordion-content">
+                        <h3>Creating Accessible Color Combinations</h3>
+                        <p>For WCAG 2.2 AAA compliance:</p>
+                        <ul>
+                            <li>Normal text needs a 7:1 contrast ratio with its background</li>
+                            <li>Large text (18pt or 14pt bold) needs a 4.5:1 contrast ratio</li>
+                            <li>UI components and graphics need a 3:1 contrast ratio</li>
+                            <li>Don't rely solely on color to convey information</li>
+                            <li>Provide alternative visual cues like patterns, icons, or text labels</li>
+                        </ul>
+                        <p>This tool helps you check these ratios automatically.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false" aria-controls="palette-tips-content">
+                        Creating Effective Palettes
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div id="palette-tips-content" class="accordion-content">
+                        <h3>Tips for Balanced Color Palettes</h3>
+                        <p>A well-designed palette typically includes:</p>
+                        <ul>
+                            <li><strong>Primary color:</strong> Your main brand color</li>
+                            <li><strong>Secondary color:</strong> Complements your primary color</li>
+                            <li><strong>Accent color:</strong> Used sparingly for calls to action</li>
+                            <li><strong>Neutral colors:</strong> Grays or muted tones for text and backgrounds</li>
+                            <li><strong>Semantic colors:</strong> Colors for success, warning, error states</li>
+                        </ul>
+                        <p>Start with 3-5 colors and expand as needed. Ensure sufficient contrast between text and backgrounds.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false" aria-controls="tool-usage-content">
+                        How to Use This Tool
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div id="tool-usage-content" class="accordion-content">
+                        <h3>Getting the Most from the Color Palette Mixer</h3>
+                        <ol>
+                            <li>Use the RGB sliders to create colors or click "Random Color"</li>
+                            <li>Check the contrast ratios to ensure accessibility</li>
+                            <li>Add colors to your palette with "Add to Palette"</li>
+                            <li>Save palettes with descriptive names</li>
+                            <li>Apply your palette to the theme preview to see how it works in context</li>
+                            <li>Adjust which colors are used for different elements</li>
+                            <li>Export your palette when you're satisfied</li>
+                        </ol>
+                        <p>You can create multiple palettes for different projects or themes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modal for saving palette -->
+    <div id="save-palette-modal" class="modal" role="dialog" aria-labelledby="save-palette-title" aria-modal="true">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Close modal">&times;</button>
+            <h2 id="save-palette-title">Save Your Palette</h2>
+            <p>Give your palette a descriptive name to save it for future use.</p>
+            
+            <div class="palette-name-group">
+                <label for="palette-name">Palette Name:</label>
+                <input type="text" id="palette-name" required aria-describedby="palette-name-help">
+                <p id="palette-name-help" class="help-text">Choose a name that describes the mood or purpose of this color scheme</p>
+            </div>
+            
+            <div class="palette-preview">
+                <h3>Palette Preview</h3>
+                <div id="modal-palette-preview" class="saved-palette">
+                    <!-- Colors will be displayed here -->
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="confirm-save" aria-describedby="confirm-save-desc">Save Palette</button>
+                <span id="confirm-save-desc" class="sr-only">Save this palette with the specified name</span>
+                
+                <button id="cancel-save" class="secondary" aria-describedby="cancel-save-desc">Cancel</button>
+                <span id="cancel-save-desc" class="sr-only">Cancel saving and close this dialog</span>
+            </div>
+        </div>
+    </div>
+    
+    <button id="contrast-toggle" class="contrast-toggle" aria-pressed="false" aria-label="Toggle high contrast mode">
+        <span aria-hidden="true">A</span>
+    </button>
+    
+    <footer>
+        <h2>Accessible Color Palette Mixer</h2>
+        <p>A tool for creating accessible and harmonious color palettes for web design</p>
+        <p>&copy; 2023 Accessible Web Tools</p>
+        <nav aria-label="Footer navigation">
+            <ul>
+                <li><a href="#color-mixer">Color Mixer</a></li>
+                <li><a href="#saved-palettes">Saved Palettes</a></li>
+                <li><a href="#theme-preview">Theme Preview</a></li>
+                <li><a href="#help">Help & Tips</a></li>
+            </ul>
+        </nav>
+    </footer>
+
+    <script>
+        // Utility functions
+        function hexToRgb(hex) {
+            // Remove # if present
+            hex = hex.replace('#', '');
+            
+            // Parse the hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return { r, g, b };
+        }
+        
+        function rgbToHex(r, g, b) {
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+        
+        function getLuminance(r, g, b) {
+            // Convert RGB to relative luminance following WCAG formula
+            const sRGB = [r, g, b].map(val => {
+                val = val / 255;
+                return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+            });
+            
+            return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+        }
+        
+        function getContrastRatio(color1, color2) {
+            // Calculate contrast ratio between two colors
+            const luminance1 = getLuminance(color1.r, color1.g, color1.b);
+            const luminance2 = getLuminance(color2.r, color2.g, color2.b);
+            
+            const lighter = Math.max(luminance1, luminance2);
+            const darker = Math.min(luminance1, luminance2);
+            
+            const contrast = (lighter + 0.05) / (darker + 0.05);
+            
+            // Round to 2 decimal places
+            return Math.round(contrast * 100) / 100;
+        }
+        
+        function formatContrastRatio(ratio) {
+            return ratio.toFixed(2) + ':1';
+        }
+        
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            
+            return { r, g, b };
+        }
+        
+        function showStatusMessage(message, type = 'success') {
+            const statusElement = document.getElementById('status-message');
+            statusElement.textContent = message;
+            statusElement.className = 'status-message status-' + type;
+            statusElement.style.display = 'block';
+            
+            // Set appropriate ARIA role based on message type
+            if (type === 'error') {
+                statusElement.setAttribute('role', 'alert');
+            } else {
+                statusElement.setAttribute('role', 'status');
+            }
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // DOM elements
+        const redSlider = document.getElementById('red-slider');
+        const greenSlider = document.getElementById('green-slider');
+        const blueSlider = document.getElementById('blue-slider');
+        
+        const redValue = document.getElementById('red-value');
+        const greenValue = document.getElementById('green-value');
+        const blueValue = document.getElementById('blue-value');
+        
+        const currentColor = document.getElementById('current-color');
+        const colorCode = document.getElementById('color-code');
+        
+        const whiteContrast = document.getElementById('white-contrast');
+        const blackContrast = document.getElementById('black-contrast');
+        
+        const addToPaletteBtn = document.getElementById('add-to-palette');
+        const randomColorBtn = document.getElementById('random-color');
+        
+        const currentPalette = document.getElementById('current-palette');
+        const emptyPaletteMessage = document.getElementById('empty-palette-message');
+        
+        const savePaletteBtn = document.getElementById('save-palette');
+        const clearPaletteBtn = document.getElementById('clear-palette');
+        const applyToThemeBtn = document.getElementById('apply-to-theme');
+        
+        const savePaletteModal = document.getElementById('save-palette-modal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const paletteName = document.getElementById('palette-name');
+        const confirmSaveBtn = document.getElementById('confirm-save');
+        const cancelSaveBtn = document.getElementById('cancel-save');
+        const modalPalettePreview = document.getElementById('modal-palette-preview');
+        
+        const palettesList = document.getElementById('palettes-list');
+        const noSavedPalettes = document.getElementById('no-saved-palettes');
+        
+        const primaryColorSelect = document.getElementById('primary-color-select');
+        const secondaryColorSelect = document.getElementById('secondary-color-select');
+        const textColorSelect = document.getElementById('text-color-select');
+        const backgroundColorSelect = document.getElementById('background-color-select');
+        
+        const previewHeader = document.getElementById('preview-header');
+        const previewPrimaryBtn = document.getElementById('preview-primary');
+        const previewSecondaryBtn = document.getElementById('preview-secondary');
+        const previewAccentBtn = document.getElementById('preview-accent');
+        const previewSubmitBtn = document.getElementById('preview-submit');
+        
+        const contrastToggle = document.getElementById('contrast-toggle');
+        
+        // Accordion functionality
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                // Toggle aria-expanded attribute
+                const expanded = header.getAttribute('aria-expanded') === 'true';
+                header.setAttribute('aria-expanded', !expanded);
+                
+                // Get the content element
+                const contentId = header.getAttribute('aria-controls');
+                const content = document.getElementById(contentId);
+                
+                // Toggle the active class
+                content.classList.toggle('active');
+                
+                // Update the icon
+                const icon = header.querySelector('.accordion-icon');
+                icon.textContent = expanded ? '+' : '-';
+            });
+        });
+        
+        // State variables
+        let currentPaletteColors = [];
+        let savedPalettes = JSON.parse(localStorage.getItem('colorPalettes')) || [];
+        
+        // Initialize color mixer
+        function updateColorPreview() {
+            const r = parseInt(redSlider.value);
+            const g = parseInt(greenSlider.value);
+            const b = parseInt(blueSlider.value);
+            
+            const hexColor = rgbToHex(r, g, b);
+            
+            // Update the color preview
+            currentColor.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            colorCode.textContent = hexColor;
+            
+            // Calculate contrast ratios
+            const white = { r: 255, g: 255, b: 255 };
+            const black = { r: 0, g: 0, b: 0 };
+            const currentRgb = { r, g, b };
+            
+            const whiteRatio = getContrastRatio(currentRgb, white);
+            const blackRatio = getContrastRatio(currentRgb, black);
+            
+            whiteContrast.textContent = formatContrastRatio(whiteRatio);
+            blackContrast.textContent = formatContrastRatio(blackRatio);
+            
+            // Add visual indicators for accessibility
+            if (whiteRatio >= 7) {
+                whiteContrast.innerHTML = formatContrastRatio(whiteRatio) + ' <span aria-hidden="true">✓</span>';
+                whiteContrast.setAttribute('aria-label', `Contrast ratio with white: ${formatContrastRatio(whiteRatio)}. Meets AAA standards.`);
+            } else if (whiteRatio >= 4.5) {
+                whiteContrast.innerHTML = formatContrastRatio(whiteRatio) + ' <span aria-hidden="true">⚠️</span>';
+                whiteContrast.setAttribute('aria-label', `Contrast ratio with white: ${formatContrastRatio(whiteRatio)}. Meets AA standards but not AAA.`);
+            } else {
+                whiteContrast.innerHTML = formatContrastRatio(whiteRatio) + ' <span aria-hidden="true">✗</span>';
+                whiteContrast.setAttribute('aria-label', `Contrast ratio with white: ${formatContrastRatio(whiteRatio)}. Does not meet accessibility standards.`);
+            }
+            
+            if (blackRatio >= 7) {
+                blackContrast.innerHTML = formatContrastRatio(blackRatio) + ' <span aria-hidden="true">✓</span>';
+                blackContrast.setAttribute('aria-label', `Contrast ratio with black: ${formatContrastRatio(blackRatio)}. Meets AAA standards.`);
+            } else if (blackRatio >= 4.5) {
+                blackContrast.innerHTML = formatContrastRatio(blackRatio) + ' <span aria-hidden="true">⚠️</span>';
+                blackContrast.setAttribute('aria-label', `Contrast ratio with black: ${formatContrastRatio(blackRatio)}. Meets AA standards but not AAA.`);
+            } else {
+                blackContrast.innerHTML = formatContrastRatio(blackRatio) + ' <span aria-hidden="true">✗</span>';
+                blackContrast.setAttribute('aria-label', `Contrast ratio with black: ${formatContrastRatio(blackRatio)}. Does not meet accessibility standards.`);
+            }
+            
+            // Update text color for better contrast in the color box
+            if (whiteRatio > blackRatio) {
+                colorCode.style.color = 'black';
+            } else {
+                colorCode.style.color = 'white';
+            }
+        }
+        
+        // Sync slider and number input values
+        function syncInputValues() {
+            redValue.value = redSlider.value;
+            greenValue.value = greenSlider.value;
+            blueValue.value = blueSlider.value;
+        }
+        
+        // Add a color to the current palette
+        function addColorToPalette() {
+            const r = parseInt(redSlider.value);
+            const g = parseInt(greenSlider.value);
+            const b = parseInt(blueSlider.value);
+            const hexColor = rgbToHex(r, g, b);
+            
+            // Check if color already exists in palette
+            if (currentPaletteColors.includes(hexColor)) {
+                showStatusMessage('This color is already in your palette.', 'error');
+                return;
+            }
+            
+            // Add to array
+            currentPaletteColors.push(hexColor);
+            
+            // Hide empty message if needed
+            if (emptyPaletteMessage) {
+                emptyPaletteMessage.style.display = 'none';
+            }
+            
+            // Create color element
+            const colorElement = document.createElement('div');
+            colorElement.className = 'palette-color';
+            colorElement.style.backgroundColor = hexColor;
+            colorElement.setAttribute('data-color', hexColor);
+            
+            // Add color code
+            const colorCodeElement = document.createElement('span');
+            colorCodeElement.className = 'palette-color-code';
+            colorCodeElement.textContent = hexColor;
+            
+            // Add remove button
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-color';
+            removeButton.textContent = 'Remove';
+            removeButton.setAttribute('aria-label', `Remove ${hexColor} from palette`);
+            removeButton.style.position = 'absolute';
+            removeButton.style.top = '5px';
+            removeButton.style.right = '5px';
+            removeButton.style.fontSize = '0.8rem';
+            removeButton.style.padding = '3px 6px';
+            removeButton.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            
+            removeButton.addEventListener('click', function() {
+                // Remove from array
+                const index = currentPaletteColors.indexOf(hexColor);
+                if (index !== -1) {
+                    currentPaletteColors.splice(index, 1);
+                }
+                
+                // Remove from DOM
+                colorElement.remove();
+                
+                // Show empty message if needed
+                if (currentPaletteColors.length === 0) {
+                    emptyPaletteMessage.style.display = 'block';
+                }
+                
+                // Update theme selectors
+                updateThemeSelectors();
+                
+                showStatusMessage(`Removed ${hexColor} from palette.`);
+            });
+            
+            colorElement.appendChild(colorCodeElement);
+            colorElement.appendChild(removeButton);
+            currentPalette.appendChild(colorElement);
+            
+            // Update theme selectors
+            updateThemeSelectors();
+            
+            showStatusMessage(`Added ${hexColor} to palette.`);
+        }
+        
+        // Generate a random color
+        function setRandomColor() {
+            const { r, g, b } = getRandomColor();
+            
+            redSlider.value = r;
+            greenSlider.value = g;
+            blueSlider.value = b;
+            
+            redValue.value = r;
+            greenValue.value = g;
+            blueValue.value = b;
+            
+            updateColorPreview();
+            
+            showStatusMessage('Generated a random color.');
+        }
+        
+        // Clear the current palette
+        function clearPalette() {
+            currentPaletteColors = [];
+            
+            // Clear the DOM
+            while (currentPalette.firstChild) {
+                if (currentPalette.firstChild === emptyPaletteMessage) {
+                    break;
+                }
+                currentPalette.removeChild(currentPalette.firstChild);
+            }
+            
+            // Show empty message
+            emptyPaletteMessage.style.display = 'block';
+            
+            // Update theme selectors
+            updateThemeSelectors();
+            
+            showStatusMessage('Palette cleared.');
+        }
+        
+        // Open save palette modal
+        function openSavePaletteModal() {
+            if (currentPaletteColors.length === 0) {
+                showStatusMessage('Add colors to your palette before saving.', 'error');
+                return;
+            }
+            
+            // Clear previous name
+            paletteName.value = '';
+            
+            // Update modal preview
+            modalPalettePreview.innerHTML = '';
+            currentPaletteColors.forEach(color => {
+                const colorPreview = document.createElement('div');
+                colorPreview.className = 'palette-color-small';
+                colorPreview.style.backgroundColor = color;
+                modalPalettePreview.appendChild(colorPreview);
+            });
+            
+            // Show modal
+            savePaletteModal.style.display = 'flex';
+            
+            // Focus on input
+            setTimeout(() => {
+                paletteName.focus();
+            }, 100);
+        }
+        
+        // Close save palette modal
+        function closeSavePaletteModal() {
+            savePaletteModal.style.display = 'none';
+        }
+        
+        // Save the current palette
+        function savePalette() {
+            const name = paletteName.value.trim();
+            
+            if (!name) {
+                showStatusMessage('Please enter a name for your palette.', 'error');
+                return;
+            }
+            
+            // Create palette object
+            const palette = {
+                id: Date.now().toString(),
+                name: name,
+                colors: [...currentPaletteColors]
+            };
+            
+            // Add to saved palettes
+            savedPalettes.push(palette);
+            
+            // Save to localStorage
+            localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+            
+            // Update the UI
+            updateSavedPalettes();
+            
+            // Close modal
+            closeSavePaletteModal();
+            
+            showStatusMessage(`Palette "${name}" saved successfully.`);
+        }
+        
+        // Update saved palettes list
+        function updateSavedPalettes() {
+            // Clear current list
+            palettesList.innerHTML = '';
+            
+            if (savedPalettes.length === 0) {
+                palettesList.appendChild(noSavedPalettes);
+                return;
+            }
+            
+            // Hide no palettes message
+            noSavedPalettes.style.display = 'none';
+            
+            // Add each palette
+            savedPalettes.forEach(palette => {
+                const paletteItem = document.createElement('div');
+                paletteItem.className = 'palette-item';
+                paletteItem.setAttribute('data-palette-id', palette.id);
+                
+                const paletteHeader = document.createElement('div');
+                paletteHeader.style.display = 'flex';
+                paletteHeader.style.justifyContent = 'space-between';
+                paletteHeader.style.alignItems = 'center';
+                paletteHeader.style.marginBottom = '0.5rem';
+                
+                const paletteTitleEl = document.createElement('h4');
+                paletteTitleEl.textContent = palette.name;
+                paletteHeader.appendChild(paletteTitleEl);
+                
+                const paletteActions = document.createElement('div');
+                paletteActions.style.display = 'flex';
+                paletteActions.style.gap = '0.5rem';
+                
+                const loadButton = document.createElement('button');
+                loadButton.textContent = 'Load';
+                loadButton.setAttribute('aria-label', `Load palette ${palette.name}`);
+                loadButton.addEventListener('click', () => loadPalette(palette));
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'danger';
+                deleteButton.setAttribute('aria-label', `Delete palette ${palette.name}`);
+                deleteButton.addEventListener('click', () => deletePalette(palette.id));
+                
+                paletteActions.appendChild(loadButton);
+                paletteActions.appendChild(deleteButton);
+                paletteHeader.appendChild(paletteActions);
+                
+                const paletteColors = document.createElement('div');
+                paletteColors.className = 'palette-colors';
+                
+                palette.colors.forEach(color => {
+                    const colorEl = document.createElement('div');
+                    colorEl.className = 'palette-color-small';
+                    colorEl.style.backgroundColor = color;
+                    colorEl.setAttribute('title', color);
+                    colorEl.setAttribute('aria-label', color);
+                    paletteColors.appendChild(colorEl);
+                });
+                
+                paletteItem.appendChild(paletteHeader);
+                paletteItem.appendChild(paletteColors);
+                palettesList.appendChild(paletteItem);
+            });
+        }
+        
+        // Load a saved palette
+        function loadPalette(palette) {
+            // Clear current palette
+            clearPalette();
+            
+            // Add each color
+            palette.colors.forEach(color => {
+                const rgb = hexToRgb(color);
+                
+                // Set the sliders to this color
+                redSlider.value = rgb.r;
+                greenSlider.value = rgb.g;
+                blueSlider.value = rgb.b;
+                
+                redValue.value = rgb.r;
+                greenValue.value = rgb.g;
+                blueValue.value = rgb.b;
+                
+                // Update preview
+                updateColorPreview();
+                
+                // Add to palette
+                addColorToPalette();
+            });
+            
+            showStatusMessage(`Loaded palette "${palette.name}".`);
+        }
+        
+        // Delete a saved palette
+        function deletePalette(id) {
+            // Find the palette
+            const index = savedPalettes.findIndex(p => p.id === id);
+            
+            if (index === -1) {
+                return;
+            }
+            
+            const paletteName = savedPalettes[index].name;
+            
+            // Remove from array
+            savedPalettes.splice(index, 1);
+            
+            // Save to localStorage
+            localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+            
+            // Update the UI
+            updateSavedPalettes();
+            
+            showStatusMessage(`Deleted palette "${paletteName}".`);
+        }
+        
+        // Update theme selectors with current palette colors
+        function updateThemeSelectors() {
+            // Clear current options
+            primaryColorSelect.innerHTML = '<option value="">Select a color</option>';
+            secondaryColorSelect.innerHTML = '<option value="">Select a color</option>';
+            textColorSelect.innerHTML = '<option value="">Select a color</option>';
+            backgroundColorSelect.innerHTML = '<option value="">Select a color</option>';
+            
+            // Add black and white options
+            const blackOption = document.createElement('option');
+            blackOption.value = '#000000';
+            blackOption.textContent = 'Black (#000000)';
+            
+            const whiteOption = document.createElement('option');
+            whiteOption.value = '#FFFFFF';
+            whiteOption.textContent = 'White (#FFFFFF)';
+            
+            textColorSelect.appendChild(blackOption.cloneNode(true));
+            textColorSelect.appendChild(whiteOption.cloneNode(true));
+            
+            backgroundColorSelect.appendChild(whiteOption.cloneNode(true));
+            backgroundColorSelect.appendChild(blackOption.cloneNode(true));
+            
+            // Add palette colors
+            currentPaletteColors.forEach(color => {
+                const option = document.createElement('option');
+                option.value = color;
+                option.textContent = color;
+                
+                primaryColorSelect.appendChild(option.cloneNode(true));
+                secondaryColorSelect.appendChild(option.cloneNode(true));
+                textColorSelect.appendChild(option.cloneNode(true));
+                backgroundColorSelect.appendChild(option.cloneNode(true));
+            });
+        }
+        
+        // Apply current palette to theme preview
+        function applyToTheme() {
+            if (currentPaletteColors.length === 0) {
+                showStatusMessage('Add colors to your palette before applying to theme.', 'error');
+                return;
+            }
+            
+            // Set default selections if not already set
+            if (!primaryColorSelect.value && currentPaletteColors.length > 0) {
+                primaryColorSelect.value = currentPaletteColors[0];
+            }
+            
+            if (!secondaryColorSelect.value && currentPaletteColors.length > 1) {
+                secondaryColorSelect.value = currentPaletteColors[1];
+            }
+            
+            if (!textColorSelect.value) {
+                textColorSelect.value = '#000000'; // Default to black
+            }
+            
+            if (!backgroundColorSelect.value) {
+                backgroundColorSelect.value = '#FFFFFF'; // Default to white
+            }
+            
+            // Apply colors to preview
+            updateThemePreview();
+            
+            // Scroll to theme preview
+            document.getElementById('theme-preview').scrollIntoView({ behavior: 'smooth' });
+            
+            showStatusMessage('Applied palette to theme preview.');
+        }
+        
+        // Update theme preview with selected colors
+        function updateThemePreview() {
+            const primaryColor = primaryColorSelect.value;
+            const secondaryColor = secondaryColorSelect.value;
+            const textColor = textColorSelect.value;
+            const backgroundColor = backgroundColorSelect.value;
+            
+            if (primaryColor) {
+                previewHeader.style.backgroundColor = primaryColor;
+                previewPrimaryBtn.style.backgroundColor = primaryColor;
+                previewSubmitBtn.style.backgroundColor = primaryColor;
+                
+                // Check contrast for text on primary color
+                const primaryRgb = hexToRgb(primaryColor);
+                const whiteRatio = getContrastRatio(primaryRgb, { r: 255, g: 255, b: 255 });
+                const blackRatio = getContrastRatio(primaryRgb, { r: 0, g: 0, b: 0 });
+                
+                // Set text color based on contrast
+                const headerTextColor = whiteRatio > blackRatio ? 'white' : 'black';
+                previewHeader.style.color = headerTextColor;
+                previewPrimaryBtn.style.color = headerTextColor;
+                previewSubmitBtn.style.color = headerTextColor;
+            }
+            
+            if (secondaryColor) {
+                previewSecondaryBtn.style.backgroundColor = secondaryColor;
+                
+                // Check contrast for text on secondary color
+                const secondaryRgb = hexToRgb(secondaryColor);
+                const whiteRatio = getContrastRatio(secondaryRgb, { r: 255, g: 255, b: 255 });
+                const blackRatio = getContrastRatio(secondaryRgb, { r: 0, g: 0, b: 0 });
+                
+                // Set text color based on contrast
+                previewSecondaryBtn.style.color = whiteRatio > blackRatio ? 'white' : 'black';
+            }
+            
+            if (currentPaletteColors.length > 2 && currentPaletteColors[2]) {
+                previewAccentBtn.style.backgroundColor = currentPaletteColors[2];
+                
+                // Check contrast for text on accent color
+                const accentRgb = hexToRgb(currentPaletteColors[2]);
+                const whiteRatio = getContrastRatio(accentRgb, { r: 255, g: 255, b: 255 });
+                const blackRatio = getContrastRatio(accentRgb, { r: 0, g: 0, b: 0 });
+                
+                // Set text color based on contrast
+                previewAccentBtn.style.color = whiteRatio > blackRatio ? 'white' : 'black';
+            }
+            
+            if (textColor) {
+                document.querySelector('.theme-preview-content').style.color = textColor;
+            }
+            
+            if (backgroundColor) {
+                document.querySelector('.theme-preview-content').style.backgroundColor = backgroundColor;
+            }
+        }
+        
+        // Toggle high contrast mode
+        function toggleHighContrast() {
+            const isHighContrast = document.body.classList.toggle('high-contrast');
+            contrastToggle.setAttribute('aria-pressed', isHighContrast);
+            
+            if (isHighContrast) {
+                showStatusMessage('High contrast mode enabled.');
+            } else {
+                showStatusMessage('High contrast mode disabled.');
+            }
+        }
+        
+        // Event listeners
+        redSlider.addEventListener('input', () => {
+            redValue.value = redSlider.value;
+            updateColorPreview();
+        });
+        
+        greenSlider.addEventListener('input', () => {
+            greenValue.value = greenSlider.value;
+            updateColorPreview();
+        });
+        
+        blueSlider.addEventListener('input', () => {
+            blueValue.value = blueSlider.value;
+            updateColorPreview();
+        });
+        
+        redValue.addEventListener('input', () => {
+            // Ensure value is within range
+            let val = parseInt(redValue.value);
+            if (isNaN(val)) val = 0;
+            if (val < 0) val = 0;
+            if (val > 255) val = 255;
+            
+            redValue.value = val;
+            redSlider.value = val;
+            updateColorPreview();
+        });
+        
+        greenValue.addEventListener('input', () => {
+            // Ensure value is within range
+            let val = parseInt(greenValue.value);
+            if (isNaN(val)) val = 0;
+            if (val < 0) val = 0;
+            if (val > 255) val = 255;
+            
+            greenValue.value = val;
+            greenSlider.value = val;
+            updateColorPreview();
+        });
+        
+        blueValue.addEventListener('input', () => {
+            // Ensure value is within range
+            let val = parseInt(blueValue.value);
+            if (isNaN(val)) val = 0;
+            if (val < 0) val = 0;
+            if (val > 255) val = 255;
+            
+            blueValue.value = val;
+            blueSlider.value = val;
+            updateColorPreview();
+        });
+        
+        addToPaletteBtn.addEventListener('click', addColorToPalette);
+        randomColorBtn.addEventListener('click', setRandomColor);
+        clearPaletteBtn.addEventListener('click', clearPalette);
+        savePaletteBtn.addEventListener('click', openSavePaletteModal);
+        applyToThemeBtn.addEventListener('click', applyToTheme);
+        
+        closeModalBtn.addEventListener('click', closeSavePaletteModal);
+        confirmSaveBtn.addEventListener('click', savePalette);
+        cancelSaveBtn.addEventListener('click', closeSavePaletteModal);
+        
+        primaryColorSelect.addEventListener('change', updateThemePreview);
+        secondaryColorSelect.addEventListener('change', updateThemePreview);
+        textColorSelect.addEventListener('change', updateThemePreview);
+        backgroundColorSelect.addEventListener('change', updateThemePreview);
+        
+        contrastToggle.addEventListener('click', toggleHighContrast);
+        
+        // Handle keyboard events for modal
+        savePaletteModal.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSavePaletteModal();
+            }
+        });
+        
+        // Initialize
+        updateColorPreview();
+        syncInputValues();
+        updateSavedPalettes();
+        updateThemeSelectors();
+        
+        // Set initial random color
+        setRandomColor();
+        
+        // Add keyboard support for color sliders
+        const sliders = [redSlider, greenSlider, blueSlider];
+        sliders.forEach(slider => {
+            slider.addEventListener('keydown', (e) => {
+                let value = parseInt(slider.value);
+                
+                if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                    value = Math.min(255, value + 1);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                    value = Math.max(0, value - 1);
+                    e.preventDefault();
+                } else if (e.key === 'PageUp') {
+                    value = Math.min(255, value + 10);
+                    e.preventDefault();
+                } else if (e.key === 'PageDown') {
+                    value = Math.max(0, value - 10);
+                    e.preventDefault();
+                } else if (e.key === 'Home') {
+                    value = 0;
+                    e.preventDefault();
+                } else if (e.key === 'End') {
+                    value = 255;
+                    e.preventDefault();
+                }
+                
+                slider.value = value;
+                
+                // Update corresponding number input
+                if (slider === redSlider) redValue.value = value;
+                if (slider === greenSlider) greenValue.value = value;
+                if (slider === blueSlider) blueValue.value = value;
+                
+                updateColorPreview();
+            });
+        });
+    </script>
+</body>
+</html>
