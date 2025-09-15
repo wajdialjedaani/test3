@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accessibly Yours: A Personal Blog - View, Search, and Comment (WCAG 2.2 AAA Compliant)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A colorful, accessible, and interactive personal blog. View posts, leave comments, and search articles. Fully WCAG 2.2 AAA compliant.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' viewBox='0 0 32 32'><circle fill='%233b6cf6' cx='16' cy='16' r='16'/><text x='16' y='22' font-size='16' text-anchor='middle' fill='white'>B</text></svg>">
+  <style>
+    :root {
+      --color-bg: #f6f8fa;
+      --color-bg-dark: #1a1a2e;
+      --color-primary: #3b6cf6;
+      --color-primary-dark: #2747b0;
+      --color-accent: #f63b6c;
+      --color-accent-dark: #b02747;
+      --color-secondary: #32c69a;
+      --color-secondary-dark: #238a6a;
+      --color-surface: #fff;
+      --color-surface-dark: #22223b;
+      --color-border: #e1e4e8;
+      --color-border-dark: #393959;
+      --color-text: #1a1a2e;
+      --color-text-dark: #f6f8fa;
+      --color-focus: #ffbf47;
+      --color-focus-dark: #ffbf47;
+      --color-error: #c92a2a;
+      --color-success: #2b8a3e;
+      --font-size-base: 1.125rem;
+      --font-size-large: 1.375rem;
+      --font-size-xlarge: 2rem;
+      --line-height: 1.6;
+      --line-spacing: 1.5em;
+      --paragraph-spacing: 2.25em;
+      --max-line-length: 80ch;
+      --focus-outline-width: 4px;
+      --focus-outline-offset: 2px;
+      --border-radius: 0.75em;
+      --transition-fast: 0.15s cubic-bezier(.4,0,.2,1);
+      --transition-slow: 0.35s cubic-bezier(.4,0,.2,1);
+      --min-target-size: 44px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg: var(--color-bg-dark);
+        --color-surface: var(--color-surface-dark);
+        --color-border: var(--color-border-dark);
+        --color-text: var(--color-text-dark);
+      }
+      body {
+        background: var(--color-bg-dark);
+        color: var(--color-text-dark);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    html {
+      font-size: 100%;
+      background: var(--color-bg);
+      color: var(--color-text);
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      font-size: var(--font-size-base);
+      line-height: var(--line-height);
+      background: var(--color-bg);
+      color: var(--color-text);
+      max-width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--color-primary);
+      color: #fff;
+      padding: 0.5em 1em;
+      z-index: 999;
+      transform: translateY(-120%);
+      transition: transform 0.2s;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1em;
+      outline: none;
+      border: 2px solid var(--color-primary-dark);
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+      outline: 4px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+    /* Header */
+    header {
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      color: #fff;
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(59, 108, 246, 0.15);
+    }
+    header h1 {
+      font-size: var(--font-size-xlarge);
+      margin: 0 0 0.25em 0;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      max-width: var(--max-line-length);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    header p {
+      margin: 0;
+      font-size: var(--font-size-large);
+      line-height: 1.4;
+      max-width: var(--max-line-length);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Navigation */
+    nav[aria-label] {
+      background: var(--color-surface);
+      border-bottom: 3px solid var(--color-border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5em;
+      padding: 0.5em 0;
+      font-size: 1.1em;
+    }
+    nav[aria-label] ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+    }
+    nav[aria-label] li {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    nav[aria-label] a, nav[aria-label] button {
+      background: none;
+      border: none;
+      color: var(--color-primary-dark);
+      text-decoration: none;
+      padding: 0.5em 1.25em;
+      border-radius: var(--border-radius);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+    nav[aria-label] a[aria-current="page"],
+    nav[aria-label] button[aria-current="page"] {
+      background: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(59, 108, 246, 0.08);
+    }
+    nav[aria-label] a:focus, nav[aria-label] button:focus {
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+      background: var(--color-accent);
+      color: #fff;
+    }
+    nav[aria-label] .submenu-toggle[aria-haspopup="true"]::after {
+      content: " ▼";
+      font-size: 0.8em;
+      margin-left: 0.2em;
+      display: inline-block;
+    }
+    /* Dropdown Menu */
+    .submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(59, 108, 246, 0.08);
+      min-width: 180px;
+      z-index: 10;
+      margin-top: 0.2em;
+      padding: 0.25em 0;
+    }
+    .submenu[aria-hidden="false"] {
+      display: block;
+      animation: fadeIn 0.25s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .submenu li {
+      width: 100%;
+    }
+    .submenu a {
+      display: block;
+      width: 100%;
+      text-align: left;
+      color: var(--color-primary-dark);
+      background: none;
+      border: none;
+      padding: 0.75em 1.5em;
+      border-radius: 0;
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      outline: none;
+    }
+    .submenu a:focus,
+    .submenu a:hover {
+      background: var(--color-accent);
+      color: #fff;
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+    }
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      padding: 0.5em 1em;
+      background: var(--color-bg);
+      font-size: 1em;
+      border-bottom: 2px solid var(--color-border);
+    }
+    nav[aria-label="Breadcrumb"] ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25em;
+      align-items: center;
+    }
+    nav[aria-label="Breadcrumb"] li {
+      display: flex;
+      align-items: center;
+      color: var(--color-primary-dark);
+    }
+    nav[aria-label="Breadcrumb"] li:not(:last-child)::after {
+      content: "›";
+      color: var(--color-accent-dark);
+      margin: 0 0.5em;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    nav[aria-label="Breadcrumb"] a {
+      color: var(--color-primary-dark);
+      text-decoration: underline;
+      font-weight: 500;
+      background: none;
+      border: none;
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      border-radius: var(--border-radius);
+      padding: 0.25em 0.5em;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      outline: none;
+    }
+    nav[aria-label="Breadcrumb"] a:focus {
+      background: var(--color-accent);
+      color: #fff;
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+    }
+    nav[aria-label="Breadcrumb"] li[aria-current="page"] {
+      color: var(--color-accent-dark);
+      font-weight: bold;
+      text-decoration: none;
+    }
+    /* Layout */
+    .container {
+      display: flex;
+      flex-direction: row;
+      gap: 2em;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 2em 1em 2em 1em;
+      box-sizing: border-box;
+    }
+    main {
+      flex: 2 1 0;
+      max-width: 800px;
+      background: var(--color-surface);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 18px rgba(59, 108, 246, 0.09);
+      padding: 2em;
+      min-width: 0;
+      margin-bottom: 2em;
+    }
+    aside {
+      flex: 1 1 300px;
+      min-width: 270px;
+      max-width: 340px;
+      background: var(--color-surface);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 10px rgba(59, 108, 246, 0.07);
+      padding: 1.5em 1.25em;
+      margin-bottom: 2em;
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+      align-self: flex-start;
+    }
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+        gap: 1.5em;
+        padding: 1em 0.5em;
+      }
+      main, aside {
+        max-width: 100%;
+        width: 100%;
+        margin-bottom: 1.5em;
+      }
+      aside {
+        order: -1;
+      }
+    }
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.4em;
+      }
+      .container {
+        padding: 0.5em 0.1em;
+      }
+      main, aside {
+        padding: 1em 0.5em;
+      }
+    }
+    /* Blog Post List */
+    .post-list {
+      margin: 0 0 2em 0;
+      padding: 0;
+      list-style: none;
+    }
+    .post-list li {
+      margin-bottom: 2.5em;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 2em;
+      max-width: var(--max-line-length);
+    }
+    .post-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    .post-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75em;
+      background: linear-gradient(90deg, #f6f8fa 0%, #e6eaff 100%);
+      border-radius: var(--border-radius);
+      padding: 1.5em 1.25em;
+      box-shadow: 0 2px 8px rgba(59, 108, 246, 0.06);
+      transition: box-shadow var(--transition-fast);
+      border: 2px solid var(--color-border);
+    }
+    .post-card:focus-within {
+      box-shadow: 0 0 0 4px var(--color-focus);
+      border-color: var(--color-focus);
+    }
+    .post-card h2 {
+      font-size: 1.35em;
+      margin: 0 0 0.2em 0;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .post-card .meta {
+      font-size: 1em;
+      color: var(--color-secondary-dark);
+      margin-bottom: 0.5em;
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    .post-card .tags {
+      display: flex;
+      gap: 0.3em;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .tag {
+      background: var(--color-secondary);
+      color: #fff;
+      border-radius: 0.5em;
+      padding: 0.1em 0.7em;
+      font-size: 0.95em;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      display: inline-flex;
+      align-items: center;
+      border: 2px solid var(--color-secondary-dark);
+      margin-right: 0.15em;
+    }
+    .post-card .excerpt {
+      font-size: 1.1em;
+      margin: 0.4em 0 0.6em 0;
+      color: var(--color-text);
+    }
+    .post-card .read-more {
+      align-self: flex-start;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.6em 1.4em;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      outline: none;
+      box-shadow: 0 1px 3px rgba(59, 108, 246, 0.10);
+      margin-top: 0.3em;
+    }
+    .post-card .read-more:focus {
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+      background: var(--color-accent);
+      color: #fff;
+    }
+    /* Single Post */
+    .single-post {
+      background: linear-gradient(90deg, #fff 0%, #f6f8fa 100%);
+      border-radius: var(--border-radius);
+      padding: 2em 1.5em;
+      box-shadow: 0 4px 20px rgba(59, 108, 246, 0.09);
+      border: 2px solid var(--color-border);
+      max-width: var(--max-line-length);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2em;
+    }
+    .single-post h2 {
+      font-size: 1.5em;
+      margin: 0 0 0.3em 0;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .single-post .meta {
+      font-size: 1em;
+      color: var(--color-secondary-dark);
+      margin-bottom: 0.7em;
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    .single-post .tags {
+      display: flex;
+      gap: 0.3em;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .single-post .content {
+      font-size: 1.13em;
+      color: var(--color-text);
+      margin-bottom: 0.6em;
+      line-height: var(--line-height);
+      word-break: break-word;
+    }
+    .single-post .post-image {
+      width: 100%;
+      max-width: 420px;
+      border-radius: var(--border-radius);
+      margin: 1em 0;
+      border: 3px solid var(--color-secondary);
+      box-shadow: 0 2px 8px rgba(50, 198, 154, 0.11);
+      display: block;
+    }
+    /* Comments Section */
+    .comments-section {
+      margin-top: 2em;
+      background: #f1f8f6;
+      border-radius: var(--border-radius);
+      padding: 1.5em 1em;
+      border: 2px solid var(--color-secondary);
+      box-shadow: 0 2px 8px rgba(50, 198, 154, 0.10);
+      max-width: 100%;
+    }
+    .comments-section h3 {
+      font-size: 1.15em;
+      margin: 0 0 1em 0;
+      color: var(--color-secondary-dark);
+      font-weight: 700;
+    }
+    .comments-list {
+      list-style: none;
+      margin: 0 0 1.2em 0;
+      padding: 0;
+      max-width: 100%;
+    }
+    .comments-list li {
+      margin-bottom: 1.1em;
+      padding-bottom: 0.8em;
+      border-bottom: 1px dashed var(--color-border);
+      max-width: 100%;
+    }
+    .comments-list li:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .comment-author {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      font-size: 1em;
+    }
+    .comment-date {
+      font-size: 0.98em;
+      color: var(--color-secondary-dark);
+      margin-left: 0.8em;
+    }
+    .comment-text {
+      margin: 0.4em 0 0 0;
+      font-size: 1.07em;
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+    /* Comment Form */
+    .comment-form {
+      margin-top: 1.2em;
+      background: #fff;
+      border-radius: var(--border-radius);
+      padding: 1.2em 1em 1em 1em;
+      border: 2px solid var(--color-primary);
+      box-shadow: 0 2px 8px rgba(59, 108, 246, 0.06);
+      max-width: 100%;
+    }
+    .comment-form fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+    .comment-form legend {
+      font-size: 1.07em;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.4em;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25em;
+      position: relative;
+    }
+    .form-group label {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.1em;
+      font-size: 1em;
+      line-height: 1.3;
+    }
+    .form-group input,
+    .form-group textarea {
+      font-size: 1em;
+      padding: 0.7em 1em;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--color-border);
+      background: #f6f8fa;
+      color: var(--color-text);
+      outline: none;
+      transition: border var(--transition-fast), box-shadow var(--transition-fast);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      max-width: 100%;
+      resize: vertical;
+      line-height: 1.5;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--color-focus);
+      box-shadow: 0 0 0 4px var(--color-focus);
+      outline: none;
+    }
+    .form-group input[aria-invalid="true"],
+    .form-group textarea[aria-invalid="true"] {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 4px var(--color-error);
+    }
+    .form-group .error-message {
+      color: var(--color-error);
+      font-size: 0.98em;
+      margin-top: 0.2em;
+      font-weight: 500;
+      line-height: 1.3;
+      max-width: 90%;
+    }
+    .form-group .help-text {
+      color: var(--color-secondary-dark);
+      font-size: 0.97em;
+      margin-top: 0.1em;
+      line-height: 1.3;
+      max-width: 90%;
+    }
+    .required-indicator {
+      color: var(--color-accent-dark);
+      margin-left: 0.15em;
+      font-size: 1.15em;
+      vertical-align: middle;
+    }
+    .comment-form button[type="submit"] {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.7em 2em;
+      font-size: 1.1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      outline: none;
+      margin-top: 0.5em;
+      box-shadow: 0 1px 4px rgba(59, 108, 246, 0.10);
+    }
+    .comment-form button[type="submit"]:focus {
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+      background: var(--color-accent);
+      color: #fff;
+    }
+    /* Status messages */
+    .status-message {
+      margin-top: 1em;
+      font-size: 1.07em;
+      font-weight: 600;
+      color: var(--color-success);
+      background: #e7fbe7;
+      border-radius: var(--border-radius);
+      padding: 0.6em 1em;
+      border: 2px solid var(--color-success);
+      box-shadow: 0 1px 3px rgba(43, 138, 62, 0.09);
+      max-width: 100%;
+    }
+    .status-message[role="alert"] {
+      color: var(--color-error);
+      background: #fbe7e7;
+      border: 2px solid var(--color-error);
+      box-shadow: 0 1px 3px rgba(201, 42, 42, 0.09);
+    }
+    /* Search Bar */
+    .search-section {
+      margin-bottom: 2em;
+      background: #f0f4ff;
+      border-radius: var(--border-radius);
+      padding: 1.5em 1em 1em 1em;
+      border: 2px solid var(--color-primary);
+      box-shadow: 0 2px 8px rgba(59, 108, 246, 0.08);
+      max-width: 100%;
+    }
+    .search-section h2 {
+      font-size: 1.13em;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.7em;
+    }
+    .search-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      max-width: 100%;
+    }
+    .search-form label {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      font-size: 1em;
+    }
+    .search-form input[type="search"] {
+      font-size: 1em;
+      padding: 0.7em 1em;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--color-border);
+      background: #fff;
+      color: var(--color-text);
+      outline: none;
+      transition: border var(--transition-fast), box-shadow var(--transition-fast);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      max-width: 100%;
+    }
+    .search-form input[type="search"]:focus {
+      border-color: var(--color-focus);
+      box-shadow: 0 0 0 4px var(--color-focus);
+    }
+    .search-form button[type="submit"] {
+      background: var(--color-secondary);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.7em 2em;
+      font-size: 1.05em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      outline: none;
+      margin-top: 0.2em;
+      box-shadow: 0 1px 4px rgba(50, 198, 154, 0.09);
+    }
+    .search-form button[type="submit"]:focus {
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+      background: var(--color-accent);
+      color: #fff;
+    }
+    /* Sidebar */
+    .sidebar-section {
+      margin-bottom: 2em;
+    }
+    .sidebar-section h2 {
+      font-size: 1.07em;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.5em;
+    }
+    .sidebar-section ul,
+    .sidebar-section ol {
+      padding-left: 1.2em;
+      margin: 0 0 0.7em 0;
+    }
+    .sidebar-section li {
+      margin-bottom: 0.4em;
+      font-size: 1em;
+      color: var(--color-secondary-dark);
+    }
+    .sidebar-section a {
+      color: var(--color-primary-dark);
+      text-decoration: underline;
+      font-weight: 500;
+      border-radius: var(--border-radius);
+      padding: 0.15em 0.5em;
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      outline: none;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+    .sidebar-section a:focus {
+      background: var(--color-accent);
+      color: #fff;
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+    }
+    /* Color Controls */
+    .color-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      margin-top: 1.5em;
+      margin-bottom: 1.5em;
+    }
+    .color-controls label {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      font-size: 1em;
+      margin-bottom: 0.2em;
+    }
+    .color-controls input[type="color"] {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--color-border);
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      outline: none;
+      margin-right: 0.5em;
+      min-width: 44px;
+      min-height: 44px;
+      vertical-align: middle;
+    }
+    .color-controls input[type="color"]:focus {
+      border-color: var(--color-focus);
+      box-shadow: 0 0 0 4px var(--color-focus);
+    }
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+      color: #fff;
+      padding: 2em 1em 1.5em 1em;
+      text-align: center;
+      border-top: 3px solid var(--color-border);
+      font-size: 1em;
+      letter-spacing: 0.02em;
+      margin-top: auto;
+    }
+    footer nav {
+      margin-bottom: 1em;
+    }
+    footer a {
+      color: #fff;
+      text-decoration: underline;
+      font-weight: 500;
+      border-radius: var(--border-radius);
+      padding: 0.15em 0.5em;
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      outline: none;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+    footer a:focus {
+      background: var(--color-focus);
+      color: var(--color-text);
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+    }
+    /* Focus indicators for all interactive elements */
+    a:focus, button:focus, input:focus, textarea:focus, select:focus {
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+      z-index: 10;
+    }
+    /* Line spacing and paragraph spacing */
+    p, ul, ol, li, .content, .excerpt, .comment-text {
+      line-height: var(--line-spacing);
+      margin-bottom: 0.75em;
+      max-width: var(--max-line-length);
+      text-align: left;
+    }
+    p {
+      margin-bottom: var(--paragraph-spacing);
+    }
+    /* Misc */
+    [hidden] {
+      display: none !important;
+    }
+    /* Enhanced touch targets */
+    button, a, input[type="button"], input[type="submit"] {
+      min-width: var(--min-target-size);
+      min-height: var(--min-target-size);
+      touch-action: manipulation;
+    }
+    /* Responsive text resizing */
+    html {
+      font-size: 100%;
+    }
+    @media (max-width: 400px) {
+      html {
+        font-size: 90%;
+      }
+    }
+    /* Utility for visually-hidden (for screen reader text) */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0,0,0,0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+    /* Help icon */
+    .help-icon {
+      display: inline-block;
+      width: 1.2em;
+      height: 1.2em;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 1em;
+      text-align: center;
+      line-height: 1.2em;
+      margin-left: 0.2em;
+      cursor: pointer;
+      font-weight: bold;
+      vertical-align: middle;
+      border: 2px solid var(--color-accent-dark);
+      outline: none;
+    }
+    .help-icon:focus {
+      background: var(--color-focus);
+      color: var(--color-text);
+      outline: var(--focus-outline-width) solid var(--color-focus);
+      outline-offset: var(--focus-outline-offset);
+    }
+    .help-tooltip {
+      display: none;
+      position: absolute;
+      left: 110%;
+      top: 0;
+      z-index: 20;
+      background: #fff;
+      color: var(--color-text);
+      border: 2px solid var(--color-accent-dark);
+      border-radius: var(--border-radius);
+      padding: 0.6em 1em;
+      min-width: 220px;
+      max-width: 350px;
+      font-size: 1em;
+      line-height: 1.4;
+      box-shadow: 0 2px 8px rgba(246, 59, 108, 0.10);
+    }
+    .help-icon:focus + .help-tooltip,
+    .help-icon:hover + .help-tooltip {
+      display: block;
+    }
+    /* Status region for dynamic updates */
+    #aria-status {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    /* Animation controls */
+    .motion-toggle {
+      margin-top: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      font-size: 1em;
+      color: var(--color-primary-dark);
+    }
+    .motion-toggle input[type="checkbox"] {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+      margin-right: 0.3em;
+      accent-color: var(--color-primary);
+    }
+    .motion-toggle label {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+    /* Animation for micro-interactions (e.g., comment success) */
+    .fade-in {
+      animation: fadeIn2 0.5s;
+    }
+    @keyframes fadeIn2 {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link" id="skip-link">Skip to main content</a>
+  <header>
+    <h1 id="site-title">Accessibly Yours: A Personal Blog</h1>
+    <p>Your colorful, accessible, and interactive blog for everyone. <span lang="es" title="Spanish">¡Bienvenidos!</span></p>
+  </header>
+  <nav aria-label="Main navigation" id="main-nav">
+    <ul>
+      <li>
+        <a href="#home" id="nav-home" aria-current="page">Home</a>
+      </li>
+      <li>
+        <button class="submenu-toggle" id="nav-categories" aria-haspopup="true" aria-expanded="false" aria-controls="categories-menu">
+          Categories
+        </button>
+        <ul class="submenu" id="categories-menu" aria-label="Categories" aria-hidden="true">
+          <li><a href="#category-accessibility">Accessibility</a></li>
+          <li><a href="#category-webdev">Web Development</a></li>
+          <li><a href="#category-life">Life</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#about" id="nav-about">About</a>
+      </li>
+      <li>
+        <a href="#contact" id="nav-contact">Contact</a>
+      </li>
+      <li>
+        <a href="#sitemap" id="nav-sitemap">Sitemap</a>
+      </li>
+    </ul>
+  </nav>
+  <nav aria-label="Breadcrumb" id="breadcrumb-nav">
+    <ol>
+      <li><a href="#home" id="breadcrumb-home">Home</a></li>
+      <li id="breadcrumb-current" aria-current="page">Blog</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <main id="main-content" tabindex="-1">
+      <!-- Search Section -->
+      <section class="search-section" aria-labelledby="search-section-title">
+        <h2 id="search-section-title">Search Articles</h2>
+        <form class="search-form" id="search-form" autocomplete="off" role="search" aria-describedby="search-help">
+          <label for="search-input">Search blog posts by title or content:</label>
+          <input type="search" id="search-input" name="search" aria-describedby="search-help" aria-label="Search blog posts" maxlength="80" required aria-required="true" />
+          <span id="search-help" class="help-text">Type keywords and press Enter or tap "Search".</span>
+          <button type="submit" id="search-btn">Search</button>
+        </form>
+        <div id="search-status" role="status" aria-live="polite" class="status-message" hidden></div>
+      </section>
+      <!-- Blog Posts List (Dynamic) -->
+      <section id="posts-section" aria-labelledby="posts-section-title">
+        <h2 id="posts-section-title">Latest Blog Posts</h2>
+        <ul class="post-list" id="post-list" aria-live="polite" aria-relevant="additions removals"></ul>
+        <div id="no-results" role="status" aria-live="polite" class="status-message" hidden>
+          No posts match your search. Try different keywords or <a href="#home">view all posts</a>.
+        </div>
+      </section>
+      <!-- Single Post View (Dynamic) -->
+      <section id="single-post-section" aria-labelledby="single-post-title" hidden>
+        <!-- Populated by JS -->
+      </section>
+    </main>
+    <aside aria-labelledby="sidebar-title">
+      <h2 id="sidebar-title" class="sr-only">Sidebar</h2>
+      <section class="sidebar-section" aria-labelledby="recent-posts-title">
+        <h2 id="recent-posts-title">Recent Posts</h2>
+        <ul id="recent-posts-list"></ul>
+      </section>
+      <section class="sidebar-section" aria-labelledby="categories-title">
+        <h2 id="categories-title">Categories</h2>
+        <ul>
+          <li><a href="#category-accessibility">Accessibility</a></li>
+          <li><a href="#category-webdev">Web Development</a></li>
+          <li><a href="#category-life">Life</a></li>
+        </ul>
+      </section>
+      <section class="sidebar-section" aria-labelledby="sitemap-title">
+        <h2 id="sitemap-title">Sitemap</h2>
+        <ol>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+        </ol>
+      </section>
+      <section class="sidebar-section" aria-labelledby="color-controls-title">
+        <h2 id="color-controls-title">Customize Colors</h2>
+        <form class="color-controls" id="color-controls-form" autocomplete="off">
+          <label for="color-fg">Text Color:</label>
+          <input type="color" id="color-fg" name="color-fg" value="#1a1a2e" aria-label="Select text color" />
+          <label for="color-bg">Background Color:</label>
+          <input type="color" id="color-bg" name="color-bg" value="#f6f8fa" aria-label="Select background color" />
+        </form>
+      </section>
+      <section class="sidebar-section" aria-labelledby="motion-controls-title">
+        <h2 id="motion-controls-title">Motion &amp; Animation</h2>
+        <div class="motion-toggle">
+          <input type="checkbox" id="motion-toggle-checkbox" aria-checked="false" aria-label="Disable animations" />
+          <label for="motion-toggle-checkbox">Disable Animations</label>
+          <button class="help-icon" tabindex="0" aria-label="Help: Motion controls" aria-describedby="motion-help">?</button>
+          <span class="help-tooltip" id="motion-help" role="tooltip">
+            If animations or motion effects are uncomfortable, you can disable them here. This setting respects your system's "prefers-reduced-motion" preference as well.
+          </span>
+        </div>
+      </section>
+    </aside>
+  </div>
+  <footer>
+    <nav aria-label="Footer navigation">
+      <a href="#home">Home</a> |
+      <a href="#about">About</a> |
+      <a href="#contact">Contact</a> |
+      <a href="#sitemap">Sitemap</a>
+    </nav>
+    <p>
+      <strong>Accessibly Yours</strong> &mdash; A blog designed for everyone.<br>
+      <span lang="fr" title="French">Conçu pour tous.</span>
+    </p>
+    <p>
+      <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.2 AAA Compliant.
+      <span class="sr-only">This site meets the highest web accessibility standards.</span>
+    </p>
+  </footer>
+  <!-- ARIA Live Status for JS -->
+  <div id="aria-status" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script>
+    // --- Accessibility & State ---
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let motionDisabled = prefersReducedMotion;
+    // Utility: Announce status to screen readers
+    function announceStatus(message) {
+      const status = document.getElementById('aria-status');
+      status.textContent = '';
+      setTimeout(() => { status.textContent = message; }, 10);
+    }
+    // --- Blog Data (Sample) ---
+    const posts = [
+      {
+        id: '1',
+        title: 'Making the Web Truly Accessible',
+        date: '2024-06-20',
+        author: 'Alex Lee',
+        category: 'Accessibility',
+        tags: ['Accessibility', 'WCAG', 'Inclusive'],
+        excerpt: 'Discover how to make your websites accessible to all users, including those with disabilities. We explore practical steps for AAA compliance.',
+        content: `<p>Web accessibility ensures everyone, including people with disabilities, can use the web. <strong>WCAG 2.2 AAA</strong> is the gold standard for accessibility.</p>
+        <p>To achieve AAA compliance, you must:</p>
+        <ul>
+          <li>Use semantic HTML for structure.</li>
+          <li>Provide text alternatives for all images and media.</li>
+          <li>Ensure keyboard and screen reader navigation.</li>
+          <li>Meet enhanced color contrast ratios.</li>
+        </ul>
+        <p>For more, see the <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank" rel="noopener" aria-label="Read WCAG guidelines (opens in new tab)">WCAG guidelines</a>.</p>`,
+        image: {
+          src: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80',
+          alt: 'A diverse group of people collaborating on laptops and tablets at a bright table, symbolizing web accessibility and inclusion.'
+        },
+        comments: [
+          {
+            name: 'Jamie',
+            email: 'jamie@example.com',
+            date: '2024-06-21T10:20:00Z',
+            text: 'This is an excellent summary! Thanks for emphasizing the importance of semantic HTML.'
+          }
+        ]
+      },
+      {
+        id: '2',
+        title: 'Colorful Design, Maximum Contrast',
+        date: '2024-06-18',
+        author: 'Taylor Kim',
+        category: 'Web Development',
+        tags: ['Design', 'Contrast', 'Color'],
+        excerpt: 'Learn how to create vibrant, colorful sites while maintaining AAA-level contrast ratios for accessibility.',
+        content: `<p>Design doesn’t have to be boring to be accessible! Use high-contrast color palettes and visual cues beyond color alone.</p>
+        <p>Tips:</p>
+        <ul>
+          <li>Check all color pairs for at least <strong>7:1 contrast</strong>.</li>
+          <li>Use icons or patterns in addition to color to convey meaning.</li>
+          <li>Test your design at 200% zoom.</li>
+        </ul>`,
+        image: {
+          src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
+          alt: 'A colorful palette of paint swatches and a contrast checker device on a designer’s desk.'
+        },
+        comments: [
+          {
+            name: 'Morgan',
+            email: 'morgan@example.com',
+            date: '2024-06-19T13:45:00Z',
+            text: 'Great reminders! Color contrast is too often overlooked.'
+          }
+        ]
+      },
+      {
+        id: '3',
+        title: 'Commenting Systems: Accessible by Design',
+        date: '2024-06-14',
+        author: 'Jordan Smith',
+        category: 'Web Development',
+        tags: ['Forms', 'Comments', 'Usability'],
+        excerpt: 'Building an accessible commenting system means more than adding labels. Learn the best practices for forms and error handling.',
+        content: `<p>Accessible forms require clear labels, error prevention, and context-sensitive help. Use <code>aria-describedby</code> for help text and error messages.</p>
+        <p>Also, make sure:</p>
+        <ul>
+          <li>Required fields are marked visually and with <code>aria-required</code>.</li>
+          <li>Error messages are specific and actionable.</li>
+          <li>Keyboard navigation is logical and predictable.</li>
+        </ul>`,
+        image: {
+          src: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
+          alt: 'A web developer reviewing form fields on a laptop, with a checklist for accessibility best practices.'
+        },
+        comments: []
+      }
+    ];
+    // --- State ---
+    let filteredPosts = [...posts];
+    let currentView = 'list'; // 'list' or 'single'
+    let currentPostId = null;
+    // --- Utility Functions ---
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, function (m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+    function formatDateTime(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+    function updateBreadcrumb(post) {
+      const breadcrumb = document.getElementById('breadcrumb-nav');
+      const ol = breadcrumb.querySelector('ol');
+      ol.innerHTML = '';
+      ol.appendChild(createBreadcrumbItem('Home', '#home', 'breadcrumb-home'));
+      if (post) {
+        ol.appendChild(createBreadcrumbItem('Blog', '#posts-section', 'breadcrumb-blog'));
+        const li = document.createElement('li');
+        li.id = 'breadcrumb-current';
+        li.setAttribute('aria-current', 'page');
+        li.textContent = post.title;
+        ol.appendChild(li);
+      } else {
+        const li = document.createElement('li');
+        li.id = 'breadcrumb-current';
+        li.setAttribute('aria-current', 'page');
+        li.textContent = 'Blog';
+        ol.appendChild(li);
+      }
+    }
+    function createBreadcrumbItem(label, href, id) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = href;
+      a.id = id;
+      a.textContent = label;
+      li.appendChild(a);
+      return li;
+    }
+    function scrollToMain() {
+      const main = document.getElementById('main-content');
+      main.focus();
+    }
+    // --- Render Functions ---
+    function renderPostList(postsToRender) {
+      currentView = 'list';
+      currentPostId = null;
+      document.getElementById('single-post-section').hidden = true;
+      document.getElementById('posts-section').hidden = false;
+      updateBreadcrumb(null);
+      const list = document.getElementById('post-list');
+      list.innerHTML = '';
+      if (!postsToRender.length) {
+        document.getElementById('no-results').hidden = false;
+        return;
+      }
+      document.getElementById('no-results').hidden = true;
+      postsToRender.forEach(post => {
+        const li = document.createElement('li');
+        li.setAttribute('tabindex', '-1');
+        li.className = 'post-list-item';
+        const card = document.createElement('article');
+        card.className = 'post-card';
+        card.setAttribute('aria-labelledby', `post-title-${post.id}`);
+        card.innerHTML = `
+          <h2 id="post-title-${post.id}">${escapeHTML(post.title)}</h2>
+          <div class="meta">
+            <span>By <span lang="en" class="author">${escapeHTML(post.author)}</span></span>
+            <span>${formatDate(post.date)}</span>
+            <span class="tags" aria-label="Tags">${post.tags.map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join(' ')}</span>
+          </div>
+          <div class="excerpt">${escapeHTML(post.excerpt)}</div>
+          <button class="read-more" aria-label="Read full post: ${escapeHTML(post.title)}" data-postid="${post.id}">Read More</button>
+        `;
+        li.appendChild(card);
+        list.appendChild(li);
+      });
+      updateRecentPosts();
+    }
+    function renderSinglePost(post) {
+      currentView = 'single';
+      currentPostId = post.id;
+      document.getElementById('posts-section').hidden = true;
+      const section = document.getElementById('single-post-section');
+      section.hidden = false;
+      section.innerHTML = `
+        <article class="single-post" aria-labelledby="single-post-title">
+          <h2 id="single-post-title">${escapeHTML(post.title)}</h2>
+          <div class="meta">
+            <span>By <span lang="en" class="author">${escapeHTML(post.author)}</span></span>
+            <span>${formatDate(post.date)}</span>
+            <span class="tags" aria-label="Tags">${post.tags.map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join(' ')}</span>
+          </div>
+          <img class="post-image" src="${escapeHTML(post.image.src)}" alt="${escapeHTML(post.image.alt)}" width="420" height="240" />
+          <div class="content">${post.content}</div>
+        </article>
+        <section class="comments-section" aria-labelledby="comments-title">
+          <h3 id="comments-title">Comments</h3>
+          <ul class="comments-list" id="comments-list">
+            ${post.comments.length ? post.comments.map(comment => `
+              <li>
+                <span class="comment-author">${escapeHTML(comment.name)}</span>
+                <span class="comment-date">${formatDateTime(comment.date)}</span>
+                <div class="comment-text">${escapeHTML(comment.text)}</div>
+              </li>
+            `).join('') : `<li>No comments yet. Be the first to comment!</li>`}
+          </ul>
+          <form class="comment-form" id="comment-form" autocomplete="off" novalidate aria-labelledby="comment-form-legend">
+            <fieldset>
+              <legend id="comment-form-legend">Leave a Comment</legend>
+              <div class="form-group">
+                <label for="comment-name">Name <span class="required-indicator" aria-hidden="true">*</span></label>
+                <input type="text" id="comment-name" name="name" required aria-required="true" maxlength="40"
+                  aria-describedby="name-help" autocomplete="name" />
+                <span id="name-help" class="help-text">Enter your preferred display name.</span>
+                <span class="error-message" id="name-error" aria-live="assertive"></span>
+              </div>
+              <div class="form-group">
+                <label for="comment-email">Email <span class="required-indicator" aria-hidden="true">*</span></label>
+                <input type="email" id="comment-email" name="email" required aria-required="true" maxlength="50"
+                  aria-describedby="email-help" autocomplete="email" />
+                <span id="email-help" class="help-text">Your email will not be published.</span>
+                <span class="error-message" id="email-error" aria-live="assertive"></span>
+              </div>
+              <div class="form-group">
+                <label for="comment-text">Comment <span class="required-indicator" aria-hidden="true">*</span></label>
+                <textarea id="comment-text" name="comment" required aria-required="true" rows="4" maxlength="400"
+                  aria-describedby="comment-help" autocomplete="off"></textarea>
+                <span id="comment-help" class="help-text">Share your thoughts. Max 400 characters.</span>
+                <span class="error-message" id="comment-error" aria-live="assertive"></span>
+              </div>
+              <button type="submit" id="comment-submit">Post Comment</button>
+            </fieldset>
+            <div id="comment-status" role="status" aria-live="polite" class="status-message" hidden></div>
+          </form>
+        </section>
+      `;
+      updateBreadcrumb(post);
+      updateRecentPosts();
+      // Focus on post title for screen reader users
+      setTimeout(() => {
+        const title = document.getElementById('single-post-title');
+        if (title) title.focus();
+      }, 100);
+      // Add comment form handler
+      setupCommentForm(post.id);
+    }
+    function updateRecentPosts() {
+      const recent = document.getElementById('recent-posts-list');
+      recent.innerHTML = '';
+      posts.slice(0, 3).forEach(post => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = post.title;
+        a.setAttribute('data-postid', post.id);
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          showSinglePost(post.id);
+        });
+        li.appendChild(a);
+        recent.appendChild(li);
+      });
+    }
+    // --- Search ---
+    function setupSearch() {
+      const form = document.getElementById('search-form');
+      const input = document.getElementById('search-input');
+      const status = document.getElementById('search-status');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+          filteredPosts = [...posts];
+          renderPostList(filteredPosts);
+          status.hidden = true;
+          return;
+        }
+        filteredPosts = posts.filter(post =>
+          post.title.toLowerCase().includes(query) ||
+          post.content.toLowerCase().includes(query) ||
+          post.excerpt.toLowerCase().includes(query) ||
+          post.tags.some(tag => tag.toLowerCase().includes(query))
+        );
+        renderPostList(filteredPosts);
+        if (filteredPosts.length) {
+          status.textContent = `${filteredPosts.length} post${filteredPosts.length > 1 ? 's' : ''} found for "${query}".`;
+          status.hidden = false;
+        } else {
+          status.textContent = `No posts found for "${query}".`;
+          status.hidden = false;
+        }
+        announceStatus(status.textContent);
+      });
+    }
+    // --- Post Navigation ---
+    function setupPostNavigation() {
+      document.getElementById('post-list').addEventListener('click', function (e) {
+        if (e.target.classList.contains('read-more')) {
+          const postId = e.target.getAttribute('data-postid');
+          showSinglePost(postId);
+        }
+      });
+    }
+    function showSinglePost(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      renderSinglePost(post);
+      window.location.hash = '#post-' + postId;
+    }
+    // --- Comment Form ---
+    function setupCommentForm(postId) {
+      const form = document.getElementById('comment-form');
+      if (!form) return;
+      const nameInput = document.getElementById('comment-name');
+      const emailInput = document.getElementById('comment-email');
+      const commentInput = document.getElementById('comment-text');
+      const nameError = document.getElementById('name-error');
+      const emailError = document.getElementById('email-error');
+      const commentError = document.getElementById('comment-error');
+      const status = document.getElementById('comment-status');
+      // Error prevention: Save form state
+      let formState = { name: '', email: '', comment: '' };
+      [nameInput, emailInput, commentInput].forEach(input => {
+        input.value = formState[input.name] || '';
+        input.addEventListener('input', () => {
+          formState[input.name] = input.value;
+        });
+      });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        let valid = true;
+        // Name validation
+        if (!nameInput.value.trim()) {
+          nameInput.setAttribute('aria-invalid', 'true');
+          nameError.textContent = 'Name is required.';
+          valid = false;
+        } else if (nameInput.value.trim().length > 40) {
+          nameInput.setAttribute('aria-invalid', 'true');
+          nameError.textContent = 'Name must be under 40 characters.';
+          valid = false;
+        } else {
+          nameInput.removeAttribute('aria-invalid');
+          nameError.textContent = '';
+        }
+        // Email validation
+        if (!emailInput.value.trim()) {
+          emailInput.setAttribute('aria-invalid', 'true');
+          emailError.textContent = 'Email is required.';
+          valid = false;
+        } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailInput.value.trim())) {
+          emailInput.setAttribute('aria-invalid', 'true');
+          emailError.textContent = 'Please enter a valid email address.';
+          valid = false;
+        } else {
+          emailInput.removeAttribute('aria-invalid');
+          emailError.textContent = '';
+        }
+        // Comment validation
+        if (!commentInput.value.trim()) {
+          commentInput.setAttribute('aria-invalid', 'true');
+          commentError.textContent = 'Comment is required.';
+          valid = false;
+        } else if (commentInput.value.trim().length > 400) {
+          commentInput.setAttribute('aria-invalid', 'true');
+          commentError.textContent = 'Comment must be under 400 characters.';
+          valid = false;
+        } else {
+          commentInput.removeAttribute('aria-invalid');
+          commentError.textContent = '';
+        }
+        if (!valid) {
+          status.textContent = 'Please correct the errors above.';
+          status.setAttribute('role', 'alert');
+          status.hidden = false;
+          announceStatus('Form submission failed. Please fix errors.');
+          return;
+        }
+        // Confirmation dialog for error prevention (AAA)
+        if (!confirm('Are you sure you want to submit this comment?')) {
+          status.textContent = 'Comment submission cancelled.';
+          status.setAttribute('role', 'status');
+          status.hidden = false;
+          announceStatus('Comment submission cancelled.');
+          return;
+        }
+        // Simulate comment save
+        const post = posts.find(p => p.id === postId);
+        const newComment = {
+          name: nameInput.value.trim(),
+          email: emailInput.value.trim(),
+          date: new Date().toISOString(),
+          text: commentInput.value.trim()
+        };
+        post.comments.push(newComment);
+        renderSinglePost(post);
+        // Clear form state
+        formState = { name: '', email: '', comment: '' };
+        status.textContent = 'Comment posted successfully!';
+        status.setAttribute('role', 'status');
+        status.hidden = false;
+        status.classList.add('fade-in');
+        announceStatus('Comment posted successfully.');
+        // Focus on status message
+        status.focus();
+        setTimeout(() => {
+          status.classList.remove('fade-in');
+        }, motionDisabled ? 0 : 700);
+      });
+      // Context-sensitive help on focus
+      [nameInput, emailInput, commentInput].forEach(input => {
+        input.addEventListener('focus', () => {
+          announceStatus(document.getElementById(input.getAttribute('aria-describedby')).textContent);
+        });
+      });
+    }
+    // --- Navigation: Dropdown & Keyboard ---
+    function setupDropdownMenus() {
+      const toggle = document.getElementById('nav-categories');
+      const menu = document.getElementById('categories-menu');
+      let submenuOpen = false;
+      function openMenu() {
+        menu.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+        submenuOpen = true;
+        menu.querySelector('a').focus();
+      }
+      function closeMenu() {
+        menu.setAttribute('aria-hidden', 'true');
+        toggle.setAttribute('aria-expanded', 'false');
+        submenuOpen = false;
+        toggle.focus();
+      }
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        submenuOpen ? closeMenu() : openMenu();
+      });
+      toggle.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          submenuOpen ? closeMenu() : openMenu();
+        }
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          openMenu();
+        }
+      });
+      menu.addEventListener('keydown', function (e) {
+        const links = Array.from(menu.querySelectorAll('a'));
+        const idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          links[(idx + 1) % links.length].focus();
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          links[(idx - 1 + links.length) % links.length].focus();
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeMenu();
+        }
+      });
+      // Close on outside click or blur
+      document.addEventListener('mousedown', (e) => {
+        if (!menu.contains(e.target) && e.target !== toggle) closeMenu();
+      });
+      // Ensure mouse hover and keyboard focus match
+      toggle.addEventListener('mouseover', openMenu);
+      toggle.addEventListener('mouseout', closeMenu);
+      menu.addEventListener('mouseover', openMenu);
+      menu.addEventListener('mouseout', closeMenu);
+      // Alternative access: category links in sidebar and sitemap
+      // (No extra code needed, links provided)
+    }
+    // --- Skip Link ---
+    document.getElementById('skip-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      scrollToMain();
+    });
+    // --- Color Customization ---
+    function setupColorControls() {
+      const fgInput = document.getElementById('color-fg');
+      const bgInput = document.getElementById('color-bg');
+      function setColors() {
+        document.body.style.color = fgInput.value;
+        document.body.style.background = bgInput.value;
+        // Check contrast ratio (AAA: 7:1) and warn if not met
+        const fg = fgInput.value;
+        const bg = bgInput.value;
+        if (!checkContrast(fg, bg, 7)) {
+          announceStatus('Warning: Selected colors may not meet AAA contrast requirements (7:1).');
+        }
+      }
+      fgInput.addEventListener('input', setColors);
+      bgInput.addEventListener('input', setColors);
+    }
+    // --- Motion Controls ---
+    function setupMotionControls() {
+      const motionCheckbox = document.getElementById('motion-toggle-checkbox');
+      motionCheckbox.checked = motionDisabled;
+      motionCheckbox.setAttribute('aria-checked', motionDisabled ? 'true' : 'false');
+      motionCheckbox.addEventListener('change', function () {
+        motionDisabled = motionCheckbox.checked;
+        motionCheckbox.setAttribute('aria-checked', motionDisabled ? 'true' : 'false');
+        if (motionDisabled) {
+          document.body.classList.add('reduced-motion');
+        } else {
+          document.body.classList.remove('reduced-motion');
+        }
+        announceStatus(motionDisabled ? 'Animations disabled.' : 'Animations enabled.');
+      });
+    }
+    // --- Touch Target: Pointer Cancellation ---
+    // All pointer actions (e.g., button clicks) complete on pointerup (default for buttons)
+    // --- Contrast Checker (AAA) ---
+    // Uses luminance formula to check contrast
+    function checkContrast(fg, bg, minRatio) {
+      function hexToRgb(hex) {
+        let h = hex.replace('#', '');
+        if (h.length === 3) h = h.split('').map(x => x + x).join('');
+        const num = parseInt(h, 16);
+        return [num >> 16, (num >> 8) & 255, num & 255];
+      }
+      function luminance([r, g, b]) {
+        [r, g, b] = [r, g, b].map(v => {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      }
+      const l1 = luminance(hexToRgb(fg));
+      const l2 = luminance(hexToRgb(bg));
+      const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      return ratio >= minRatio;
+    }
+    // --- Hash Routing for SPA ---
+    function setupHashRouting() {
+      window.addEventListener('hashchange', handleHashChange);
+      handleHashChange();
+    }
+    function handleHashChange() {
+      const hash = window.location.hash;
+      if (hash.startsWith('#post-')) {
+        const postId = hash.replace('#post-', '');
+        showSinglePost(postId);
+      } else {
+        renderPostList(filteredPosts);
+      }
+    }
+    // --- Initial Render ---
+    function init() {
+      setupDropdownMenus();
+      setupSearch();
+      setupPostNavigation();
+      setupColorControls();
+      setupMotionControls();
+      setupHashRouting();
+      renderPostList(filteredPosts);
+      // Help icon: keyboard focus
+      document.querySelectorAll('.help-icon').forEach(icon => {
+        icon.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.nextElementSibling.style.display = 'block';
+          }
+          if (e.key === 'Escape') {
+            this.nextElementSibling.style.display = 'none';
+            this.blur();
+          }
+        });
+      });
+    }
+    // --- Run on DOMContentLoaded ---
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

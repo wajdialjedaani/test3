@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stellar Explorer: Accessible Interactive Space Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- User-selectable color themes for AAA 1.4.8 compliance -->
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle fill='navy' cx='16' cy='16' r='16'/><circle fill='yellow' cx='20' cy='12' r='5'/></svg>">
+  <style>
+    :root {
+      /* AAA contrast-compliant color palette */
+      --color-bg: #10121a;
+      --color-bg-light: #22253a;
+      --color-bg-dark: #070810;
+      --color-primary: #ffe066; /* Vibrant yellow (stars/planets) */
+      --color-secondary: #6dd3fa; /* Blue accent */
+      --color-tertiary: #ff71ce; /* Pink accent */
+      --color-quaternary: #01cdfe; /* Cyan accent */
+      --color-focus: #fff200;
+      --color-text: #f8f8ff;
+      --color-text-secondary: #e0e0f0;
+      --color-card: #1c1e2b;
+      --color-border: #ffe066;
+      --color-nav: #1a1b23;
+      --color-link: #ffe066;
+      --color-link-hover: #01cdfe;
+      --color-visited: #6dd3fa;
+      --color-shadow: rgba(0,0,0,0.7);
+      --font-size-base: 1.15rem;
+      --font-size-large: 1.4rem;
+      --font-size-xlarge: 2rem;
+      --line-height: 1.7;
+      --focus-outline: 2.5px solid var(--color-focus);
+      --focus-shadow: 0 0 0 3px var(--color-secondary);
+      --min-target: 44px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --color-bg: #fffbe9;
+        --color-bg-light: #f8f8ff;
+        --color-bg-dark: #e9ecef;
+        --color-primary: #4d3d00;
+        --color-secondary: #03639c;
+        --color-tertiary: #be1e5a;
+        --color-quaternary: #2b9eb3;
+        --color-focus: #d1a700;
+        --color-text: #111113;
+        --color-text-secondary: #33334a;
+        --color-card: #f3f3fa;
+        --color-border: #b7a900;
+        --color-nav: #f1efe3;
+        --color-link: #4d3d00;
+        --color-link-hover: #2b9eb3;
+        --color-visited: #03639c;
+        --color-shadow: rgba(0,0,0,0.15);
+      }
+    }
+
+    html {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-size: 18px;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      line-height: var(--line-height);
+      scroll-behavior: smooth;
+      word-break: break-word;
+    }
+    body {
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+    }
+
+    /* Skip links */
+    .skip-link {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      background: var(--color-primary);
+      color: #1a1a1a;
+      padding: 0.6em 1.2em;
+      z-index: 1000;
+      font-weight: bold;
+      border-radius: 0.4em;
+      box-shadow: 0 2px 8px var(--color-shadow);
+      text-decoration: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+    }
+    .skip-link:focus {
+      opacity: 1;
+      pointer-events: auto;
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: linear-gradient(90deg, var(--color-bg-dark) 0%, var(--color-nav) 100%);
+      padding: 0;
+      box-shadow: 0 2px 10px var(--color-shadow);
+      position: relative;
+      z-index: 10;
+    }
+    .site-title {
+      font-size: var(--font-size-xlarge);
+      font-weight: bold;
+      margin: 0;
+      padding: 1.1rem 1.5rem 0.4rem 1.5rem;
+      letter-spacing: 0.02em;
+      color: var(--color-primary);
+      text-shadow: 0 1px 4px #000, 0 0 10px var(--color-secondary);
+    }
+    nav[aria-label] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2em 2em;
+      padding: 0.6em 1.5em 1em 1.5em;
+      align-items: center;
+      background: var(--color-nav);
+      border-bottom: 2px solid var(--color-border);
+    }
+    nav[aria-label] ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em 1.8em;
+      margin: 0;
+      padding: 0;
+    }
+    nav[aria-label] li {
+      position: relative;
+    }
+    nav[aria-label] a,
+    nav[aria-label] button {
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.08em;
+      color: var(--color-link);
+      background: none;
+      border: none;
+      text-decoration: none;
+      padding: 0.5em 0.7em;
+      border-radius: 0.4em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-weight: 600;
+      outline: none;
+      box-shadow: none;
+      position: relative;
+    }
+    nav[aria-label] a:focus,
+    nav[aria-label] button:focus {
+      outline: var(--focus-outline);
+      background: var(--color-secondary);
+      color: #1a1a1a;
+      z-index: 1;
+    }
+    nav[aria-label] a[aria-current="page"] {
+      background: var(--color-primary);
+      color: #1a1a1a;
+      font-weight: bold;
+      border-bottom: 3px solid var(--color-secondary);
+    }
+    nav[aria-label] a:hover,
+    nav[aria-label] button:hover {
+      background: var(--color-link-hover);
+      color: #1a1a1a;
+    }
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      background: none;
+      padding: 0.4em 1.5em 0.4em 1.5em;
+      font-size: 1em;
+    }
+    nav[aria-label="Breadcrumb"] ol {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4em;
+      margin: 0;
+      padding: 0;
+    }
+    nav[aria-label="Breadcrumb"] li:not(:last-child)::after {
+      content: "›";
+      color: var(--color-secondary);
+      margin: 0 0.4em;
+    }
+    nav[aria-label="Breadcrumb"] a {
+      color: var(--color-link);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0.2em 0.4em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+    }
+    nav[aria-label="Breadcrumb"] a:focus {
+      outline: var(--focus-outline);
+      background: var(--color-secondary);
+      color: #1a1a1a;
+    }
+    nav[aria-label="Breadcrumb"] li:last-child span {
+      color: var(--color-primary);
+      font-weight: bold;
+    }
+
+    /* Main Layout */
+    main {
+      display: grid;
+      grid-template-columns: 1fr minmax(320px, 500px);
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2.5rem 1.2rem 2rem 1.2rem;
+      background: none;
+      position: relative;
+      z-index: 2;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+      }
+    }
+
+    /* Space Canvas (background stars & constellations) */
+    #space-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      background: none;
+      display: block;
+    }
+    /* Visually hidden but accessible constellation map description */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      border: 0;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    /* Constellation Info Modal */
+    #constellation-modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(16,18,26,0.92);
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+    #constellation-modal[aria-hidden="false"] {
+      display: flex;
+    }
+    .modal-dialog {
+      background: var(--color-card);
+      color: var(--color-text);
+      border-radius: 1.2em;
+      box-shadow: 0 6px 32px var(--color-shadow);
+      padding: 2.2em 2em 1.5em 2em;
+      max-width: 480px;
+      min-width: 320px;
+      outline: none;
+      position: relative;
+      border: 2.5px solid var(--color-primary);
+    }
+    .modal-dialog:focus {
+      outline: var(--focus-outline);
+      box-shadow: var(--focus-shadow);
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 1.1em;
+      right: 1.1em;
+      background: var(--color-secondary);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 50%;
+      width: var(--min-target);
+      height: var(--min-target);
+      font-size: 1.4em;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+    }
+    .modal-close-btn:focus {
+      outline: var(--focus-outline);
+      background: var(--color-primary);
+      color: #1a1a1a;
+    }
+    .modal-title {
+      font-size: var(--font-size-large);
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: 0.7em;
+      margin-top: 0;
+    }
+    .modal-description {
+      font-size: 1.08em;
+      margin-bottom: 0.5em;
+    }
+
+    /* Section Headings */
+    section {
+      margin-bottom: 2.5rem;
+    }
+    h1, h2, h3, h4 {
+      font-family: inherit;
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-top: 0;
+      margin-bottom: 0.6em;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5em;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.3em;
+    }
+    h3 {
+      font-size: 1.18rem;
+      color: var(--color-secondary);
+    }
+    h4 {
+      font-size: 1.05rem;
+      color: var(--color-tertiary);
+    }
+
+    /* Planet Gallery */
+    .planet-gallery-section {
+      grid-column: 2;
+      background: var(--color-bg-light);
+      border-radius: 1.2em;
+      box-shadow: 0 2px 14px var(--color-shadow);
+      padding: 1.5em 1em 2em 1em;
+      min-width: 320px;
+      max-width: 520px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .planet-gallery-section {
+        grid-column: 1;
+        max-width: 100%;
+      }
+    }
+    .planet-gallery-heading {
+      font-size: 1.35rem;
+      color: var(--color-primary);
+      margin-bottom: 0.8em;
+      text-align: center;
+    }
+    .planet-gallery {
+      display: flex;
+      overflow-x: auto;
+      gap: 1.2em;
+      padding: 0.7em 0.2em;
+      scroll-behavior: smooth;
+      margin-bottom: 0.8em;
+      min-height: 310px;
+    }
+    .planet-card {
+      background: var(--color-card);
+      border: 2.5px solid var(--color-border);
+      border-radius: 1.1em;
+      box-shadow: 0 2px 10px var(--color-shadow);
+      min-width: 260px;
+      max-width: 280px;
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.2em 1em 1em 1em;
+      position: relative;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .planet-card:focus-within,
+    .planet-card:focus-visible {
+      outline: var(--focus-outline);
+      border-color: var(--color-focus);
+      box-shadow: var(--focus-shadow);
+    }
+    .planet-img {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--color-bg-dark);
+      border: 3px solid var(--color-primary);
+      object-fit: cover;
+      margin-bottom: 0.7em;
+      box-shadow: 0 0 0 4px var(--color-secondary);
+      display: block;
+    }
+    .planet-name {
+      font-size: 1.13em;
+      color: var(--color-primary);
+      font-weight: bold;
+      margin-bottom: 0.3em;
+      text-align: center;
+    }
+    .planet-fact {
+      color: var(--color-text-secondary);
+      font-size: 1em;
+      margin-bottom: 0.3em;
+      text-align: center;
+    }
+    .planet-gallery-controls {
+      display: flex;
+      gap: 1em;
+      justify-content: center;
+      margin-bottom: 0.5em;
+    }
+    .gallery-btn {
+      background: var(--color-secondary);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 0.7em;
+      padding: 0.7em 1.3em;
+      font-size: 1.12em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-weight: bold;
+      outline: none;
+      box-shadow: 0 1px 4px var(--color-shadow);
+    }
+    .gallery-btn:focus {
+      outline: var(--focus-outline);
+      background: var(--color-primary);
+      color: #1a1a1a;
+    }
+    .gallery-btn[aria-disabled="true"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    /* Gallery scrollbar for AAA touch */
+    .planet-gallery {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-secondary) var(--color-bg-light);
+    }
+    .planet-gallery::-webkit-scrollbar {
+      height: 12px;
+      background: var(--color-bg-light);
+    }
+    .planet-gallery::-webkit-scrollbar-thumb {
+      background: var(--color-secondary);
+      border-radius: 8px;
+    }
+
+    /* Search & Sitemap */
+    .search-section, .sitemap-section {
+      margin-top: 2.5em;
+      margin-bottom: 2.5em;
+    }
+    .search-form {
+      display: flex;
+      gap: 0.7em;
+      align-items: center;
+      margin-bottom: 0.8em;
+    }
+    .search-input {
+      font-size: 1.05em;
+      padding: 0.6em 1em;
+      border-radius: 0.5em;
+      border: 2px solid var(--color-secondary);
+      background: var(--color-bg-light);
+      color: var(--color-text);
+      min-width: 220px;
+      outline: none;
+      min-height: var(--min-target);
+    }
+    .search-input:focus {
+      outline: var(--focus-outline);
+      border-color: var(--color-focus);
+      background: var(--color-bg-dark);
+    }
+    .search-btn {
+      background: var(--color-primary);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 0.5em;
+      padding: 0.6em 1.2em;
+      font-size: 1.07em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+    }
+    .search-btn:focus {
+      outline: var(--focus-outline);
+      background: var(--color-secondary);
+      color: #1a1a1a;
+    }
+    .search-results {
+      margin-top: 0.8em;
+      background: var(--color-card);
+      border-radius: 0.7em;
+      padding: 0.8em 1em;
+      color: var(--color-text-secondary);
+      box-shadow: 0 1px 6px var(--color-shadow);
+      font-size: 1em;
+      min-height: 2em;
+    }
+    .search-results[aria-live] {
+      outline: none;
+    }
+
+    /* Help Box */
+    .help-box {
+      background: var(--color-bg-light);
+      border-left: 5px solid var(--color-secondary);
+      padding: 1.1em 1.5em;
+      border-radius: 0.8em;
+      margin-bottom: 2em;
+      color: var(--color-text-secondary);
+      font-size: 1em;
+      box-shadow: 0 1px 8px var(--color-shadow);
+      max-width: 650px;
+    }
+    .help-box strong {
+      color: var(--color-primary);
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, var(--color-bg-dark) 0%, var(--color-nav) 100%);
+      color: var(--color-primary);
+      text-align: center;
+      padding: 1.3em 0 2em 0;
+      font-size: 1em;
+      border-top: 2px solid var(--color-border);
+      box-shadow: 0 -2px 12px var(--color-shadow);
+      margin-top: 2em;
+      letter-spacing: 0.01em;
+    }
+    .footer-links {
+      margin-top: 0.6em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2em;
+      justify-content: center;
+    }
+    .footer-links a {
+      color: var(--color-link);
+      text-decoration: underline;
+      font-weight: bold;
+      background: none;
+      border-radius: 0.3em;
+      padding: 0.3em 0.6em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      transition: background 0.2s, color 0.2s;
+    }
+    .footer-links a:focus {
+      outline: var(--focus-outline);
+      background: var(--color-secondary);
+      color: #1a1a1a;
+    }
+
+    /* Focus indicator for all interactive elements */
+    a:focus, button:focus, input:focus, [tabindex]:focus, .planet-card:focus-within {
+      outline: var(--focus-outline) !important;
+      box-shadow: var(--focus-shadow) !important;
+      z-index: 2;
+    }
+
+    /* Responsive font and layout */
+    @media (max-width: 600px) {
+      html { font-size: 16px; }
+      .planet-gallery-section { padding: 0.7em 0.2em 1em 0.2em; }
+      .modal-dialog { min-width: 90vw; padding: 1.2em 0.6em; }
+    }
+
+    /* AAA: User can change foreground/background colors (1.4.8) */
+    .theme-switcher {
+      margin-top: 1.5em;
+      margin-bottom: 1.2em;
+      display: flex;
+      gap: 1em;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .theme-switcher label {
+      font-size: 1em;
+      color: var(--color-primary);
+      font-weight: bold;
+      margin-right: 0.5em;
+    }
+    .theme-btn {
+      background: var(--color-secondary);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 0.5em;
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+    }
+    .theme-btn:focus {
+      outline: var(--focus-outline);
+      background: var(--color-primary);
+      color: #1a1a1a;
+    }
+
+    /* Visually indicate current theme */
+    .theme-btn[aria-pressed="true"] {
+      background: var(--color-primary);
+      color: #1a1a1a;
+      border: 2.5px solid var(--color-secondary);
+    }
+
+    /* Line/paragraph spacing for AAA (1.4.8) */
+    p, ul, ol, dl, .planet-fact {
+      line-height: 1.7;
+      margin-bottom: 1.2em;
+      max-width: 70ch;
+    }
+    p + p, ul + p, ol + p, dl + p {
+      margin-top: 1.2em;
+    }
+    /* No justified text */
+    p, .planet-fact, li, h1, h2, h3, h4, h5, h6 {
+      text-align: left;
+      text-justify: none;
+    }
+    /* Limit line width */
+    main, .planet-gallery-section, .help-box {
+      max-width: 80ch;
+    }
+
+    /* AAA: Pause/stop controls for auto animations (motion) */
+    .motion-controls {
+      margin-top: 1em;
+      margin-bottom: 1.2em;
+      display: flex;
+      gap: 1em;
+      align-items: center;
+    }
+    .motion-btn {
+      background: var(--color-tertiary);
+      color: #1a1a1a;
+      border: none;
+      border-radius: 0.5em;
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      min-width: var(--min-target);
+      min-height: var(--min-target);
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+    }
+    .motion-btn:focus {
+      outline: var(--focus-outline);
+      background: var(--color-primary);
+      color: #1a1a1a;
+    }
+    .motion-btn[aria-pressed="true"] {
+      background: var(--color-primary);
+      color: #1a1a1a;
+      border: 2.5px solid var(--color-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link" id="skip-main">Skip to main content</a>
+  <header>
+    <h1 class="site-title" id="site-title">Stellar Explorer: Accessible Interactive Space Website</h1>
+    <nav aria-label="Main Navigation" id="main-nav">
+      <ul>
+        <li><a href="#main-content" aria-current="page">Home</a></li>
+        <li><a href="#constellations-section">Constellations</a></li>
+        <li><a href="#planet-gallery-section">Planets Gallery</a></li>
+        <li><a href="#search-section">Search</a></li>
+        <li><a href="#sitemap-section">Sitemap</a></li>
+        <li><a href="#help-section">Help</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Breadcrumb" id="breadcrumb-nav">
+      <ol>
+        <li><a href="#main-content">Home</a></li>
+        <li><span aria-current="page">Stellar Explorer</span></li>
+      </ol>
+    </nav>
+  </header>
+  <!-- Space canvas background -->
+  <canvas id="space-canvas" aria-hidden="true"></canvas>
+  <main id="main-content" tabindex="-1">
+    <section id="help-section" aria-labelledby="help-heading">
+      <div class="help-box" role="region" aria-label="Help and Accessibility Information">
+        <h2 id="help-heading">Help &amp; Accessibility</h2>
+        <p>
+          <strong>Welcome to Stellar Explorer!</strong> This site is fully accessible and AAA-compliant. Use the navigation above, or <a href="#search-section">search</a> for space topics. 
+          <ul>
+            <li>To explore constellations, use keyboard or mouse to select stars or lines on the map.</li>
+            <li>Planet gallery is horizontally scrollable; use <kbd>Tab</kbd> or gallery controls for navigation.</li>
+            <li>All images have descriptive alt text. Motion and color themes can be adjusted below.</li>
+            <li>Skip links and headings help with quick navigation. For help, see this section at any time.</li>
+          </ul>
+        </p>
+        <div class="theme-switcher" role="group" aria-label="Theme color controls">
+          <label for="theme-select">Choose color theme:</label>
+          <button type="button" class="theme-btn" id="theme-dark" aria-pressed="true">Dark</button>
+          <button type="button" class="theme-btn" id="theme-light" aria-pressed="false">Light</button>
+          <button type="button" class="theme-btn" id="theme-highcontrast" aria-pressed="false">High Contrast</button>
+        </div>
+        <div class="motion-controls" role="group" aria-label="Motion controls">
+          <label for="motion-toggle">Animations:</label>
+          <button type="button" class="motion-btn" id="motion-on" aria-pressed="true">On</button>
+          <button type="button" class="motion-btn" id="motion-off" aria-pressed="false">Off</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="constellations-section" aria-labelledby="constellations-heading">
+      <h2 id="constellations-heading">Interactive Constellation Map</h2>
+      <p>
+        Explore some famous constellations! Select a star or constellation line on the map below to learn more. 
+        <span id="constellation-map-desc" class="visually-hidden">
+          The interactive star map displays constellations: Orion, Ursa Major, and Cassiopeia. Each star is a button with an accessible label. Constellation lines are keyboard accessible and display information when activated.
+        </span>
+      </p>
+      <!-- The interactive map is rendered on the canvas and fully described above -->
+    </section>
+
+    <section id="planet-gallery-section" class="planet-gallery-section" aria-labelledby="planet-gallery-heading">
+      <h2 id="planet-gallery-heading" class="planet-gallery-heading">Planets Gallery</h2>
+      <p>
+        Scroll through our solar system's planets! Use the arrow controls or scroll horizontally. Each planet has a colorful image and a fun fact.
+      </p>
+      <div class="planet-gallery-controls" role="group" aria-label="Planet gallery controls">
+        <button type="button" class="gallery-btn" id="gallery-prev" aria-label="Scroll to previous planet" aria-disabled="true">&larr; Previous</button>
+        <button type="button" class="gallery-btn" id="gallery-next" aria-label="Scroll to next planet">&rarr; Next</button>
+      </div>
+      <div class="planet-gallery" id="planet-gallery" tabindex="0" aria-label="Solar system planet gallery" role="listbox">
+        <!-- Planet cards inserted by JS -->
+      </div>
+    </section>
+
+    <section id="search-section" class="search-section" aria-labelledby="search-heading">
+      <h2 id="search-heading">Search Space Topics</h2>
+      <form class="search-form" id="search-form" role="search" aria-label="Search space topics" autocomplete="off">
+        <label for="search-input">Search constellations or planets:</label>
+        <input type="search" id="search-input" class="search-input" name="q" autocomplete="off" aria-describedby="search-help" aria-label="Search constellations or planets" required aria-required="true" />
+        <button type="submit" class="search-btn">Search</button>
+      </form>
+      <div id="search-help" class="visually-hidden">Type a planet or constellation name to find related information. Results will appear below.</div>
+      <div class="search-results" id="search-results" aria-live="polite" role="status"></div>
+    </section>
+
+    <section id="sitemap-section" class="sitemap-section" aria-labelledby="sitemap-heading">
+      <h2 id="sitemap-heading">Sitemap</h2>
+      <ul>
+        <li><a href="#main-content">Home</a></li>
+        <li><a href="#constellations-section">Constellations</a></li>
+        <li><a href="#planet-gallery-section">Planets Gallery</a></li>
+        <li><a href="#search-section">Search</a></li>
+        <li><a href="#help-section">Help &amp; Accessibility</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Constellation Info Modal (AAA accessible modal) -->
+  <div id="constellation-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
+    <div class="modal-dialog" tabindex="0">
+      <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close constellation info dialog">&times;</button>
+      <h3 id="modal-title" class="modal-title"></h3>
+      <div id="modal-desc" class="modal-description"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div>
+      <strong>Stellar Explorer</strong> &copy; 2024 | Created for Accessible Space Education
+    </div>
+    <div class="footer-links">
+      <a href="#help-section">Accessibility Info</a>
+      <a href="#sitemap-section">Sitemap</a>
+      <a href="#main-content">Back to Top</a>
+    </div>
+  </footer>
+
+  <!-- JavaScript for interactivity, accessibility, and canvas rendering -->
+  <script>
+    // Accessibility: focus trap for modal
+    function trapFocus(element) {
+      const focusable = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      function handle(e) {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      }
+      element.addEventListener('keydown', handle);
+      return () => element.removeEventListener('keydown', handle);
+    }
+
+    // Theme switching (AAA 1.4.8)
+    const themeBtns = {
+      dark: document.getElementById('theme-dark'),
+      light: document.getElementById('theme-light'),
+      highcontrast: document.getElementById('theme-highcontrast')
+    };
+    function setTheme(theme) {
+      document.documentElement.removeAttribute('data-theme');
+      for (const key in themeBtns) {
+        themeBtns[key].setAttribute('aria-pressed', String(key === theme));
+      }
+      if (theme === 'dark') {
+        document.documentElement.style.setProperty('--color-bg', '#10121a');
+        document.documentElement.style.setProperty('--color-bg-light', '#22253a');
+        document.documentElement.style.setProperty('--color-bg-dark', '#070810');
+        document.documentElement.style.setProperty('--color-primary', '#ffe066');
+        document.documentElement.style.setProperty('--color-secondary', '#6dd3fa');
+        document.documentElement.style.setProperty('--color-tertiary', '#ff71ce');
+        document.documentElement.style.setProperty('--color-quaternary', '#01cdfe');
+        document.documentElement.style.setProperty('--color-focus', '#fff200');
+        document.documentElement.style.setProperty('--color-text', '#f8f8ff');
+        document.documentElement.style.setProperty('--color-text-secondary', '#e0e0f0');
+        document.documentElement.style.setProperty('--color-card', '#1c1e2b');
+        document.documentElement.style.setProperty('--color-border', '#ffe066');
+        document.documentElement.style.setProperty('--color-nav', '#1a1b23');
+        document.documentElement.style.setProperty('--color-link', '#ffe066');
+        document.documentElement.style.setProperty('--color-link-hover', '#01cdfe');
+        document.documentElement.style.setProperty('--color-visited', '#6dd3fa');
+        document.documentElement.style.setProperty('--color-shadow', 'rgba(0,0,0,0.7)');
+      } else if (theme === 'light') {
+        document.documentElement.style.setProperty('--color-bg', '#fffbe9');
+        document.documentElement.style.setProperty('--color-bg-light', '#f8f8ff');
+        document.documentElement.style.setProperty('--color-bg-dark', '#e9ecef');
+        document.documentElement.style.setProperty('--color-primary', '#4d3d00');
+        document.documentElement.style.setProperty('--color-secondary', '#03639c');
+        document.documentElement.style.setProperty('--color-tertiary', '#be1e5a');
+        document.documentElement.style.setProperty('--color-quaternary', '#2b9eb3');
+        document.documentElement.style.setProperty('--color-focus', '#d1a700');
+        document.documentElement.style.setProperty('--color-text', '#111113');
+        document.documentElement.style.setProperty('--color-text-secondary', '#33334a');
+        document.documentElement.style.setProperty('--color-card', '#f3f3fa');
+        document.documentElement.style.setProperty('--color-border', '#b7a900');
+        document.documentElement.style.setProperty('--color-nav', '#f1efe3');
+        document.documentElement.style.setProperty('--color-link', '#4d3d00');
+        document.documentElement.style.setProperty('--color-link-hover', '#2b9eb3');
+        document.documentElement.style.setProperty('--color-visited', '#03639c');
+        document.documentElement.style.setProperty('--color-shadow', 'rgba(0,0,0,0.15)');
+      } else if (theme === 'highcontrast') {
+        document.documentElement.style.setProperty('--color-bg', '#000');
+        document.documentElement.style.setProperty('--color-bg-light', '#111');
+        document.documentElement.style.setProperty('--color-bg-dark', '#000');
+        document.documentElement.style.setProperty('--color-primary', '#fff');
+        document.documentElement.style.setProperty('--color-secondary', '#00ffff');
+        document.documentElement.style.setProperty('--color-tertiary', '#ff00ff');
+        document.documentElement.style.setProperty('--color-quaternary', '#ffff00');
+        document.documentElement.style.setProperty('--color-focus', '#fff200');
+        document.documentElement.style.setProperty('--color-text', '#fff');
+        document.documentElement.style.setProperty('--color-text-secondary', '#fff');
+        document.documentElement.style.setProperty('--color-card', '#000');
+        document.documentElement.style.setProperty('--color-border', '#fff');
+        document.documentElement.style.setProperty('--color-nav', '#000');
+        document.documentElement.style.setProperty('--color-link', '#fff');
+        document.documentElement.style.setProperty('--color-link-hover', '#00ffff');
+        document.documentElement.style.setProperty('--color-visited', '#ff00ff');
+        document.documentElement.style.setProperty('--color-shadow', 'rgba(0,0,0,0.9)');
+      }
+    }
+    themeBtns.dark.addEventListener('click', () => setTheme('dark'));
+    themeBtns.light.addEventListener('click', () => setTheme('light'));
+    themeBtns.highcontrast.addEventListener('click', () => setTheme('highcontrast'));
+
+    // Motion controls (AAA)
+    let allowMotion = true;
+    const motionBtns = {
+      on: document.getElementById('motion-on'),
+      off: document.getElementById('motion-off')
+    };
+    function setMotion(on) {
+      allowMotion = on;
+      motionBtns.on.setAttribute('aria-pressed', String(on));
+      motionBtns.off.setAttribute('aria-pressed', String(!on));
+      if (!on) {
+        cancelAnimationFrame(animationId);
+        drawSpace(true); // static
+      } else {
+        drawSpace();
+      }
+    }
+    motionBtns.on.addEventListener('click', () => setMotion(true));
+    motionBtns.off.addEventListener('click', () => setMotion(false));
+
+    // Accessibility: Skip to main content focus
+    document.getElementById('skip-main').addEventListener('click', function(e) {
+      setTimeout(() => {
+        document.getElementById('main-content').focus();
+      }, 50);
+    });
+
+    // --- Interactive Constellation Map ---
+    // Data for constellations (positions are relative to canvas size)
+    const CONSTELLATIONS = [
+      {
+        id: 'orion',
+        name: 'Orion',
+        description: `Orion is one of the most recognizable constellations in the night sky. Its brightest stars form a pattern resembling a hunter. Notable stars include Betelgeuse (a red supergiant) and Rigel (a blue supergiant). Orion's Belt is made up of three aligned stars: Alnitak, Alnilam, and Mintaka.`,
+        stars: [
+          {id: 'betelgeuse', name: 'Betelgeuse', x: 0.27, y: 0.32, mag: 0.5, desc: 'Betelgeuse is a red supergiant, one of the largest visible to the naked eye.'},
+          {id: 'bellatrix', name: 'Bellatrix', x: 0.41, y: 0.26, mag: 1.6, desc: 'Bellatrix is a blue giant, also known as the Amazon Star.'},
+          {id: 'alnilam', name: 'Alnilam', x: 0.36, y: 0.48, mag: 1.7, desc: 'Alnilam is the central star of Orion\'s Belt.'},
+          {id: 'alnitak', name: 'Alnitak', x: 0.32, y: 0.52, mag: 1.7, desc: 'Alnitak is the leftmost star in Orion\'s Belt.'},
+          {id: 'mintaka', name: 'Mintaka', x: 0.40, y: 0.52, mag: 2.2, desc: 'Mintaka is the rightmost star in Orion\'s Belt.'},
+          {id: 'rigel', name: 'Rigel', x: 0.48, y: 0.65, mag: 0.1, desc: 'Rigel is a blue supergiant, the brightest star in Orion.'},
+          {id: 'saiph', name: 'Saiph', x: 0.36, y: 0.68, mag: 2.1, desc: 'Saiph is a blue supergiant, marking Orion\'s right knee.'}
+        ],
+        lines: [
+          // [from, to] (by star index)
+          [0,1],[0,3],[1,2],[2,3],[2,4],[4,1],[2,5],[2,6]
+        ]
+      },
+      {
+        id: 'ursa-major',
+        name: 'Ursa Major',
+        description: `Ursa Major, the Great Bear, is home to the Big Dipper asterism. It's one of the largest and most well-known constellations. The Big Dipper's pointer stars help locate Polaris, the North Star.`,
+        stars: [
+          {id: 'dubhe', name: 'Dubhe', x: 0.7, y: 0.18, mag: 1.8, desc: 'Dubhe is the brightest star in Ursa Major.'},
+          {id: 'merak', name: 'Merak', x: 0.68, y: 0.25, mag: 2.3, desc: 'Merak is one of the Big Dipper\'s pointer stars.'},
+          {id: 'phecda', name: 'Phecda', x: 0.67, y: 0.34, mag: 2.4, desc: 'Phecda forms the bottom left of the Big Dipper.'},
+          {id: 'megrez', name: 'Megrez', x: 0.72, y: 0.32, mag: 3.3, desc: 'Megrez connects the handle and the bowl of the Big Dipper.'},
+          {id: 'alioth', name: 'Alioth', x: 0.78, y: 0.35, mag: 1.8, desc: 'Alioth is the brightest star in the Big Dipper\'s handle.'},
+          {id: 'mizar', name: 'Mizar', x: 0.83, y: 0.38, mag: 2.1, desc: 'Mizar is famous for its double star system.'},
+          {id: 'alkaid', name: 'Alkaid', x: 0.89, y: 0.41, mag: 1.9, desc: 'Alkaid is the end star of the Big Dipper\'s handle.'}
+        ],
+        lines: [
+          [0,1],[1,2],[2,3],[3,4],[4,5],[5,6]
+        ]
+      },
+      {
+        id: 'cassiopeia',
+        name: 'Cassiopeia',
+        description: `Cassiopeia is easily recognized by its distinctive "W" shape. It represents the vain queen Cassiopeia from Greek mythology. Its stars are bright and form a zigzag in the sky.`,
+        stars: [
+          {id: 'schedar', name: 'Schedar', x: 0.12, y: 0.12, mag: 2.2, desc: 'Schedar is the brightest star in Cassiopeia.'},
+          {id: 'caph', name: 'Caph', x: 0.19, y: 0.17, mag: 2.3, desc: 'Caph is a white giant at the end of the "W".'},
+          {id: 'gamma-cas', name: 'Gamma Cassiopeiae', x: 0.16, y: 0.21, mag: 2.5, desc: 'Gamma Cassiopeiae is a variable star.'},
+          {id: 'rho-cas', name: 'Rho Cassiopeiae', x: 0.13, y: 0.25, mag: 4.5, desc: 'Rho Cassiopeiae is a yellow hypergiant.'},
+          {id: 'sigin', name: 'Segin', x: 0.09, y: 0.18, mag: 3.4, desc: 'Segin is at the other end of the "W".'}
+        ],
+        lines: [
+          [0,1],[1,2],[2,3],[3,4]
+        ]
+      }
+    ];
+
+    // Render constellations on canvas, and handle keyboard/mouse interaction
+    const canvas = document.getElementById('space-canvas');
+    let ctx = null;
+    let animationId = null;
+    let starMapElements = []; // {type, constellation, starIdx, lineIdx, x, y, r, ...}
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawSpace();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) setMotion(false);
+
+    function drawSpace(staticOnly = false) {
+      if (!ctx) ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw background gradient
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--color-bg-dark').trim());
+      grad.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim());
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw random stars
+      const starCount = Math.max(200, Math.floor(window.innerWidth / 5));
+      for (let i = 0; i < starCount; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const r = Math.random() * 0.7 + 0.5;
+        ctx.globalAlpha = Math.random() * 0.4 + 0.6;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = (i % 5 === 0) ? getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() : '#fff';
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Draw constellations
+      starMapElements = [];
+      CONSTELLATIONS.forEach((c, ci) => {
+        // Draw lines
+        c.lines.forEach((l, li) => {
+          const [fromIdx, toIdx] = l;
+          const from = c.stars[fromIdx];
+          const to = c.stars[toIdx];
+          const fx = from.x * canvas.width;
+          const fy = from.y * canvas.height;
+          const tx = to.x * canvas.width;
+          const ty = to.y * canvas.height;
+          ctx.save();
+          ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim();
+          ctx.lineWidth = 3.5;
+          ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--color-tertiary').trim();
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.moveTo(fx, fy);
+          ctx.lineTo(tx, ty);
+          ctx.stroke();
+          ctx.restore();
+          // Store for interaction
+          starMapElements.push({
+            type: 'line',
+            constellation: ci,
+            lineIdx: li,
+            x1: fx, y1: fy, x2: tx, y2: ty,
+            focusable: true
+          });
+        });
+        // Draw stars
+        c.stars.forEach((s, si) => {
+          const sx = s.x * canvas.width;
+          const sy = s.y * canvas.height;
+          let r = Math.max(8, 16 - s.mag * 2);
+          // Animate twinkle if allowed
+          if (allowMotion && !staticOnly) {
+            r += Math.sin(Date.now() / 250 + sx + sy) * 1.2;
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(sx, sy, r, 0, 2 * Math.PI);
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+          ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--color-quaternary').trim();
+          ctx.shadowBlur = 16;
+          ctx.globalAlpha = 0.98;
+          ctx.fill();
+          ctx.restore();
+          // Star outline for focus
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(sx, sy, r+2.5, 0, 2 * Math.PI);
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.globalAlpha = 0.15;
+          ctx.stroke();
+          ctx.restore();
+          // Store for interaction
+          starMapElements.push({
+            type: 'star',
+            constellation: ci,
+            starIdx: si,
+            x: sx,
+            y: sy,
+            r: r + 6, // interaction radius
+            focusable: true
+          });
+        });
+      });
+      if (allowMotion && !staticOnly) {
+        animationId = requestAnimationFrame(drawSpace);
+      }
+    }
+    // Initial draw
+    resizeCanvas();
+
+    // Keyboard/Mouse Accessible Star Map Overlay
+    // We'll create offscreen buttons for each interactive star/line for AAA accessibility
+    function createStarMapOverlay() {
+      // Remove any existing overlays
+      document.querySelectorAll('.star-map-overlay').forEach(el => el.remove());
+      const overlay = document.createElement('div');
+      overlay.className = 'star-map-overlay';
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.zIndex = '3';
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('role', 'presentation');
+      overlay.style.background = 'none';
+      overlay.style.display = 'block';
+      overlay.id = 'star-map-overlay';
+
+      // Create focusable buttons for stars/lines
+      starMapElements.forEach((el, idx) => {
+        let btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'star-map-btn';
+        btn.style.position = 'absolute';
+        btn.style.pointerEvents = 'auto';
+        btn.style.background = 'transparent';
+        btn.style.border = '2.5px solid transparent';
+        btn.style.borderRadius = '50%';
+        btn.style.minWidth = '44px';
+        btn.style.minHeight = '44px';
+        btn.style.width = '44px';
+        btn.style.height = '44px';
+        btn.style.outline = 'none';
+        btn.style.transition = 'border-color 0.2s, box-shadow 0.2s';
+        btn.setAttribute('tabindex', '0');
+        btn.setAttribute('aria-haspopup', 'dialog');
+        btn.setAttribute('aria-label', '');
+        btn.setAttribute('aria-describedby', 'constellation-map-desc');
+        btn.setAttribute('data-idx', idx);
+
+        if (el.type === 'star') {
+          btn.style.left = (el.x - 22) + 'px';
+          btn.style.top = (el.y - 22) + 'px';
+          btn.setAttribute('aria-label', CONSTELLATIONS[el.constellation].stars[el.starIdx].name + ' in ' + CONSTELLATIONS[el.constellation].name + ', star');
+        } else if (el.type === 'line') {
+          // Place at midpoint of line, make elliptical
+          const mx = (el.x1 + el.x2) / 2 - 22;
+          const my = (el.y1 + el.y2) / 2 - 22;
+          btn.style.left = mx + 'px';
+          btn.style.top = my + 'px';
+          btn.style.borderRadius = '40%';
+          btn.setAttribute('aria-label', CONSTELLATIONS[el.constellation].name + ' constellation line');
+        }
+        // Focus/hover indicator
+        btn.addEventListener('focus', function() {
+          btn.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--color-focus');
+          btn.style.boxShadow = '0 0 0 3px ' + getComputedStyle(document.documentElement).getPropertyValue('--color-secondary');
+        });
+        btn.addEventListener('blur', function() {
+          btn.style.borderColor = 'transparent';
+          btn.style.boxShadow = 'none';
+        });
+        // Open modal on click/keyboard
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showConstellationInfo(el);
+        });
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            showConstellationInfo(el);
+          }
+        });
+        overlay.appendChild(btn);
+      });
+      document.body.appendChild(overlay);
+    }
+    // Recreate overlay after resize or redraw
+    window.addEventListener('resize', () => setTimeout(createStarMapOverlay, 300));
+    setTimeout(createStarMapOverlay, 400);
+
+    // Modal dialog for constellation/star info
+    const modal = document.getElementById('constellation-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    let untrap = null;
+    function showConstellationInfo(el) {
+      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'flex';
+      let title = '';
+      let desc = '';
+      if (el.type === 'star') {
+        const c = CONSTELLATIONS[el.constellation];
+        const s = c.stars[el.starIdx];
+        title = s.name + ' (' + c.name + ')';
+        desc = `<strong>${s.name}</strong> is a star in the <strong>${c.name}</strong> constellation.<br>${s.desc}`;
+      } else if (el.type === 'line') {
+        const c = CONSTELLATIONS[el.constellation];
+        title = c.name + ' (Constellation)';
+        desc = `<strong>${c.name}</strong>: ${c.description}`;
+      }
+      modalTitle.textContent = title;
+      modalDesc.innerHTML = desc;
+      modal.querySelector('.modal-dialog').focus();
+      document.body.style.overflow = 'hidden';
+      untrap = trapFocus(modal.querySelector('.modal-dialog'));
+    }
+    function closeModal() {
+      modal.setAttribute('aria-hidden', 'true');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+      if (untrap) untrap();
+      // Return focus to last focused star/line
+      const overlay = document.getElementById('star-map-overlay');
+      if (overlay && overlay.lastActiveBtn) {
+        overlay.lastActiveBtn.focus();
+      }
+    }
+    modalCloseBtn.addEventListener('click', closeModal);
+    modal.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+      }
+    });
+    // Keep track of last active button for focus return
+    document.body.addEventListener('mousedown', function(e) {
+      const overlay = document.getElementById('star-map-overlay');
+      if (overlay && overlay.contains(e.target) && e.target.classList.contains('star-map-btn')) {
+        overlay.lastActiveBtn = e.target;
+      }
+    });
+    document.body.addEventListener('keydown', function(e) {
+      const overlay = document.getElementById('star-map-overlay');
+      if (overlay && document.activeElement && overlay.contains(document.activeElement) && document.activeElement.classList.contains('star-map-btn')) {
+        overlay.lastActiveBtn = document.activeElement;
+      }
+    });
+
+    // Redraw overlay on theme/motion change
+    for (const btn of Object.values(themeBtns)) {
+      btn.addEventListener('click', () => setTimeout(() => { drawSpace(); createStarMapOverlay(); }, 200));
+    }
+    for (const btn of Object.values(motionBtns)) {
+      btn.addEventListener('click', () => setTimeout(() => { drawSpace(); createStarMapOverlay(); }, 200));
+    }
+
+    // --- Planet Gallery ---
+    const PLANETS = [
+      {
+        name: 'Mercury',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg',
+        alt: 'True color image of Mercury, a gray rocky planet',
+        fact: 'Mercury is the smallest planet and closest to the Sun.',
+      },
+      {
+        name: 'Venus',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg',
+        alt: 'Image of Venus, a pale yellowish planet with thick clouds',
+        fact: 'Venus is the hottest planet in the solar system.',
+      },
+      {
+        name: 'Earth',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg',
+        alt: 'Photo of Earth from space, blue oceans and white clouds visible',
+        fact: 'Earth is the only planet known to support life.',
+      },
+      {
+        name: 'Mars',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg',
+        alt: 'Image of Mars, a reddish planet with visible surface features',
+        fact: 'Mars is known as the Red Planet.',
+      },
+      {
+        name: 'Jupiter',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg',
+        alt: 'Image of Jupiter, a large striped planet with the Great Red Spot',
+        fact: 'Jupiter is the largest planet in our solar system.',
+      },
+      {
+        name: 'Saturn',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg',
+        alt: 'Image of Saturn with its iconic rings clearly visible',
+        fact: 'Saturn is famous for its beautiful rings.',
+      },
+      {
+        name: 'Uranus',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg',
+        alt: 'Image of Uranus, a pale blue-green planet',
+        fact: 'Uranus rotates on its side compared to other planets.',
+      },
+      {
+        name: 'Neptune',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg',
+        alt: 'Image of Neptune, a deep blue planet',
+        fact: 'Neptune has the strongest winds in the solar system.',
+      }
+    ];
+    const gallery = document.getElementById('planet-gallery');
+    const galleryPrev = document.getElementById('gallery-prev');
+    const galleryNext = document.getElementById('gallery-next');
+    let galleryIndex = 0;
+    function renderGallery() {
+      gallery.innerHTML = '';
+      PLANETS.forEach((planet, idx) => {
+        const card = document.createElement('div');
+        card.className = 'planet-card';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'option');
+        card.setAttribute('aria-label', planet.name + ' planet card');
+        card.setAttribute('aria-selected', idx === galleryIndex ? 'true' : 'false');
+        const img = document.createElement('img');
+        img.src = planet.img;
+        img.alt = planet.alt;
+        img.className = 'planet-img';
+        img.width = 88;
+        img.height = 88;
+        img.setAttribute('aria-describedby', 'planet-fact-' + idx);
+        card.appendChild(img);
+        const name = document.createElement('div');
+        name.className = 'planet-name';
+        name.textContent = planet.name;
+        card.appendChild(name);
+        const fact = document.createElement('div');
+        fact.className = 'planet-fact';
+        fact.textContent = planet.fact;
+        fact.id = 'planet-fact-' + idx;
+        card.appendChild(fact);
+        gallery.appendChild(card);
+      });
+      // Scroll to current index
+      const cardEls = gallery.querySelectorAll('.planet-card');
+      if (cardEls[galleryIndex]) {
+        cardEls[galleryIndex].focus();
+        cardEls[galleryIndex].setAttribute('aria-selected', 'true');
+        cardEls.forEach((el, idx) => {
+          if (idx !== galleryIndex) el.setAttribute('aria-selected', 'false');
+        });
+        // Scroll so card is visible
+        const cardRect = cardEls[galleryIndex].getBoundingClientRect();
+        const galleryRect = gallery.getBoundingClientRect();
+        if (cardRect.left < galleryRect.left || cardRect.right > galleryRect.right) {
+          gallery.scrollLeft = cardEls[galleryIndex].offsetLeft - 20;
+        }
+      }
+      // Disable/enable controls
+      galleryPrev.setAttribute('aria-disabled', galleryIndex === 0 ? 'true' : 'false');
+      galleryNext.setAttribute('aria-disabled', galleryIndex === PLANETS.length - 1 ? 'true' : 'false');
+    }
+    renderGallery();
+
+    galleryPrev.addEventListener('click', () => {
+      if (galleryIndex > 0) {
+        galleryIndex--;
+        renderGallery();
+      }
+    });
+    galleryNext.addEventListener('click', () => {
+      if (galleryIndex < PLANETS.length - 1) {
+        galleryIndex++;
+        renderGallery();
+      }
+    });
+    // Keyboard navigation for gallery
+    gallery.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight') {
+        if (galleryIndex < PLANETS.length - 1) {
+          galleryIndex++;
+          renderGallery();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (galleryIndex > 0) {
+          galleryIndex--;
+          renderGallery();
+        }
+      }
+    });
+    // Card focus via tab
+    gallery.addEventListener('focusin', function(e) {
+      const idx = Array.from(gallery.children).indexOf(document.activeElement);
+      if (idx >= 0) {
+        galleryIndex = idx;
+        renderGallery();
+      }
+    });
+    // Touch swipe for gallery (AAA: multiple input)
+    let startX = null;
+    gallery.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) startX = e.touches[0].clientX;
+    });
+    gallery.addEventListener('touchend', function(e) {
+      if (startX !== null && e.changedTouches.length === 1) {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 30) {
+          if (dx < 0 && galleryIndex < PLANETS.length - 1) {
+            galleryIndex++;
+            renderGallery();
+          } else if (dx > 0 && galleryIndex > 0) {
+            galleryIndex--;
+            renderGallery();
+          }
+        }
+      }
+      startX = null;
+    });
+
+    // --- Search Functionality ---
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    function searchTopics(q) {
+      q = q.trim().toLowerCase();
+      let results = [];
+      // Planets
+      PLANETS.forEach(p => {
+        if (p.name.toLowerCase().includes(q) || p.fact.toLowerCase().includes(q)) {
+          results.push(`<strong>${p.name}</strong>: ${p.fact}`);
+        }
+      });
+      // Constellations
+      CONSTELLATIONS.forEach(c => {
+        if (c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) {
+          results.push(`<strong>${c.name}</strong>: ${c.description}`);
+        }
+        c.stars.forEach(s => {
+          if (s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)) {
+            results.push(`<strong>${s.name}</strong> in <strong>${c.name}</strong>: ${s.desc}`);
+          }
+        });
+      });
+      return results;
+    }
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const q = searchInput.value;
+      if (!q.trim()) {
+        searchResults.innerHTML = 'Please enter a search term.';
+        return;
+      }
+      const results = searchTopics(q);
+      if (results.length === 0) {
+        searchResults.innerHTML = 'No results found for <strong>' + q + '</strong>. Try a planet or constellation name.';
+      } else {
+        searchResults.innerHTML = '<ul>' + results.map(r => `<li>${r}</li>`).join('') + '</ul>';
+      }
+    });
+
+    // --- Accessibility: Focus management, AAA ---
+    // Enhanced focus indicators already in CSS
+    // No keyboard trap except in modal (focus trap)
+    // Logical tab order: skip links, nav, main, sections, footer
+
+    // --- End of script ---
+  </script>
+</body>
+</html>

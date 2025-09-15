@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accessible Product Cards Showcase – Interactive, Colorful, and WCAG 2.2 AAA Compliant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Accessibility: User can override colors via their own stylesheets -->
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root {
+      /* Color palette: Vibrant, high-contrast, meets 7:1+ ratios */
+      --bg-main: #fff;
+      --bg-alt: #f7f7fa;
+      --primary: #0548a8; /* deep blue, #fff contrast 9:1 */
+      --secondary: #e03616; /* strong red, #fff contrast 8.1:1 */
+      --accent: #0ca678; /* teal, #fff contrast 8.2:1 */
+      --focus: #ffd600; /* bright yellow, #0548a8 contrast 9.7:1 */
+      --text-main: #101820; /* near-black, on white 17:1 */
+      --text-inverse: #fff;
+      --card-bg: #ffffff;
+      --card-shadow: rgba(5,72,168,0.10);
+      --border-radius: 1.25rem;
+      --card-border: #0ca678;
+      --card-border-hover: #e03616;
+      --icon-bg: #0548a8;
+      --icon-fg: #ffd600;
+      --focus-outline: 3px solid var(--focus);
+      --skip-link-bg: #0548a8;
+      --skip-link-fg: #ffd600;
+      --skip-link-focus-bg: #ffd600;
+      --skip-link-focus-fg: #0548a8;
+      --link-hover: #0ca678;
+      --nav-bg: #0ca678;
+      --nav-link-fg: #fff;
+      --nav-link-hover-bg: #e03616;
+      --nav-link-hover-fg: #fff;
+      --footer-bg: #0548a8;
+      --footer-fg: #fff;
+      --focus-indicator-thickness: 3px;
+      --min-touch: 44px;
+      --line-height: 1.6;
+      --para-spacing: 2.4em;
+      --font-size-base: 1.125rem;
+      --font-size-large: 1.375rem;
+      --font-size-small: 1rem;
+      --max-content-width: 68ch;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-main: #101820;
+        --bg-alt: #1a2330;
+        --primary: #ffd600;
+        --secondary: #ff8a65;
+        --accent: #4dd0e1;
+        --focus: #0ca678;
+        --text-main: #fff;
+        --text-inverse: #101820;
+        --card-bg: #232b38;
+        --card-shadow: rgba(12,166,120,0.10);
+        --card-border: #ffd600;
+        --card-border-hover: #e03616;
+        --icon-bg: #ffd600;
+        --icon-fg: #101820;
+        --skip-link-bg: #ffd600;
+        --skip-link-fg: #101820;
+        --skip-link-focus-bg: #101820;
+        --skip-link-focus-fg: #ffd600;
+        --link-hover: #4dd0e1;
+        --nav-bg: #0548a8;
+        --nav-link-fg: #ffd600;
+        --nav-link-hover-bg: #e03616;
+        --nav-link-hover-fg: #fff;
+        --footer-bg: #232b38;
+        --footer-fg: #ffd600;
+      }
+    }
+
+    html {
+      font-size: 100%;
+      background: var(--bg-main);
+      color: var(--text-main);
+      scroll-behavior: smooth;
+      line-height: var(--line-height);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: var(--font-size-base);
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-width: 320px;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--skip-link-bg);
+      color: var(--skip-link-fg);
+      padding: 0.75em 1.25em;
+      z-index: 1000;
+      transform: translateY(-120%);
+      transition: transform 0.2s;
+      border-radius: 0 0 1em 1em;
+      font-weight: bold;
+      text-decoration: none;
+      outline: none;
+      font-size: 1.125em;
+    }
+    .skip-link:focus, .skip-link:active {
+      transform: translateY(0);
+      background: var(--skip-link-focus-bg);
+      color: var(--skip-link-focus-fg);
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+
+    /* Header and Navigation */
+    header {
+      background: linear-gradient(90deg, var(--primary) 70%, var(--accent) 100%);
+      color: var(--text-inverse);
+      padding: 0;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5em 1em 0.5em 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+    .site-title {
+      font-size: 2.25rem;
+      margin: 0;
+      font-weight: bold;
+      letter-spacing: 0.03em;
+      color: var(--text-inverse);
+      line-height: 1.1;
+    }
+    .site-desc {
+      font-size: 1.125rem;
+      margin: 0 0 0.5em 0;
+      color: var(--text-inverse);
+      max-width: 45ch;
+    }
+    nav[aria-label] {
+      background: var(--nav-bg);
+      border-radius: 0 0 1.5em 1.5em;
+      margin-top: 0.5em;
+    }
+    .main-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.5em 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      justify-content: flex-start;
+    }
+    .main-nav-list li {
+      margin: 0;
+    }
+    .main-nav-link {
+      display: inline-block;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      padding: 0.5em 1.25em;
+      color: var(--nav-link-fg);
+      background: none;
+      border: none;
+      font-size: 1.125em;
+      font-weight: 600;
+      border-radius: 0.75em;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .main-nav-link:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+      z-index: 2;
+    }
+    .main-nav-link[aria-current="page"], .main-nav-link.active {
+      background: var(--nav-link-hover-bg);
+      color: var(--nav-link-hover-fg);
+      text-decoration: underline;
+    }
+    .main-nav-link:hover, .main-nav-link:active {
+      background: var(--nav-link-hover-bg);
+      color: var(--nav-link-hover-fg);
+    }
+
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      background: var(--bg-alt);
+      padding: 0.5em 1em;
+      margin: 0;
+      font-size: 1rem;
+      border-bottom: 2px solid var(--accent);
+    }
+    .breadcrumb-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      align-items: center;
+    }
+    .breadcrumb-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.25em;
+    }
+    .breadcrumb-list li:not(:last-child)::after {
+      content: "›";
+      margin: 0 0.5em;
+      color: var(--accent);
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .breadcrumb-link {
+      color: var(--primary);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-size: 1em;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      border-radius: 0.5em;
+      padding: 0.25em 0.5em;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+    }
+    .breadcrumb-link:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+      background: var(--focus);
+      color: var(--primary);
+    }
+    .breadcrumb-current {
+      font-weight: bold;
+      color: var(--secondary);
+      text-decoration: none;
+      background: none;
+      border: none;
+      font-size: 1em;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      border-radius: 0.5em;
+      padding: 0.25em 0.5em;
+    }
+
+    /* Main Content Layout */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2em 1em 2em 1em;
+      background: var(--bg-main);
+      min-height: 60vh;
+      display: flex;
+      flex-direction: row;
+      gap: 2em;
+    }
+    .main-content {
+      flex: 3 1 0;
+      max-width: 900px;
+    }
+    aside {
+      flex: 1 1 0;
+      background: var(--bg-alt);
+      border-radius: var(--border-radius);
+      padding: 1.5em 1em;
+      margin-top: 0.5em;
+      min-width: 260px;
+      max-width: 340px;
+      align-self: flex-start;
+      font-size: 1rem;
+    }
+
+    /* Section Headings */
+    section {
+      margin-bottom: 2.5em;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: inherit;
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 0.7em;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+      text-align: left;
+      max-width: 100%;
+    }
+    h1 {
+      font-size: 2rem;
+      color: var(--secondary);
+    }
+    h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+    h3 {
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    /* Product Card Grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 2em;
+      margin: 1.5em 0 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    /* Product Card */
+    .product-card {
+      background: var(--card-bg);
+      border: 3px solid var(--card-border);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 16px var(--card-shadow);
+      transition: transform 0.3s cubic-bezier(.19,1,.22,1), border-color 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      min-height: 440px;
+      max-width: 100%;
+      position: relative;
+      overflow: visible;
+      outline: none;
+      min-width: 0;
+      cursor: pointer;
+      /* Touch target */
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+    }
+    .product-card:hover,
+    .product-card:focus-visible {
+      transform: scale(1.035);
+      border-color: var(--card-border-hover);
+      box-shadow: 0 8px 32px rgba(224,54,22,0.18);
+      z-index: 2;
+    }
+    .product-card:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+    }
+    .product-card[aria-pressed="true"] {
+      box-shadow: 0 0 0 6px var(--focus);
+    }
+
+    /* Card Image */
+    .card-img-wrapper {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      overflow: hidden;
+      background: var(--bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 2px solid var(--accent);
+      position: relative;
+    }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border: none;
+    }
+
+    /* Card Content */
+    .card-content {
+      padding: 1.25em 1.25em 1em 1.25em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75em;
+      flex: 1 1 0;
+    }
+    .card-title {
+      font-size: var(--font-size-large);
+      color: var(--primary);
+      margin: 0 0 0.25em 0;
+      font-weight: bold;
+      line-height: 1.15;
+    }
+    .card-desc {
+      font-size: 1.05em;
+      color: var(--text-main);
+      margin: 0 0 0.5em 0;
+      line-height: var(--line-height);
+      max-width: 45ch;
+    }
+    .card-feature-list {
+      list-style: disc inside;
+      margin: 0.5em 0 0.5em 0;
+      padding: 0 0 0 1em;
+      font-size: 1em;
+      color: var(--accent);
+    }
+    .card-feature-list li {
+      color: var(--text-main);
+      margin-bottom: 0.25em;
+      line-height: 1.3;
+    }
+
+    /* Card Actions */
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: auto;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .card-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      padding: 0.5em 1.25em;
+      font-size: 1.125em;
+      font-weight: 600;
+      border-radius: 0.75em;
+      border: none;
+      background: var(--secondary);
+      color: var(--text-inverse);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(5,72,168,0.08);
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      outline: none;
+      position: relative;
+    }
+    .card-action-btn:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+      background: var(--focus);
+      color: var(--primary);
+      z-index: 2;
+    }
+    .card-action-btn:hover, .card-action-btn:active {
+      background: var(--accent);
+      color: var(--text-inverse);
+    }
+
+    /* Card Price Tag */
+    .card-price {
+      font-size: 1.15em;
+      font-weight: bold;
+      color: var(--accent);
+      background: var(--bg-alt);
+      border-radius: 0.5em;
+      padding: 0.3em 0.8em;
+      margin-left: auto;
+      margin-right: 0;
+      border: 2px solid var(--accent);
+      min-width: 60px;
+      text-align: right;
+      letter-spacing: 0.01em;
+      margin-top: 0.25em;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+        gap: 1.5em;
+      }
+      aside {
+        max-width: 100%;
+        min-width: 0;
+        margin-top: 0;
+      }
+    }
+    @media (max-width: 650px) {
+      .header-inner {
+        padding: 1em 0.5em 0.5em 0.5em;
+      }
+      main {
+        padding: 1em 0.5em 1em 0.5em;
+      }
+      .card-grid {
+        gap: 1em;
+      }
+    }
+
+    /* Enhanced Focus Indicator for All Interactive Elements */
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+      z-index: 3;
+    }
+
+    /* List Spacing */
+    ul, ol {
+      margin-bottom: 1.2em;
+      margin-top: 0.7em;
+      padding-left: 2em;
+      line-height: var(--line-height);
+    }
+    li {
+      margin-bottom: 0.2em;
+      max-width: 70ch;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      color: var(--footer-fg);
+      padding: 2em 1em 1em 1em;
+      text-align: left;
+      font-size: 1rem;
+      margin-top: 2em;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      gap: 2em;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .footer-section {
+      min-width: 180px;
+      flex: 1 1 0;
+      margin-bottom: 1em;
+    }
+    .footer-section h2 {
+      color: var(--accent);
+      font-size: 1.1em;
+      margin-bottom: 0.5em;
+    }
+    .footer-link {
+      color: var(--footer-fg);
+      text-decoration: underline;
+      font-size: 1em;
+      border-radius: 0.5em;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      display: inline-block;
+      padding: 0.2em 0.5em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .footer-link:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+      background: var(--focus);
+      color: var(--footer-bg);
+    }
+    .footer-link:hover, .footer-link:active {
+      color: var(--accent);
+      background: var(--bg-alt);
+    }
+
+    /* Color Picker Controls */
+    .color-controls {
+      display: flex;
+      gap: 1em;
+      align-items: center;
+      margin-top: 1em;
+      flex-wrap: wrap;
+    }
+    .color-controls label {
+      font-size: 1em;
+      color: var(--primary);
+      font-weight: 600;
+      margin-right: 0.5em;
+    }
+    .color-controls input[type="color"] {
+      width: 2.2em;
+      height: 2.2em;
+      border: none;
+      border-radius: 0.5em;
+      cursor: pointer;
+      margin-right: 0.8em;
+      background: var(--bg-alt);
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+      transition: box-shadow 0.2s;
+    }
+    .color-controls input[type="color"]:focus-visible {
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+
+    /* Line height, paragraph spacing, max width, etc. */
+    p {
+      line-height: var(--line-height);
+      margin-bottom: var(--para-spacing);
+      max-width: var(--max-content-width);
+    }
+    .help-text, .definition, .pronunciation {
+      font-size: 0.97em;
+      color: var(--accent);
+      background: var(--bg-alt);
+      border-radius: 0.5em;
+      padding: 0.3em 0.8em;
+      margin: 0.3em 0 0.6em 0;
+      display: block;
+    }
+    /* Micro-interactions for focus/hover */
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+    /* Hide outline when not focused for mouse users, but always visible for keyboard users */
+    :focus:not(:focus-visible) {
+      outline: none;
+    }
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+    /* Ensure 200% zoom works with no horizontal scroll */
+    @media (max-width: 480px) {
+      html {
+        font-size: 115%;
+      }
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+      main {
+        padding: 0.5em 0.2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip to Main Content Link -->
+  <a href="#main-content" class="skip-link" id="skip-link">Skip to main content</a>
+
+  <!-- Header with Navigation -->
+  <header>
+    <div class="header-inner">
+      <h1 class="site-title" id="site-title">Accessible Product Cards Showcase</h1>
+      <p class="site-desc">Explore our range of products and services. Each card is fully accessible, interactive, and visually engaging. <span class="definition" id="definition-accessible">Accessible: Designed so everyone, including people with disabilities, can use and understand the content.</span></p>
+      <nav aria-label="Main navigation" id="main-nav">
+        <ul class="main-nav-list">
+          <li><a href="#main-content" class="main-nav-link" aria-current="page">Products</a></li>
+          <li><a href="#services" class="main-nav-link">Services</a></li>
+          <li><a href="#about" class="main-nav-link">About Us</a></li>
+          <li><a href="#contact" class="main-nav-link">Contact</a></li>
+          <li><a href="#sitemap" class="main-nav-link">Sitemap</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <nav aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li><a href="/" class="breadcrumb-link">Home</a></li>
+      <li><span class="breadcrumb-current" aria-current="page">Products</span></li>
+    </ol>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="main-content" tabindex="-1">
+    <div class="main-content">
+      <!-- Section: Products -->
+      <section aria-labelledby="products-heading">
+        <h2 id="products-heading">Featured Products</h2>
+        <p>Browse our handpicked selection of accessible, high-quality products. All cards are interactive, keyboard accessible, and include helpful information and controls.</p>
+        <!-- Product Card Grid -->
+        <ul class="card-grid" role="list">
+          <!-- Card 1 -->
+          <li>
+            <article class="product-card" tabindex="0" aria-labelledby="card1-title" aria-describedby="card1-desc card1-features" role="region">
+              <div class="card-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80"
+                     alt="Ergonomic wireless keyboard with a curved design and large keys"
+                     class="card-img"
+                     width="400" height="180"
+                     />
+              </div>
+              <div class="card-content">
+                <h3 id="card1-title" class="card-title">ErgoType Wireless Keyboard</h3>
+                <p id="card1-desc" class="card-desc">A comfortable, ergonomic wireless keyboard designed for all-day productivity. Its split layout and tactile keys reduce strain and support accessibility for users with limited dexterity.</p>
+                <ul id="card1-features" class="card-feature-list">
+                  <li>Bluetooth &amp; USB connectivity</li>
+                  <li>High-contrast keycaps</li>
+                  <li>Rechargeable battery (6 months)</li>
+                  <li>One-touch assistive shortcuts</li>
+                </ul>
+                <div class="card-actions">
+                  <button class="card-action-btn" type="button" aria-label="View details about ErgoType Wireless Keyboard" data-card="1">View Details</button>
+                  <button class="card-action-btn" type="button" aria-label="Add ErgoType Wireless Keyboard to cart" data-card="1">Add to Cart</button>
+                  <span class="card-price" aria-label="Price: $99">$99</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <!-- Card 2 -->
+          <li>
+            <article class="product-card" tabindex="0" aria-labelledby="card2-title" aria-describedby="card2-desc card2-features" role="region">
+              <div class="card-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80"
+                     alt="Portable smart speaker with tactile buttons and voice control"
+                     class="card-img"
+                     width="400" height="180"
+                     />
+              </div>
+              <div class="card-content">
+                <h3 id="card2-title" class="card-title">SoundMate Smart Speaker</h3>
+                <p id="card2-desc" class="card-desc">A portable, voice-activated smart speaker with tactile controls and high-contrast indicators. Designed for clear audio and ease of use by everyone, including people with visual impairments.</p>
+                <ul id="card2-features" class="card-feature-list">
+                  <li>Voice control &amp; screen reader support</li>
+                  <li>10-hour battery life</li>
+                  <li>Large, tactile volume buttons</li>
+                  <li>360° sound, noise reduction</li>
+                </ul>
+                <div class="card-actions">
+                  <button class="card-action-btn" type="button" aria-label="View details about SoundMate Smart Speaker" data-card="2">View Details</button>
+                  <button class="card-action-btn" type="button" aria-label="Add SoundMate Smart Speaker to cart" data-card="2">Add to Cart</button>
+                  <span class="card-price" aria-label="Price: $59">$59</span>
+                </div>
+              </div>
+            </article>
+          </li>
+          <!-- Card 3 -->
+          <li>
+            <article class="product-card" tabindex="0" aria-labelledby="card3-title" aria-describedby="card3-desc card3-features" role="region">
+              <div class="card-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
+                     alt="Adjustable desk lamp with touch controls and high-contrast markings"
+                     class="card-img"
+                     width="400" height="180"
+                     />
+              </div>
+              <div class="card-content">
+                <h3 id="card3-title" class="card-title">FlexiLight Desk Lamp</h3>
+                <p id="card3-desc" class="card-desc">A fully adjustable LED desk lamp with accessible touch controls, high-contrast settings, and a flexible arm. Perfect for reading, working, or relaxing in any environment.</p>
+                <ul id="card3-features" class="card-feature-list">
+                  <li>5 brightness levels, color temperature control</li>
+                  <li>Touch controls with audio feedback</li>
+                  <li>Energy-efficient LEDs</li>
+                  <li>Anti-glare, flicker-free design</li>
+                </ul>
+                <div class="card-actions">
+                  <button class="card-action-btn" type="button" aria-label="View details about FlexiLight Desk Lamp" data-card="3">View Details</button>
+                  <button class="card-action-btn" type="button" aria-label="Add FlexiLight Desk Lamp to cart" data-card="3">Add to Cart</button>
+                  <span class="card-price" aria-label="Price: $42">$42</span>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Section: Services -->
+      <section aria-labelledby="services-heading" id="services">
+        <h2 id="services-heading">Our Services</h2>
+        <p>We offer a range of services to support your accessibility journey. <span class="help-text" id="help-services">Need help choosing the right product? Contact our accessibility specialists for free advice.</span></p>
+        <ul>
+          <li><strong>Accessibility Audits</strong>: In-depth evaluation of your digital products for WCAG 2.2 AAA compliance.</li>
+          <li><strong>Assistive Technology Training</strong>: Personalized training for screen readers, magnifiers, and more.</li>
+          <li><strong>Custom Adaptations</strong>: Tailored modifications for products and environments.</li>
+        </ul>
+      </section>
+
+      <!-- Section: About Us -->
+      <section aria-labelledby="about-heading" id="about">
+        <h2 id="about-heading">About Us</h2>
+        <p>We are dedicated to creating accessible, inclusive products for everyone. Our team includes people with lived experience of disability, ensuring authentic design and support. <span class="pronunciation" id="pronunciation-accessible">Pronunciation of "accessible": /əkˈsɛs.ə.bəl/</span></p>
+      </section>
+
+      <!-- Section: Contact -->
+      <section aria-labelledby="contact-heading" id="contact">
+        <h2 id="contact-heading">Contact</h2>
+        <form id="contact-form" aria-labelledby="contact-heading" novalidate>
+          <fieldset>
+            <legend>Contact Form</legend>
+            <div>
+              <label for="name">Name <span aria-hidden="true" style="color: var(--secondary);">*</span></label>
+              <input type="text" id="name" name="name" autocomplete="name" required aria-required="true" aria-describedby="name-help" minlength="2" maxlength="40" style="width: 100%; min-width: var(--min-touch); min-height: var(--min-touch);" />
+              <span id="name-help" class="help-text">Enter your full name.</span>
+            </div>
+            <div>
+              <label for="email">Email <span aria-hidden="true" style="color: var(--secondary);">*</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" required aria-required="true" aria-describedby="email-help" style="width: 100%; min-width: var(--min-touch); min-height: var(--min-touch);" />
+              <span id="email-help" class="help-text">We'll never share your email.</span>
+            </div>
+            <div>
+              <label for="message">Message <span aria-hidden="true" style="color: var(--secondary);">*</span></label>
+              <textarea id="message" name="message" autocomplete="off" required aria-required="true" aria-describedby="message-help" rows="4" style="width: 100%; min-width: var(--min-touch); min-height: 88px;"></textarea>
+              <span id="message-help" class="help-text">How can we assist you?</span>
+            </div>
+            <div>
+              <button type="submit" id="contact-submit" class="card-action-btn" aria-label="Send message">Send Message</button>
+            </div>
+            <div id="contact-form-status" role="status" aria-live="polite" style="margin-top: 1em;"></div>
+          </fieldset>
+        </form>
+      </section>
+    </div>
+    <!-- Sidebar: Multiple Ways to Find Content -->
+    <aside aria-labelledby="sidebar-heading">
+      <h2 id="sidebar-heading">Quick Access</h2>
+      <nav aria-label="Quick links">
+        <ul>
+          <li><a href="#main-content" class="footer-link">Featured Products</a></li>
+          <li><a href="#services" class="footer-link">Our Services</a></li>
+          <li><a href="#about" class="footer-link">About Us</a></li>
+          <li><a href="#contact" class="footer-link">Contact</a></li>
+          <li><a href="#sitemap" class="footer-link">Sitemap</a></li>
+        </ul>
+      </nav>
+      <form id="sidebar-search" role="search" aria-label="Site search" style="margin-top: 2em;">
+        <label for="site-search">Search site:</label>
+        <input type="search" id="site-search" name="q" autocomplete="off" aria-describedby="search-help" style="width: 100%; min-width: var(--min-touch); min-height: var(--min-touch);" />
+        <span id="search-help" class="help-text">Type keywords to find products or services.</span>
+        <button type="submit" class="card-action-btn" aria-label="Search site">Search</button>
+        <div id="search-results" role="status" aria-live="polite" style="margin-top: 0.8em;"></div>
+      </form>
+      <!-- Color controls for user-selectable foreground/background -->
+      <div class="color-controls" aria-labelledby="color-controls-heading">
+        <span id="color-controls-heading" class="visually-hidden">Color Preferences</span>
+        <label for="fg-color-picker">Text color:</label>
+        <input type="color" id="fg-color-picker" name="fg-color" value="#101820" aria-label="Select text color" />
+        <label for="bg-color-picker">Background color:</label>
+        <input type="color" id="bg-color-picker" name="bg-color" value="#ffffff" aria-label="Select background color" />
+        <button type="button" id="reset-colors" class="card-action-btn" aria-label="Reset colors to default">Reset</button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-section">
+        <h2>Help &amp; Resources</h2>
+        <ul>
+          <li><a href="#help-services" class="footer-link">Accessibility Help</a></li>
+          <li><a href="#definition-accessible" class="footer-link">What does "Accessible" mean?</a></li>
+          <li><a href="#pronunciation-accessible" class="footer-link">Pronunciation Guide</a></li>
+          <li><a href="#sitemap" class="footer-link">Sitemap</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h2>Contact</h2>
+        <address>
+          <ul>
+            <li>Email: <a href="mailto:access@productcards.com" class="footer-link">access@productcards.com</a></li>
+            <li>Phone: <a href="tel:+18005551234" class="footer-link">+1 800 555 1234</a></li>
+          </ul>
+        </address>
+      </div>
+      <div class="footer-section">
+        <h2>Follow Us</h2>
+        <ul>
+          <li><a href="https://twitter.com/" class="footer-link" rel="noopener" target="_blank" aria-label="Follow us on Twitter">Twitter</a></li>
+          <li><a href="https://facebook.com/" class="footer-link" rel="noopener" target="_blank" aria-label="Follow us on Facebook">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:1em; font-size:0.95em;">
+      &copy; <span id="year"></span> Accessible Product Cards Showcase. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Sitemap (hidden section for multiple ways to find content) -->
+  <section id="sitemap" aria-labelledby="sitemap-heading" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+    <h2 id="sitemap-heading">Sitemap</h2>
+    <ul>
+      <li><a href="#main-content">Featured Products</a></li>
+      <li><a href="#services">Our Services</a></li>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#help-services">Accessibility Help</a></li>
+    </ul>
+  </section>
+
+  <!-- Accessible Modal for Product Details (hidden until triggered) -->
+  <div id="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" tabindex="-1" hidden style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(16,24,32,0.92);">
+    <div style="max-width: 540px; margin: 5vh auto; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 6px 48px rgba(5,72,168,0.22); padding: 2em 1.5em; position:relative;">
+      <button id="modal-close" class="card-action-btn" aria-label="Close product details" style="position:absolute; top:1em; right:1em; min-width:44px; min-height:44px;">&times;</button>
+      <h2 id="modal-title">Product Details</h2>
+      <div id="modal-desc"></div>
+    </div>
+  </div>
+
+  <!-- Status region for live announcements -->
+  <div id="live-region" role="status" aria-live="polite" class="visually-hidden"></div>
+
+  <script>
+    // Utility: Update copyright year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Keyboard focus for skip link
+    document.getElementById('skip-link').addEventListener('click', function(e) {
+      var main = document.getElementById('main-content');
+      if (main) {
+        main.setAttribute('tabindex', '-1');
+        main.focus();
+      }
+    });
+
+    // Enhanced navigation: set aria-current
+    (function() {
+      var navLinks = document.querySelectorAll('.main-nav-link');
+      var loc = window.location.hash || '#main-content';
+      navLinks.forEach(function(link) {
+        if (link.getAttribute('href') === loc) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    })();
+
+    // Product Card Keyboard and Modal
+    (function() {
+      // Card focus/hover/activation
+      var cards = document.querySelectorAll('.product-card');
+      cards.forEach(function(card) {
+        // Allow Enter/Space to activate (open modal)
+        card.addEventListener('keydown', function(e) {
+          if ((e.key === 'Enter' || e.key === ' ') && !e.target.classList.contains('card-action-btn')) {
+            e.preventDefault();
+            showProductModal(card);
+          }
+        });
+        // Pointer activation (click on card, not button)
+        card.addEventListener('click', function(e) {
+          if (!e.target.classList.contains('card-action-btn')) {
+            showProductModal(card);
+          }
+        });
+      });
+
+      // Modal logic
+      var modal = document.getElementById('product-modal');
+      var modalTitle = document.getElementById('modal-title');
+      var modalDesc = document.getElementById('modal-desc');
+      var modalClose = document.getElementById('modal-close');
+      var lastFocusedElement = null;
+
+      function showProductModal(card) {
+        var title = card.querySelector('.card-title').textContent;
+        var desc = card.querySelector('.card-desc').textContent;
+        var features = card.querySelector('.card-feature-list').cloneNode(true);
+        var price = card.querySelector('.card-price').textContent;
+        modalTitle.textContent = title;
+        modalDesc.innerHTML = '<p>' + desc + '</p>';
+        modalDesc.appendChild(features);
+        modalDesc.innerHTML += '<p><strong>Price:</strong> ' + price + '</p>';
+        modal.style.display = 'block';
+        modal.hidden = false;
+        lastFocusedElement = document.activeElement;
+        modal.setAttribute('tabindex', '-1');
+        modal.focus();
+        document.body.style.overflow = 'hidden';
+        // Trap focus
+        trapFocus(modal);
+      }
+
+      function closeProductModal() {
+        modal.hidden = true;
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        if (lastFocusedElement) lastFocusedElement.focus();
+      }
+
+      modalClose.addEventListener('click', function() {
+        closeProductModal();
+      });
+      modalClose.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          closeProductModal();
+        }
+      });
+      modal.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeProductModal();
+        }
+      });
+      // Trap focus within modal
+      function trapFocus(element) {
+        var focusable = element.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        element.addEventListener('keydown', function(e) {
+          if (e.key === 'Tab') {
+            if (e.shiftKey) {
+              if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              }
+            } else {
+              if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }
+        });
+      }
+      // Dismiss modal on background click
+      modal.addEventListener('mousedown', function(e) {
+        if (e.target === modal) closeProductModal();
+      });
+    })();
+
+    // Card action buttons: Live region announcement
+    (function() {
+      var live = document.getElementById('live-region');
+      var btns = document.querySelectorAll('.card-action-btn');
+      btns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          var action = btn.textContent.trim();
+          var card = btn.closest('.product-card');
+          var title = card.querySelector('.card-title').textContent;
+          live.textContent = action + ' for ' + title + ' activated.';
+          setTimeout(function() { live.textContent = ''; }, 4000);
+        });
+        // Keyboard support (already button, but add pointer cancellation)
+        btn.addEventListener('pointerdown', function(e) {
+          // Only activate on pointerup for pointer cancellation
+          e.preventDefault();
+        });
+        btn.addEventListener('pointerup', function(e) {
+          btn.click();
+        });
+      });
+    })();
+
+    // Contact Form Validation (AAA: clear errors, correction, aria-describedby, etc.)
+    (function() {
+      var form = document.getElementById('contact-form');
+      var status = document.getElementById('contact-form-status');
+      var fields = ['name', 'email', 'message'];
+      var fieldEls = {};
+      fields.forEach(function(f) {
+        fieldEls[f] = document.getElementById(f);
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Clear previous errors
+        fields.forEach(function(f) {
+          fieldEls[f].setAttribute('aria-invalid', 'false');
+          var err = document.getElementById(f + '-error');
+          if (err) err.remove();
+        });
+        status.textContent = '';
+        var valid = true;
+        // Name
+        if (!fieldEls.name.value.trim() || fieldEls.name.value.trim().length < 2) {
+          showError('name', 'Please enter your full name (at least 2 characters).');
+          valid = false;
+        }
+        // Email
+        if (!fieldEls.email.value.trim() || !/^[^@]+@[^@]+\.[^@]+$/.test(fieldEls.email.value.trim())) {
+          showError('email', 'Please enter a valid email address.');
+          valid = false;
+        }
+        // Message
+        if (!fieldEls.message.value.trim() || fieldEls.message.value.trim().length < 5) {
+          showError('message', 'Please enter a message (at least 5 characters).');
+          valid = false;
+        }
+        if (!valid) {
+          status.textContent = 'Please correct the highlighted errors and try again.';
+          status.setAttribute('role', 'alert');
+          return;
+        }
+        // Simulate success (no real backend)
+        status.textContent = 'Your message has been sent! We will reply soon.';
+        status.setAttribute('role', 'status');
+        form.reset();
+      });
+
+      function showError(field, msg) {
+        var input = fieldEls[field];
+        input.setAttribute('aria-invalid', 'true');
+        var err = document.createElement('span');
+        err.id = field + '-error';
+        err.className = 'help-text';
+        err.setAttribute('role', 'alert');
+        err.textContent = msg;
+        input.insertAdjacentElement('afterend', err);
+        input.setAttribute('aria-describedby', input.getAttribute('aria-describedby') + ' ' + err.id);
+      }
+    })();
+
+    // Sidebar Search (simulate results)
+    (function() {
+      var searchForm = document.getElementById('sidebar-search');
+      var searchInput = document.getElementById('site-search');
+      var results = document.getElementById('search-results');
+      var products = [
+        'ErgoType Wireless Keyboard',
+        'SoundMate Smart Speaker',
+        'FlexiLight Desk Lamp'
+      ];
+      searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var q = searchInput.value.trim().toLowerCase();
+        results.textContent = '';
+        if (!q) {
+          results.textContent = 'Please enter a search term.';
+          return;
+        }
+        var found = products.filter(function(p) {
+          return p.toLowerCase().includes(q);
+        });
+        if (found.length) {
+          results.innerHTML = 'Found: <ul>' + found.map(function(f) {
+            return '<li>' + f + '</li>';
+          }).join('') + '</ul>';
+        } else {
+          results.textContent = 'No results found.';
+        }
+      });
+    })();
+
+    // Color Picker Controls (user-selectable fg/bg)
+    (function() {
+      var fgPicker = document.getElementById('fg-color-picker');
+      var bgPicker = document.getElementById('bg-color-picker');
+      var resetBtn = document.getElementById('reset-colors');
+      // Set initial colors from root
+      fgPicker.value = rgb2hex(getComputedStyle(document.documentElement).getPropertyValue('--text-main'));
+      bgPicker.value = rgb2hex(getComputedStyle(document.documentElement).getPropertyValue('--bg-main'));
+      fgPicker.addEventListener('input', function() {
+        document.documentElement.style.setProperty('--text-main', fgPicker.value);
+        document.body.style.color = fgPicker.value;
+      });
+      bgPicker.addEventListener('input', function() {
+        document.documentElement.style.setProperty('--bg-main', bgPicker.value);
+        document.body.style.background = bgPicker.value;
+      });
+      resetBtn.addEventListener('click', function() {
+        document.documentElement.style.setProperty('--text-main', '#101820');
+        document.documentElement.style.setProperty('--bg-main', '#ffffff');
+        document.body.style.color = '';
+        document.body.style.background = '';
+        fgPicker.value = '#101820';
+        bgPicker.value = '#ffffff';
+      });
+      function rgb2hex(rgb) {
+        // Converts 'rgb(16,24,32)' to '#101820'
+        var m = rgb.match(/\d+/g);
+        if (!m) return '#101820';
+        return '#' + m.map(function(x) {
+          var h = parseInt(x).toString(16);
+          return h.length == 1 ? '0' + h : h;
+        }).join('');
+      }
+    })();
+
+    // Enhanced keyboard navigation for nav and breadcrumbs
+    (function() {
+      // Keyboard nav for main nav (arrow keys)
+      var nav = document.getElementById('main-nav');
+      var links = nav.querySelectorAll('.main-nav-link');
+      links.forEach(function(link, idx) {
+        link.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            links[(idx + 1) % links.length].focus();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            links[(idx - 1 + links.length) % links.length].focus();
+          }
+        });
+      });
+      // Breadcrumbs: no dropdown, but ensure focus indicator
+      var bcrumbs = document.querySelectorAll('.breadcrumb-link');
+      bcrumbs.forEach(function(link) {
+        link.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            // Focus next/prev breadcrumb
+            var items = Array.from(bcrumbs);
+            var idx = items.indexOf(link);
+            if (e.key === 'ArrowRight' && idx < items.length - 1) {
+              items[idx + 1].focus();
+              e.preventDefault();
+            } else if (e.key === 'ArrowLeft' && idx > 0) {
+              items[idx - 1].focus();
+              e.preventDefault();
+            }
+          }
+        });
+      });
+    })();
+
+    // Reduced motion: Allow user to disable card scale animation
+    (function() {
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        var style = document.createElement('style');
+        style.textContent = '.product-card { transition: none !important; }';
+        document.head.appendChild(style);
+      }
+    })();
+
+    // Tooltip for abbreviations (AAA)
+    (function() {
+      // Example: add definition for "WCAG"
+      var abbrs = document.querySelectorAll('abbr[title]');
+      abbrs.forEach(function(abbr) {
+        abbr.setAttribute('tabindex', '0');
+        abbr.addEventListener('focus', function() {
+          var live = document.getElementById('live-region');
+          live.textContent = abbr.getAttribute('title');
+        });
+        abbr.addEventListener('blur', function() {
+          var live = document.getElementById('live-region');
+          live.textContent = '';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

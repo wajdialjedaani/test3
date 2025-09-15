@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ArtShare: Accessible Creative Work Upload & Sharing Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- User-selectable color themes -->
+  <style>
+    :root {
+      /* Vibrant, AAA-compliant color palette */
+      --color-bg: #181c2a;
+      --color-bg-alt: #23294a;
+      --color-header: #2e365c;
+      --color-primary: #3b8c3b;
+      --color-primary-contrast: #fff;
+      --color-accent: #d84797;
+      --color-accent-contrast: #fff;
+      --color-focus: #ffd600;
+      --color-focus-contrast: #181c2a;
+      --color-border: #6c7fd1;
+      --color-error: #b8002f;
+      --color-error-bg: #ffe5ed;
+      --color-success: #206b35;
+      --color-success-bg: #e7faea;
+      --color-link: #0077ff;
+      --color-link-visited: #6527e6;
+      --color-text: #fff;
+      --color-text-alt: #e3e3e3;
+      --color-disabled: #bdbdbd;
+      --color-tag-bg: #3b8c3b;
+      --color-tag-text: #fff;
+      --color-card-bg: #23294a;
+      --color-card-border: #6c7fd1;
+      --color-modal-bg: #22274a;
+      --color-modal-overlay: rgba(24,28,42,0.95);
+
+      --focus-outline-width: 3px;
+      --focus-outline-style: solid;
+      --focus-outline-color: var(--color-focus);
+
+      --font-size-base: 1.2rem;
+      --font-size-lg: 1.5rem;
+      --font-size-xl: 2rem;
+      --line-height: 1.7;
+      --line-spacing: 1.5em;
+      --paragraph-spacing: 2.25em;
+      --max-line-length: 80ch;
+
+      --border-radius: 12px;
+      --shadow-lg: 0 4px 32px rgba(0,0,0,0.28);
+      --shadow-md: 0 2px 12px rgba(0,0,0,0.18);
+
+      /* Touch target minimums */
+      --min-touch-size: 44px;
+    }
+    [data-theme="light"] {
+      --color-bg: #f7faff;
+      --color-bg-alt: #e6ecfa;
+      --color-header: #d2e2fa;
+      --color-primary: #007a4d;
+      --color-primary-contrast: #fff;
+      --color-accent: #b1006e;
+      --color-accent-contrast: #fff;
+      --color-focus: #ffd600;
+      --color-focus-contrast: #22274a;
+      --color-border: #3b4d8c;
+      --color-error: #b8002f;
+      --color-error-bg: #ffe5ed;
+      --color-success: #206b35;
+      --color-success-bg: #e7faea;
+      --color-link: #0033cc;
+      --color-link-visited: #6527e6;
+      --color-text: #181c2a;
+      --color-text-alt: #2e365c;
+      --color-disabled: #bdbdbd;
+      --color-tag-bg: #007a4d;
+      --color-tag-text: #fff;
+      --color-card-bg: #fff;
+      --color-card-border: #3b4d8c;
+      --color-modal-bg: #fff;
+      --color-modal-overlay: rgba(230,236,250,0.95);
+    }
+    html {
+      font-size: 100%;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: var(--line-height);
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      min-height: 100%;
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, var(--color-bg), var(--color-bg-alt) 100%);
+      min-height: 100vh;
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    header, nav, main, footer, section, article, aside {
+      max-width: 100vw;
+    }
+    a, button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    a {
+      color: var(--color-link);
+      text-decoration: underline;
+      transition: color 0.2s;
+      word-break: break-word;
+    }
+    a:visited {
+      color: var(--color-link-visited);
+    }
+    a:focus, button:focus, input:focus, textarea:focus, select:focus {
+      outline: var(--focus-outline-width) var(--focus-outline-style) var(--focus-outline-color);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px var(--color-focus-contrast);
+      z-index: 2;
+    }
+    .skip-link {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      padding: 0.5em 1em;
+      z-index: 1000;
+      transform: translateY(-120%);
+      transition: transform 0.2s;
+      border-radius: var(--border-radius);
+      font-weight: bold;
+      text-decoration: none;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-block;
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+    /* Header */
+    header {
+      background: linear-gradient(90deg, var(--color-header) 60%, var(--color-accent) 100%);
+      color: var(--color-primary-contrast);
+      padding: 0;
+      border-bottom: 4px solid var(--color-primary);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      z-index: 10;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5em 1.5em 1.2em 1.5em;
+      flex-wrap: wrap;
+    }
+    .site-title {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+    }
+    .site-logo {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-block;
+      background: linear-gradient(135deg, var(--color-accent) 50%, var(--color-primary) 100%);
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .site-logo svg {
+      width: 32px;
+      height: 32px;
+      display: block;
+    }
+    /* Main Nav */
+    nav[aria-label="Main navigation"] {
+      background: none;
+      margin: 0 auto;
+      max-width: 1200px;
+      padding: 0 1.5em;
+    }
+    .main-nav-list {
+      display: flex;
+      gap: 2em;
+      align-items: center;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .main-nav-list li {
+      position: relative;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+    }
+    .main-nav-link, .main-nav-button {
+      background: none;
+      border: none;
+      color: var(--color-primary-contrast);
+      font-size: var(--font-size-lg);
+      padding: 0.5em 1em;
+      border-radius: var(--border-radius);
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      text-align: left;
+      position: relative;
+      z-index: 1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+    }
+    .main-nav-link:focus, .main-nav-button:focus, .main-nav-link[aria-current="page"] {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+    }
+    .main-nav-link[aria-current="page"] {
+      font-weight: bold;
+      border-bottom: 3px solid var(--color-focus);
+    }
+    .main-nav-button[aria-expanded="true"]::after {
+      content: "▲";
+      margin-left: 0.5em;
+      font-size: 0.8em;
+    }
+    .main-nav-button[aria-expanded="false"]::after {
+      content: "▼";
+      margin-left: 0.5em;
+      font-size: 0.8em;
+    }
+    /* Dropdown menu */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 200px;
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      margin-top: 0.2em;
+      padding: 0.5em 0;
+    }
+    .dropdown-menu[aria-hidden="false"] {
+      display: block;
+    }
+    .dropdown-menu li {
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+    }
+    .dropdown-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      color: var(--color-text);
+      background: none;
+      border: none;
+      width: 100%;
+      padding: 0.5em 1em;
+      text-align: left;
+      border-radius: var(--border-radius);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      text-decoration: none;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      transition: background 0.2s, color 0.2s;
+    }
+    .dropdown-link:focus, .dropdown-link:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      margin: 1.2em 0 0.7em 0;
+      padding: 0 1.5em;
+      max-width: 1200px;
+    }
+    .breadcrumb-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.3em;
+      font-size: 1.05em;
+    }
+    .breadcrumb-list li {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-list li:not(:last-child)::after {
+      content: "›";
+      color: var(--color-border);
+      margin: 0 0.5em;
+    }
+    .breadcrumb-link {
+      color: var(--color-link);
+      text-decoration: underline;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      display: inline-block;
+      border-radius: var(--border-radius);
+      padding: 0.1em 0.3em;
+    }
+    .breadcrumb-link:focus {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    .breadcrumb-current {
+      color: var(--color-text);
+      font-weight: bold;
+      padding: 0.1em 0.3em;
+    }
+    /* Main Layout */
+    .layout-container {
+      display: flex;
+      flex-direction: row;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 2em;
+      padding: 0 1.5em;
+    }
+    @media (max-width: 900px) {
+      .layout-container {
+        flex-direction: column;
+        gap: 1em;
+      }
+      .sidebar {
+        order: 2;
+      }
+      .main-content {
+        order: 1;
+      }
+    }
+    /* Sidebar */
+    .sidebar {
+      flex: 0 0 280px;
+      max-width: 320px;
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      padding: 1.2em 1em;
+      margin-top: 1em;
+      min-width: 0;
+      font-size: 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+    }
+    .sidebar section {
+      margin: 0;
+      padding: 0;
+    }
+    /* Main Content */
+    .main-content {
+      flex: 1 1 0;
+      min-width: 0;
+      margin-top: 1em;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5em;
+    }
+    /* Upload Form */
+    .upload-section {
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      padding: 2em 2em 2.5em 2em;
+      margin-bottom: 1.5em;
+      max-width: 700px;
+      width: 100%;
+    }
+    .upload-section h2 {
+      margin-top: 0;
+      margin-bottom: 0.6em;
+      font-size: var(--font-size-lg);
+      color: var(--color-primary);
+      letter-spacing: 0.01em;
+    }
+    .upload-form fieldset {
+      border: none;
+      padding: 0;
+      margin: 0 0 1.5em 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2em;
+    }
+    .upload-form legend {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: var(--color-accent);
+      margin-bottom: 0.6em;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2em;
+      max-width: 100%;
+    }
+    .form-label {
+      font-weight: 600;
+      color: var(--color-text-alt);
+      margin-bottom: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+    }
+    .required-indicator {
+      color: var(--color-error);
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-left: 0.1em;
+      aria-hidden: true;
+    }
+    .form-help {
+      color: var(--color-border);
+      font-size: 0.95em;
+      margin-top: 0.05em;
+      margin-bottom: 0.1em;
+    }
+    .form-input, .form-textarea, .form-file {
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 0.7em 1em;
+      font-size: 1em;
+      line-height: 1.5;
+      min-width: 0;
+      min-height: var(--min-touch-size);
+      transition: border 0.2s, background 0.2s;
+      margin-bottom: 0.1em;
+      max-width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus, .form-file:focus {
+      border-color: var(--color-focus);
+      background: var(--color-bg);
+      outline: var(--focus-outline-width) var(--focus-outline-style) var(--focus-outline-color);
+    }
+    .form-input[aria-invalid="true"], .form-textarea[aria-invalid="true"], .form-file[aria-invalid="true"] {
+      border-color: var(--color-error);
+      background: var(--color-error-bg);
+      color: var(--color-error);
+    }
+    .error-message {
+      color: var(--color-error);
+      background: var(--color-error-bg);
+      border-left: 4px solid var(--color-error);
+      padding: 0.4em 0.7em;
+      border-radius: 0 8px 8px 0;
+      font-size: 1em;
+      margin-top: 0.1em;
+      margin-bottom: 0.1em;
+      min-width: 0;
+    }
+    .success-message {
+      color: var(--color-success);
+      background: var(--color-success-bg);
+      border-left: 4px solid var(--color-success);
+      padding: 0.4em 0.7em;
+      border-radius: 0 8px 8px 0;
+      font-size: 1em;
+      margin-top: 0.2em;
+      margin-bottom: 0.2em;
+      min-width: 0;
+    }
+    .upload-preview {
+      margin-top: 1em;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.2em;
+      max-width: 100%;
+      flex-wrap: wrap;
+    }
+    .preview-img {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--color-border);
+      background: var(--color-bg-alt);
+      object-fit: contain;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .preview-details {
+      color: var(--color-text-alt);
+      font-size: 0.98em;
+      word-break: break-word;
+    }
+    /* Tag Input */
+    .tag-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3em;
+    }
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4em;
+      margin-top: 0.2em;
+      margin-bottom: 0.2em;
+      min-height: 44px;
+    }
+    .tag {
+      background: var(--color-tag-bg);
+      color: var(--color-tag-text);
+      border-radius: 2em;
+      padding: 0.2em 0.8em 0.2em 0.7em;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      min-width: 44px;
+      min-height: 44px;
+      line-height: 1.2;
+      border: 2px solid var(--color-border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .tag-remove-btn {
+      background: var(--color-error);
+      color: var(--color-error-bg);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-left: 0.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      min-width: 32px;
+      min-height: 32px;
+    }
+    .tag-remove-btn:focus, .tag-remove-btn:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    /* Form Buttons */
+    .form-actions {
+      display: flex;
+      gap: 1em;
+      align-items: center;
+      margin-top: 1.2em;
+    }
+    .btn {
+      background: var(--color-primary);
+      color: var(--color-primary-contrast);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.7em 2em;
+      font-size: 1.1em;
+      font-weight: bold;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .btn:focus, .btn:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      box-shadow: 0 0 0 4px var(--color-focus-contrast);
+    }
+    .btn-secondary {
+      background: var(--color-accent);
+      color: var(--color-accent-contrast);
+    }
+    .btn[disabled], .btn:disabled {
+      background: var(--color-disabled);
+      color: #fff;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    /* Art Gallery */
+    .gallery-section {
+      margin-top: 1.5em;
+    }
+    .gallery-section h2 {
+      font-size: var(--font-size-lg);
+      color: var(--color-accent);
+      margin-bottom: 0.6em;
+    }
+    .gallery-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      align-items: center;
+      margin-bottom: 1.2em;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      background: var(--color-bg-alt);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 0.5em 1em;
+      min-width: 220px;
+      min-height: var(--min-touch-size);
+      color: var(--color-text);
+      font-size: 1em;
+    }
+    .search-bar input[type="search"] {
+      background: transparent;
+      border: none;
+      color: var(--color-text);
+      font-size: 1em;
+      outline: none;
+      width: 140px;
+      min-width: 0;
+      min-height: var(--min-touch-size);
+    }
+    .search-bar input[type="search"]:focus {
+      outline: none;
+    }
+    .gallery-filters {
+      display: flex;
+      gap: 0.7em;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-btn {
+      background: var(--color-card-bg);
+      color: var(--color-primary);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .filter-btn.active, .filter-btn:focus, .filter-btn:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2em;
+      width: 100%;
+    }
+    .gallery-card {
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      padding: 1em;
+      gap: 0.7em;
+      max-width: 100%;
+      min-width: 0;
+      min-height: 320px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .gallery-card:focus-within {
+      border-color: var(--color-focus);
+      box-shadow: 0 0 0 4px var(--color-focus-contrast);
+      z-index: 2;
+    }
+    .gallery-img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      border-radius: var(--border-radius);
+      background: var(--color-bg-alt);
+      border: 2px solid var(--color-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      margin-bottom: 0.6em;
+    }
+    .gallery-description {
+      color: var(--color-text);
+      font-size: 1.08em;
+      margin-bottom: 0.2em;
+      word-break: break-word;
+    }
+    .gallery-tags {
+      display: flex;
+      gap: 0.5em;
+      flex-wrap: wrap;
+      margin-bottom: 0.2em;
+    }
+    .gallery-tag {
+      background: var(--color-tag-bg);
+      color: var(--color-tag-text);
+      border-radius: 2em;
+      padding: 0.2em 0.8em;
+      font-size: 1em;
+      border: 2px solid var(--color-border);
+      display: inline-flex;
+      align-items: center;
+      min-width: 44px;
+      min-height: 44px;
+      line-height: 1.2;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .gallery-meta {
+      color: var(--color-text-alt);
+      font-size: 0.96em;
+      margin-bottom: 0.2em;
+    }
+    .gallery-actions {
+      display: flex;
+      gap: 1em;
+      align-items: center;
+      margin-top: auto;
+    }
+    .gallery-actions .btn {
+      font-size: 1em;
+      padding: 0.4em 1.2em;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+    }
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: var(--color-modal-overlay);
+      justify-content: center;
+      align-items: center;
+      min-width: 100vw;
+      min-height: 100vh;
+    }
+    .modal-overlay[aria-hidden="false"] {
+      display: flex;
+    }
+    .modal-dialog {
+      background: var(--color-modal-bg);
+      color: var(--color-text);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      padding: 2em 2.5em;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      outline: none;
+      border: 3px solid var(--color-focus);
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 1em;
+      right: 1em;
+      background: var(--color-error);
+      color: var(--color-error-bg);
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      z-index: 1;
+    }
+    .modal-close-btn:focus, .modal-close-btn:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    /* Theme Switcher */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      font-size: 1em;
+      margin-top: 1em;
+    }
+    .theme-label {
+      color: var(--color-text-alt);
+      font-size: 1em;
+    }
+    .theme-btn {
+      background: var(--color-card-bg);
+      color: var(--color-primary);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 0.4em 1.1em;
+      font-size: 1em;
+      min-width: var(--min-touch-size);
+      min-height: var(--min-touch-size);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .theme-btn.active, .theme-btn:focus, .theme-btn:hover {
+      background: var(--color-focus);
+      color: var(--color-focus-contrast);
+      outline: none;
+    }
+    /* Help & Definitions */
+    .help-section {
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      padding: 1em 1.2em;
+      font-size: 1em;
+      color: var(--color-text-alt);
+      margin-bottom: 1.2em;
+    }
+    .help-section h2 {
+      font-size: 1.05em;
+      color: var(--color-primary);
+      margin-top: 0;
+    }
+    .help-section dl {
+      margin: 0.5em 0 0 0;
+    }
+    .help-section dt {
+      font-weight: bold;
+      color: var(--color-accent);
+      margin-top: 0.5em;
+    }
+    .help-section dd {
+      margin: 0 0 0.5em 1.2em;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .header-content, nav[aria-label="Main navigation"], .layout-container, nav[aria-label="Breadcrumb"] {
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+      }
+      .upload-section, .modal-dialog {
+        padding: 1em 0.7em;
+      }
+      .sidebar {
+        padding: 0.7em 0.5em;
+      }
+    }
+    /* Visual presentation for text */
+    main, .upload-section, .gallery-section, .sidebar, .help-section {
+      max-width: var(--max-line-length);
+    }
+    p, ul, ol, dl {
+      margin-bottom: var(--paragraph-spacing);
+      line-height: var(--line-height);
+      max-width: var(--max-line-length);
+    }
+    /* Enhanced focus indicator for all focusable elements */
+    :focus-visible {
+      outline: var(--focus-outline-width) var(--focus-outline-style) var(--focus-outline-color) !important;
+      outline-offset: 2px !important;
+      box-shadow: 0 0 0 3px var(--color-focus-contrast) !important;
+      z-index: 2;
+    }
+    /* Hide visually but keep for screen readers */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    /* User-selectable foreground/background color picker */
+    .color-picker-group {
+      display: flex;
+      gap: 1em;
+      align-items: center;
+      margin-top: 0.7em;
+      margin-bottom: 0.7em;
+    }
+    .color-picker-label {
+      font-size: 1em;
+      color: var(--color-text-alt);
+      margin-right: 0.5em;
+    }
+    .color-picker {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      background: transparent;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+    }
+    /* Status region */
+    #status-region {
+      position: fixed;
+      top: 0.5em;
+      right: 0.5em;
+      z-index: 10000;
+      min-width: 220px;
+      max-width: 340px;
+      pointer-events: none;
+    }
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link" id="skip-link">Skip to main content</a>
+  <header>
+    <div class="header-content">
+      <span class="site-title" id="site-title">
+        <span class="site-logo" aria-hidden="true">
+          <!-- Accessible SVG icon: Palette with brush -->
+          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <circle cx="24" cy="24" r="20" fill="#3b8c3b"/>
+            <ellipse cx="16" cy="18" rx="3" ry="3.5" fill="#ffd600"/>
+            <ellipse cx="28" cy="14" rx="2.5" ry="3" fill="#d84797"/>
+            <ellipse cx="34" cy="26" rx="3" ry="2.5" fill="#0077ff"/>
+            <ellipse cx="22" cy="32" rx="2.5" ry="2.5" fill="#fff"/>
+            <rect x="38" y="32" width="7" height="3" rx="1.5" fill="#ffd600" transform="rotate(40 41.5 33.5)"/>
+          </svg>
+        </span>
+        ArtShare
+      </span>
+      <nav aria-label="Main navigation" id="main-nav">
+        <ul class="main-nav-list" role="menubar">
+          <li>
+            <a href="#main-content" class="main-nav-link" aria-current="page" role="menuitem" tabindex="0">Gallery</a>
+          </li>
+          <li>
+            <a href="#upload-section" class="main-nav-link" role="menuitem" tabindex="0">Upload</a>
+          </li>
+          <li>
+            <button type="button" class="main-nav-button" aria-haspopup="true" aria-expanded="false" aria-controls="nav-dropdown-info" id="nav-dropdown-btn" role="menuitem" tabindex="0">
+              Info
+            </button>
+            <ul class="dropdown-menu" id="nav-dropdown-info" role="menu" aria-hidden="true">
+              <li>
+                <a href="#help" class="dropdown-link" role="menuitem" tabindex="-1">Help</a>
+              </li>
+              <li>
+                <a href="#sitemap" class="dropdown-link" role="menuitem" tabindex="-1">Sitemap</a>
+              </li>
+              <li>
+                <a href="#definitions" class="dropdown-link" role="menuitem" tabindex="-1">Definitions</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <nav aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li>
+        <a href="#main-content" class="breadcrumb-link">Home</a>
+      </li>
+      <li>
+        <span class="breadcrumb-current" aria-current="page">Gallery</span>
+      </li>
+    </ol>
+  </nav>
+  <main id="main-content" tabindex="-1">
+    <div class="layout-container">
+      <aside class="sidebar" aria-labelledby="sidebar-heading">
+        <section>
+          <h2 id="sidebar-heading">Quick Access</h2>
+          <ul>
+            <li><a href="#upload-section">Upload Art</a></li>
+            <li><a href="#gallery-section">Browse Gallery</a></li>
+            <li><a href="#help">Help &amp; FAQ</a></li>
+            <li><a href="#definitions">Definitions</a></li>
+            <li><a href="#sitemap">Sitemap</a></li>
+          </ul>
+        </section>
+        <section>
+          <h2 id="theme-heading">Color Theme</h2>
+          <div class="theme-switcher" role="group" aria-labelledby="theme-heading">
+            <label for="theme-light" class="theme-label">Light</label>
+            <button type="button" class="theme-btn" id="theme-light" aria-pressed="false" tabindex="0">Light</button>
+            <label for="theme-dark" class="theme-label">Dark</label>
+            <button type="button" class="theme-btn" id="theme-dark" aria-pressed="true" tabindex="0">Dark</button>
+          </div>
+          <form id="color-picker-form" class="color-picker-group" aria-labelledby="color-picker-label">
+            <span id="color-picker-label" class="color-picker-label">Custom Colors:</span>
+            <label for="fg-color-picker" class="sr-only">Foreground color</label>
+            <input type="color" id="fg-color-picker" class="color-picker" aria-label="Pick foreground color" title="Pick foreground color" value="#ffffff">
+            <label for="bg-color-picker" class="sr-only">Background color</label>
+            <input type="color" id="bg-color-picker" class="color-picker" aria-label="Pick background color" title="Pick background color" value="#181c2a">
+            <button type="button" class="btn btn-secondary" id="reset-colors-btn">Reset</button>
+          </form>
+        </section>
+        <section>
+          <h2 id="sidebar-help-heading">Need Help?</h2>
+          <p>Find instructions and answers in the <a href="#help">Help section</a>.</p>
+        </section>
+      </aside>
+      <div class="main-content">
+        <section class="upload-section" id="upload-section" aria-labelledby="upload-section-heading">
+          <h2 id="upload-section-heading">Upload Your Creative Work</h2>
+          <form class="upload-form" id="upload-form" autocomplete="off" novalidate aria-describedby="upload-help">
+            <fieldset>
+              <legend>Artwork Details</legend>
+              <div class="form-group">
+                <label for="file-upload" class="form-label">
+                  Select Image File
+                  <span class="required-indicator" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="file"
+                  class="form-file"
+                  id="file-upload"
+                  name="file-upload"
+                  accept="image/png, image/jpeg, image/gif, image/webp"
+                  required
+                  aria-required="true"
+                  aria-describedby="file-upload-help file-upload-error"
+                  tabindex="0"
+                >
+                <span class="form-help" id="file-upload-help">
+                  Choose a photo or art image (PNG, JPG, GIF, WEBP, max 5MB).
+                </span>
+                <span class="error-message" id="file-upload-error" role="alert" aria-live="polite" style="display:none"></span>
+              </div>
+              <div class="form-group">
+                <label for="description" class="form-label">
+                  Description
+                  <span class="required-indicator" aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  class="form-textarea"
+                  id="description"
+                  name="description"
+                  rows="3"
+                  maxlength="300"
+                  required
+                  aria-required="true"
+                  aria-describedby="description-help description-error"
+                  autocomplete="off"
+                  tabindex="0"
+                  style="resize:vertical"
+                ></textarea>
+                <span class="form-help" id="description-help">
+                  Briefly describe your work (max 300 characters).
+                </span>
+                <span class="error-message" id="description-error" role="alert" aria-live="polite" style="display:none"></span>
+              </div>
+              <div class="form-group tag-input-wrapper">
+                <label for="tag-input" class="form-label">
+                  Tags
+                  <span class="required-indicator" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-input"
+                  id="tag-input"
+                  name="tag-input"
+                  autocomplete="off"
+                  aria-required="true"
+                  aria-describedby="tag-input-help tag-input-error"
+                  maxlength="24"
+                  placeholder="Type a tag and press Enter"
+                  tabindex="0"
+                >
+                <span class="form-help" id="tag-input-help">
+                  Add up to 5 tags. Tags help others find your work. E.g., <em>nature</em>, <em>digital</em>, <em>portrait</em>.
+                </span>
+                <span class="error-message" id="tag-input-error" role="alert" aria-live="polite" style="display:none"></span>
+                <div class="tag-list" id="tag-list" aria-live="polite" aria-label="Current tags"></div>
+              </div>
+            </fieldset>
+            <div class="form-actions">
+              <button type="submit" class="btn" id="submit-btn">Share Artwork</button>
+              <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
+            </div>
+            <div class="upload-preview" id="upload-preview" aria-live="polite" aria-atomic="true"></div>
+            <span class="form-help" id="upload-help">
+              All fields are required. Your upload is visible to everyone in the gallery. Please avoid personal information.
+            </span>
+          </form>
+        </section>
+        <section class="gallery-section" id="gallery-section" aria-labelledby="gallery-section-heading">
+          <h2 id="gallery-section-heading">Art Gallery</h2>
+          <div class="gallery-controls" aria-label="Gallery controls">
+            <form class="search-bar" id="search-form" role="search" aria-label="Search gallery">
+              <label for="search-input" class="sr-only">Search artworks</label>
+              <input
+                type="search"
+                id="search-input"
+                name="search"
+                autocomplete="off"
+                placeholder="Search artworks"
+                aria-label="Search artworks"
+                maxlength="40"
+                tabindex="0"
+              >
+              <button type="submit" class="btn btn-secondary" id="search-btn" aria-label="Search gallery">Search</button>
+            </form>
+            <div class="gallery-filters" id="gallery-filters" aria-label="Filter by tag">
+              <!-- Dynamic tag filter buttons -->
+            </div>
+          </div>
+          <div class="gallery-grid" id="gallery-grid" aria-live="polite" aria-atomic="false">
+            <!-- Gallery items rendered here -->
+          </div>
+        </section>
+        <section class="help-section" id="help" aria-labelledby="help-heading">
+          <h2 id="help-heading">Help &amp; Frequently Asked Questions</h2>
+          <ul>
+            <li>
+              <strong>How do I upload artwork?</strong>
+              <p>Use the <a href="#upload-section">Upload</a> form above. Select an image, enter a description, and add tags. All fields are required.</p>
+            </li>
+            <li>
+              <strong>What file types are allowed?</strong>
+              <p>PNG, JPG, GIF, and WEBP images up to 5MB. No images of text or personal information.</p>
+            </li>
+            <li>
+              <strong>How do tags work?</strong>
+              <p>Tags are keywords that describe your work. They help others find similar art. Press Enter after typing each tag.</p>
+            </li>
+            <li>
+              <strong>How do I search or filter the gallery?</strong>
+              <p>Use the search bar or tag filters above the gallery to find specific works.</p>
+            </li>
+            <li>
+              <strong>Accessibility &amp; Keyboard Navigation</strong>
+              <p>
+                <ul>
+                  <li>All features are keyboard accessible. Use Tab/Shift+Tab to move, Enter/Space to activate.</li>
+                  <li>Skip links are provided for fast navigation.</li>
+                  <li>Dropdown menus, modals, and forms are fully accessible.</li>
+                  <li>Use the color theme and custom color pickers for optimal readability.</li>
+                </ul>
+              </p>
+            </li>
+            <li>
+              <strong>How is my data used?</strong>
+              <p>Your uploads are stored in your browser only (no remote server). Clear your browser to remove them.</p>
+            </li>
+          </ul>
+        </section>
+        <section class="help-section" id="definitions" aria-labelledby="definitions-heading">
+          <h2 id="definitions-heading">Definitions &amp; Abbreviations</h2>
+          <dl>
+            <dt><abbr title="Portable Network Graphics">PNG</abbr></dt>
+            <dd>A lossless image file format suitable for art and photos.</dd>
+            <dt><abbr title="Joint Photographic Experts Group">JPG</abbr></dt>
+            <dd>A common compressed image format for photos.</dd>
+            <dt><abbr title="Graphics Interchange Format">GIF</abbr></dt>
+            <dd>A format supporting animated images.</dd>
+            <dt><abbr title="Web Picture format">WEBP</abbr></dt>
+            <dd>A modern image format providing superior compression.</dd>
+            <dt><abbr title="Frequently Asked Questions">FAQ</abbr></dt>
+            <dd>Commonly asked questions and their answers.</dd>
+            <dt>Tag</dt>
+            <dd>A keyword describing your artwork, e.g., <em>nature</em>, <em>abstract</em>.</dd>
+            <dt>Accessibility</dt>
+            <dd>Designing for all users, including those with disabilities. Pronounced as <span lang="en" aria-label="ak-ses-uh-bil-i-tee">ak-ses-uh-bil-i-tee</span>.</dd>
+          </dl>
+        </section>
+        <section class="help-section" id="sitemap" aria-labelledby="sitemap-heading">
+          <h2 id="sitemap-heading">Sitemap</h2>
+          <ul>
+            <li><a href="#main-content">Home / Gallery</a></li>
+            <li><a href="#upload-section">Upload Art</a></li>
+            <li><a href="#help">Help &amp; FAQ</a></li>
+            <li><a href="#definitions">Definitions</a></li>
+            <li><a href="#sitemap">Sitemap</a></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div style="max-width:1200px;margin:2em auto 1em auto;padding:0 1.5em;">
+      <nav aria-label="Footer navigation">
+        <ul style="display:flex;gap:2em;list-style:none;padding:0;margin:0;flex-wrap:wrap;">
+          <li><a href="#main-content">Gallery</a></li>
+          <li><a href="#upload-section">Upload</a></li>
+          <li><a href="#help">Help</a></li>
+          <li><a href="#definitions">Definitions</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+        </ul>
+      </nav>
+      <p style="margin-top:1em;color:var(--color-text-alt);font-size:1em;">
+        &copy; <span id="year"></span> ArtShare. Accessible Creative Platform.
+        <span lang="en" aria-label="ak-ses-uh-bil-i-tee">(Accessibility)</span>
+      </p>
+    </div>
+  </footer>
+  <!-- Modal for viewing artwork -->
+  <div class="modal-overlay" id="modal-overlay" aria-hidden="true" aria-modal="true" role="dialog">
+    <div class="modal-dialog" id="modal-dialog" tabindex="-1" aria-labelledby="modal-title" aria-describedby="modal-desc">
+      <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">&times;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+  <!-- Status region for dynamic feedback -->
+  <div id="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script>
+    // Set year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Accessibility: Skip link focuses main
+    document.getElementById('skip-link').addEventListener('click', function(e) {
+      setTimeout(function() {
+        document.getElementById('main-content').focus();
+      }, 0);
+    });
+
+    // Theme switcher
+    (function() {
+      const root = document.documentElement;
+      const themeBtns = {
+        light: document.getElementById('theme-light'),
+        dark: document.getElementById('theme-dark')
+      };
+      function setTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        themeBtns.light.setAttribute('aria-pressed', theme === 'light');
+        themeBtns.dark.setAttribute('aria-pressed', theme === 'dark');
+        themeBtns.light.classList.toggle('active', theme === 'light');
+        themeBtns.dark.classList.toggle('active', theme === 'dark');
+        localStorage.setItem('artshare-theme', theme);
+      }
+      themeBtns.light.addEventListener('click', () => setTheme('light'));
+      themeBtns.dark.addEventListener('click', () => setTheme('dark'));
+      // Load from storage
+      const savedTheme = localStorage.getItem('artshare-theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') setTheme(savedTheme);
+    })();
+
+    // Custom color pickers
+    (function() {
+      const fgPicker = document.getElementById('fg-color-picker');
+      const bgPicker = document.getElementById('bg-color-picker');
+      const resetBtn = document.getElementById('reset-colors-btn');
+      function setColors(fg, bg) {
+        document.documentElement.style.setProperty('--color-text', fg);
+        document.documentElement.style.setProperty('--color-bg', bg);
+        localStorage.setItem('artshare-fg', fg);
+        localStorage.setItem('artshare-bg', bg);
+      }
+      fgPicker.addEventListener('input', e => setColors(fgPicker.value, bgPicker.value));
+      bgPicker.addEventListener('input', e => setColors(fgPicker.value, bgPicker.value));
+      resetBtn.addEventListener('click', function() {
+        fgPicker.value = "#ffffff";
+        bgPicker.value = "#181c2a";
+        setColors("#ffffff", "#181c2a");
+      });
+      // Load from storage
+      const fg = localStorage.getItem('artshare-fg');
+      const bg = localStorage.getItem('artshare-bg');
+      if (fg && bg) {
+        fgPicker.value = fg;
+        bgPicker.value = bg;
+        setColors(fg, bg);
+      }
+    })();
+
+    // Dropdown menu (Info)
+    (function() {
+      const btn = document.getElementById('nav-dropdown-btn');
+      const menu = document.getElementById('nav-dropdown-info');
+      let menuOpen = false;
+      function openMenu() {
+        menu.setAttribute('aria-hidden', 'false');
+        btn.setAttribute('aria-expanded', 'true');
+        menuOpen = true;
+        // Focus first item
+        const first = menu.querySelector('a,button');
+        if (first) first.focus();
+      }
+      function closeMenu() {
+        menu.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        menuOpen = false;
+      }
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (menuOpen) closeMenu();
+        else openMenu();
+      });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openMenu();
+        }
+      });
+      menu.addEventListener('keydown', function(e) {
+        const items = Array.from(menu.querySelectorAll('a,button'));
+        const idx = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx < items.length - 1) items[idx + 1].focus();
+          else items[0].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx > 0) items[idx - 1].focus();
+          else items[items.length - 1].focus();
+        } else if (e.key === 'Escape') {
+          closeMenu();
+          btn.focus();
+        }
+      });
+      menu.addEventListener('focusout', function(e) {
+        setTimeout(() => {
+          if (!menu.contains(document.activeElement) && document.activeElement !== btn) {
+            closeMenu();
+          }
+        }, 0);
+      });
+      document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+      });
+      // Mouse hover
+      btn.addEventListener('mouseenter', openMenu);
+      menu.addEventListener('mouseleave', closeMenu);
+    })();
+
+    // Tag input
+    (function() {
+      const tagInput = document.getElementById('tag-input');
+      const tagList = document.getElementById('tag-list');
+      let tags = [];
+      function renderTags() {
+        tagList.innerHTML = '';
+        tags.forEach((tag, i) => {
+          const el = document.createElement('span');
+          el.className = 'tag';
+          el.innerHTML = `<span>${tag}</span>`;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'tag-remove-btn';
+          btn.setAttribute('aria-label', `Remove tag ${tag}`);
+          btn.innerHTML = '&times;';
+          btn.addEventListener('click', () => {
+            tags.splice(i, 1);
+            renderTags();
+          });
+          btn.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              tags.splice(i, 1);
+              renderTags();
+            }
+          });
+          el.appendChild(btn);
+          tagList.appendChild(el);
+        });
+      }
+      tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          const val = tagInput.value.trim().replace(/[^a-zA-Z0-9-_ ]/g, '').toLowerCase();
+          if (val && !tags.includes(val) && tags.length < 5) {
+            tags.push(val);
+            tagInput.value = '';
+            renderTags();
+          }
+        } else if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
+          tags.pop();
+          renderTags();
+        }
+      });
+      tagInput.addEventListener('blur', function() {
+        const val = tagInput.value.trim().replace(/[^a-zA-Z0-9-_ ]/g, '').toLowerCase();
+        if (val && !tags.includes(val) && tags.length < 5) {
+          tags.push(val);
+          tagInput.value = '';
+          renderTags();
+        }
+      });
+      // Expose for form
+      window.getTagInputTags = () => tags.slice();
+      window.setTagInputTags = (t) => { tags = t.slice(); renderTags(); };
+      renderTags();
+    })();
+
+    // Upload form validation and preview
+    (function() {
+      const form = document.getElementById('upload-form');
+      const fileInput = document.getElementById('file-upload');
+      const descInput = document.getElementById('description');
+      const tagInput = document.getElementById('tag-input');
+      const preview = document.getElementById('upload-preview');
+      const errorFile = document.getElementById('file-upload-error');
+      const errorDesc = document.getElementById('description-error');
+      const errorTag = document.getElementById('tag-input-error');
+      const submitBtn = document.getElementById('submit-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      let fileData = null;
+      let fileName = '';
+      let fileType = '';
+      let fileSize = 0;
+      let previewUrl = '';
+      function clearErrors() {
+        errorFile.style.display = 'none';
+        errorDesc.style.display = 'none';
+        errorTag.style.display = 'none';
+        fileInput.setAttribute('aria-invalid', 'false');
+        descInput.setAttribute('aria-invalid', 'false');
+        tagInput.setAttribute('aria-invalid', 'false');
+      }
+      function showError(input, errorEl, msg) {
+        errorEl.textContent = msg;
+        errorEl.style.display = '';
+        input.setAttribute('aria-invalid', 'true');
+      }
+      function validate() {
+        clearErrors();
+        let valid = true;
+        // File
+        if (!fileInput.files || !fileInput.files[0]) {
+          showError(fileInput, errorFile, 'Please select an image file.');
+          valid = false;
+        } else {
+          const file = fileInput.files[0];
+          if (!['image/png','image/jpeg','image/gif','image/webp'].includes(file.type)) {
+            showError(fileInput, errorFile, 'Invalid file type. PNG, JPG, GIF, WEBP only.');
+            valid = false;
+          } else if (file.size > 5*1024*1024) {
+            showError(fileInput, errorFile, 'File too large (max 5MB).');
+            valid = false;
+          }
+        }
+        // Description
+        const desc = descInput.value.trim();
+        if (!desc) {
+          showError(descInput, errorDesc, 'Description is required.');
+          valid = false;
+        } else if (desc.length > 300) {
+          showError(descInput, errorDesc, 'Description too long (max 300 characters).');
+          valid = false;
+        }
+        // Tags
+        const tags = window.getTagInputTags();
+        if (!tags.length) {
+          showError(tagInput, errorTag, 'At least one tag is required.');
+          valid = false;
+        } else if (tags.length > 5) {
+          showError(tagInput, errorTag, 'Maximum 5 tags allowed.');
+          valid = false;
+        }
+        return valid;
+      }
+      function showPreview() {
+        preview.innerHTML = '';
+        if (fileData && previewUrl) {
+          const img = document.createElement('img');
+          img.src = previewUrl;
+          img.alt = 'Preview of uploaded artwork';
+          img.className = 'preview-img';
+          img.width = 120;
+          img.height = 120;
+          preview.appendChild(img);
+          const details = document.createElement('div');
+          details.className = 'preview-details';
+          details.innerHTML = `<strong>File:</strong> ${fileName}<br><strong>Type:</strong> ${fileType}<br><strong>Size:</strong> ${(fileSize/1024).toFixed(1)} KB`;
+          preview.appendChild(details);
+        }
+      }
+      fileInput.addEventListener('change', function() {
+        fileData = null;
+        fileName = '';
+        fileType = '';
+        fileSize = 0;
+        previewUrl = '';
+        clearErrors();
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          if (!['image/png','image/jpeg','image/gif','image/webp'].includes(file.type)) {
+            showError(fileInput, errorFile, 'Invalid file type. PNG, JPG, GIF, WEBP only.');
+            return;
+          }
+          if (file.size > 5*1024*1024) {
+            showError(fileInput, errorFile, 'File too large (max 5MB).');
+            return;
+          }
+          fileName = file.name;
+          fileType = file.type;
+          fileSize = file.size;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            fileData = e.target.result;
+            previewUrl = fileData;
+            showPreview();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      descInput.addEventListener('input', function() {
+        if (descInput.value.length > 300) {
+          showError(descInput, errorDesc, 'Description too long (max 300 characters).');
+        } else {
+          errorDesc.style.display = 'none';
+          descInput.setAttribute('aria-invalid', 'false');
+        }
+      });
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearErrors();
+        if (!validate()) {
+          // Focus first error
+          if (fileInput.getAttribute('aria-invalid') === 'true') fileInput.focus();
+          else if (descInput.getAttribute('aria-invalid') === 'true') descInput.focus();
+          else if (tagInput.getAttribute('aria-invalid') === 'true') tagInput.focus();
+          return;
+        }
+        // Save to localStorage
+        const tags = window.getTagInputTags();
+        const artwork = {
+          id: 'art-' + Date.now(),
+          image: fileData,
+          imageAlt: descInput.value.trim().substring(0, 60),
+          description: descInput.value.trim(),
+          tags: tags,
+          uploaded: new Date().toISOString()
+        };
+        let artworks = JSON.parse(localStorage.getItem('artshare-artworks') || '[]');
+        artworks.unshift(artwork);
+        localStorage.setItem('artshare-artworks', JSON.stringify(artworks));
+        // Reset form
+        form.reset();
+        window.setTagInputTags([]);
+        fileData = null;
+        fileName = '';
+        fileType = '';
+        fileSize = 0;
+        previewUrl = '';
+        preview.innerHTML = '';
+        showStatus('Artwork uploaded successfully!', 'success');
+        renderGallery();
+        // Move focus to gallery
+        setTimeout(() => {
+          document.getElementById('gallery-section-heading').focus();
+        }, 100);
+      });
+      resetBtn.addEventListener('click', function() {
+        form.reset();
+        window.setTagInputTags([]);
+        fileData = null;
+        fileName = '';
+        fileType = '';
+        fileSize = 0;
+        previewUrl = '';
+        preview.innerHTML = '';
+        clearErrors();
+      });
+    })();
+
+    // Gallery rendering, filtering, modal
+    function getArtworks() {
+      return JSON.parse(localStorage.getItem('artshare-artworks') || '[]');
+    }
+    function setArtworks(arr) {
+      localStorage.setItem('artshare-artworks', JSON.stringify(arr));
+    }
+    function getAllTags(artworks) {
+      const tags = new Set();
+      artworks.forEach(a => a.tags.forEach(t => tags.add(t)));
+      return Array.from(tags).sort();
+    }
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+    }
+    function renderGallery() {
+      const grid = document.getElementById('gallery-grid');
+      const searchInput = document.getElementById('search-input');
+      const filters = document.getElementById('gallery-filters');
+      let artworks = getArtworks();
+      // Search/filter
+      const q = searchInput.value.trim().toLowerCase();
+      const activeTag = filters.querySelector('.filter-btn.active')?.dataset.tag || '';
+      let filtered = artworks;
+      if (q) {
+        filtered = filtered.filter(a =>
+          a.description.toLowerCase().includes(q) ||
+          a.tags.some(t => t.includes(q))
+        );
+      }
+      if (activeTag) {
+        filtered = filtered.filter(a => a.tags.includes(activeTag));
+      }
+      // Render filters
+      filters.innerHTML = '';
+      const allTags = getAllTags(artworks);
+      allTags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'filter-btn' + (tag === activeTag ? ' active' : '');
+        btn.dataset.tag = tag;
+        btn.setAttribute('aria-pressed', tag === activeTag ? 'true' : 'false');
+        btn.textContent = tag;
+        btn.addEventListener('click', function() {
+          // Remove all active
+          filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderGallery();
+        });
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+          }
+        });
+        filters.appendChild(btn);
+      });
+      // Add clear filter
+      if (activeTag) {
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'filter-btn btn-secondary';
+        clearBtn.textContent = 'Clear Filter';
+        clearBtn.addEventListener('click', function() {
+          filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          renderGallery();
+        });
+        filters.appendChild(clearBtn);
+      }
+      // Render gallery cards
+      grid.innerHTML = '';
+      if (!filtered.length) {
+        grid.innerHTML = `<p>No artworks found. Try uploading or changing filters.</p>`;
+        return;
+      }
+      filtered.forEach((a, idx) => {
+        const card = document.createElement('article');
+        card.className = 'gallery-card';
+        card.tabIndex = 0;
+        card.setAttribute('aria-labelledby', `gallery-desc-${a.id}`);
+        card.setAttribute('role', 'region');
+        // Image
+        const img = document.createElement('img');
+        img.src = a.image;
+        img.alt = a.imageAlt || 'Artwork';
+        img.className = 'gallery-img';
+        img.width = 320;
+        img.height = 220;
+        card.appendChild(img);
+        // Description
+        const desc = document.createElement('div');
+        desc.className = 'gallery-description';
+        desc.id = `gallery-desc-${a.id}`;
+        desc.textContent = a.description;
+        card.appendChild(desc);
+        // Tags
+        const tagsDiv = document.createElement('div');
+        tagsDiv.className = 'gallery-tags';
+        a.tags.forEach(tag => {
+          const tagEl = document.createElement('span');
+          tagEl.className = 'gallery-tag';
+          tagEl.textContent = tag;
+          tagsDiv.appendChild(tagEl);
+        });
+        card.appendChild(tagsDiv);
+        // Meta
+        const meta = document.createElement('div');
+        meta.className = 'gallery-meta';
+        meta.textContent = `Uploaded: ${formatDate(a.uploaded)}`;
+        card.appendChild(meta);
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'gallery-actions';
+        const viewBtn = document.createElement('button');
+        viewBtn.type = 'button';
+        viewBtn.className = 'btn btn-secondary';
+        viewBtn.textContent = 'View';
+        viewBtn.setAttribute('aria-label', `View artwork: ${a.description}`);
+        viewBtn.addEventListener('click', () => openModal(a));
+        viewBtn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(a);
+          }
+        });
+        actions.appendChild(viewBtn);
+        // Remove button (for demo, local only)
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn';
+        removeBtn.style.background = 'var(--color-error)';
+        removeBtn.style.color = 'var(--color-error-bg)';
+        removeBtn.textContent = 'Remove';
+        removeBtn.setAttribute('aria-label', `Remove artwork: ${a.description}`);
+        removeBtn.addEventListener('click', () => {
+          if (confirm('Are you sure you want to remove this artwork?')) {
+            let artworks = getArtworks();
+            artworks = artworks.filter(x => x.id !== a.id);
+            setArtworks(artworks);
+            renderGallery();
+            showStatus('Artwork removed.', 'success');
+          }
+        });
+        actions.appendChild(removeBtn);
+        card.appendChild(actions);
+        grid.appendChild(card);
+      });
+    }
+    // Search form
+    document.getElementById('search-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      renderGallery();
+    });
+    document.getElementById('search-input').addEventListener('input', function() {
+      renderGallery();
+    });
+
+    // Modal dialog for artwork
+    function openModal(a) {
+      const overlay = document.getElementById('modal-overlay');
+      const dialog = document.getElementById('modal-dialog');
+      const content = document.getElementById('modal-content');
+      overlay.setAttribute('aria-hidden', 'false');
+      content.innerHTML = `
+        <h2 id="modal-title" style="margin-top:0;">Artwork Details</h2>
+        <img src="${a.image}" alt="${a.imageAlt || 'Artwork'}" style="max-width:100%;border-radius:12px;border:2px solid var(--color-border);background:var(--color-bg-alt);" width="400" height="300">
+        <div id="modal-desc" style="margin-top:1em;">
+          <strong>Description:</strong> ${a.description}<br>
+          <strong>Tags:</strong> ${a.tags.map(t=>`<span class="gallery-tag">${t}</span>`).join(' ')}<br>
+          <strong>Uploaded:</strong> ${formatDate(a.uploaded)}
+        </div>
+      `;
+      dialog.focus();
+      // Trap focus
+      const focusable = overlay.querySelectorAll('button, [tabindex]:not([tabindex="-1"])');
+      let first = focusable[0], last = focusable[focusable.length-1];
+      function trap(e) {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        } else if (e.key === 'Escape') {
+          closeModal();
+        }
+      }
+      dialog.addEventListener('keydown', trap);
+      overlay.addEventListener('keydown', trap);
+      // Close
+      document.getElementById('modal-close-btn').onclick = closeModal;
+      overlay.onclick = function(e) {
+        if (e.target === overlay) closeModal();
+      };
+      function closeModal() {
+        overlay.setAttribute('aria-hidden', 'true');
+        content.innerHTML = '';
+        dialog.removeEventListener('keydown', trap);
+        overlay.removeEventListener('keydown', trap);
+        // Return focus to gallery
+        setTimeout(() => {
+          document.getElementById('gallery-section-heading').focus();
+        }, 100);
+      }
+    }
+    // Initial render
+    renderGallery();
+
+    // Status region
+    function showStatus(msg, type) {
+      const region = document.getElementById('status-region');
+      region.innerHTML = `<div class="${type === 'success' ? 'success-message' : 'error-message'}" role="status" aria-live="polite">${msg}</div>`;
+      setTimeout(() => { region.innerHTML = ''; }, 4000);
+    }
+
+    // Reduced motion: remove animation
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.classList.add('reduced-motion');
+    }
+  </script>
+</body>
+</html>

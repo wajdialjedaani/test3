@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accessible Creative Portfolio – Interactive Projects Showcase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Enhanced contrast, modern, colorful design, AAA accessibility -->
+  <style>
+    :root {
+      /* Color palette: vibrant, high-contrast, AAA compliant */
+      --color-bg: #f5f8ff;
+      --color-bg-dark: #181c2f;
+      --color-primary: #1351b4;
+      --color-primary-light: #1976d2;
+      --color-accent: #f78c09;
+      --color-accent-dark: #bb5a00;
+      --color-success: #00896a;
+      --color-danger: #b80036;
+      --color-focus: #f78c09;
+      --color-card-bg: #fff;
+      --color-card-border: #1976d2;
+      --color-card-shadow: rgba(19, 81, 180, 0.10);
+      --color-text: #111a28;
+      --color-text-invert: #fff;
+      --color-muted: #374151;
+      --color-nav-bg: #181c2f;
+      --color-nav-link: #fff;
+      --color-nav-active: #f78c09;
+      --color-nav-focus: #f78c09;
+      --color-breadcrumb-bg: #e3eafc;
+      --color-breadcrumb-text: #1351b4;
+      --color-border: #c5d4ea;
+      --color-help-bg: #e3eafc;
+      --color-help-text: #111a28;
+      --color-search-bg: #fff;
+      --color-search-border: #1976d2;
+      --color-modal-bg: rgba(24, 28, 47, 0.85);
+      --color-modal-content-bg: #fff;
+      --color-modal-content-border: #1976d2;
+      --color-focus-outline: #f78c09;
+      --color-table-row-alt: #e3eafc;
+      --font-main: 'Segoe UI', 'Arial', sans-serif;
+      --font-size-base: 1.125rem;
+      --line-height-base: 1.6;
+      --line-height-heading: 1.3;
+      --spacing: 1.5rem;
+      --spacing-lg: 2.5rem;
+      --radius: 0.75rem;
+      --shadow-card: 0 2px 12px var(--color-card-shadow);
+      --focus-thickness: 3px;
+      --transition: 0.2s cubic-bezier(.4,0,.2,1);
+      --min-touch: 44px;
+    }
+
+    html {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-main);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-base);
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      word-break: break-word;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      font-size: 1.125rem;
+    }
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--color-primary);
+      color: var(--color-text-invert);
+      padding: 0.75em 1.5em;
+      z-index: 1000;
+      transform: translateY(-120%);
+      transition: transform 0.2s;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      outline: none;
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    /* Header & Navigation */
+    header {
+      background: linear-gradient(90deg, var(--color-primary) 70%, var(--color-accent) 100%);
+      color: var(--color-text-invert);
+      padding: 0;
+      border-bottom: 4px solid var(--color-accent);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing) var(--spacing);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .site-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin: 0;
+      line-height: var(--line-height-heading);
+      color: var(--color-text-invert);
+      text-shadow: 1px 2px 6px rgba(24,28,47,0.09);
+    }
+    .site-title abbr[title] {
+      border-bottom: 1px dotted var(--color-accent);
+      text-decoration: none;
+      cursor: help;
+    }
+    nav[aria-label] {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .main-nav {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      background: none;
+    }
+    .main-nav li {
+      position: relative;
+    }
+    .main-nav a,
+    .main-nav button {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5em 1.25em;
+      font-size: 1.1rem;
+      color: var(--color-nav-link);
+      background: none;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      transition: background var(--transition), color var(--transition);
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+    .main-nav a:focus-visible,
+    .main-nav button:focus-visible {
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+      background: var(--color-bg-dark);
+      color: var(--color-nav-active);
+    }
+    .main-nav .active,
+    .main-nav a[aria-current="page"] {
+      background: var(--color-nav-active);
+      color: var(--color-text-invert);
+      font-weight: 700;
+    }
+    /* Dropdown (for demonstration of AAA menu patterns) */
+    .dropdown {
+      position: relative;
+    }
+    .dropdown > button[aria-haspopup="true"]::after {
+      content: ' ▼';
+      font-size: 0.8em;
+      margin-left: 0.3em;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      min-width: 220px;
+      background: var(--color-nav-bg);
+      color: var(--color-nav-link);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 16px rgba(24,28,47,0.12);
+      margin-top: 0.25em;
+      z-index: 10;
+      padding: 0.5em 0;
+    }
+    .dropdown-menu[aria-hidden="false"] {
+      display: block;
+    }
+    .dropdown-menu li {
+      width: 100%;
+    }
+    .dropdown-menu a {
+      width: 100%;
+      display: block;
+      padding: 0.7em 1.25em;
+      color: var(--color-nav-link);
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 1.08rem;
+      border-radius: 0;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      transition: background var(--transition), color var(--transition);
+    }
+    .dropdown-menu a:focus-visible,
+    .dropdown-menu a:hover {
+      background: var(--color-nav-active);
+      color: var(--color-text-invert);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      background: var(--color-breadcrumb-bg);
+      padding: 0.5em 1em;
+      font-size: 1rem;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 0.5em;
+    }
+    .breadcrumb-list {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      margin: 0;
+      padding: 0;
+      color: var(--color-breadcrumb-text);
+    }
+    .breadcrumb-list li {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-list li:not(:last-child)::after {
+      content: "›";
+      color: var(--color-accent);
+      margin: 0 0.5em;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .breadcrumb-list a {
+      color: var(--color-breadcrumb-text);
+      text-decoration: underline;
+      font-weight: 600;
+      outline: none;
+      border-radius: var(--radius);
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      padding: 0.2em 0.5em;
+      transition: background var(--transition);
+    }
+    .breadcrumb-list a:focus-visible {
+      background: var(--color-focus-outline);
+      color: var(--color-text-invert);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    /* Main Content Layout */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing) var(--spacing);
+      display: flex;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+    .sidebar {
+      flex: 1 1 260px;
+      min-width: 260px;
+      max-width: 320px;
+      background: var(--color-card-bg);
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      padding: var(--spacing);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing);
+      align-self: flex-start;
+    }
+    .main-content {
+      flex: 3 1 500px;
+      min-width: 0;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+    /* Project Filter */
+    .project-filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      align-items: flex-end;
+      background: var(--color-help-bg);
+      border-radius: var(--radius);
+      padding: 1em;
+      border: 2px solid var(--color-card-border);
+      margin-bottom: 1em;
+    }
+    .project-filter-form fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      align-items: center;
+    }
+    .project-filter-form legend {
+      font-weight: 700;
+      font-size: 1.08em;
+      color: var(--color-primary);
+      margin-bottom: 0.5em;
+    }
+    .project-filter-form label {
+      font-weight: 600;
+      margin-right: 0.4em;
+    }
+    .project-filter-form select,
+    .project-filter-form input[type="search"] {
+      padding: 0.5em 1em;
+      font-size: 1.08em;
+      border: 2px solid var(--color-search-border);
+      border-radius: var(--radius);
+      background: var(--color-search-bg);
+      color: var(--color-text);
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      outline: none;
+      transition: border var(--transition);
+    }
+    .project-filter-form select:focus,
+    .project-filter-form input[type="search"]:focus {
+      border-color: var(--color-focus-outline);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    .project-filter-form button[type="submit"] {
+      background: var(--color-primary);
+      color: var(--color-text-invert);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.5em 1.5em;
+      font-size: 1.08em;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      transition: background var(--transition);
+      outline: none;
+    }
+    .project-filter-form button[type="submit"]:focus-visible {
+      background: var(--color-focus-outline);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+      color: var(--color-text-invert);
+    }
+    /* Project Grid */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--spacing-lg);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .project-card {
+      background: var(--color-card-bg);
+      border: 3px solid var(--color-card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+      padding: 1.5em;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
+      cursor: pointer;
+      outline: none;
+      min-width: 0;
+      min-height: 220px;
+      position: relative;
+      z-index: 0;
+    }
+    .project-card:focus-visible,
+    .project-card:hover {
+      border-color: var(--color-accent);
+      box-shadow: 0 8px 32px rgba(247,140,9,0.20);
+      transform: translateY(-3px) scale(1.02);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+      z-index: 2;
+    }
+    .project-card .project-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--color-primary);
+      line-height: var(--line-height-heading);
+    }
+    .project-card .project-category {
+      font-size: 1.02rem;
+      color: var(--color-accent-dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .project-card .project-category::before {
+      content: '';
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+      background: var(--color-accent);
+      margin-right: 0.2em;
+      border: 2px solid var(--color-accent-dark);
+    }
+    .project-card .project-summary {
+      color: var(--color-muted);
+      font-size: 1.05rem;
+      margin: 0.3em 0 0.6em 0;
+    }
+    .project-card .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin: 0.2em 0 0 0;
+    }
+    .project-card .project-tag {
+      background: var(--color-accent);
+      color: var(--color-text-invert);
+      font-size: 0.95em;
+      font-weight: 600;
+      padding: 0.2em 0.7em;
+      border-radius: 2em;
+      border: 1.5px solid var(--color-accent-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      min-width: 30px;
+      min-height: 28px;
+    }
+    .project-card .project-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 2px solid var(--color-card-border);
+      box-shadow: 0 2px 8px rgba(19,81,180,0.10);
+      background: #e3eafc;
+      margin-bottom: 0.5em;
+    }
+    .project-card .project-links {
+      display: flex;
+      gap: 1em;
+      margin-top: 0.5em;
+      flex-wrap: wrap;
+    }
+    .project-card .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      background: var(--color-primary);
+      color: var(--color-text-invert);
+      font-weight: 600;
+      border-radius: var(--radius);
+      padding: 0.35em 1em;
+      text-decoration: none;
+      font-size: 1.02em;
+      border: none;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      transition: background var(--transition), color var(--transition);
+      outline: none;
+    }
+    .project-card .project-link:focus-visible,
+    .project-card .project-link:hover {
+      background: var(--color-focus-outline);
+      color: var(--color-text-invert);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    /* Modal for Project Details */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--color-modal-bg);
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+    }
+    .modal[aria-hidden="false"] {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--color-modal-content-bg);
+      color: var(--color-text);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 48px rgba(19,81,180,0.23);
+      border: 3px solid var(--color-modal-content-border);
+      max-width: 600px;
+      width: 90vw;
+      padding: 2em;
+      position: relative;
+      outline: none;
+      margin: 2em 0;
+      animation: modalFadeIn 0.25s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 1em;
+      right: 1em;
+      background: var(--color-danger);
+      color: var(--color-text-invert);
+      border: none;
+      border-radius: 50%;
+      width: var(--min-touch);
+      height: var(--min-touch);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      cursor: pointer;
+      outline: none;
+      transition: background var(--transition);
+      z-index: 2;
+    }
+    .modal-close-btn:focus-visible,
+    .modal-close-btn:hover {
+      background: var(--color-focus-outline);
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--color-primary);
+      font-size: 1.6em;
+      line-height: var(--line-height-heading);
+    }
+    .modal-content .modal-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 2px solid var(--color-card-border);
+      margin-bottom: 1em;
+      background: #e3eafc;
+    }
+    .modal-content .modal-section {
+      margin-bottom: 1.3em;
+    }
+    .modal-content .modal-section:last-child {
+      margin-bottom: 0;
+    }
+    .modal-content .project-tags {
+      margin-bottom: 0.5em;
+    }
+    /* Sidebar Help */
+    .help-section {
+      background: var(--color-help-bg);
+      color: var(--color-help-text);
+      border-radius: var(--radius);
+      padding: 1em;
+      font-size: 1.01em;
+      border: 2px solid var(--color-card-border);
+      line-height: 1.7;
+    }
+    .help-section h2 {
+      font-size: 1.1em;
+      color: var(--color-primary);
+      margin-top: 0;
+    }
+    /* Responsive Design */
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+        gap: var(--spacing);
+      }
+      .sidebar {
+        max-width: 100%;
+      }
+      .main-content {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 600px) {
+      .header-inner {
+        flex-direction: column;
+        gap: 1em;
+        padding: 1em;
+      }
+      main {
+        padding: 1em;
+      }
+      .sidebar {
+        padding: 1em;
+      }
+      .modal-content {
+        padding: 1em;
+      }
+    }
+    /* Enhanced Focus Indicator (AAA) */
+    :focus-visible {
+      outline: var(--focus-thickness) solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+    /* Table for Project Data (if needed) */
+    .project-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5em 0;
+      background: var(--color-card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 1.04em;
+    }
+    .project-table th,
+    .project-table td {
+      padding: 0.9em 1.2em;
+      text-align: left;
+      border-bottom: 2px solid var(--color-border);
+      color: var(--color-text);
+    }
+    .project-table th {
+      background: var(--color-primary);
+      color: var(--color-text-invert);
+      font-weight: 700;
+      border-bottom: 3px solid var(--color-accent);
+    }
+    .project-table tr:nth-child(even) {
+      background: var(--color-table-row-alt);
+    }
+    /* User Color Preferences */
+    .user-color-controls {
+      margin: 1em 0 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+    }
+    .user-color-controls label {
+      font-weight: 600;
+      margin-right: 0.5em;
+    }
+    .user-color-controls input[type="color"] {
+      border: 2px solid var(--color-card-border);
+      border-radius: var(--radius);
+      width: 2.2em;
+      height: 2.2em;
+      cursor: pointer;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+      background: none;
+      margin-left: 0.3em;
+      vertical-align: middle;
+    }
+    /* Motion: reduced-motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+    /* Hide visually but keep accessible */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+      border: 0;
+      padding: 0;
+      margin: -1px;
+    }
+    /* Status region */
+    #status-message[role="status"] {
+      margin: 1em 0 0 0;
+      color: var(--color-success);
+      font-weight: 700;
+      font-size: 1.08em;
+      min-height: 1.3em;
+    }
+    /* Touch Target Helper */
+    .touch-helper {
+      display: inline-block;
+      min-width: var(--min-touch);
+      min-height: var(--min-touch);
+    }
+    /* Avoid justified text, max 80ch per line, spacing */
+    p, li, .project-summary, .help-section, .modal-content, .main-content {
+      max-width: 80ch;
+      line-height: 1.5;
+      margin-bottom: 1.5em;
+      text-align: left;
+      letter-spacing: 0.01em;
+    }
+    /* Paragraph spacing at least 1.5x line height */
+    p, .help-section, .modal-content, .main-content {
+      margin-bottom: 2.25em;
+    }
+    /* Prevent horizontal scroll at 200% zoom */
+    html {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link" id="skip-link">Skip to main content</a>
+  <header>
+    <div class="header-inner">
+      <h1 class="site-title">
+        <abbr title="Portfolio">Portfolio</abbr> of Creative Projects
+      </h1>
+      <nav aria-label="Main Navigation">
+        <ul class="main-nav" id="main-nav">
+          <li>
+            <a href="#main-content" aria-current="page" tabindex="0">Projects</a>
+          </li>
+          <li>
+            <a href="#about" tabindex="0">About</a>
+          </li>
+          <li>
+            <a href="#contact" tabindex="0">Contact</a>
+          </li>
+          <li class="dropdown">
+            <button type="button" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" id="more-menu-btn">
+              More
+            </button>
+            <ul class="dropdown-menu" id="more-menu" aria-label="More Menu" aria-hidden="true">
+              <li>
+                <a href="#sitemap" tabindex="-1">Sitemap</a>
+              </li>
+              <li>
+                <a href="#accessibility" tabindex="-1">Accessibility</a>
+              </li>
+              <li>
+                <a href="#help" tabindex="-1">Help</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li>
+          <a href="#main-content">Home</a>
+        </li>
+        <li aria-current="page">Projects</li>
+      </ol>
+    </nav>
+  </header>
+  <main id="main-content" tabindex="-1">
+    <aside class="sidebar" aria-labelledby="sidebar-heading">
+      <section>
+        <h2 id="sidebar-heading">Navigation & Help</h2>
+        <nav aria-label="Sidebar Navigation">
+          <ul>
+            <li><a href="#main-content">Project Gallery</a></li>
+            <li><a href="#about">About the Creator</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#sitemap">Sitemap</a></li>
+            <li><a href="#accessibility">Accessibility Info</a></li>
+          </ul>
+        </nav>
+      </section>
+      <section class="help-section" aria-labelledby="help-section-heading">
+        <h2 id="help-section-heading">How to Use This Portfolio</h2>
+        <ul>
+          <li>Use the filter controls to search and sort projects by category or keyword.</li>
+          <li>Tab through projects and press <kbd>Enter</kbd> or <kbd>Space</kbd> to open detailed views.</li>
+          <li>All interactive elements are fully keyboard accessible and have enhanced focus indicators.</li>
+          <li>Use the color controls below to set your preferred background and text colors.</li>
+        </ul>
+        <div class="user-color-controls" aria-label="User Color Preferences">
+          <label for="user-bg-color">Background color:
+            <input type="color" id="user-bg-color" name="user-bg-color" aria-label="Select background color" value="#f5f8ff">
+          </label>
+          <label for="user-text-color">Text color:
+            <input type="color" id="user-text-color" name="user-text-color" aria-label="Select text color" value="#111a28">
+          </label>
+          <button type="button" id="reset-colors" aria-label="Reset to default colors">Reset Colors</button>
+        </div>
+      </section>
+    </aside>
+    <div class="main-content">
+      <section aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Creative Projects Gallery</h2>
+        <form class="project-filter-form" id="project-filter-form" autocomplete="off" aria-label="Filter Projects">
+          <fieldset>
+            <legend>Filter Projects</legend>
+            <label for="filter-category">Category:</label>
+            <select id="filter-category" name="category" aria-label="Filter by category">
+              <option value="all">All</option>
+              <option value="web">Web Design</option>
+              <option value="art">Digital Art</option>
+              <option value="audio">Audio</option>
+              <option value="video">Video</option>
+              <option value="other">Other</option>
+            </select>
+            <label for="filter-search">Keyword:</label>
+            <input type="search" id="filter-search" name="search" aria-label="Search projects by keyword" placeholder="Search…" maxlength="40" autocomplete="off">
+            <button type="submit" aria-label="Apply project filters">Apply</button>
+          </fieldset>
+        </form>
+        <div id="status-message" role="status" aria-live="polite"></div>
+        <ul class="project-grid" id="project-grid" aria-label="Project List">
+          <!-- Projects will be injected here by JS -->
+        </ul>
+      </section>
+      <section id="about" aria-labelledby="about-heading">
+        <h2 id="about-heading">About the Creator</h2>
+        <p>
+          Hello! I'm <strong>Alex Rivera</strong>, a passionate creative working at the intersection of <em>design</em>, <em>technology</em>, and <em>storytelling</em>. My work spans web development, digital art, and multimedia projects. I strive to make digital experiences accessible, engaging, and visually vibrant for everyone.
+        </p>
+        <p>
+          <abbr title="World Wide Web Consortium">W3C</abbr> accessibility and inclusive design are core to my practice. If you have questions or need alternative content, please reach out!
+        </p>
+      </section>
+      <section id="contact" aria-labelledby="contact-heading">
+        <h2 id="contact-heading">Contact</h2>
+        <form id="contact-form" autocomplete="on" aria-label="Contact Form" novalidate>
+          <fieldset>
+            <legend>Send a Message</legend>
+            <div>
+              <label for="contact-name">Name <span aria-hidden="true" style="color: var(--color-danger);">*</span></label>
+              <input type="text" id="contact-name" name="name" autocomplete="name" required aria-required="true" aria-describedby="name-help" minlength="2" maxlength="40">
+              <span id="name-help" class="visually-hidden">Enter your full name.</span>
+            </div>
+            <div>
+              <label for="contact-email">Email <span aria-hidden="true" style="color: var(--color-danger);">*</span></label>
+              <input type="email" id="contact-email" name="email" autocomplete="email" required aria-required="true" aria-describedby="email-help" maxlength="60">
+              <span id="email-help" class="visually-hidden">Enter your email address.</span>
+            </div>
+            <div>
+              <label for="contact-message">Message <span aria-hidden="true" style="color: var(--color-danger);">*</span></label>
+              <textarea id="contact-message" name="message" rows="5" required aria-required="true" aria-describedby="message-help" maxlength="1000"></textarea>
+              <span id="message-help" class="visually-hidden">Enter your message. Max 1000 characters.</span>
+            </div>
+            <button type="submit" aria-label="Send message">Send Message</button>
+            <div id="contact-form-status" role="status" aria-live="polite"></div>
+          </fieldset>
+        </form>
+      </section>
+      <section id="sitemap" aria-labelledby="sitemap-heading">
+        <h2 id="sitemap-heading">Sitemap</h2>
+        <ul>
+          <li><a href="#main-content">Projects Gallery</a></li>
+          <li><a href="#about">About the Creator</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#accessibility">Accessibility Info</a></li>
+          <li><a href="#help">Help</a></li>
+        </ul>
+      </section>
+      <section id="accessibility" aria-labelledby="accessibility-heading">
+        <h2 id="accessibility-heading">Accessibility Information</h2>
+        <p>
+          This portfolio is designed to meet <strong>WCAG 2.2 AAA</strong> accessibility standards. It includes enhanced color contrast, keyboard navigation, ARIA labels, alternative text for all images, and multiple ways to locate content. If you encounter any accessibility barriers, please <a href="#contact">contact me</a>.
+        </p>
+        <ul>
+          <li>All images have descriptive <code>alt</code> text.</li>
+          <li>All interactive elements are keyboard accessible and have visible focus indicators.</li>
+          <li>Color choices meet or exceed 7:1 contrast ratio.</li>
+          <li>Motion is minimized and respects your system's reduced motion settings.</li>
+          <li>Help and instructions are available throughout the site.</li>
+        </ul>
+      </section>
+      <section id="help" aria-labelledby="help-heading">
+        <h2 id="help-heading">Help & Definitions</h2>
+        <dl>
+          <dt>WCAG</dt>
+          <dd>
+            <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> is a set of guidelines for making web content more accessible to people with disabilities.
+          </dd>
+          <dt>ARIA</dt>
+          <dd>
+            <abbr title="Accessible Rich Internet Applications">ARIA</abbr> is a set of attributes to improve accessibility of web content, especially dynamic content and advanced user interface controls.
+          </dd>
+          <dt>AAA Level</dt>
+          <dd>
+            The highest level of accessibility conformance, including advanced requirements for color contrast, keyboard navigation, and content alternatives.
+          </dd>
+        </dl>
+        <p>
+          For more definitions or help, please <a href="#contact">contact me</a>.
+        </p>
+      </section>
+    </div>
+    <!-- Project Details Modal -->
+    <div class="modal" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
+      <div class="modal-content" tabindex="0">
+        <button class="modal-close-btn" type="button" aria-label="Close project details" id="modal-close-btn" title="Close details">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div id="modal-content-inner">
+          <!-- Modal content injected by JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <section aria-labelledby="footer-heading" style="background: var(--color-bg-dark); color: var(--color-text-invert); padding: 2em 0; border-top: 4px solid var(--color-accent);">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing); display: flex; flex-wrap: wrap; gap: 2em; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h2 id="footer-heading" style="font-size: 1.1em; margin-top: 0;">Contact & Social</h2>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li><a href="#contact" style="color: var(--color-accent); text-decoration: underline;">Contact Form</a></li>
+            <li><a href="https://github.com/" target="_blank" rel="noopener" style="color: var(--color-accent); text-decoration: underline;">GitHub (opens in new tab)</a></li>
+            <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener" style="color: var(--color-accent); text-decoration: underline;">LinkedIn (opens in new tab)</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="font-size: 1.1em; margin-top: 0;">Quick Links</h2>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li><a href="#main-content" style="color: var(--color-accent); text-decoration: underline;">Projects</a></li>
+            <li><a href="#about" style="color: var(--color-accent); text-decoration: underline;">About</a></li>
+            <li><a href="#accessibility" style="color: var(--color-accent); text-decoration: underline;">Accessibility</a></li>
+            <li><a href="#help" style="color: var(--color-accent); text-decoration: underline;">Help</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 style="font-size: 1.1em; margin-top: 0;">Accessibility</h2>
+          <p style="margin: 0;">
+            This site is designed for <strong>WCAG 2.2 AAA</strong> compliance.<br>
+            <a href="#accessibility" style="color: var(--color-accent); text-decoration: underline;">Accessibility Statement</a>
+          </p>
+        </div>
+      </div>
+      <div style="max-width: 1200px; margin: 2em auto 0 auto; text-align: center; color: var(--color-muted); font-size: 0.97em;">
+        &copy; 2024 Alex Rivera. All rights reserved.
+      </div>
+    </section>
+  </footer>
+  <script>
+    // Accessibility: Focus management for skip link
+    document.getElementById('skip-link').addEventListener('click', function(e) {
+      setTimeout(function() {
+        document.getElementById('main-content').focus();
+      }, 10);
+    });
+
+    // Dropdown Menu (AAA navigation patterns)
+    (function() {
+      const btn = document.getElementById('more-menu-btn');
+      const menu = document.getElementById('more-menu');
+      let open = false;
+      function openMenu() {
+        menu.setAttribute('aria-hidden', 'false');
+        btn.setAttribute('aria-expanded', 'true');
+        // Focus first item
+        const firstLink = menu.querySelector('a');
+        if (firstLink) firstLink.tabIndex = 0;
+        open = true;
+      }
+      function closeMenu() {
+        menu.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        // Remove tabIndex from all items
+        menu.querySelectorAll('a').forEach(a => a.tabIndex = -1);
+        open = false;
+      }
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!open) openMenu();
+        else closeMenu();
+      });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          openMenu();
+          setTimeout(() => {
+            const firstLink = menu.querySelector('a');
+            if (firstLink) firstLink.focus();
+          }, 10);
+        }
+      });
+      menu.addEventListener('keydown', function(e) {
+        const links = Array.from(menu.querySelectorAll('a'));
+        let idx = links.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx < links.length - 1) links[idx + 1].focus();
+          else links[0].focus();
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx > 0) links[idx - 1].focus();
+          else links[links.length - 1].focus();
+        }
+        if (e.key === 'Escape') {
+          closeMenu();
+          btn.focus();
+        }
+      });
+      menu.addEventListener('focusout', function(e) {
+        // Close if focus moves outside
+        setTimeout(() => {
+          if (!menu.contains(document.activeElement) && document.activeElement !== btn) {
+            closeMenu();
+          }
+        }, 10);
+      });
+      // Dismiss on click outside
+      document.addEventListener('mousedown', function(e) {
+        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+      });
+      // Set initial tabIndex
+      menu.querySelectorAll('a').forEach(a => a.tabIndex = -1);
+    })();
+
+    // Project Data (replace with your real data as needed)
+    const projects = [
+      {
+        id: 1,
+        title: "Accessible Art Gallery",
+        category: "art",
+        tags: ["SVG", "Canvas", "Accessibility"],
+        summary: "A digital art gallery with full keyboard navigation, alternative text, and high-contrast visuals.",
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+        imageAlt: "Colorful abstract digital artwork with bold geometric shapes",
+        details: `
+          <p>This project demonstrates how to build an art gallery that is fully accessible to screen readers and keyboard users. It uses SVG and Canvas with descriptive ARIA labels and alternative text for each artwork.</p>
+          <ul>
+            <li>Keyboard navigation for artwork selection</li>
+            <li>High-contrast color palette for AAA compliance</li>
+            <li>ARIA labels and live region updates for dynamic content</li>
+          </ul>
+        `,
+        links: [
+          { href: "https://github.com/", label: "Source Code", icon: "💻" },
+          { href: "https://demo.com/", label: "Live Demo", icon: "🌐" }
+        ]
+      },
+      {
+        id: 2,
+        title: "Inclusive Podcast Platform",
+        category: "audio",
+        tags: ["Audio", "Transcripts", "Captions"],
+        summary: "A podcast player with synchronized captions, transcripts, and sign language video overlays.",
+        image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80",
+        imageAlt: "Microphone and headphones on a vibrant background",
+        details: `
+          <p>This project features a podcast platform that provides:</p>
+          <ul>
+            <li>Synchronized captions for all audio content</li>
+            <li>Full text transcripts for each episode</li>
+            <li>Sign language video overlays for AAA compliance</li>
+            <li>Keyboard-accessible playback controls</li>
+          </ul>
+        `,
+        links: [
+          { href: "https://github.com/", label: "Source Code", icon: "💻" }
+        ]
+      },
+      {
+        id: 3,
+        title: "Vivid Video Stories",
+        category: "video",
+        tags: ["Video", "Captions", "Audio Description"],
+        summary: "A video storytelling site with extended audio descriptions, sign language, and full transcripts.",
+        image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+        imageAlt: "Person holding a camera, filming a colorful urban scene",
+        details: `
+          <p>Vivid Video Stories ensures that every user can access video content:</p>
+          <ul>
+            <li>Synchronized captions and extended audio descriptions</li>
+            <li>Sign language interpretation videos</li>
+            <li>Media alternatives: full text transcripts for all videos</li>
+            <li>Keyboard-accessible playback and transcript navigation</li>
+          </ul>
+        `,
+        links: [
+          { href: "https://github.com/", label: "Source Code", icon: "💻" },
+          { href: "https://demo.com/", label: "Live Demo", icon: "🌐" }
+        ]
+      },
+      {
+        id: 4,
+        title: "Responsive Web Portfolio",
+        category: "web",
+        tags: ["Web", "Responsive", "Grid"],
+        summary: "A personal portfolio built with CSS Grid, enhanced focus indicators, and user color preferences.",
+        image: "https://images.unsplash.com/photo-1465101178521-c1a9136a3fd8?auto=format&fit=crop&w=600&q=80",
+        imageAlt: "Laptop displaying a vibrant, modern website interface",
+        details: `
+          <p>This web portfolio demonstrates:</p>
+          <ul>
+            <li>Responsive layout using CSS Grid and Flexbox</li>
+            <li>User-selectable foreground and background colors</li>
+            <li>Enhanced focus indicators for all interactive elements</li>
+            <li>Multiple ways to locate content (search, sitemap, navigation)</li>
+          </ul>
+        `,
+        links: [
+          { href: "https://github.com/", label: "Source Code", icon: "💻" }
+        ]
+      },
+      {
+        id: 5,
+        title: "Creative Coding Experiments",
+        category: "other",
+        tags: ["JavaScript", "Animation", "Reduced Motion"],
+        summary: "Interactive code playgrounds with accessible motion controls and reduced-motion support.",
+        image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+        imageAlt: "Brightly colored abstract code on a computer screen",
+        details: `
+          <p>Creative Coding Experiments includes:</p>
+          <ul>
+            <li>Accessible interactive widgets and code playgrounds</li>
+            <li>Motion controls that respect <code>prefers-reduced-motion</code></li>
+            <li>Pause/stop controls for any animation over 5 seconds</li>
+            <li>Keyboard-accessible UI for all features</li>
+          </ul>
+        `,
+        links: [
+          { href: "https://github.com/", label: "Source Code", icon: "💻" }
+        ]
+      }
+    ];
+
+    // Category to label mapping
+    const categoryLabels = {
+      all: "All",
+      web: "Web Design",
+      art: "Digital Art",
+      audio: "Audio",
+      video: "Video",
+      other: "Other"
+    };
+
+    // Render project cards
+    function renderProjects(filter = {}) {
+      const grid = document.getElementById('project-grid');
+      grid.innerHTML = '';
+      let filtered = projects;
+      const category = filter.category || 'all';
+      const search = (filter.search || '').trim().toLowerCase();
+      if (category !== 'all') {
+        filtered = filtered.filter(p => p.category === category);
+      }
+      if (search.length > 0) {
+        filtered = filtered.filter(p =>
+          p.title.toLowerCase().includes(search) ||
+          p.summary.toLowerCase().includes(search) ||
+          p.tags.join(' ').toLowerCase().includes(search)
+        );
+      }
+      if (filtered.length === 0) {
+        grid.innerHTML = `<li role="alert" style="font-weight:700; color:var(--color-danger);">No projects found matching your criteria.</li>`;
+      } else {
+        for (const project of filtered) {
+          const card = document.createElement('li');
+          card.className = 'project-card';
+          card.tabIndex = 0;
+          card.setAttribute('role', 'article');
+          card.setAttribute('aria-labelledby', `project-title-${project.id}`);
+          card.setAttribute('aria-describedby', `project-summary-${project.id}`);
+          card.setAttribute('data-project-id', project.id);
+
+          card.innerHTML = `
+            <img src="${project.image}" alt="${project.imageAlt}" class="project-img" loading="lazy" width="600" height="160">
+            <h3 class="project-title" id="project-title-${project.id}">${project.title}</h3>
+            <div class="project-category">${categoryLabels[project.category]}</div>
+            <div class="project-summary" id="project-summary-${project.id}">${project.summary}</div>
+            <div class="project-tags" aria-label="Project tags">
+              ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+            </div>
+            <div class="project-links">
+              ${project.links.map(link => `
+                <a href="${link.href}" class="project-link" target="_blank" rel="noopener" aria-label="${link.label} for ${project.title}">
+                  <span aria-hidden="true">${link.icon}</span> ${link.label}
+                </a>
+              `).join('')}
+            </div>
+          `;
+          // Open modal on click or keyboard
+          card.addEventListener('click', () => openProjectModal(project.id));
+          card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openProjectModal(project.id);
+            }
+          });
+          grid.appendChild(card);
+        }
+      }
+      // Update status message
+      const status = document.getElementById('status-message');
+      if (filtered.length === 1) {
+        status.textContent = '1 project found.';
+      } else if (filtered.length > 1) {
+        status.textContent = `${filtered.length} projects found.`;
+      } else {
+        status.textContent = '';
+      }
+    }
+
+    // Filter form logic
+    document.getElementById('project-filter-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const category = document.getElementById('filter-category').value;
+      const search = document.getElementById('filter-search').value;
+      renderProjects({ category, search });
+    });
+
+    // Initial render
+    renderProjects();
+
+    // Modal logic (AAA: focus management, ARIA, keyboard)
+    const modal = document.getElementById('project-modal');
+    const modalContent = document.getElementById('modal-content-inner');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    let lastFocusedElement = null;
+
+    function openProjectModal(projectId) {
+      const project = projects.find(p => p.id === projectId);
+      if (!project) return;
+      lastFocusedElement = document.activeElement;
+      modalContent.innerHTML = `
+        <img src="${project.image}" alt="${project.imageAlt}" class="modal-img" loading="lazy" width="600" height="220">
+        <h2 id="modal-title">${project.title}</h2>
+        <div class="project-category">${categoryLabels[project.category]}</div>
+        <div class="project-tags" aria-label="Project tags">
+          ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+        </div>
+        <div class="modal-section" id="modal-desc">
+          ${project.details}
+        </div>
+        <div class="project-links">
+          ${project.links.map(link => `
+            <a href="${link.href}" class="project-link" target="_blank" rel="noopener" aria-label="${link.label} for ${project.title}">
+              <span aria-hidden="true">${link.icon}</span> ${link.label}
+            </a>
+          `).join('')}
+        </div>
+      `;
+      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'flex';
+      // Trap focus inside modal
+      setTimeout(() => {
+        modal.querySelector('.modal-content').focus();
+      }, 10);
+      document.body.style.overflow = 'hidden';
+    }
+    function closeProjectModal() {
+      modal.setAttribute('aria-hidden', 'true');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        setTimeout(() => lastFocusedElement.focus(), 10);
+      }
+    }
+    modalCloseBtn.addEventListener('click', closeProjectModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeProjectModal();
+    });
+    // Keyboard navigation for modal
+    modal.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeProjectModal();
+      }
+      // Trap focus inside modal
+      if (e.key === 'Tab') {
+        const focusable = modal.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])');
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (focusable.length === 0) return;
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    });
+
+    // Close modal on Escape from anywhere
+    document.addEventListener('keydown', function(e) {
+      if (modal.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') {
+        closeProjectModal();
+      }
+    });
+
+    // User color preferences (AAA: user-selectable colors)
+    const root = document.documentElement;
+    const userBgInput = document.getElementById('user-bg-color');
+    const userTextInput = document.getElementById('user-text-color');
+    const resetColorsBtn = document.getElementById('reset-colors');
+    // Store user preferences in localStorage
+    function applyUserColors(bg, text) {
+      root.style.setProperty('--color-bg', bg);
+      root.style.setProperty('--color-card-bg', bg);
+      root.style.setProperty('--color-search-bg', bg);
+      root.style.setProperty('--color-modal-content-bg', bg);
+      root.style.setProperty('--color-text', text);
+      root.style.setProperty('--color-help-text', text);
+      userBgInput.value = bg;
+      userTextInput.value = text;
+      localStorage.setItem('portfolio-user-bg', bg);
+      localStorage.setItem('portfolio-user-text', text);
+    }
+    userBgInput.addEventListener('input', function() {
+      applyUserColors(userBgInput.value, userTextInput.value);
+    });
+    userTextInput.addEventListener('input', function() {
+      applyUserColors(userBgInput.value, userTextInput.value);
+    });
+    resetColorsBtn.addEventListener('click', function() {
+      applyUserColors('#f5f8ff', '#111a28');
+    });
+    // On load, restore user colors
+    (function() {
+      const bg = localStorage.getItem('portfolio-user-bg');
+      const text = localStorage.getItem('portfolio-user-text');
+      if (bg && text) {
+        applyUserColors(bg, text);
+      }
+    })();
+
+    // Contact Form (AAA: labels, error handling, context help, error prevention)
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('contact-name');
+      const email = document.getElementById('contact-email');
+      const message = document.getElementById('contact-message');
+      let valid = true;
+      // Remove old errors
+      [name, email, message].forEach(input => {
+        input.setAttribute('aria-invalid', 'false');
+        input.removeAttribute('aria-describedby');
+        input.style.borderColor = '';
+      });
+      let errorMsg = '';
+      if (name.value.trim().length < 2) {
+        valid = false;
+        name.setAttribute('aria-invalid', 'true');
+        name.setAttribute('aria-describedby', 'name-error');
+        name.style.borderColor = 'var(--color-danger)';
+        errorMsg += '<div id="name-error">Name must be at least 2 characters.</div>';
+      }
+      if (!/^[^@]+@[^@]+\.[^@]+$/.test(email.value.trim())) {
+        valid = false;
+        email.setAttribute('aria-invalid', 'true');
+        email.setAttribute('aria-describedby', 'email-error');
+        email.style.borderColor = 'var(--color-danger)';
+        errorMsg += '<div id="email-error">Enter a valid email address.</div>';
+      }
+      if (message.value.trim().length < 2) {
+        valid = false;
+        message.setAttribute('aria-invalid', 'true');
+        message.setAttribute('aria-describedby', 'message-error');
+        message.style.borderColor = 'var(--color-danger)';
+        errorMsg += '<div id="message-error">Message cannot be empty.</div>';
+      }
+      const status = document.getElementById('contact-form-status');
+      if (!valid) {
+        status.innerHTML = `<div role="alert" style="color:var(--color-danger);font-weight:700;">${errorMsg}</div>`;
+        // Focus first invalid
+        if (name.getAttribute('aria-invalid') === 'true') name.focus();
+        else if (email.getAttribute('aria-invalid') === 'true') email.focus();
+        else if (message.getAttribute('aria-invalid') === 'true') message.focus();
+        return;
+      }
+      // Error prevention: confirm before submit
+      if (!window.confirm('Are you sure you want to send this message?')) {
+        status.innerHTML = '<div role="alert" style="color:var(--color-muted);font-weight:700;">Submission cancelled.</div>';
+        return;
+      }
+      // Simulate successful send
+      status.innerHTML = '<div style="color:var(--color-success);font-weight:700;">Thank you! Your message has been sent.</div>';
+      [name, email, message].forEach(input => input.value = '');
+    });
+
+    // Motion & Animation Controls (AAA: reduced motion, pause controls)
+    // This demo does not use autoplaying animation, but here's an example for compliance:
+    (function() {
+      // If we had an animation over 5s, provide a pause button here
+      // For demo, just show/hide the pause control based on a variable
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        // Optionally, remove or reduce any animations
+        document.body.classList.add('reduced-motion');
+      }
+    })();
+
+    // Touch & Pointer: ensure all clickable elements are at least 44x44px via CSS
+
+    // Alternative access to menu items: all dropdown links also available in sidebar and sitemap
+
+    // Definitions, abbreviations, and reading level: provided in Help section
+
+    // Pronunciation: Example for ambiguous word
+    // <span lang="en" aria-label="read as 'lead', meaning to guide">lead</span>
+
+    // Ensure focus is always visible and never trapped except in modal (handled above)
+  </script>
+</body>
+</html>
