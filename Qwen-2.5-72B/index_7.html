@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Mixer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header, footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .color-mixer {
+            display: flex;
+            gap: 1rem;
+        }
+        .color-mixer input[type="color"] {
+            width: 100px;
+            height: 100px;
+        }
+        .color-mixer label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .color-preview {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .color-preview .color-box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .color-box::before {
+            content: attr(data-color);
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group input {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 0.5rem 1rem;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .form-group button:active {
+            background-color: #004999;
+        }
+        .form-group button:focus {
+            outline: 2px solid #007BFF;
+            outline-offset: 2px;
+        }
+        .error-message {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Color Palette Mixer</h1>
+    </header>
+    <main id="main">
+        <div class="container">
+            <section>
+                <h2>Color Mixer</h2>
+                <div class="color-mixer">
+                    <div class="form-group">
+                        <label for="color1">Color 1</label>
+                        <input type="color" id="color1" name="color1" value="#ff0000" aria-label="Select color 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="color2">Color 2</label>
+                        <input type="color" id="color2" name="color2" value="#00ff00" aria-label="Select color 2">
+                    </div>
+                    <div class="form-group">
+                        <label for="color3">Color 3</label>
+                        <input type="color" id="color3" name="color3" value="#0000ff" aria-label="Select color 3">
+                    </div>
+                    <div class="form-group">
+                        <button id="mixColors" aria-label="Mix selected colors">Mix Colors</button>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Color Preview</h2>
+                <div class="color-preview" id="colorPreview">
+                    <div class="color-box" data-color="#ff0000" style="background-color: #ff0000;">#ff0000</div>
+                    <div class="color-box" data-color="#00ff00" style="background-color: #00ff00;">#00ff00</div>
+                    <div class="color-box" data-color="#0000ff" style="background-color: #0000ff;">#0000ff</div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Color Palette Mixer. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const color1 = document.getElementById('color1');
+            const color2 = document.getElementById('color2');
+            const color3 = document.getElementById('color3');
+            const mixButton = document.getElementById('mixColors');
+            const colorPreview = document.getElementById('colorPreview');
+
+            mixButton.addEventListener('click', function() {
+                const color1Value = color1.value;
+                const color2Value = color2.value;
+                const color3Value = color3.value;
+
+                // Mix colors (simple average for demonstration)
+                const mixedColor = mixColors(color1Value, color2Value, color3Value);
+
+                // Update color preview
+                updateColorPreview(mixedColor);
+            });
+
+            function mixColors(color1, color2, color3) {
+                const color1RGB = hexToRgb(color1);
+                const color2RGB = hexToRgb(color2);
+                const color3RGB = hexToRgb(color3);
+
+                const mixedR = Math.round((color1RGB.r + color2RGB.r + color3RGB.r) / 3);
+                const mixedG = Math.round((color1RGB.g + color2RGB.g + color3RGB.g) / 3);
+                const mixedB = Math.round((color1RGB.b + color2RGB.b + color3RGB.b) / 3);
+
+                return rgbToHex(mixedR, mixedG, mixedB);
+            }
+
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
+            function rgbToHex(r, g, b) {
+                return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+            }
+
+            function updateColorPreview(mixedColor) {
+                const colorBox = document.createElement('div');
+                colorBox.classList.add('color-box');
+                colorBox.setAttribute('data-color', mixedColor);
+                colorBox.style.backgroundColor = mixedColor;
+                colorBox.textContent = mixedColor;
+                colorPreview.appendChild(colorBox);
+            }
+        });
+    </script>
+</body>
+</html>

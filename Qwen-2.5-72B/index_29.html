@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Product Cards</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #005a9c;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        header {
+            background: #005a9c;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            background: #003d66;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+        nav ul li a:hover {
+            background: #0073cc;
+            border-radius: 5px;
+        }
+        main {
+            padding: 20px 0;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 1.5em;
+            margin: 0 0 10px;
+        }
+        .card-description {
+            margin: 0 0 15px;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-footer a {
+            color: #005a9c;
+            text-decoration: none;
+        }
+        .card-footer a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background: #005a9c;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+        /* Accessibility Enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .focus-visible {
+            outline: 2px solid #005a9c;
+            outline-offset: 2px;
+        }
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Interactive Product Cards</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <section>
+            <h2>Featured Products</h2>
+            <div class="card-grid">
+                <article class="card" tabindex="0">
+                    <img src="product1.jpg" alt="Product 1 Image" aria-describedby="product1-description">
+                    <div class="card-content">
+                        <h3 class="card-title">Product 1</h3>
+                        <p class="card-description" id="product1-description">Description of Product 1. This is a detailed description that provides more information about the product.</p>
+                        <div class="card-footer">
+                            <a href="#product1" aria-label="Learn more about Product 1">Learn More</a>
+                            <a href="#add-to-cart" aria-label="Add Product 1 to Cart">Add to Cart</a>
+                        </div>
+                    </div>
+                </article>
+                <article class="card" tabindex="0">
+                    <img src="product2.jpg" alt="Product 2 Image" aria-describedby="product2-description">
+                    <div class="card-content">
+                        <h3 class="card-title">Product 2</h3>
+                        <p class="card-description" id="product2-description">Description of Product 2. This is a detailed description that provides more information about the product.</p>
+                        <div class="card-footer">
+                            <a href="#product2" aria-label="Learn more about Product 2">Learn More</a>
+                            <a href="#add-to-cart" aria-label="Add Product 2 to Cart">Add to Cart</a>
+                        </div>
+                    </div>
+                </article>
+                <article class="card" tabindex="0">
+                    <img src="product3.jpg" alt="Product 3 Image" aria-describedby="product3-description">
+                    <div class="card-content">
+                        <h3 class="card-title">Product 3</h3>
+                        <p class="card-description" id="product3-description">Description of Product 3. This is a detailed description that provides more information about the product.</p>
+                        <div class="card-footer">
+                            <a href="#product3" aria-label="Learn more about Product 3">Learn More</a>
+                            <a href="#add-to-cart" aria-label="Add Product 3 to Cart">Add to Cart</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Interactive Product Cards. All rights reserved.</p>
+    </footer>
+    <script>
+        // Add focus-visible class for better focus management
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('focus', () => {
+                card.classList.add('focus-visible');
+            });
+            card.addEventListener('blur', () => {
+                card.classList.remove('focus-visible');
+            });
+        });
+    </script>
+</body>
+</html>

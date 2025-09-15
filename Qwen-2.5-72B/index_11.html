@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Showcase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #0056b3;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        header {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            background-color: #003d80;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        nav a:hover, nav a:focus {
+            text-decoration: underline;
+        }
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pet-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .pet-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .pet-card h2 {
+            margin-top: 0;
+        }
+        .pet-card p {
+            margin: 10px 0;
+        }
+        .pet-card .fun-fact {
+            font-style: italic;
+            color: #666;
+        }
+        footer {
+            background-color: #0056b3;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+        .form-group .error {
+            color: #d00;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .submit-button {
+            background-color: #0056b3;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-button:hover, .submit-button:focus {
+            background-color: #003d80;
+        }
+        .submit-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header>
+        <h1>Pet Showcase</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <a href="#pet-list">View Pets</a>
+        <a href="#add-pet">Add a Pet</a>
+    </nav>
+    <main id="main-content">
+        <section id="pet-list">
+            <h2>Our Pets</h2>
+            <div class="pet-card" tabindex="0" aria-labelledby="pet-name-1">
+                <img src="https://via.placeholder.com/300" alt="Fluffy the Cat" id="pet-image-1">
+                <h2 id="pet-name-1">Fluffy</h2>
+                <p><strong>Breed:</strong> Siamese</p>
+                <p><strong>Age:</strong> 3 years</p>
+                <p class="fun-fact"><strong>Fun Fact:</strong> Fluffy loves to play with strings and chase laser pointers.</p>
+            </div>
+            <div class="pet-card" tabindex="0" aria-labelledby="pet-name-2">
+                <img src="https://via.placeholder.com/300" alt="Buddy the Dog" id="pet-image-2">
+                <h2 id="pet-name-2">Buddy</h2>
+                <p><strong>Breed:</strong> Golden Retriever</p>
+                <p><strong>Age:</strong> 5 years</p>
+                <p class="fun-fact"><strong>Fun Fact:</strong> Buddy is a certified therapy dog and loves to comfort people.</p>
+            </div>
+        </section>
+        <section id="add-pet">
+            <h2>Add a New Pet</h2>
+            <form id="pet-form" aria-label="Add a new pet form">
+                <div class="form-group">
+                    <label for="pet-name">Name:</label>
+                    <input type="text" id="pet-name" name="pet-name" required aria-required="true">
+                    <span class="error" id="name-error" aria-live="polite" aria-atomic="true" role="alert" aria-hidden="true"></span>
+                </div>
+                <div class="form-group">
+                    <label for="pet-breed">Breed:</label>
+                    <input type="text" id="pet-breed" name="pet-breed" required aria-required="true">
+                    <span class="error" id="breed-error" aria-live="polite" aria-atomic="true" role="alert" aria-hidden="true"></span>
+                </div>
+                <div class="form-group">
+                    <label for="pet-age">Age:</label>
+                    <input type="number" id="pet-age" name="pet-age" required aria-required="true">
+                    <span class="error" id="age-error" aria-live="polite" aria-atomic="true" role="alert" aria-hidden="true"></span>
+                </div>
+                <div class="form-group">
+                    <label for="pet-fun-fact">Fun Fact:</label>
+                    <textarea id="pet-fun-fact" name="pet-fun-fact" required aria-required="true"></textarea>
+                    <span class="error" id="fun-fact-error" aria-live="polite" aria-atomic="true" role="alert" aria-hidden="true"></span>
+                </div>
+                <button type="submit" class="submit-button" id="submit-button">Add Pet</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Pet Showcase. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pet-form');
+            const submitButton = document.getElementById('submit-button');
+            const nameInput = document.getElementById('pet-name');
+            const breedInput = document.getElementById('pet-breed');
+            const ageInput = document.getElementById('pet-age');
+            const funFactInput = document.getElementById('pet-fun-fact');
+            const nameError = document.getElementById('name-error');
+            const breedError = document.getElementById('breed-error');
+            const ageError = document.getElementById('age-error');
+            const funFactError = document.getElementById('fun-fact-error');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                let isValid = true;
+
+                // Reset error messages
+                [nameError, breedError, ageError, funFactError].forEach(error => {
+                    error.textContent = '';
+                    error.setAttribute('aria-hidden', 'true');
+                });
+
+                // Validate name
+                if (nameInput.value.trim() === '') {
+                    nameError.textContent = 'Name is required.';
+                    nameError.setAttribute('aria-hidden', 'false');
+                    isValid = false;
+                }
+
+                // Validate breed
+                if (breedInput.value.trim() === '') {
+                    breedError.textContent = 'Breed is required.';
+                    breedError.setAttribute('aria-hidden', 'false');
+                    isValid = false;
+                }
+
+                // Validate age
+                if (ageInput.value.trim() === '' || isNaN(ageInput.value) || ageInput.value < 0) {
+                    ageError.textContent = 'Age must be a valid number.';
+                    ageError.setAttribute('aria-hidden', 'false');
+                    isValid = false;
+                }
+
+                // Validate fun fact
+                if (funFactInput.value.trim() === '') {
+                    funFactError.textContent = 'Fun fact is required.';
+                    funFactError.setAttribute('aria-hidden', 'false');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    const petList = document.getElementById('pet-list');
+                    const newPetCard = document.createElement('div');
+                    newPetCard.className = 'pet-card';
+                    newPetCard.tabIndex = 0;
+                    newPetCard.setAttribute('aria-labelledby', `pet-name-${petList.childElementCount + 1}`);
+
+                    newPetCard.innerHTML = `
+                        <img src="https://via.placeholder.com/300" alt="${nameInput.value} the ${breedInput.value}" id="pet-image-${petList.childElementCount + 1}">
+                        <h2 id="pet-name-${petList.childElementCount + 1}">${nameInput.value}</h2>
+                        <p><strong>Breed:</strong> ${breedInput.value}</p>
+                        <p><strong>Age:</strong> ${ageInput.value} years</p>
+                        <p class="fun-fact"><strong>Fun Fact:</strong> ${funFactInput.value}</p>
+                    `;
+
+                    petList.appendChild(newPetCard);
+
+                    // Clear form
+                    form.reset();
+                } else {
+                    submitButton.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

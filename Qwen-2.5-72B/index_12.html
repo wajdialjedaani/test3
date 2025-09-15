@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz - Accessible Webpage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header, footer {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #007BFF;
+        }
+        .quiz-question {
+            margin-bottom: 2rem;
+        }
+        .quiz-question label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .quiz-question input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .quiz-question .feedback {
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .quiz-question .feedback.correct {
+            color: green;
+        }
+        .quiz-question .feedback.incorrect {
+            color: red;
+        }
+        .quiz-results {
+            margin-top: 2rem;
+            display: none;
+        }
+        .quiz-results h2 {
+            margin-bottom: 1rem;
+        }
+        .quiz-results ul {
+            list-style: none;
+            padding: 0;
+        }
+        .quiz-results li {
+            margin-bottom: 0.5rem;
+        }
+        .quiz-results li.correct {
+            color: green;
+        }
+        .quiz-results li.incorrect {
+            color: red;
+        }
+        .quiz-controls {
+            margin-top: 2rem;
+        }
+        .quiz-controls button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 4px;
+            min-width: 100px;
+            min-height: 44px;
+        }
+        .quiz-controls button:hover {
+            background-color: #0056b3;
+        }
+        .quiz-controls button:active {
+            background-color: #004080;
+        }
+        .quiz-controls button:focus {
+            outline: 2px solid #007BFF;
+            outline-offset: 2px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid #007BFF;
+            outline-offset: 2px;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .quiz-question .feedback {
+                transition: none;
+            }
+            .quiz-results {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Interactive Quiz</h1>
+    </header>
+    <main id="main" role="main">
+        <div class="container">
+            <section id="quiz-section" aria-live="polite">
+                <div class="quiz-question" id="question-1">
+                    <h2>Question 1: What is the capital of France?</h2>
+                    <label>
+                        <input type="radio" name="q1" value="a" id="q1-a" aria-label="Paris">
+                        Paris
+                    </label>
+                    <label>
+                        <input type="radio" name="q1" value="b" id="q1-b" aria-label="Berlin">
+                        Berlin
+                    </label>
+                    <label>
+                        <input type="radio" name="q1" value="c" id="q1-c" aria-label="Madrid">
+                        Madrid
+                    </label>
+                    <div class="feedback" id="feedback-1"></div>
+                </div>
+                <div class="quiz-question" id="question-2">
+                    <h2>Question 2: What is the largest planet in our solar system?</h2>
+                    <label>
+                        <input type="radio" name="q2" value="a" id="q2-a" aria-label="Mars">
+                        Mars
+                    </label>
+                    <label>
+                        <input type="radio" name="q2" value="b" id="q2-b" aria-label="Jupiter">
+                        Jupiter
+                    </label>
+                    <label>
+                        <input type="radio" name="q2" value="c" id="q2-c" aria-label="Saturn">
+                        Saturn
+                    </label>
+                    <div class="feedback" id="feedback-2"></div>
+                </div>
+                <div class="quiz-question" id="question-3">
+                    <h2>Question 3: What is the chemical symbol for gold?</h2>
+                    <label>
+                        <input type="radio" name="q3" value="a" id="q3-a" aria-label="Au">
+                        Au
+                    </label>
+                    <label>
+                        <input type="radio" name="q3" value="b" id="q3-b" aria-label="Ag">
+                        Ag
+                    </label>
+                    <label>
+                        <input type="radio" name="q3" value="c" id="q3-c" aria-label="Cu">
+                        Cu
+                    </label>
+                    <div class="feedback" id="feedback-3"></div>
+                </div>
+                <div class="quiz-controls">
+                    <button id="submit-quiz" aria-label="Submit Quiz">Submit Quiz</button>
+                </div>
+                <div class="quiz-results" id="quiz-results" aria-live="polite">
+                    <h2>Quiz Results</h2>
+                    <ul id="results-list"></ul>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Interactive Quiz. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                { id: 'question-1', correct: 'a', question: 'What is the capital of France?', options: ['Paris', 'Berlin', 'Madrid'] },
+                { id: 'question-2', correct: 'b', question: 'What is the largest planet in our solar system?', options: ['Mars', 'Jupiter', 'Saturn'] },
+                { id: 'question-3', correct: 'a', question: 'What is the chemical symbol for gold?', options: ['Au', 'Ag', 'Cu'] }
+            ];
+
+            const submitButton = document.getElementById('submit-quiz');
+            const resultsList = document.getElementById('results-list');
+            const quizResults = document.getElementById('quiz-results');
+
+            submitButton.addEventListener('click', function() {
+                let score = 0;
+                resultsList.innerHTML = '';
+
+                questions.forEach(question => {
+                    const selectedOption = document.querySelector(`input[name="${question.id.split('-')[1]}"]:checked`);
+                    const feedback = document.getElementById(`feedback-${question.id.split('-')[1]}`);
+
+                    if (selectedOption) {
+                        if (selectedOption.value === question.correct) {
+                            feedback.classList.add('correct');
+                            feedback.textContent = 'Correct!';
+                            score++;
+                        } else {
+                            feedback.classList.add('incorrect');
+                            feedback.textContent = `Incorrect. The correct answer is ${question.options[question.correct === 'a' ? 0 : question.correct === 'b' ? 1 : 2]}.`;
+                        }
+                        feedback.style.display = 'block';
+                    } else {
+                        feedback.classList.add('incorrect');
+                        feedback.textContent = 'Please select an answer.';
+                        feedback.style.display = 'block';
+                    }
+
+                    const resultItem = document.createElement('li');
+                    resultItem.textContent = `${question.question}: ${selectedOption ? selectedOption.nextElementSibling.textContent : 'Not answered'}`;
+                    resultItem.classList.add(selectedOption && selectedOption.value === question.correct ? 'correct' : 'incorrect');
+                    resultsList.appendChild(resultItem);
+                });
+
+                quizResults.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>

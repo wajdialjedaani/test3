@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        main {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .progress-chart {
+            margin-top: 20px;
+        }
+        .progress-chart canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .error {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .success {
+            color: #008000;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Fitness Tracker</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#add-exercise">Add Exercise</a></li>
+            <li><a href="#progress-chart">Progress Chart</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <section id="add-exercise">
+            <h2>Add Exercise</h2>
+            <form id="exercise-form">
+                <div class="form-group">
+                    <label for="exercise-type">Exercise Type</label>
+                    <select id="exercise-type" name="exercise-type" required aria-required="true">
+                        <option value="">Select Exercise Type</option>
+                        <option value="running">Running</option>
+                        <option value="cycling">Cycling</option>
+                        <option value="swimming">Swimming</option>
+                        <option value="weightlifting">Weightlifting</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="duration">Duration (minutes)</label>
+                    <input type="number" id="duration" name="duration" min="1" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="calories-burned">Calories Burned</label>
+                    <input type="number" id="calories-burned" name="calories-burned" min="1" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Add Exercise</button>
+                </div>
+                <div class="form-group hidden" id="form-status"></div>
+            </form>
+        </section>
+        <section id="progress-chart">
+            <h2>Progress Chart</h2>
+            <canvas id="progress-chart-canvas"></canvas>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Fitness Tracker. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('exercise-form');
+            const formStatus = document.getElementById('form-status');
+            const chartCanvas = document.getElementById('progress-chart-canvas');
+            const chartData = {
+                labels: [],
+                datasets: [{
+                    label: 'Calories Burned',
+                    data: [],
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            const chart = new Chart(chartCanvas, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                formStatus.innerHTML = '';
+                formStatus.classList.add('hidden');
+
+                const exerciseType = document.getElementById('exercise-type').value;
+                const duration = document.getElementById('duration').value;
+                const caloriesBurned = document.getElementById('calories-burned').value;
+
+                if (exerciseType && duration && caloriesBurned) {
+                    chartData.labels.push(exerciseType);
+                    chartData.datasets[0].data.push(caloriesBurned);
+                    chart.update();
+
+                    formStatus.innerHTML = 'Exercise added successfully!';
+                    formStatus.classList.remove('error');
+                    formStatus.classList.add('success');
+                    formStatus.classList.remove('hidden');
+                } else {
+                    formStatus.innerHTML = 'Please fill in all fields.';
+                    formStatus.classList.remove('success');
+                    formStatus.classList.add('error');
+                    formStatus.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

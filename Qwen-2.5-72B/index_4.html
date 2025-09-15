@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Events Showcase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        header {
+            background: #007BFF;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        nav {
+            background: #0056b3;
+            padding: 0.5rem 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 1rem;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        nav ul li a:hover {
+            background: #003d80;
+        }
+        main {
+            padding: 2rem;
+        }
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .event-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .event-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .event-card .event-details {
+            padding: 1rem;
+        }
+        .event-card h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .event-card p {
+            margin: 0.5rem 0;
+        }
+        .event-card .event-date {
+            font-weight: bold;
+        }
+        .event-card .event-location {
+            font-style: italic;
+        }
+        .event-card .event-description {
+            margin-top: 1rem;
+        }
+        .event-card .event-map {
+            margin-top: 1rem;
+            height: 200px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+        .filter-section label {
+            margin-right: 1rem;
+        }
+        .filter-section input {
+            margin-right: 0.5rem;
+        }
+        footer {
+            background: #007BFF;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .aria-live-region {
+            position: absolute;
+            clip: rect(0 0 0 0);
+            clip-path: inset(50%);
+            height: 1px;
+            width: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Local Events Showcase</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <main id="main-content" tabindex="-1">
+        <section class="filter-section">
+            <h2>Filter Events</h2>
+            <form id="filter-form">
+                <label>
+                    <input type="checkbox" name="category" value="music" aria-label="Filter by Music Events">
+                    Music
+                </label>
+                <label>
+                    <input type="checkbox" name="category" value="theater" aria-label="Filter by Theater Events">
+                    Theater
+                </label>
+                <label>
+                    <input type="checkbox" name="category" value="art" aria-label="Filter by Art Events">
+                    Art
+                </label>
+                <label>
+                    <input type="checkbox" name="category" value="sports" aria-label="Filter by Sports Events">
+                    Sports
+                </label>
+                <button type="submit" aria-label="Apply Filters">Apply Filters</button>
+            </form>
+        </section>
+        <section id="events">
+            <h2>Upcoming Events</h2>
+            <div class="event-list" id="event-list">
+                <!-- Event cards will be dynamically generated here -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Local Events Showcase. All rights reserved.</p>
+    </footer>
+    <div class="aria-live-region" aria-live="polite" aria-atomic="true" aria-relevant="additions"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const events = [
+                {
+                    id: 1,
+                    title: 'Concert in the Park',
+                    date: '2023-10-15',
+                    location: 'Central Park',
+                    description: 'Join us for a free concert featuring local bands and artists.',
+                    image: 'https://via.placeholder.com/300x200?text=Concert+in+the+Park',
+                    category: 'music',
+                    map: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.770297996273!2d-73.97122168457031!3d40.78306017932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480291%3A0x55d7a4a4e4b06d0!2sCentral%20Park!5e0!3m2!1sen!2sus!4v1634323200000!5m2!1sen!2sus'
+                },
+                {
+                    id: 2,
+                    title: 'Theater Night',
+                    date: '2023-10-20',
+                    location: 'Broadway Theater',
+                    description: 'Experience a night of live theater with a classic play.',
+                    image: 'https://via.placeholder.com/300x200?text=Theater+Night',
+                    category: 'theater',
+                    map: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.770297996273!2d-73.97122168457031!3d40.78306017932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480291%3A0x55d7a4a4e4b06d0!2sBroadway%20Theater!5e0!3m2!1sen!2sus!4v1634323200000!5m2!1sen!2sus'
+                },
+                {
+                    id: 3,
+                    title: 'Art Exhibition',
+                    date: '2023-10-25',
+                    location: 'City Art Gallery',
+                    description: 'Explore a new exhibition of contemporary art by local artists.',
+                    image: 'https://via.placeholder.com/300x200?text=Art+Exhibition',
+                    category: 'art',
+                    map: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.770297996273!2d-73.97122168457031!3d40.78306017932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480291%3A0x55d7a4a4e4b06d0!2sCity%20Art%20Gallery!5e0!3m2!1sen!2sus!4v1634323200000!5m2!1sen!2sus'
+                },
+                {
+                    id: 4,
+                    title: 'Sports Match',
+                    date: '2023-10-30',
+                    location: 'Stadium',
+                    description: 'Watch a thrilling sports match between two local teams.',
+                    image: 'https://via.placeholder.com/300x200?text=Sports+Match',
+                    category: 'sports',
+                    map: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.770297996273!2d-73.97122168457031!3d40.78306017932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480291%3A0x55d7a4a4e4b06d0!2sStadium!5e0!3m2!1sen!2sus!4v1634323200000!5m2!1sen!2sus'
+                }
+            ];
+
+            function renderEvents(filteredEvents) {
+                const eventList = document.getElementById('event-list');
+                eventList.innerHTML = '';
+
+                filteredEvents.forEach(event => {
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+                    eventCard.innerHTML = `
+                        <img src="${event.image}" alt="${event.title} - ${event.description}" />
+                        <div class="event-details">
+                            <h2>${event.title}</h2>
+                            <p class="event-date">Date: ${event.date}</p>
+                            <p class="event-location">Location: ${event.location}</p>
+                            <p class="event-description">${event.description}</p>
+                            <div class="event-map" aria-label="Map of ${event.location}">
+                                <iframe src="${event.map}" title="Map of ${event.location}" aria-label="Map of ${event.location}" style="border:0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    `;
+                    eventList.appendChild(eventCard);
+                });
+
+                const liveRegion = document.querySelector('.aria-live-region');
+                liveRegion.textContent = `${filteredEvents.length} events found.`;
+            }
+
+            function filterEvents() {
+                const filters = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(input => input.value);
+                const filteredEvents = filters.length > 0 ? events.filter(event => filters.includes(event.category)) : events;
+                renderEvents(filteredEvents);
+            }
+
+            document.getElementById('filter-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                filterEvents();
+            });
+
+            renderEvents(events);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Music Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        header, footer, nav, main, section, article {
+            padding: 20px;
+        }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+        }
+        nav {
+            background-color: #343a40;
+            color: #fff;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: inline-block;
+        }
+        nav a:hover {
+            background-color: #0056b3;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .player {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+        .player__controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .player__controls button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .player__controls button:hover {
+            background-color: #0056b3;
+        }
+        .player__controls input[type="range"] {
+            width: 100%;
+            margin: 0 10px;
+        }
+        .playlist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .playlist li {
+            background-color: #e9ecef;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .playlist li:hover {
+            background-color: #d1d1d1;
+        }
+        .playlist li.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            transition: top 0.3s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .sr-only:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            overflow: visible;
+            clip: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .player__controls button:hover,
+            .playlist li:hover,
+            .skip-link:focus {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Accessible Music Player</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <a href="#main">Home</a>
+        <a href="#playlist">Playlist</a>
+        <a href="#about">About</a>
+    </nav>
+    <main id="main" role="main">
+        <section class="player" aria-live="polite" aria-atomic="true">
+            <h2>Now Playing</h2>
+            <audio id="audioPlayer" controls>
+                <source src="song1.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <div class="player__controls">
+                <button id="playPauseBtn" aria-label="Play/Pause" aria-pressed="false">Play</button>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" aria-label="Volume Control">
+                <button id="nextBtn" aria-label="Next Song">Next</button>
+            </div>
+            <ul class="playlist" aria-label="Playlist">
+                <li id="song1" tabindex="0" role="button" aria-selected="true">Song 1</li>
+                <li id="song2" tabindex="0" role="button" aria-selected="false">Song 2</li>
+                <li id="song3" tabindex="0" role="button" aria-selected="false">Song 3</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Accessible Music Player. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const playlist = document.querySelector('.playlist');
+            const playlistItems = document.querySelectorAll('.playlist li');
+
+            // Play/Pause functionality
+            playPauseBtn.addEventListener('click', function() {
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                    playPauseBtn.textContent = 'Pause';
+                    playPauseBtn.setAttribute('aria-pressed', 'true');
+                } else {
+                    audioPlayer.pause();
+                    playPauseBtn.textContent = 'Play';
+                    playPauseBtn.setAttribute('aria-pressed', 'false');
+                }
+            });
+
+            // Volume control
+            volumeSlider.addEventListener('input', function() {
+                audioPlayer.volume = volumeSlider.value;
+            });
+
+            // Playlist selection
+            playlistItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    playlistItems.forEach(li => li.setAttribute('aria-selected', 'false'));
+                    item.setAttribute('aria-selected', 'true');
+                    item.classList.add('active');
+                    audioPlayer.src = item.id + '.mp3';
+                    audioPlayer.play();
+                    playPauseBtn.textContent = 'Pause';
+                    playPauseBtn.setAttribute('aria-pressed', 'true');
+                });
+            });
+
+            // Next song functionality
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                const currentIndex = Array.from(playlistItems).indexOf(document.querySelector('.playlist li[aria-selected="true"]'));
+                const nextIndex = (currentIndex + 1) % playlistItems.length;
+                playlistItems[nextIndex].click();
+            });
+
+            // Skip link focus management
+            document.querySelector('.skip-link').addEventListener('focus', function() {
+                document.getElementById('main').focus();
+            });
+        });
+    </script>
+</body>
+</html>

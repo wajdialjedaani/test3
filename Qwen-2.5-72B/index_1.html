@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        main {
+            padding: 20px 0;
+        }
+        .budget-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .budget-form h2 {
+            margin-top: 0;
+        }
+        .budget-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .budget-form input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .budget-form button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .budget-form button:hover {
+            background-color: #0056b3;
+        }
+        .budget-results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .budget-results h3 {
+            margin-top: 0;
+        }
+        .budget-results .result-item {
+            margin-bottom: 10px;
+        }
+        .budget-results .result-item label {
+            font-weight: normal;
+        }
+        .budget-results .result-item span {
+            font-weight: bold;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            transition: top 0.3s ease;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Budget Calculator</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#income">Income</a></li>
+            <li><a href="#expenses">Expenses</a></li>
+            <li><a href="#results">Results</a></li>
+        </ul>
+    </nav>
+    <main id="main">
+        <section class="budget-form">
+            <h2>Enter Your Budget Details</h2>
+            <form id="budget-form">
+                <label for="income">Monthly Income:</label>
+                <input type="number" id="income" name="income" required aria-required="true" aria-describedby="income-help">
+                <span id="income-help" class="help-text">Enter your total monthly income.</span>
+
+                <label for="rent">Rent/Mortgage:</label>
+                <input type="number" id="rent" name="rent" required aria-required="true" aria-describedby="rent-help">
+                <span id="rent-help" class="help-text">Enter your monthly rent or mortgage payment.</span>
+
+                <label for="utilities">Utilities:</label>
+                <input type="number" id="utilities" name="utilities" required aria-required="true" aria-describedby="utilities-help">
+                <span id="utilities-help" class="help-text">Enter your monthly utility costs.</span>
+
+                <label for="groceries">Groceries:</label>
+                <input type="number" id="groceries" name="groceries" required aria-required="true" aria-describedby="groceries-help">
+                <span id="groceries-help" class="help-text">Enter your monthly grocery expenses.</span>
+
+                <label for="transportation">Transportation:</label>
+                <input type="number" id="transportation" name="transportation" required aria-required="true" aria-describedby="transportation-help">
+                <span id="transportation-help" class="help-text">Enter your monthly transportation costs.</span>
+
+                <label for="other">Other Expenses:</label>
+                <input type="number" id="other" name="other" required aria-required="true" aria-describedby="other-help">
+                <span id="other-help" class="help-text">Enter any other monthly expenses.</span>
+
+                <button type="submit">Calculate Budget</button>
+            </form>
+        </section>
+        <section class="budget-results" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
+            <h3>Budget Breakdown</h3>
+            <div id="results" role="region" aria-labelledby="results-heading">
+                <div class="result-item" id="total-income" aria-live="polite">
+                    <label>Total Income:</label>
+                    <span>$0.00</span>
+                </div>
+                <div class="result-item" id="total-expenses" aria-live="polite">
+                    <label>Total Expenses:</label>
+                    <span>$0.00</span>
+                </div>
+                <div class="result-item" id="remaining" aria-live="polite">
+                    <label>Remaining:</label>
+                    <span>$0.00</span>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2023 Budget Calculator. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('budget-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const income = parseFloat(document.getElementById('income').value);
+            const rent = parseFloat(document.getElementById('rent').value);
+            const utilities = parseFloat(document.getElementById('utilities').value);
+            const groceries = parseFloat(document.getElementById('groceries').value);
+            const transportation = parseFloat(document.getElementById('transportation').value);
+            const other = parseFloat(document.getElementById('other').value);
+
+            const totalExpenses = rent + utilities + groceries + transportation + other;
+            const remaining = income - totalExpenses;
+
+            document.getElementById('total-income').querySelector('span').textContent = `$${income.toFixed(2)}`;
+            document.getElementById('total-expenses').querySelector('span').textContent = `$${totalExpenses.toFixed(2)}`;
+            document.getElementById('remaining').querySelector('span').textContent = `$${remaining.toFixed(2)}`;
+        });
+    </script>
+</body>
+</html>

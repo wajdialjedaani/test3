@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header, footer {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .countdown {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .countdown div {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+        }
+        .countdown div span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .countdown div small {
+            font-size: 1rem;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 2rem;
+            height: 20px;
+        }
+        .progress-bar .progress {
+            height: 100%;
+            background-color: #007BFF;
+            width: 0;
+            transition: width 0.5s;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 0.5rem;
+            text-decoration: none;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .form-container {
+            margin-top: 2rem;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-container button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .form-container .error {
+            color: #ff0000;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+    <header>
+        <h1>Event Countdown Timer</h1>
+    </header>
+    <main id="main">
+        <div class="container">
+            <h2>Countdown to the Big Event</h2>
+            <div class="countdown" aria-live="polite" aria-atomic="true">
+                <div>
+                    <span id="days">00</span>
+                    <small>Days</small>
+                </div>
+                <div>
+                    <span id="hours">00</span>
+                    <small>Hours</small>
+                </div>
+                <div>
+                    <span id="minutes">00</span>
+                    <small>Minutes</small>
+                </div>
+                <div>
+                    <span id="seconds">00</span>
+                    <small>Seconds</small>
+                </div>
+            </div>
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="form-container">
+                <form id="eventForm">
+                    <label for="eventDate">Enter Event Date (YYYY-MM-DD HH:MM:SS):</label>
+                    <input type="datetime-local" id="eventDate" name="eventDate" required aria-required="true">
+                    <button type="submit">Set Event Date</button>
+                    <div class="error" id="formError" aria-live="polite" aria-atomic="true" role="alert"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Event Countdown Timer. All rights reserved.</p>
+    </footer>
+    <script>
+        const countdownElements = document.querySelectorAll('.countdown div span');
+        const progressBar = document.getElementById('progress');
+        const form = document.getElementById('eventForm');
+        const eventDateInput = document.getElementById('eventDate');
+        const formError = document.getElementById('formError');
+
+        let targetDate = new Date('2023-12-31T23:59:59').getTime();
+        let interval;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownElements[0].textContent = days;
+            countdownElements[1].textContent = hours;
+            countdownElements[2].textContent = minutes;
+            countdownElements[3].textContent = seconds;
+
+            const progress = (distance / (targetDate - now)) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.setAttribute('aria-valuenow', progress);
+
+            if (distance < 0) {
+                clearInterval(interval);
+                countdownElements.forEach(element => element.textContent = '00');
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', '100');
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newTargetDate = new Date(eventDateInput.value).getTime();
+            if (isNaN(newTargetDate)) {
+                formError.textContent = 'Please enter a valid date and time.';
+                formError.setAttribute('aria-invalid', 'true');
+            } else {
+                targetDate = newTargetDate;
+                formError.textContent = '';
+                formError.setAttribute('aria-invalid', 'false');
+                clearInterval(interval);
+                interval = setInterval(updateCountdown, 1000);
+            }
+        });
+
+        interval = setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

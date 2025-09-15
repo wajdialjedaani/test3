@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event RSVP Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f9f9f9;
+            font-size: 16px;
+        }
+        header, nav, main, footer {
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+        }
+        nav {
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 10px;
+            display: block;
+        }
+        nav ul li a:hover {
+            background-color: #007BFF;
+            color: #fff;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .form-section, .attendees-section {
+            flex: 1;
+            margin: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .form-section h2, .attendees-section h2 {
+            margin-top: 0;
+        }
+        .form-section form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-section label {
+            margin-bottom: 5px;
+        }
+        .form-section input, .form-section select, .form-section textarea {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-section button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-section button:hover {
+            background-color: #0056b3;
+        }
+        .attendees-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .attendees-section li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+        .attendees-section li strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .attendees-section li span {
+            color: #777;
+        }
+        footer {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid #0056b3;
+        }
+        .error-message {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #008000;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header>
+        <h1>Event RSVP</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#form-section">RSVP Form</a></li>
+            <li><a href="#attendees-section">Attendees List</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <section class="form-section" id="form-section">
+            <h2>RSVP Form</h2>
+            <form id="rsvp-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true" autocomplete="name">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true" autocomplete="email">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required aria-required="true" autocomplete="tel">
+                <label for="attendance">Will you attend?</label>
+                <select id="attendance" name="attendance" required aria-required="true">
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+                <label for="comments">Comments:</label>
+                <textarea id="comments" name="comments" rows="4" cols="50" aria-describedby="comments-help"></textarea>
+                <span id="comments-help" class="hidden">Please provide any additional information or questions here.</span>
+                <button type="submit">Submit</button>
+                <div id="form-messages" class="hidden"></div>
+            </form>
+        </section>
+        <section class="attendees-section" id="attendees-section">
+            <h2>Attendees List</h2>
+            <ul id="attendees-list">
+                <!-- Attendees will be dynamically added here -->
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Event RSVP. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('rsvp-form');
+            const formMessages = document.getElementById('form-messages');
+            const attendeesList = document.getElementById('attendees-list');
+            const commentsHelp = document.getElementById('comments-help');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                formMessages.innerHTML = ''; // Clear previous messages
+
+                const name = form.elements['name'].value.trim();
+                const email = form.elements['email'].value.trim();
+                const phone = form.elements['phone'].value.trim();
+                const attendance = form.elements['attendance'].value.trim();
+                const comments = form.elements['comments'].value.trim();
+
+                if (!name || !email || !phone || !attendance) {
+                    formMessages.innerHTML = '<div class="error-message">Please fill in all required fields.</div>';
+                    formMessages.classList.remove('hidden');
+                    return;
+                }
+
+                // Add attendee to the list
+                const attendeeItem = document.createElement('li');
+                attendeeItem.innerHTML = `
+                    <strong>${name}</strong>
+                    <span>Email: ${email}</span>
+                    <span>Phone: ${phone}</span>
+                    <span>Attendance: ${attendance}</span>
+                    <span>Comments: ${comments}</span>
+                `;
+                attendeesList.appendChild(attendeeItem);
+
+                // Clear form fields
+                form.reset();
+
+                // Show success message
+                formMessages.innerHTML = '<div class="success-message">Thank you for your RSVP!</div>';
+                formMessages.classList.remove('hidden');
+            });
+
+            // Show help text for comments field
+            form.elements['comments'].addEventListener('focus', function() {
+                commentsHelp.classList.remove('hidden');
+            });
+
+            form.elements['comments'].addEventListener('blur', function() {
+                commentsHelp.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

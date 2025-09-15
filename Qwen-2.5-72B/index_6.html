@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing Webpage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        nav ul li a:hover {
+            background-color: #575757;
+        }
+        main {
+            margin: 20px 0;
+        }
+        .recipe-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .recipe-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .recipe-card h2 {
+            margin-top: 0;
+        }
+        .recipe-card p {
+            margin: 10px 0;
+        }
+        .recipe-card img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .search-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .search-form input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+        .search-form button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .search-form button:hover {
+            background-color: #45a049;
+        }
+        .rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .rating input[type="radio"] {
+            display: none;
+        }
+        .rating label {
+            font-size: 24px;
+            color: #f2c94c;
+            cursor: pointer;
+        }
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating input[type="radio"]:checked ~ label {
+            color: #f2c94c;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-content form label {
+            margin-bottom: 10px;
+        }
+        .modal-content form input,
+        .modal-content form textarea {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-content form button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content form button:hover {
+            background-color: #45a049;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Recipe Sharing Webpage</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#recipes">Recipes</a></li>
+            <li><a href="#submit-recipe">Submit Recipe</a></li>
+            <li><a href="#search">Search</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <section id="recipes">
+            <h2>Recipes</h2>
+            <div class="recipe-list" id="recipe-list">
+                <!-- Recipes will be dynamically added here -->
+            </div>
+        </section>
+        <section id="submit-recipe">
+            <h2>Submit a Recipe</h2>
+            <button id="open-modal" aria-label="Open Recipe Submission Modal">Submit Recipe</button>
+        </section>
+        <section id="search">
+            <h2>Search Recipes</h2>
+            <form class="search-form" id="search-form">
+                <input type="text" id="search-input" placeholder="Search by ingredient" aria-label="Search by ingredient">
+                <button type="submit" aria-label="Search">Search</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Recipe Sharing Webpage. All rights reserved.</p>
+    </footer>
+
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" aria-label="Close Modal">&times;</span>
+            <h2>Submit a Recipe</h2>
+            <form id="recipe-form">
+                <label for="recipe-title">Recipe Title:</label>
+                <input type="text" id="recipe-title" name="recipe-title" required aria-required="true" aria-label="Recipe Title">
+                <label for="recipe-ingredients">Ingredients:</label>
+                <textarea id="recipe-ingredients" name="recipe-ingredients" required aria-required="true" aria-label="Ingredients"></textarea>
+                <label for="recipe-instructions">Instructions:</label>
+                <textarea id="recipe-instructions" name="recipe-instructions" required aria-required="true" aria-label="Instructions"></textarea>
+                <button type="submit" aria-label="Submit Recipe">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const recipes = [
+                { title: 'Spaghetti Carbonara', ingredients: 'Pasta, Eggs, Parmesan, Pancetta', instructions: 'Cook pasta, mix with eggs and cheese, add pancetta.' },
+                { title: 'Chicken Alfredo', ingredients: 'Chicken, Pasta, Cream, Parmesan', instructions: 'Cook chicken, mix with cream and cheese, serve over pasta.' }
+            ];
+
+            const recipeList = document.getElementById('recipe-list');
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const recipeModal = document.getElementById('recipe-modal');
+            const openModalButton = document.getElementById('open-modal');
+            const closeModalButton = document.querySelector('.close');
+            const recipeForm = document.getElementById('recipe-form');
+            const errorMessage = document.createElement('div');
+            errorMessage.classList.add('error-message');
+            const successMessage = document.createElement('div');
+            successMessage.classList.add('success-message');
+
+            function displayRecipes(recipes) {
+                recipeList.innerHTML = '';
+                recipes.forEach(recipe => {
+                    const recipeCard = document.createElement('div');
+                    recipeCard.classList.add('recipe-card');
+                    recipeCard.innerHTML = `
+                        <h2>${recipe.title}</h2>
+                        <p><strong>Ingredients:</strong> ${recipe.ingredients}</p>
+                        <p><strong>Instructions:</strong> ${recipe.instructions}</p>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5" aria-label="5 stars">
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" aria-label="4 stars">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" aria-label="3 stars">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" aria-label="2 stars">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" aria-label="1 star">
+                            <label for="star1">★</label>
+                        </div>
+                    `;
+                    recipeList.appendChild(recipeCard);
+                });
+            }
+
+            function searchRecipes() {
+                const query = searchInput.value.toLowerCase();
+                const filteredRecipes = recipes.filter(recipe => recipe.ingredients.toLowerCase().includes(query));
+                displayRecipes(filteredRecipes);
+            }
+
+            searchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                searchRecipes();
+            });
+
+            openModalButton.addEventListener('click', function () {
+                recipeModal.style.display = 'block';
+            });
+
+            closeModalButton.addEventListener('click', function () {
+                recipeModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function (event) {
+                if (event.target === recipeModal) {
+                    recipeModal.style.display = 'none';
+                }
+            });
+
+            recipeForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const title = document.getElementById('recipe-title').value;
+                const ingredients = document.getElementById('recipe-ingredients').value;
+                const instructions = document.getElementById('recipe-instructions').value;
+
+                if (title && ingredients && instructions) {
+                    recipes.push({ title, ingredients, instructions });
+                    displayRecipes(recipes);
+                    recipeModal.style.display = 'none';
+                    recipeForm.reset();
+                    successMessage.textContent = 'Recipe submitted successfully!';
+                    recipeForm.appendChild(successMessage);
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 3000);
+                } else {
+                    errorMessage.textContent = 'Please fill in all fields.';
+                    recipeForm.appendChild(errorMessage);
+                    setTimeout(() => {
+                        errorMessage.remove();
+                    }, 3000);
+                }
+            });
+
+            displayRecipes(recipes);
+        });
+    </script>
+</body>
+</html>

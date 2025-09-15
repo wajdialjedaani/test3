@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gardening Community</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        header, nav, main, footer {
+            padding: 20px;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .card h2 {
+            margin-top: 10px;
+        }
+        .card p {
+            margin: 10px 0;
+        }
+        .card form {
+            display: flex;
+            flex-direction: column;
+        }
+        .card form label {
+            margin-bottom: 5px;
+        }
+        .card form input, .card form textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .card form button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .card form button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .success {
+            color: green;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <header>
+        <h1>Gardening Community</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <main id="main">
+        <section id="home">
+            <h2>Welcome to the Gardening Community</h2>
+            <p>Share your gardening experiences, photos, and tips with fellow gardeners.</p>
+        </section>
+        <section id="gallery">
+            <h2>Gallery</h2>
+            <div class="container">
+                <div class="card">
+                    <img src="https://via.placeholder.com/300" alt="Beautiful Garden" aria-describedby="garden-description">
+                    <div id="garden-description" class="visually-hidden">A beautiful garden with a variety of flowers and plants.</div>
+                    <h2>Beautiful Garden</h2>
+                    <p>Description of the garden.</p>
+                    <form id="comment-form" aria-label="Add a comment">
+                        <label for="comment">Add a comment:</label>
+                        <textarea id="comment" name="comment" required aria-required="true"></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
+                    <div class="error" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+                    <div class="success" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+                </div>
+                <div class="card">
+                    <img src="https://via.placeholder.com/300" alt="Flower Bed" aria-describedby="flower-bed-description">
+                    <div id="flower-bed-description" class="visually-hidden">A colorful flower bed with roses and daisies.</div>
+                    <h2>Flower Bed</h2>
+                    <p>Description of the flower bed.</p>
+                    <form id="comment-form-2" aria-label="Add a comment">
+                        <label for="comment-2">Add a comment:</label>
+                        <textarea id="comment-2" name="comment" required aria-required="true"></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
+                    <div class="error" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+                    <div class="success" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+                </div>
+            </div>
+        </section>
+        <section id="about">
+            <h2>About Us</h2>
+            <p>We are a community of gardeners who love to share our passion for plants and gardening. Join us to connect with others, get inspired, and learn new tips and techniques.</p>
+        </section>
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Have a question or need help? Feel free to reach out to us.</p>
+            <form id="contact-form" aria-label="Contact form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true" autocomplete="name">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true" autocomplete="email">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required aria-required="true"></textarea>
+                <button type="submit">Send</button>
+            </form>
+            <div class="error" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+            <div class="success" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Gardening Community. All rights reserved.</p>
+    </footer>
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const errorDiv = this.querySelector('.error');
+                const successDiv = this.querySelector('.success');
+                const comment = this.querySelector('textarea').value;
+
+                if (comment.trim() === '') {
+                    errorDiv.textContent = 'Please enter a comment.';
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                } else {
+                    errorDiv.style.display = 'none';
+                    successDiv.textContent = 'Comment submitted successfully!';
+                    successDiv.style.display = 'block';
+                    this.querySelector('textarea').value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Landing Page with Dark/Light Theme Toggle</title>
+    <style>
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #6C757D;
+            --background-color: #F8F9FA;
+            --text-color: #212529;
+            --border-color: #DEE2E6;
+            --hover-color: #0056b3;
+            --active-color: #004085;
+            --focus-color: #0056b3;
+            --focus-border-color: #0056b3;
+            --focus-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-left: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 2rem 0;
+        }
+
+        .feature {
+            flex: 1 1 300px;
+            margin: 1rem;
+            padding: 1rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .feature:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .cta button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cta button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .cta button:active {
+            background-color: var(--active-color);
+        }
+
+        .cta button:focus {
+            outline: none;
+            box-shadow: var(--focus-shadow);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem;
+            z-index: 1000;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        .dark-mode {
+            --primary-color: #212529;
+            --secondary-color: #6C757D;
+            --background-color: #343a40;
+            --text-color: #F8F9FA;
+            --border-color: #495057;
+            --hover-color: #1b1e21;
+            --active-color: #151b1e;
+            --focus-color: #1b1e21;
+            --focus-border-color: #1b1e21;
+            --focus-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .nav-links li {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+
+            .feature {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">MyApp</a>
+            <nav aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="theme-toggle" aria-label="Toggle Dark/Light Theme" onclick="toggleTheme()">Dark/Light</button>
+        </div>
+    </header>
+    <main id="main-content" role="main">
+        <section class="hero">
+            <div class="container">
+                <h1>Welcome to MyApp</h1>
+                <p>Experience the future of web applications with our innovative and user-friendly platform.</p>
+                <button class="cta" onclick="alert('Sign-up form will be displayed here')">Sign Up</button>
+            </div>
+        </section>
+        <section class="features" id="features">
+            <div class="container">
+                <div class="feature">
+                    <h2>Feature 1</h2>
+                    <p>Discover the first amazing feature that will revolutionize your workflow.</p>
+                </div>
+                <div class="feature">
+                    <h2>Feature 2</h2>
+                    <p>Explore the second feature that will enhance your productivity and efficiency.</p>
+                </div>
+                <div class="feature">
+                    <h2>Feature 3</h2>
+                    <p>Experience the third feature that will simplify your tasks and streamline your processes.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 MyApp. All rights reserved. <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+        </div>
+    </footer>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            document.documentElement.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>

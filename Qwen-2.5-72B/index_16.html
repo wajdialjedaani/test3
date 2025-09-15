@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Interactive Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        main {
+            margin-top: 20px;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input:focus, textarea:focus {
+            outline: 2px solid #007BFF;
+            border-color: #007BFF;
+        }
+        .error {
+            color: #FF0000;
+            font-size: 14px;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Accessible Interactive Form</h1>
+    </header>
+    <main id="main-content" tabindex="-1">
+        <form id="registration-form">
+            <fieldset>
+                <legend>Personal Information</legend>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true" aria-describedby="name-error" autocomplete="name">
+                <span id="name-error" class="error" role="alert" aria-live="assertive" aria-atomic="true"></span>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true" aria-describedby="email-error" autocomplete="email">
+                <span id="email-error" class="error" role="alert" aria-live="assertive" aria-atomic="true"></span>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required aria-required="true" aria-describedby="password-error" autocomplete="new-password">
+                <span id="password-error" class="error" role="alert" aria-live="assertive" aria-atomic="true"></span>
+
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required aria-required="true" aria-describedby="phone-error" autocomplete="tel">
+                <span id="phone-error" class="error" role="alert" aria-live="assertive" aria-atomic="true"></span>
+
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+        <div id="success-message" class="success" role="status" aria-live="assertive" aria-atomic="true" hidden></div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registration-form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const phoneInput = document.getElementById('phone');
+            const nameError = document.getElementById('name-error');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            const phoneError = document.getElementById('phone-error');
+            const successMessage = document.getElementById('success-message');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                clearErrors();
+                let isValid = true;
+
+                if (!nameInput.value) {
+                    nameError.textContent = 'Name is required.';
+                    nameInput.setAttribute('aria-invalid', 'true');
+                    isValid = false;
+                }
+
+                if (!emailInput.value || !validateEmail(emailInput.value)) {
+                    emailError.textContent = 'Valid email is required.';
+                    emailInput.setAttribute('aria-invalid', 'true');
+                    isValid = false;
+                }
+
+                if (!passwordInput.value || passwordInput.value.length < 8) {
+                    passwordError.textContent = 'Password must be at least 8 characters long.';
+                    passwordInput.setAttribute('aria-invalid', 'true');
+                    isValid = false;
+                }
+
+                if (!phoneInput.value || !validatePhone(phoneInput.value)) {
+                    phoneError.textContent = 'Valid phone number is required.';
+                    phoneInput.setAttribute('aria-invalid', 'true');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    successMessage.textContent = 'Form submitted successfully!';
+                    successMessage.hidden = false;
+                    form.reset();
+                }
+            });
+
+            function clearErrors() {
+                nameError.textContent = '';
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                phoneError.textContent = '';
+                nameInput.removeAttribute('aria-invalid');
+                emailInput.removeAttribute('aria-invalid');
+                passwordInput.removeAttribute('aria-invalid');
+                phoneInput.removeAttribute('aria-invalid');
+            }
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            function validatePhone(phone) {
+                const re = /^\d{10}$/;
+                return re.test(phone);
+            }
+        });
+    </script>
+</body>
+</html>

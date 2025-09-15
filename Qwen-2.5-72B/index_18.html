@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        header, nav, main, footer {
+            padding: 20px;
+        }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        .profile-info {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .profile-info h2 {
+            margin-top: 0;
+        }
+        .profile-info p {
+            margin: 10px 0;
+        }
+        .avatar-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .avatar-gallery img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+        }
+        .follow-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .follow-button:hover {
+            background-color: #0056b3;
+        }
+        .social-media-links {
+            margin-top: 20px;
+        }
+        .social-media-links a {
+            display: inline-block;
+            margin-right: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .social-media-links a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid #0056b3;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header>
+        <h1>User Profile Page</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <a href="#profile-info">Profile Info</a>
+        <a href="#avatar-gallery">Avatar Gallery</a>
+        <a href="#social-media">Social Media Links</a>
+    </nav>
+    <main id="main-content">
+        <section id="profile-info" class="profile-info">
+            <h2>User Bio</h2>
+            <p>Hi, I'm John Doe, a full-stack web developer with a passion for creating accessible and user-friendly web applications. I specialize in modern web technologies and adhere to the highest standards of web accessibility.</p>
+            <button class="follow-button" aria-label="Follow John Doe">Follow</button>
+        </section>
+        <section id="avatar-gallery" class="avatar-gallery">
+            <img src="https://via.placeholder.com/100" alt="Avatar 1" aria-describedby="avatar-desc-1">
+            <img src="https://via.placeholder.com/100" alt="Avatar 2" aria-describedby="avatar-desc-2">
+            <img src="https://via.placeholder.com/100" alt="Avatar 3" aria-describedby="avatar-desc-3">
+            <div id="avatar-desc-1" class="sr-only">This is the first avatar image.</div>
+            <div id="avatar-desc-2" class="sr-only">This is the second avatar image.</div>
+            <div id="avatar-desc-3" class="sr-only">This is the third avatar image.</div>
+        </section>
+        <section id="social-media" class="social-media-links">
+            <h2>Connect with Me</h2>
+            <a href="https://twitter.com/johndoe" aria-label="Follow John Doe on Twitter">Twitter</a>
+            <a href="https://github.com/johndoe" aria-label="Follow John Doe on GitHub">GitHub</a>
+            <a href="https://linkedin.com/in/johndoe" aria-label="Connect with John Doe on LinkedIn">LinkedIn</a>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 John Doe. All rights reserved.</p>
+    </footer>
+    <script>
+        document.querySelector('.follow-button').addEventListener('click', function() {
+            alert('Thank you for following!');
+        });
+
+        // Form validation example
+        document.querySelectorAll('.form-group input, .form-group textarea').forEach(function(input) {
+            input.addEventListener('input', function() {
+                const error = document.querySelector(`#${input.id}-error`);
+                if (error) {
+                    error.remove();
+                }
+                input.setAttribute('aria-invalid', 'false');
+            });
+
+            input.addEventListener('blur', function() {
+                if (input.value.trim() === '') {
+                    const error = document.createElement('div');
+                    error.className = 'error-message';
+                    error.id = `${input.id}-error`;
+                    error.textContent = 'This field is required.';
+                    input.parentNode.appendChild(error);
+                    input.setAttribute('aria-invalid', 'true');
+                    input.setAttribute('aria-describedby', `${input.id}-error`);
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const errors = [];
+            document.querySelectorAll('.form-group input, .form-group textarea').forEach(function(input) {
+                if (input.value.trim() === '') {
+                    errors.push(input);
+                }
+            });
+
+            if (errors.length > 0) {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                errorMessage.textContent = 'Please fill out all required fields.';
+                document.querySelector('form').insertBefore(errorMessage, document.querySelector('form').firstChild);
+                return;
+            }
+
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.textContent = 'Form submitted successfully!';
+            document.querySelector('form').insertBefore(successMessage, document.querySelector('form').firstChild);
+        });
+    </script>
+</body>
+</html>

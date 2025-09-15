@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Space-Themed Website</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-size: 16px;
+            text-align: center;
+        }
+        header {
+            background: #1a1a1a;
+            padding: 1rem;
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #444;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        nav a:hover, nav a:focus {
+            background: #444;
+        }
+        main {
+            padding: 2rem;
+        }
+        .constellation {
+            position: relative;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        .constellation img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border: 2px solid #444;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        .constellation img:hover, .constellation img:focus {
+            border-color: #fff;
+        }
+        .constellation-info {
+            display: none;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        .constellation-info h3 {
+            margin-top: 0;
+        }
+        .planet-gallery {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding: 1rem;
+            scroll-snap-type: x mandatory;
+        }
+        .planet-card {
+            flex: 0 0 auto;
+            width: 200px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 1rem;
+            scroll-snap-align: start;
+        }
+        .planet-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .planet-card h3 {
+            margin-top: 0;
+        }
+        footer {
+            background: #1a1a1a;
+            padding: 1rem;
+            position: relative;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: 1px solid #444;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Interactive Space-Themed Website</h1>
+        <nav aria-label="Main Navigation">
+            <a href="#constellations">Constellations</a>
+            <a href="#planet-gallery">Planet Gallery</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+    <main id="main" role="main">
+        <section id="constellations" aria-labelledby="constellations-heading">
+            <h2 id="constellations-heading">Constellations</h2>
+            <div class="constellation" aria-label="Orion Constellation" tabindex="0">
+                <img src="orion.jpg" alt="Orion Constellation" aria-describedby="orion-info">
+                <div class="constellation-info" id="orion-info" role="dialog" aria-live="polite">
+                    <h3>Orion</h3>
+                    <p>Orion, the Hunter, is one of the most prominent and recognizable constellations in the night sky. It is named after Orion, a hunter in Greek mythology.</p>
+                </div>
+            </div>
+            <div class="constellation" aria-label="Big Dipper Constellation" tabindex="0">
+                <img src="big-dipper.jpg" alt="Big Dipper Constellation" aria-describedby="big-dipper-info">
+                <div class="constellation-info" id="big-dipper-info" role="dialog" aria-live="polite">
+                    <h3>Big Dipper</h3>
+                    <p>The Big Dipper, also known as the Plough, is an asterism in the constellation Ursa Major. It is one of the most recognizable star patterns in the northern sky.</p>
+                </div>
+            </div>
+        </section>
+        <section id="planet-gallery" aria-labelledby="planet-gallery-heading">
+            <h2 id="planet-gallery-heading">Planet Gallery</h2>
+            <div class="planet-gallery" role="region" aria-label="Planet Gallery">
+                <div class="planet-card" tabindex="0">
+                    <img src="mercury.jpg" alt="Mercury" aria-describedby="mercury-info">
+                    <div class="planet-info" id="mercury-info" role="dialog" aria-live="polite">
+                        <h3>Mercury</h3>
+                        <p>Mercury is the smallest and closest planet to the Sun in our solar system. It has no natural satellites and is primarily composed of iron and nickel.</p>
+                    </div>
+                </div>
+                <div class="planet-card" tabindex="0">
+                    <img src="venus.jpg" alt="Venus" aria-describedby="venus-info">
+                    <div class="planet-info" id="venus-info" role="dialog" aria-live="polite">
+                        <h3>Venus</h3>
+                        <p>Venus is the second planet from the Sun and is often referred to as Earth's sister planet due to its similar size and mass. However, its thick, toxic atmosphere makes it one of the hottest planets in the solar system.</p>
+                    </div>
+                </div>
+                <div class="planet-card" tabindex="0">
+                    <img src="earth.jpg" alt="Earth" aria-describedby="earth-info">
+                    <div class="planet-info" id="earth-info" role="dialog" aria-live="polite">
+                        <h3>Earth</h3>
+                        <p>Earth is the third planet from the Sun and the only known planet to support life. It has a diverse range of ecosystems and is home to millions of species, including humans.</p>
+                    </div>
+                </div>
+                <div class="planet-card" tabindex="0">
+                    <img src="mars.jpg" alt="Mars" aria-describedby="mars-info">
+                    <div class="planet-info" id="mars-info" role="dialog" aria-live="polite">
+                        <h3>Mars</h3>
+                        <p>Mars, the fourth planet from the Sun, is often called the Red Planet due to its reddish appearance. It has a thin atmosphere and is a target for future human exploration.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="about" aria-labelledby="about-heading">
+            <h2 id="about-heading">About</h2>
+            <p>This interactive space-themed website is designed to be fully accessible and compliant with WCAG 2.2 AAA standards. It features constellations and a planet gallery with detailed information and engaging content.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Interactive Space-Themed Website. All rights reserved.</p>
+    </footer>
+    <script>
+        document.querySelectorAll('.constellation, .planet-card').forEach(element => {
+            element.addEventListener('click', () => {
+                const info = element.querySelector('.constellation-info, .planet-info');
+                if (info) {
+                    info.style.display = info.style.display === 'block' ? 'none' : 'block';
+                }
+            });
+            element.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    const info = element.querySelector('.constellation-info, .planet-info');
+                    if (info) {
+                        info.style.display = info.style.display === 'block' ? 'none' : 'block';
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.constellation-info, .planet-info').forEach(info => {
+            info.addEventListener('blur', () => {
+                info.style.display = 'none';
+            });
+        });
+
+        document.querySelector('.skip-link').addEventListener('click', (event) => {
+            event.preventDefault();
+            document.getElementById('main').focus();
+        });
+    </script>
+</body>
+</html>

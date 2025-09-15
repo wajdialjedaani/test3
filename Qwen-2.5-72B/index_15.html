@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Friendly Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            padding: 0.5rem;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 1rem;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem;
+        }
+        nav ul li a:hover {
+            background-color: #555;
+        }
+        main {
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .filter-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .filter-options label {
+            margin-right: 1rem;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-card img {
+            width: 100%;
+            height: auto;
+        }
+        .product-card h3 {
+            font-size: 1.2rem;
+            margin: 0.5rem;
+        }
+        .product-card p {
+            margin: 0.5rem;
+        }
+        .product-card button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 0 0 5px 5px;
+            cursor: pointer;
+        }
+        .product-card button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 0.5rem;
+            z-index: 100;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: none;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .sr-only:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            padding: 0.25rem;
+            overflow: visible;
+            clip: auto;
+        }
+        .aria-live-region {
+            position: absolute;
+            clip: rect(0 0 0 0);
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header>
+        <h1>Eco-Friendly Products</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#all">All</a></li>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#personal-care">Personal Care</a></li>
+            <li><a href="#kitchen">Kitchen</a></li>
+            <li><a href="#garden">Garden</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <div class="container">
+            <div class="filter-options">
+                <label for="category">Category:</label>
+                <select id="category" aria-label="Filter by category">
+                    <option value="all">All</option>
+                    <option value="home">Home</option>
+                    <option value="personal-care">Personal Care</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="garden">Garden</option>
+                </select>
+                <label for="sort">Sort by:</label>
+                <select id="sort" aria-label="Sort by">
+                    <option value="price">Price</option>
+                    <option value="popularity">Popularity</option>
+                </select>
+            </div>
+            <div class="product-grid" id="product-grid">
+                <!-- Product Cards will be dynamically generated here -->
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2023 Eco-Friendly Products. All rights reserved.</p>
+    </footer>
+    <div class="aria-live-region" aria-live="polite" aria-atomic="true"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const products = [
+                { id: 1, name: 'Eco-Friendly Reusable Bags', category: 'home', price: 15.99, image: 'images/bags.jpg', description: 'Durable and reusable bags for grocery shopping.' },
+                { id: 2, name: 'Bamboo Toothbrush', category: 'personal-care', price: 4.99, image: 'images/toothbrush.jpg', description: 'Eco-friendly toothbrush made from bamboo.' },
+                { id: 3, name: 'Stainless Steel Straws', category: 'kitchen', price: 9.99, image: 'images/straws.jpg', description: 'Set of 4 reusable stainless steel straws with cleaning brush.' },
+                { id: 4, name: 'Organic Cotton Towels', category: 'home', price: 24.99, image: 'images/towels.jpg', description: 'Soft and absorbent organic cotton towels.' },
+                { id: 5, name: 'Biodegradable Cleaning Wipes', category: 'kitchen', price: 7.99, image: 'images/wipes.jpg', description: 'Eco-friendly cleaning wipes made from biodegradable materials.' },
+                { id: 6, name: 'Eco-Friendly Planters', category: 'garden', price: 12.99, image: 'images/planters.jpg', description: 'Set of 3 planters made from recycled materials.' },
+                { id: 7, name: 'Eco-Friendly Shampoo Bars', category: 'personal-care', price: 8.99, image: 'images/shampoo.jpg', description: 'Shampoo bars that reduce plastic waste.' },
+                { id: 8, name: 'Eco-Friendly Dish Soap', category: 'kitchen', price: 6.99, image: 'images/dish-soap.jpg', description: 'Concentrated dish soap in a reusable bottle.' },
+                { id: 9, name: 'Eco-Friendly Laundry Detergent', category: 'home', price: 14.99, image: 'images/laundry.jpg', description: 'Biodegradable laundry detergent in a compostable package.' },
+                { id: 10, name: 'Eco-Friendly Compost Bin', category: 'garden', price: 29.99, image: 'images/compost.jpg', description: 'Compost bin made from recycled plastic.' }
+            ];
+
+            const productGrid = document.getElementById('product-grid');
+            const categorySelect = document.getElementById('category');
+            const sortSelect = document.getElementById('sort');
+
+            function renderProducts(filteredProducts) {
+                productGrid.innerHTML = '';
+                filteredProducts.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>Price: $${product.price.toFixed(2)}</p>
+                        <button class="quick-view" aria-label="Quick view ${product.name}" data-id="${product.id}">Quick View</button>
+                        <div class="sr-only" id="product-${product.id}-description">${product.description}</div>
+                    `;
+                    productGrid.appendChild(productCard);
+                });
+            }
+
+            function filterProducts() {
+                const selectedCategory = categorySelect.value;
+                const filteredProducts = products.filter(product => selectedCategory === 'all' || product.category === selectedCategory);
+                renderProducts(filteredProducts);
+            }
+
+            function sortProducts() {
+                const selectedSort = sortSelect.value;
+                let sortedProducts = [...products];
+                if (selectedSort === 'price') {
+                    sortedProducts.sort((a, b) => a.price - b.price);
+                } else if (selectedSort === 'popularity') {
+                    sortedProducts.sort((a, b) => b.popularity - a.popularity);
+                }
+                renderProducts(sortedProducts);
+            }
+
+            categorySelect.addEventListener('change', filterProducts);
+            sortSelect.addEventListener('change', sortProducts);
+
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('quick-view')) {
+                    const productId = event.target.dataset.id;
+                    const product = products.find(p => p.id === parseInt(productId));
+                    const liveRegion = document.querySelector('.aria-live-region');
+                    liveRegion.textContent = `Quick view: ${product.name} - ${product.description}`;
+                }
+            });
+
+            renderProducts(products);
+        });
+    </script>
+</body>
+</html>

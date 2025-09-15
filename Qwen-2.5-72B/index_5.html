@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Portfolio - Showcasing Personal Creative Projects</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+        .nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .nav ul li {
+            margin: 0 15px;
+        }
+        .nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .nav ul li a:hover {
+            text-decoration: underline;
+        }
+        .main {
+            margin-top: 20px;
+        }
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .project {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .project:hover {
+            transform: scale(1.05);
+        }
+        .project img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .project h2 {
+            font-size: 1.5em;
+            margin: 10px;
+        }
+        .project p {
+            margin: 10px;
+        }
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .filter-buttons button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .filter-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .filter-buttons button.active {
+            background-color: #0056b3;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="header">
+        <h1>Interactive Portfolio</h1>
+    </header>
+    <nav class="nav" aria-label="Main Navigation">
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <main id="main-content" class="main">
+        <section id="about">
+            <h2>About Me</h2>
+            <p>Hi, I'm a creative developer with a passion for building interactive and accessible web applications. Explore my portfolio to see my latest projects and get in touch if you'd like to collaborate.</p>
+        </section>
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="filter-buttons">
+                <button class="filter" data-category="all" aria-pressed="true">All</button>
+                <button class="filter" data-category="web" aria-pressed="false">Web Development</button>
+                <button class="filter" data-category="design" aria-pressed="false">Design</button>
+                <button class="filter" data-category="mobile" aria-pressed="false">Mobile Apps</button>
+            </div>
+            <div class="projects">
+                <article class="project" data-category="web">
+                    <img src="project1.jpg" alt="Project 1: Web Development" aria-describedby="project1-description">
+                    <div id="project1-description" class="sr-only">A web development project showcasing a responsive and accessible e-commerce website.</div>
+                    <h2>Project 1</h2>
+                    <p>A responsive and accessible e-commerce website built with modern web technologies.</p>
+                </article>
+                <article class="project" data-category="design">
+                    <img src="project2.jpg" alt="Project 2: Design" aria-describedby="project2-description">
+                    <div id="project2-description" class="sr-only">A design project featuring a modern and user-friendly interface for a mobile app.</div>
+                    <h2>Project 2</h2>
+                    <p>A modern and user-friendly interface design for a mobile app.</p>
+                </article>
+                <article class="project" data-category="mobile">
+                    <img src="project3.jpg" alt="Project 3: Mobile App" aria-describedby="project3-description">
+                    <div id="project3-description" class="sr-only">A mobile app developed for iOS and Android platforms with a focus on performance and accessibility.</div>
+                    <h2>Project 3</h2>
+                    <p>A mobile app developed for iOS and Android platforms with a focus on performance and accessibility.</p>
+                </article>
+                <article class="project" data-category="web">
+                    <img src="project4.jpg" alt="Project 4: Web Development" aria-describedby="project4-description">
+                    <div id="project4-description" class="sr-only">A web development project that includes a complex backend system and a user-friendly frontend.</div>
+                    <h2>Project 4</h2>
+                    <p>A web development project that includes a complex backend system and a user-friendly frontend.</p>
+                </article>
+            </div>
+        </section>
+        <section id="contact">
+            <h2>Contact Me</h2>
+            <p>Feel free to reach out if you have any questions or would like to collaborate on a project.</p>
+            <form action="#" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true" autocomplete="email">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required aria-required="true"></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </section>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2023 Interactive Portfolio. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filters = document.querySelectorAll('.filter');
+            const projects = document.querySelectorAll('.project');
+
+            filters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    filters.forEach(f => f.setAttribute('aria-pressed', 'false'));
+                    this.setAttribute('aria-pressed', 'true');
+
+                    const category = this.getAttribute('data-category');
+                    projects.forEach(project => {
+                        if (category === 'all' || project.getAttribute('data-category') === category) {
+                            project.style.display = 'block';
+                        } else {
+                            project.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

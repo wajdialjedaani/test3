@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Weather Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        nav {
+            background-color: #333;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .search-form {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .search-form input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .search-form button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .weather-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .weather-card h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        .weather-card p {
+            margin: 10px 0;
+        }
+        .forecast {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .forecast-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 200px;
+        }
+        .forecast-item h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .forecast-item p {
+            margin: 5px 0;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            z-index: 1000;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .error-message {
+            color: #FF0000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .success-message {
+            color: #008000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .loading-indicator {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <header>
+        <h1>Interactive Weather Dashboard</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#search-form">Search</a></li>
+            <li><a href="#current-weather">Current Weather</a></li>
+            <li><a href="#forecast">24-Hour Forecast</a></li>
+        </ul>
+    </nav>
+    <main id="main-content" tabindex="-1">
+        <section class="search-form" id="search-form">
+            <h2>Search for a City</h2>
+            <form id="weather-form">
+                <label for="city-input" class="visually-hidden">Enter city name:</label>
+                <input type="text" id="city-input" name="city" placeholder="Enter city name" required aria-required="true">
+                <button type="submit" id="search-button">Search</button>
+            </form>
+            <div class="error-message" id="error-message" aria-live="assertive" aria-atomic="true" role="alert"></div>
+            <div class="success-message" id="success-message" aria-live="assertive" aria-atomic="true" role="alert"></div>
+            <div class="loading-indicator" id="loading-indicator" aria-live="assertive" aria-atomic="true" role="status" hidden>Loading...</div>
+        </section>
+        <section class="weather-card" id="current-weather" hidden>
+            <h2>Current Weather</h2>
+            <p><strong>City:</strong> <span id="city-name"></span></p>
+            <p><strong>Temperature:</strong> <span id="current-temperature"></span>°C</p>
+            <p><strong>Conditions:</strong> <span id="current-conditions"></span></p>
+        </section>
+        <section class="forecast" id="forecast" hidden>
+            <h2>24-Hour Forecast</h2>
+            <div class="forecast-item" id="forecast-item-1" hidden>
+                <h3>Hour 1</h3>
+                <p><strong>Temperature:</strong> <span id="forecast-temperature-1"></span>°C</p>
+                <p><strong>Conditions:</strong> <span id="forecast-conditions-1"></span></p>
+            </div>
+            <div class="forecast-item" id="forecast-item-2" hidden>
+                <h3>Hour 2</h3>
+                <p><strong>Temperature:</strong> <span id="forecast-temperature-2"></span>°C</p>
+                <p><strong>Conditions:</strong> <span id="forecast-conditions-2"></span></p>
+            </div>
+            <!-- Add more forecast items as needed -->
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Interactive Weather Dashboard. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('weather-form');
+            const cityInput = document.getElementById('city-input');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const currentWeatherSection = document.getElementById('current-weather');
+            const forecastSection = document.getElementById('forecast');
+            const forecastItems = document.querySelectorAll('.forecast-item');
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                errorMessage.textContent = '';
+                successMessage.textContent = '';
+                loadingIndicator.hidden = false;
+
+                const city = cityInput.value.trim();
+                if (city) {
+                    try {
+                        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=YOUR_API_KEY`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            displayCurrentWeather(data);
+                            displayForecast(city);
+                            successMessage.textContent = 'Weather data loaded successfully.';
+                        } else {
+                            errorMessage.textContent = 'City not found. Please try again.';
+                        }
+                    } catch (error) {
+                        errorMessage.textContent = 'An error occurred. Please try again later.';
+                    } finally {
+                        loadingIndicator.hidden = true;
+                    }
+                } else {
+                    errorMessage.textContent = 'Please enter a city name.';
+                    loadingIndicator.hidden = true;
+                }
+            });
+
+            function displayCurrentWeather(data) {
+                document.getElementById('city-name').textContent = data.name;
+                document.getElementById('current-temperature').textContent = data.main.temp;
+                document.getElementById('current-conditions').textContent = data.weather[0].description;
+                currentWeatherSection.hidden = false;
+            }
+
+            async function displayForecast(city) {
+                try {
+                    const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=YOUR_API_KEY`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const forecastList = data.list.slice(0, 8); // Display the first 8 hours of forecast
+                        forecastItems.forEach((item, index) => {
+                            if (index < forecastList.length) {
+                                item.hidden = false;
+                                const forecast = forecastList[index];
+                                item.querySelector('h3').textContent = `Hour ${index + 1}`;
+                                item.querySelector('#forecast-temperature-1').textContent = forecast.main.temp;
+                                item.querySelector('#forecast-conditions-1').textContent = forecast.weather[0].description;
+                            } else {
+                                item.hidden = true;
+                            }
+                        });
+                        forecastSection.hidden = false;
+                    } else {
+                        errorMessage.textContent = 'Forecast data not available. Please try again.';
+                    }
+                } catch (error) {
+                    errorMessage.textContent = 'An error occurred while fetching forecast data. Please try again later.';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
