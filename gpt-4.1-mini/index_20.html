@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Accessible Music Player – Play, Pause, Volume & Playlist Controls</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-bg: #121212;
+    --color-bg-alt: #1e1e1e;
+    --color-primary: #ff6f61;
+    --color-primary-dark: #cc574d;
+    --color-primary-light: #ff9b8b;
+    --color-text: #f0f0f0;
+    --color-text-alt: #cccccc;
+    --color-focus: #ffff00;
+    --color-focus-bg: #333300;
+    --color-border: #444444;
+    --color-success: #4caf50;
+    --color-error: #e53935;
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --line-height: 1.6;
+    --spacing: 1rem;
+    --spacing-sm: 0.5rem;
+    --border-radius: 0.375rem;
+    --shadow-focus: 0 0 0 3px var(--color-focus);
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-family);
+    line-height: var(--line-height);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+  }
+  a:focus,
+  a:hover {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    color: var(--color-primary);
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  header, footer, main, nav, section, article {
+    display: block;
+  }
+
+  header {
+    background: linear-gradient(135deg, #ff6f61, #ff9b8b);
+    color: var(--color-bg);
+    padding: var(--spacing);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: var(--font-size-xl);
+  }
+
+  nav[aria-label="Main Navigation"] {
+    margin-top: var(--spacing-sm);
+  }
+
+  nav[aria-label="Main Navigation"] ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: var(--spacing);
+  }
+
+  nav[aria-label="Main Navigation"] a {
+    color: var(--color-bg);
+    background-color: var(--color-primary-dark);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  nav[aria-label="Main Navigation"] a:focus,
+  nav[aria-label="Main Navigation"] a:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-bg);
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  main {
+    flex: 1 0 auto;
+    padding: var(--spacing);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Music Player Section */
+  section#music-player {
+    background-color: var(--color-bg-alt);
+    border-radius: var(--border-radius);
+    padding: var(--spacing);
+    box-shadow: 0 4px 12px rgba(255,111,97,0.4);
+  }
+
+  section#music-player h2 {
+    font-size: var(--font-size-lg);
+    margin-top: 0;
+    margin-bottom: var(--spacing);
+    color: var(--color-primary-light);
+  }
+
+  /* Player Controls Container */
+  .player-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Play/Pause Button */
+  button#play-pause {
+    background-color: var(--color-primary);
+    border: none;
+    color: var(--color-bg);
+    font-size: var(--font-size-lg);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    min-width: 100px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  button#play-pause:hover,
+  button#play-pause:focus {
+    background-color: var(--color-primary-light);
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button#play-pause:focus-visible {
+    outline-offset: 4px;
+  }
+
+  /* Volume Control */
+  .volume-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 200px;
+  }
+
+  label[for="volume"] {
+    font-weight: 600;
+    color: var(--color-primary-light);
+  }
+
+  input[type="range"]#volume {
+    width: 100%;
+    cursor: pointer;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) 50%, var(--color-border) 50%, var(--color-border) 100%);
+    outline-offset: 2px;
+  }
+  input[type="range"]#volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary-light);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid var(--color-bg);
+    transition: background-color 0.3s ease;
+  }
+  input[type="range"]#volume::-webkit-slider-thumb:hover,
+  input[type="range"]#volume::-webkit-slider-thumb:focus {
+    background: var(--color-primary-dark);
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  input[type="range"]#volume::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary-light);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid var(--color-bg);
+    transition: background-color 0.3s ease;
+  }
+  input[type="range"]#volume::-moz-range-thumb:hover,
+  input[type="range"]#volume::-moz-range-thumb:focus {
+    background: var(--color-primary-dark);
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Playlist */
+  .playlist {
+    margin-top: var(--spacing);
+  }
+
+  .playlist h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-primary-light);
+  }
+
+  ul#playlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background-color: var(--color-bg);
+  }
+
+  ul#playlist-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    color: var(--color-text-alt);
+    transition: background-color 0.3s ease;
+  }
+  ul#playlist-list li:last-child {
+    border-bottom: none;
+  }
+  ul#playlist-list li:hover,
+  ul#playlist-list li:focus-within {
+    background-color: var(--color-primary-dark);
+    color: var(--color-bg);
+    outline: none;
+  }
+  ul#playlist-list li[aria-selected="true"] {
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+  }
+  ul#playlist-list li button.select-song {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  ul#playlist-list li button.select-song:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Song info */
+  .song-info {
+    flex-grow: 1;
+    margin-left: var(--spacing-sm);
+    overflow: hidden;
+  }
+  .song-title {
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .song-artist {
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--color-text-alt);
+  }
+
+  /* Audio transcript and help */
+  #transcript-container {
+    margin-top: var(--spacing);
+    background-color: var(--color-bg-alt);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing);
+    color: var(--color-text-alt);
+    font-size: 0.875rem;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  #transcript-container h3 {
+    margin-top: 0;
+    color: var(--color-primary-light);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .player-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    button#play-pause {
+      width: 100%;
+      min-width: auto;
+      justify-content: center;
+    }
+    .volume-control {
+      flex: 1 1 auto;
+    }
+  }
+
+  /* Focus outline enhancement */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar styling for playlist */
+  ul#playlist-list::-webkit-scrollbar {
+    width: 8px;
+  }
+  ul#playlist-list::-webkit-scrollbar-track {
+    background: var(--color-bg-alt);
+  }
+  ul#playlist-list::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+<header>
+  <h1>Accessible Music Player</h1>
+  <nav aria-label="Main Navigation">
+    <ul>
+      <li><a href="#music-player" id="nav-player" tabindex="0">Music Player</a></li>
+      <li><a href="#transcript-container" id="nav-transcript" tabindex="0">Audio Transcript</a></li>
+      <li><a href="#playlist-list" id="nav-playlist" tabindex="0">Playlist</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content" tabindex="-1">
+  <section id="music-player" aria-labelledby="player-heading" role="region">
+    <h2 id="player-heading">Music Player Controls</h2>
+
+    <div class="player-controls">
+      <button id="play-pause" aria-pressed="false" aria-label="Play music" type="button">
+        ▶️ Play
+      </button>
+
+      <div class="volume-control">
+        <label for="volume" id="volume-label">Volume</label>
+        <input type="range" id="volume" name="volume" min="0" max="1" step="0.01" aria-labelledby="volume-label" aria-live="polite" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.5" value="0.5" />
+      </div>
+    </div>
+
+    <section class="playlist" aria-labelledby="playlist-heading" role="region" tabindex="0">
+      <h3 id="playlist-heading">Playlist</h3>
+      <ul id="playlist-list" role="listbox" aria-label="Available songs" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+        <!-- Songs inserted by JS -->
+      </ul>
+    </section>
+  </section>
+
+  <section id="transcript-container" aria-live="polite" aria-atomic="true" role="region" aria-labelledby="transcript-heading" tabindex="0">
+    <h3 id="transcript-heading">Audio Transcript and Descriptions</h3>
+    <p id="transcript-text">Select a song to see its transcript and descriptions here.</p>
+  </section>
+</main>
+
+<footer>
+  <p style="text-align:center; padding: var(--spacing-sm); color: var(--color-text-alt); font-size: 0.875rem;">
+    &copy; 2024 Accessible Music Player. All rights reserved.
+  </p>
+</footer>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Songs data: title, artist, audio src, transcript, sign language video, extended audio description
+    // Using short royalty-free samples with accessible metadata
+    const songs = [
+      {
+        id: "song1",
+        title: "Calm Breeze",
+        artist: "A. Composer",
+        src: "https://cdn.pixabay.com/download/audio/2021/10/29/audio_9f7e1f49a6.mp3?filename=calm-breeze-ambient-11260.mp3",
+        transcript: `This instrumental track features gentle wind chimes and soft synth pads, creating a relaxing atmosphere.
+        [music: calm breeze, gentle wind chimes, soft synth pads]`,
+        signLangVideo: "https://example.com/videos/calm-breeze-asl.mp4",
+        extendedAudioDescription: `The music begins with soft wind chimes that sparkle lightly, evoking the feeling of a calm, cool breeze on a summer evening.
+        The synth pads swell slowly and smoothly, providing a warm and enveloping background.`,
+      },
+      {
+        id: "song2",
+        title: "Energetic Drive",
+        artist: "B. Beats",
+        src: "https://cdn.pixabay.com/download/audio/2022/03/22/audio_3b5d8f7a88.mp3?filename=energetic-drive-12890.mp3",
+        transcript: `Upbeat electronic track with a driving bassline and rhythmic drum patterns.
+        [music: energetic bass, rhythmic drums, upbeat electronic]`,
+        signLangVideo: "https://example.com/videos/energetic-drive-asl.mp4",
+        extendedAudioDescription: `The track opens with a punchy bass drum that sets a fast tempo.
+        Synth stabs punctuate the rhythm, giving a sense of urgency and excitement.`,
+      },
+      {
+        id: "song3",
+        title: "Gentle Rain",
+        artist: "C. Sounds",
+        src: "https://cdn.pixabay.com/download/audio/2021/08/04/audio_6f5d60f6a1.mp3?filename=gentle-rain-ambient-10784.mp3",
+        transcript: `Ambient sounds of gentle rain with soft piano melodies.
+        [music: gentle rain, soft piano, ambient sounds]`,
+        signLangVideo: "https://example.com/videos/gentle-rain-asl.mp4",
+        extendedAudioDescription: `The sound of rain falling steadily creates a peaceful background.
+        A soft piano melody plays intermittently, adding emotional depth.`,
+      }
+    ];
+
+    // Elements
+    const playPauseBtn = document.getElementById("play-pause");
+    const volumeSlider = document.getElementById("volume");
+    const playlistList = document.getElementById("playlist-list");
+    const transcriptText = document.getElementById("transcript-text");
+
+    // Create audio element
+    const audio = new Audio();
+    audio.preload = "metadata";
+    audio.volume = parseFloat(volumeSlider.value);
+
+    // State
+    let currentSongIndex = -1;
+    let isPlaying = false;
+
+    // Utility: update play/pause button text and aria-pressed
+    function updatePlayPauseButton() {
+      if (isPlaying) {
+        playPauseBtn.textContent = "⏸️ Pause";
+        playPauseBtn.setAttribute("aria-label", "Pause music");
+        playPauseBtn.setAttribute("aria-pressed", "true");
+      } else {
+        playPauseBtn.textContent = "▶️ Play";
+        playPauseBtn.setAttribute("aria-label", "Play music");
+        playPauseBtn.setAttribute("aria-pressed", "false");
+      }
+    }
+
+    // Utility: update aria-valuenow for volume slider
+    function updateVolumeAria() {
+      volumeSlider.setAttribute("aria-valuenow", volumeSlider.value);
+    }
+
+    // Load song by index
+    function loadSong(index) {
+      if (index < 0 || index >= songs.length) return;
+      const song = songs[index];
+      audio.src = song.src;
+      audio.load();
+      currentSongIndex = index;
+      updateTranscript(song);
+      updatePlaylistSelection();
+      isPlaying = false;
+      updatePlayPauseButton();
+      playPauseBtn.focus();
+    }
+
+    // Update transcript area with transcript and extended audio description
+    function updateTranscript(song) {
+      transcriptText.innerHTML = "";
+      // Compose accessible transcript content with paragraphs
+      const transcriptPara = document.createElement("p");
+      transcriptPara.textContent = song.transcript;
+      transcriptText.appendChild(transcriptPara);
+
+      // Extended audio description with a heading and paragraph
+      const extDescHeading = document.createElement("h4");
+      extDescHeading.textContent = "Extended Audio Description";
+      extDescHeading.style.marginTop = "1rem";
+      extDescHeading.style.color = "var(--color-primary-light)";
+      transcriptText.appendChild(extDescHeading);
+
+      const extDescPara = document.createElement("p");
+      extDescPara.textContent = song.extendedAudioDescription;
+      transcriptText.appendChild(extDescPara);
+
+      // Sign language video link with description
+      const signLangLink = document.createElement("a");
+      signLangLink.href = song.signLangVideo;
+      signLangLink.target = "_blank";
+      signLangLink.rel = "noopener";
+      signLangLink.textContent = "Watch sign language interpretation (opens in new tab)";
+      signLangLink.setAttribute("aria-label", `Sign language interpretation video for ${song.title} by ${song.artist}`);
+      signLangLink.style.display = "inline-block";
+      signLangLink.style.marginTop = "1rem";
+      signLangLink.style.color = "var(--color-primary)";
+      transcriptText.appendChild(signLangLink);
+    }
+
+    // Update playlist selection aria and styles
+    function updatePlaylistSelection() {
+      const items = playlistList.querySelectorAll("li");
+      items.forEach((li, idx) => {
+        if (idx === currentSongIndex) {
+          li.setAttribute("aria-selected", "true");
+          li.tabIndex = 0;
+        } else {
+          li.setAttribute("aria-selected", "false");
+          li.tabIndex = -1;
+        }
+      });
+    }
+
+    // Play or pause audio
+    function togglePlayPause() {
+      if (currentSongIndex === -1) {
+        loadSong(0);
+      }
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play().catch((e) => {
+          // Handle play errors (e.g. autoplay restrictions)
+          console.error("Playback failed:", e);
+          alert("Playback failed. Please interact with the player controls to start audio.");
+        });
+      }
+    }
+
+    // Event Handlers
+    playPauseBtn.addEventListener("click", () => {
+      togglePlayPause();
+    });
+
+    // Keyboard support for play/pause button (Enter/Space)
+    playPauseBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        togglePlayPause();
+      }
+    });
+
+    volumeSlider.addEventListener("input", (e) => {
+      const vol = parseFloat(e.target.value);
+      audio.volume = vol;
+      updateVolumeAria();
+    });
+
+    // Keyboard support for volume slider handled by native input[type=range]
+
+    // Populate playlist
+    function createPlaylistItem(song, index) {
+      const li = document.createElement("li");
+      li.setAttribute("role", "option");
+      li.id = `playlist-item-${index}`;
+      li.tabIndex = -1;
+      li.setAttribute("aria-selected", "false");
+
+      // Song info container
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "song-info";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "song-title";
+      titleSpan.textContent = song.title;
+      titleSpan.setAttribute("aria-label", `Song title: ${song.title}`);
+
+      const artistSpan = document.createElement("span");
+      artistSpan.className = "song-artist";
+      artistSpan.textContent = song.artist;
+      artistSpan.setAttribute("aria-label", `Artist: ${song.artist}`);
+
+      infoDiv.appendChild(titleSpan);
+      infoDiv.appendChild(document.createElement("br"));
+      infoDiv.appendChild(artistSpan);
+
+      // Select button
+      const selectBtn = document.createElement("button");
+      selectBtn.className = "select-song";
+      selectBtn.type = "button";
+      selectBtn.setAttribute("aria-label", `Select song ${song.title} by ${song.artist}`);
+      selectBtn.textContent = "▶️";
+
+      selectBtn.addEventListener("click", (evt) => {
+        evt.stopPropagation();
+        if (currentSongIndex !== index) {
+          loadSong(index);
+          audio.play();
+          isPlaying = true;
+          updatePlayPauseButton();
+        } else {
+          // If same song selected, toggle play/pause
+          togglePlayPause();
+        }
+        selectBtn.focus();
+      });
+
+      // Keyboard support for li: Enter/Space selects song
+      li.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectBtn.click();
+        }
+        // Arrow navigation within playlist
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          const next = li.nextElementSibling || playlistList.firstElementChild;
+          next.focus();
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          const prev = li.previousElementSibling || playlistList.lastElementChild;
+          prev.focus();
+        }
+      });
+
+      // Clicking on li selects the song
+      li.addEventListener("click", () => {
+        selectBtn.click();
+      });
+
+      li.appendChild(selectBtn);
+      li.appendChild(infoDiv);
+
+      return li;
+    }
+
+    // Initialize playlist
+    function initPlaylist() {
+      songs.forEach((song, idx) => {
+        const li = createPlaylistItem(song, idx);
+        playlistList.appendChild(li);
+      });
+    }
+
+    // Audio event listeners
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      updatePlayPauseButton();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      updatePlayPauseButton();
+    });
+
+    audio.addEventListener("ended", () => {
+      // Auto play next song or stop
+      if (currentSongIndex + 1 < songs.length) {
+        loadSong(currentSongIndex + 1);
+        audio.play();
+      } else {
+        isPlaying = false;
+        updatePlayPauseButton();
+      }
+    });
+
+    audio.addEventListener("error", (e) => {
+      console.error("Audio playback error", e);
+      alert("An error occurred during audio playback. Please try another song.");
+    });
+
+    // Initialization
+    initPlaylist();
+    updateVolumeAria();
+
+    // Load first song by default but do not autoplay
+    loadSong(0);
+
+    // Focus management: when user uses skip link, focus main content
+    const skipLink = document.querySelector(".skip-link");
+    skipLink.addEventListener("click", (e) => {
+      const main = document.getElementById("main-content");
+      if (main) {
+        main.focus();
+      }
+    });
+
+    // Ensure all interactive elements have minimum 44x44 px size
+    // Already enforced by CSS min-width/min-height and padding
+
+  })();
+</script>
+</body>
+</html>

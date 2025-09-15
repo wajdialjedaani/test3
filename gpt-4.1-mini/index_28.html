@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=yes" />
+<title>Gardeners' Haven: Share Your Plants, Get Feedback & Connect</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #e0f7e9 0%, #d4f0fc 100%);
+    color: #003300;
+    max-width: 80ch;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 1.5rem 3rem 1.5rem;
+  }
+  a {
+    color: #006622;
+    text-decoration: underline;
+  }
+  a:focus,
+  button:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 3px solid #004d00;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #004d00;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    transition: top 0.3s ease;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+  }
+  #skip-link:focus {
+    top: 0;
+  }
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #2e7d32 0%, #81c784 100%);
+    color: #e6f4ea;
+    padding: 1.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 77, 0, 0.3);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.25rem;
+    line-height: 1.2;
+    text-shadow: 1px 1px 3px #004d00;
+  }
+  header p {
+    margin: 0.25rem 0 0 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  /* Navigation */
+  nav[aria-label="Primary"] {
+    margin-top: 1rem;
+    background: #1b5e20;
+    border-radius: 6px;
+    box-shadow: inset 0 -3px 5px #145214;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  nav[aria-label="Primary"] li {
+    position: relative;
+  }
+  nav[aria-label="Primary"] > ul > li {
+    flex: 1 1 auto;
+  }
+  nav[aria-label="Primary"] a,
+  nav[aria-label="Primary"] button.menu-button {
+    display: block;
+    padding: 1rem 1.25rem;
+    color: #d0f0c0;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  nav[aria-label="Primary"] a:hover,
+  nav[aria-label="Primary"] button.menu-button:hover,
+  nav[aria-label="Primary"] a:focus,
+  nav[aria-label="Primary"] button.menu-button:focus {
+    background: #4caf50;
+    color: #003300;
+    outline-offset: 3px;
+  }
+  /* Dropdown menus */
+  nav[aria-label="Primary"] li ul {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: #2e7d32;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 8px rgba(0, 77, 0, 0.5);
+    min-width: 12rem;
+    display: none;
+    z-index: 10;
+  }
+  nav[aria-label="Primary"] li[aria-expanded="true"] > ul {
+    display: block;
+  }
+  nav[aria-label="Primary"] li ul li a {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: #c8e6c9;
+    text-align: left;
+  }
+  nav[aria-label="Primary"] li ul li a:hover,
+  nav[aria-label="Primary"] li ul li a:focus {
+    background: #81c784;
+    color: #003300;
+    outline-offset: 2px;
+  }
+  /* Breadcrumbs */
+  nav[aria-label="Breadcrumb"] {
+    margin: 1rem 0;
+    font-size: 0.875rem;
+  }
+  nav[aria-label="Breadcrumb"] ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  nav[aria-label="Breadcrumb"] li::after {
+    content: "›";
+    margin-left: 0.5rem;
+    color: #2e7d32;
+  }
+  nav[aria-label="Breadcrumb"] li:last-child::after {
+    content: "";
+  }
+  nav[aria-label="Breadcrumb"] a {
+    color: #2e7d32;
+    text-decoration: none;
+  }
+  nav[aria-label="Breadcrumb"] a:hover,
+  nav[aria-label="Breadcrumb"] a:focus {
+    text-decoration: underline;
+  }
+  /* Main content */
+  main {
+    margin-top: 1rem;
+  }
+  section {
+    margin-bottom: 2rem;
+  }
+  section > h2 {
+    font-size: 1.75rem;
+    color: #1b5e20;
+    border-bottom: 3px solid #4caf50;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  /* Upload form */
+  form#upload-form {
+    background: #e8f5e9;
+    border: 3px solid #4caf50;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 40rem;
+  }
+  fieldset {
+    border: none;
+    margin: 0 0 1rem 0;
+    padding: 0;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #2e7d32;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #004d00;
+  }
+  .required-indicator {
+    color: #b71c1c;
+    font-weight: 700;
+    margin-left: 0.25rem;
+  }
+  input[type="text"],
+  input[type="url"],
+  textarea,
+  input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid #4caf50;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #003300;
+    line-height: 1.4;
+  }
+  input[type="file"] {
+    padding: 0.25rem 0.5rem;
+  }
+  input[type="text"]:focus,
+  input[type="url"]:focus,
+  textarea:focus,
+  input[type="file"]:focus {
+    border-color: #1b5e20;
+    outline-offset: 3px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+  .help-text {
+    font-size: 0.875rem;
+    color: #2e7d32;
+    margin-top: 0.125rem;
+  }
+  .error-message {
+    color: #b71c1c;
+    font-weight: 700;
+    margin-top: 0.25rem;
+  }
+  button[type="submit"] {
+    background: #2e7d32;
+    color: #e6f4ea;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    box-shadow: 0 3px 6px rgba(0, 77, 0, 0.5);
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover,
+  button[type="submit"]:focus {
+    background: #4caf50;
+    color: #003300;
+    outline-offset: 3px;
+  }
+  /* Gallery */
+  #gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem;
+  }
+  article.plant-card {
+    background: #f1f8f1;
+    border: 3px solid #4caf50;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 77, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  article.plant-card:focus-within {
+    outline: 3px solid #1b5e20;
+    outline-offset: 2px;
+  }
+  .plant-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 66.66%; /* 3:2 aspect ratio */
+    overflow: hidden;
+    background: #c8e6c9;
+  }
+  .plant-image-wrapper img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .plant-content {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .plant-description {
+    flex-grow: 1;
+    font-size: 1rem;
+    color: #004d00;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+  }
+  .interaction-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  button.like-button,
+  button.comment-button {
+    background: #2e7d32;
+    color: #e6f4ea;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 77, 0, 0.4);
+    transition: background-color 0.3s ease;
+  }
+  button.like-button:hover,
+  button.like-button:focus,
+  button.comment-button:hover,
+  button.comment-button:focus {
+    background: #4caf50;
+    color: #003300;
+    outline-offset: 3px;
+  }
+  button.like-button svg,
+  button.comment-button svg {
+    fill: currentColor;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .like-count {
+    font-weight: 700;
+    color: #1b5e20;
+  }
+  /* Comments modal */
+  #comments-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 77, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+  }
+  #comments-modal[aria-hidden="false"] {
+    display: flex;
+  }
+  #comments-dialog {
+    background: #e8f5e9;
+    border: 4px solid #4caf50;
+    border-radius: 12px;
+    max-width: 40rem;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 77, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+  }
+  #comments-dialog header {
+    background: #2e7d32;
+    color: #e6f4ea;
+    padding: 1rem 1.5rem;
+    border-radius: 8px 8px 0 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #comments-dialog header h3 {
+    margin: 0;
+  }
+  #comments-dialog header button.close-button {
+    background: transparent;
+    border: none;
+    color: #e6f4ea;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+  }
+  #comments-dialog header button.close-button:focus {
+    outline: 3px solid #81c784;
+    outline-offset: 3px;
+  }
+  #comments-list {
+    padding: 1rem 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  #comments-list p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #004d00;
+  }
+  #comments-list p.comment-author {
+    font-weight: 700;
+    color: #1b5e20;
+  }
+  #comments-list p.comment-date {
+    font-size: 0.875rem;
+    color: #2e7d32;
+    font-style: italic;
+  }
+  #comments-form {
+    border-top: 3px solid #4caf50;
+    padding: 1rem 1.5rem;
+    background: #dcedc8;
+  }
+  #comments-form fieldset {
+    margin: 0 0 1rem 0;
+  }
+  #comments-form label {
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  #comments-form textarea {
+    width: 100%;
+    min-height: 4rem;
+    font-size: 1rem;
+    border: 2px solid #4caf50;
+    border-radius: 6px;
+    padding: 0.5rem;
+    resize: vertical;
+    background: #ffffff;
+    color: #003300;
+  }
+  #comments-form textarea:focus {
+    border-color: #1b5e20;
+    outline-offset: 3px;
+  }
+  #comments-form button[type="submit"] {
+    background: #2e7d32;
+    color: #e6f4ea;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    box-shadow: 0 3px 6px rgba(0, 77, 0, 0.5);
+    transition: background-color 0.3s ease;
+  }
+  #comments-form button[type="submit"]:hover,
+  #comments-form button[type="submit"]:focus {
+    background: #4caf50;
+    color: #003300;
+    outline-offset: 3px;
+  }
+  /* Status message */
+  #status-message {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2e7d32;
+    color: #e6f4ea;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 77, 0, 0.6);
+    font-weight: 700;
+    font-size: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1100;
+  }
+  #status-message[aria-live="polite"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    nav[aria-label="Primary"] ul {
+      flex-direction: column;
+    }
+    nav[aria-label="Primary"] > ul > li {
+      flex: none;
+    }
+  }
+  /* Focus visible enhancement */
+  :focus-visible {
+    outline: 3px solid #1b5e20;
+    outline-offset: 2px;
+  }
+  /* Vibrant color-coded badges for likes and comments count */
+  .badge {
+    background: #4caf50;
+    color: #e6f4ea;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.875rem;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link" class="visually-hidden-focusable">Skip to main content</a>
+
+<header>
+  <h1>Gardeners' Haven</h1>
+  <p>Share Your Plants, Get Feedback & Connect with Fellow Gardeners</p>
+  <nav aria-label="Primary">
+    <ul>
+      <li><a href="#upload-section" id="nav-upload" role="link">Upload Plant Photo</a></li>
+      <li><a href="#gallery-section" id="nav-gallery" role="link">Gallery</a></li>
+      <li><a href="#about-section" id="nav-about" role="link">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<nav aria-label="Breadcrumb" class="visually-hidden" id="breadcrumb-nav">
+  <ol>
+    <li><a href="#main-content" id="breadcrumb-home">Home</a></li>
+    <li id="breadcrumb-current" aria-current="page">Gallery</li>
+  </ol>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section id="upload-section" aria-labelledby="upload-heading">
+    <h2 id="upload-heading">Upload Your Plant or Garden Photo</h2>
+    <form id="upload-form" novalidate aria-describedby="upload-help" aria-live="polite">
+      <fieldset>
+        <legend>Plant Photo Details</legend>
+
+        <label for="plant-photo">
+          Plant or Garden Photo
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <input 
+          type="file" 
+          id="plant-photo" 
+          name="plant-photo" 
+          accept="image/jpeg, image/png, image/webp" 
+          aria-describedby="photo-help photo-error" 
+          aria-required="true" 
+          required 
+          aria-invalid="false" 
+          aria-label="Upload a photo of your plant or garden"
+        />
+        <p id="photo-help" class="help-text">Accepted formats: JPEG, PNG, WEBP. Max size 5MB.</p>
+        <p id="photo-error" class="error-message" role="alert" aria-live="assertive" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <label for="plant-description">
+          Description
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <textarea 
+          id="plant-description" 
+          name="plant-description" 
+          rows="4" 
+          maxlength="500" 
+          aria-describedby="desc-help desc-error" 
+          aria-required="true" 
+          required 
+          aria-invalid="false" 
+          autocomplete="off" 
+          placeholder="Describe your plant or garden..."></textarea>
+        <p id="desc-help" class="help-text">Max 500 characters. Describe your plant or garden.</p>
+        <p id="desc-error" class="error-message" role="alert" aria-live="assertive" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <label for="plant-url">
+          Optional: Link to your gardening blog or profile
+        </label>
+        <input 
+          type="url" 
+          id="plant-url" 
+          name="plant-url" 
+          placeholder="https://example.com" 
+          aria-describedby="url-help url-error" 
+          autocomplete="url" 
+          aria-invalid="false"
+        />
+        <p id="url-help" class="help-text">Provide a valid URL starting with https://</p>
+        <p id="url-error" class="error-message" role="alert" aria-live="assertive" hidden></p>
+      </fieldset>
+
+      <button type="submit" aria-label="Submit plant photo and description">Upload</button>
+    </form>
+  </section>
+
+  <section id="gallery-section" aria-labelledby="gallery-heading">
+    <h2 id="gallery-heading">Community Gallery</h2>
+    <p>Browse photos shared by fellow gardeners. Like and comment to share your thoughts!</p>
+    <div id="gallery" aria-live="polite" aria-relevant="additions" aria-atomic="false" tabindex="0" role="list">
+      <!-- Plant cards will be injected here -->
+    </div>
+  </section>
+
+  <section id="about-section" aria-labelledby="about-heading">
+    <h2 id="about-heading">About Gardeners' Haven</h2>
+    <p>
+      <strong>Gardeners' Haven</strong> is a welcoming community for gardening enthusiasts to share photos of their plants and gardens, exchange feedback, and grow together. 
+      We prioritize accessibility and inclusivity so everyone can enjoy and participate fully.
+    </p>
+    <p>
+      <abbr title="World Wide Web Consortium">W3C</abbr> standards guide our design, ensuring the highest level of accessibility compliance (WCAG 2.2 AAA).
+    </p>
+    <p lang="es" aria-label="Spanish translation: Bienvenidos a Gardeners' Haven, una comunidad para jardineros.">
+      Bienvenidos a <em>Gardeners' Haven</em>, una comunidad para entusiastas de la jardinería para compartir fotos y comentarios.
+    </p>
+  </section>
+</main>
+
+<!-- Comments Modal -->
+<div id="comments-modal" role="dialog" aria-modal="true" aria-labelledby="comments-dialog-title" aria-hidden="true">
+  <section id="comments-dialog" tabindex="-1">
+    <header>
+      <h3 id="comments-dialog-title">Comments</h3>
+      <button type="button" class="close-button" aria-label="Close comments dialog">&times;</button>
+    </header>
+    <div id="comments-list" role="list" aria-live="polite" aria-relevant="additions">
+      <!-- Comments injected here -->
+    </div>
+    <form id="comments-form" aria-describedby="comments-help" novalidate>
+      <fieldset>
+        <legend>Add a Comment</legend>
+        <label for="comment-textarea">Your Comment</label>
+        <textarea id="comment-textarea" name="comment-textarea" rows="3" maxlength="300" aria-describedby="comments-help comments-error" required aria-required="true" aria-invalid="false" autocomplete="off" placeholder="Write your comment here..."></textarea>
+        <p id="comments-help" class="help-text">Max 300 characters. Be kind and respectful.</p>
+        <p id="comments-error" class="error-message" role="alert" aria-live="assertive" hidden></p>
+      </fieldset>
+      <button type="submit" aria-label="Submit comment">Post Comment</button>
+    </form>
+  </section>
+</div>
+
+<!-- Status message for feedback -->
+<div id="status-message" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // Utility: Escape HTML for safe injection
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m]);
+  }
+
+  // Elements
+  const uploadForm = document.getElementById('upload-form');
+  const photoInput = document.getElementById('plant-photo');
+  const photoError = document.getElementById('photo-error');
+  const descInput = document.getElementById('plant-description');
+  const descError = document.getElementById('desc-error');
+  const urlInput = document.getElementById('plant-url');
+  const urlError = document.getElementById('url-error');
+  const gallery = document.getElementById('gallery');
+  const statusMessage = document.getElementById('status-message');
+
+  const commentsModal = document.getElementById('comments-modal');
+  const commentsDialog = document.getElementById('comments-dialog');
+  const commentsList = document.getElementById('comments-list');
+  const commentsForm = document.getElementById('comments-form');
+  const commentTextarea = document.getElementById('comment-textarea');
+  const commentsError = document.getElementById('comments-error');
+  const commentsCloseBtn = commentsDialog.querySelector('button.close-button');
+
+  // Data storage keys
+  const STORAGE_KEY = 'gardeners_haven_posts';
+
+  // In-memory data
+  let posts = [];
+  let activePostId = null;
+
+  // Load posts from localStorage
+  function loadPosts() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        posts = JSON.parse(stored);
+        if (!Array.isArray(posts)) posts = [];
+      }
+    } catch {
+      posts = [];
+    }
+  }
+
+  // Save posts to localStorage
+  function savePosts() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    } catch {
+      // Storage quota exceeded or unavailable
+      showStatus('Warning: Unable to save posts locally.', true);
+    }
+  }
+
+  // Show status message
+  let statusTimeout = null;
+  function showStatus(message, isError = false, duration = 4000) {
+    statusMessage.textContent = message;
+    statusMessage.style.backgroundColor = isError ? '#b71c1c' : '#2e7d32';
+    statusMessage.hidden = false;
+    statusMessage.setAttribute('aria-live', 'polite');
+    clearTimeout(statusTimeout);
+    statusTimeout = setTimeout(() => {
+      statusMessage.hidden = true;
+      statusMessage.removeAttribute('aria-live');
+    }, duration);
+  }
+
+  // Validate image file
+  function validateImageFile(file) {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (!file) return 'No file selected.';
+    if (!validTypes.includes(file.type)) return 'Invalid file type. Only JPEG, PNG, and WEBP are allowed.';
+    if (file.size > maxSize) return 'File size exceeds 5MB limit.';
+    return '';
+  }
+
+  // Validate URL
+  function validateURL(url) {
+    if (!url) return '';
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'https:') return 'URL must start with https://';
+      return '';
+    } catch {
+      return 'Invalid URL format.';
+    }
+  }
+
+  // Clear form errors
+  function clearFormErrors() {
+    [photoError, descError, urlError].forEach(el => {
+      el.hidden = true;
+      el.textContent = '';
+      const input = document.getElementById(el.id.replace('-error', ''));
+      if (input) {
+        input.setAttribute('aria-invalid', 'false');
+      }
+    });
+  }
+
+  // Validate form inputs, return boolean
+  function validateForm() {
+    clearFormErrors();
+    let valid = true;
+
+    // Photo validation
+    const photoFile = photoInput.files[0];
+    const photoErrMsg = validateImageFile(photoFile);
+    if (photoErrMsg) {
+      photoError.textContent = photoErrMsg;
+      photoError.hidden = false;
+      photoInput.setAttribute('aria-invalid', 'true');
+      valid = false;
+    }
+
+    // Description validation
+    const descVal = descInput.value.trim();
+    if (!descVal) {
+      descError.textContent = 'Description is required.';
+      descError.hidden = false;
+      descInput.setAttribute('aria-invalid', 'true');
+      valid = false;
+    } else if (descVal.length > 500) {
+      descError.textContent = 'Description exceeds 500 characters limit.';
+      descError.hidden = false;
+      descInput.setAttribute('aria-invalid', 'true');
+      valid = false;
+    }
+
+    // URL validation
+    const urlVal = urlInput.value.trim();
+    const urlErrMsg = validateURL(urlVal);
+    if (urlErrMsg) {
+      urlError.textContent = urlErrMsg;
+      urlError.hidden = false;
+      urlInput.setAttribute('aria-invalid', 'true');
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  // Create DOM plant card
+  function createPlantCard(post) {
+    const article = document.createElement('article');
+    article.className = 'plant-card';
+    article.setAttribute('tabindex', '0');
+    article.setAttribute('role', 'listitem');
+    article.setAttribute('aria-labelledby', `desc-${post.id}`);
+
+    // Image wrapper with alt and aria-describedby for description
+    const imgWrapper = document.createElement('div');
+    imgWrapper.className = 'plant-image-wrapper';
+
+    const img = document.createElement('img');
+    img.src = post.imageDataUrl;
+    img.alt = `Photo of plant or garden: ${post.description.substring(0, 50)}${post.description.length > 50 ? '...' : ''}`;
+    imgWrapper.appendChild(img);
+
+    // Content container
+    const content = document.createElement('div');
+    content.className = 'plant-content';
+
+    // Description
+    const desc = document.createElement('p');
+    desc.className = 'plant-description';
+    desc.id = `desc-${post.id}`;
+    desc.textContent = post.description;
+    content.appendChild(desc);
+
+    // Interaction bar: likes and comments buttons
+    const interactionBar = document.createElement('div');
+    interactionBar.className = 'interaction-bar';
+
+    // Like button
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'like-button';
+    likeBtn.type = 'button';
+    likeBtn.setAttribute('aria-pressed', post.liked ? 'true' : 'false');
+    likeBtn.setAttribute('aria-label', `Like post: ${post.description.substring(0, 30)}. ${post.likes} likes.`);
+    likeBtn.dataset.postId = post.id;
+    likeBtn.innerHTML = `
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <span class="like-count">${post.likes}</span>
+    `;
+    interactionBar.appendChild(likeBtn);
+
+    // Comment button
+    const commentBtn = document.createElement('button');
+    commentBtn.className = 'comment-button';
+    commentBtn.type = 'button';
+    commentBtn.setAttribute('aria-label', `View and add comments for post: ${post.description.substring(0, 30)}. ${post.comments.length} comments.`);
+    commentBtn.dataset.postId = post.id;
+    commentBtn.innerHTML = `
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <path d="M20 2H4a2 2 0 0 0-2 2v16l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
+      </svg>
+      <span class="badge" aria-live="polite" aria-atomic="true">${post.comments.length}</span>
+    `;
+    interactionBar.appendChild(commentBtn);
+
+    content.appendChild(interactionBar);
+
+    article.appendChild(imgWrapper);
+    article.appendChild(content);
+
+    return article;
+  }
+
+  // Render gallery posts
+  function renderGallery() {
+    gallery.innerHTML = '';
+    if (posts.length === 0) {
+      const noPostsMsg = document.createElement('p');
+      noPostsMsg.textContent = 'No photos uploaded yet. Be the first to share your garden!';
+      gallery.appendChild(noPostsMsg);
+      return;
+    }
+    posts.forEach(post => {
+      const card = createPlantCard(post);
+      gallery.appendChild(card);
+    });
+  }
+
+  // Generate unique ID for posts
+  function generateId() {
+    return 'p' + Date.now() + Math.floor(Math.random() * 1000);
+  }
+
+  // Read image file as Data URL
+  function readImageFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Error reading image file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Handle form submission
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      showStatus('Please fix errors before submitting.', true);
+      return;
+    }
+
+    const file = photoInput.files[0];
+    if (!file) {
+      showStatus('No image file selected.', true);
+      return;
+    }
+
+    try {
+      const imageDataUrl = await readImageFile(file);
+      const newPost = {
+        id: generateId(),
+        imageDataUrl,
+        description: descInput.value.trim(),
+        url: urlInput.value.trim() || null,
+        likes: 0,
+        liked: false,
+        comments: []
+      };
+      posts.unshift(newPost);
+      savePosts();
+      renderGallery();
+      uploadForm.reset();
+      showStatus('Your plant photo has been uploaded successfully.');
+      photoInput.focus();
+    } catch (error) {
+      showStatus('Failed to read image file. Please try again.', true);
+    }
+  });
+
+  // Like button toggle handler
+  gallery.addEventListener('click', (e) => {
+    if (e.target.closest('button.like-button')) {
+      const btn = e.target.closest('button.like-button');
+      const postId = btn.dataset.postId;
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      post.liked = !post.liked;
+      post.likes += post.liked ? 1 : -1;
+      if (post.likes < 0) post.likes = 0;
+      savePosts();
+      renderGallery();
+      showStatus(post.liked ? 'You liked a post.' : 'You unliked a post.');
+    } else if (e.target.closest('button.comment-button')) {
+      const btn = e.target.closest('button.comment-button');
+      const postId = btn.dataset.postId;
+      openCommentsModal(postId);
+    }
+  });
+
+  // Open comments modal
+  function openCommentsModal(postId) {
+    activePostId = postId;
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    commentsList.innerHTML = '';
+    if (post.comments.length === 0) {
+      const p = document.createElement('p');
+      p.textContent = 'No comments yet. Be the first to comment!';
+      commentsList.appendChild(p);
+    } else {
+      post.comments.forEach((comment) => {
+        const commentWrapper = document.createElement('div');
+        commentWrapper.setAttribute('role', 'listitem');
+        commentWrapper.style.marginBottom = '1rem';
+
+        const authorP = document.createElement('p');
+        authorP.className = 'comment-author';
+        authorP.textContent = comment.author || 'Anonymous';
+
+        const dateP = document.createElement('p');
+        dateP.className = 'comment-date';
+        const dateObj = new Date(comment.date);
+        dateP.textContent = dateObj.toLocaleString(undefined, {
+          year: 'numeric', month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+
+        const textP = document.createElement('p');
+        textP.textContent = comment.text;
+
+        commentWrapper.appendChild(authorP);
+        commentWrapper.appendChild(dateP);
+        commentWrapper.appendChild(textP);
+
+        commentsList.appendChild(commentWrapper);
+      });
+    }
+    commentsError.hidden = true;
+    commentTextarea.value = '';
+    commentsModal.setAttribute('aria-hidden', 'false');
+    commentsModal.style.display = 'flex';
+    commentsDialog.focus();
+    trapFocus(commentsDialog);
+  }
+
+  // Close comments modal
+  function closeCommentsModal() {
+    commentsModal.setAttribute('aria-hidden', 'true');
+    commentsModal.style.display = 'none';
+    activePostId = null;
+    releaseFocusTrap();
+    // Return focus to last focused comment button
+    const lastBtn = gallery.querySelector(`button.comment-button[data-post-id="${activePostId}"]`);
+    if (lastBtn) lastBtn.focus();
+  }
+
+  commentsCloseBtn.addEventListener('click', closeCommentsModal);
+
+  // Keyboard handling for modal (Esc to close)
+  commentsModal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeCommentsModal();
+    }
+  });
+
+  // Comments form validation and submission
+  commentsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    commentsError.hidden = true;
+    const commentText = commentTextarea.value.trim();
+    if (!commentText) {
+      commentsError.textContent = 'Comment cannot be empty.';
+      commentsError.hidden = false;
+      commentTextarea.setAttribute('aria-invalid', 'true');
+      commentTextarea.focus();
+      return;
+    }
+    if (commentText.length > 300) {
+      commentsError.textContent = 'Comment exceeds 300 characters limit.';
+      commentsError.hidden = false;
+      commentTextarea.setAttribute('aria-invalid', 'true');
+      commentTextarea.focus();
+      return;
+    }
+    commentTextarea.setAttribute('aria-invalid', 'false');
+
+    if (!activePostId) {
+      showStatus('Error: No active post to comment on.', true);
+      return;
+    }
+    const post = posts.find(p => p.id === activePostId);
+    if (!post) {
+      showStatus('Error: Post not found.', true);
+      return;
+    }
+    // Add comment with timestamp and anonymous author (for simplicity)
+    post.comments.push({
+      text: commentText,
+      date: new Date().toISOString(),
+      author: 'Community Member'
+    });
+    savePosts();
+    // Update comment count badge on gallery
+    renderGallery();
+    // Update modal comments list
+    openCommentsModal(activePostId);
+    showStatus('Your comment has been posted.');
+  });
+
+  // Focus trap for modal dialog
+  let lastFocusedElement = null;
+  let focusTrapHandler = null;
+  function trapFocus(element) {
+    lastFocusedElement = document.activeElement;
+    const focusableSelectors = [
+      'a[href]:not([disabled])',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ];
+    const focusableElements = element.querySelectorAll(focusableSelectors.join(','));
+    if (focusableElements.length === 0) return;
+
+    let firstFocusable = focusableElements[0];
+    let lastFocusable = focusableElements[focusableElements.length - 1];
+
+    focusTrapHandler = function(e) {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+    };
+    element.addEventListener('keydown', focusTrapHandler);
+  }
+  function releaseFocusTrap() {
+    if (focusTrapHandler) {
+      commentsDialog.removeEventListener('keydown', focusTrapHandler);
+      focusTrapHandler = null;
+    }
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
+  }
+
+  // Skip link focus fix: focus main content on skip link click
+  document.getElementById('skip-link').addEventListener('click', (e) => {
+    const main = document.getElementById('main-content');
+    if (main) {
+      main.setAttribute('tabindex', '-1');
+      main.focus();
+      main.addEventListener('blur', () => {
+        main.removeAttribute('tabindex');
+      }, { once: true });
+    }
+  });
+
+  // Keyboard navigation for nav dropdown menus (if any added in future)
+  // Currently, no dropdown menus in primary nav, but structure is ready for extension
+
+  // Initialize app
+  function init() {
+    loadPosts();
+    renderGallery();
+  }
+
+  init();
+
+})();
+</script>
+
+<!-- Visually hidden but focusable utility class -->
+<style>
+  .visually-hidden-focusable {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+  }
+  .visually-hidden-focusable:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+  }
+</style>
+
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+<title>Accessible Interactive User Profile - Jane Doe</title>
+<style>
+  /* Reset and base */
+  :where(html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i, center,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form, label, legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed,
+  figure, figcaption, footer, header, hgroup,
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video) {
+    margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #0b3d91 0%, #1456b4 100%);
+    color: #e9f0ff;
+    scroll-behavior: smooth;
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #0b3d91;
+    color: #e9f0ff;
+  }
+  a {
+    color: #f4d35e;
+    text-decoration: none;
+    outline-offset: 3px;
+  }
+  a:hover,
+  a:focus-visible {
+    text-decoration: underline;
+    outline: 3px solid #f4d35e;
+    outline-offset: 3px;
+  }
+  /* Skip Link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #f4d35e;
+    color: #0b3d91;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+    transition: top 0.3s ease;
+  }
+  #skip-link:focus {
+    top: 0;
+  }
+
+  header, nav, main, footer, section, article {
+    display: block;
+  }
+
+  /* Container */
+  .container {
+    max-width: 900px;
+    margin: 1.5rem auto 3rem auto;
+    padding: 0 1rem;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #1456b4 0%, #0b3d91 100%);
+    padding: 1rem 0;
+    border-bottom: 3px solid #f4d35e;
+  }
+  header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #f4d35e;
+    text-align: center;
+  }
+
+  /* Navigation */
+  nav[aria-label="Primary"] {
+    background-color: #1a4fbc;
+    border-bottom: 2px solid #f4d35e;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.75rem 0;
+  }
+  nav[aria-label="Primary"] a {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #f4d35e;
+    position: relative;
+  }
+  nav[aria-label="Primary"] a[aria-current="page"],
+  nav[aria-label="Primary"] a:focus-visible {
+    outline: 3px solid #f4d35e;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  nav[aria-label="Primary"] a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0%;
+    height: 3px;
+    background: #f4d35e;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+  nav[aria-label="Primary"] a:hover::after,
+  nav[aria-label="Primary"] a:focus-visible::after {
+    width: 100%;
+  }
+
+  /* Main */
+  main {
+    background-color: #183f8c;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(244, 211, 94, 0.7);
+    padding: 2rem;
+    color: #e9f0ff;
+  }
+  main > h2 {
+    font-size: 1.875rem;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #f4d35e;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Profile Bio Section */
+  #bio {
+    margin-bottom: 2rem;
+  }
+  #bio h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #f4d35e;
+  }
+  #bio p {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    max-width: 75ch;
+  }
+
+  /* Avatar Gallery Section */
+  #avatar-gallery {
+    margin-bottom: 2rem;
+  }
+  #avatar-gallery h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f4d35e;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: 1rem;
+  }
+  .gallery button {
+    background: none;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 96px;
+    height: 96px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery button img {
+    border-radius: 50%;
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+  }
+  .gallery button:focus-visible,
+  .gallery button[aria-pressed="true"] {
+    border-color: #f4d35e;
+    box-shadow: 0 0 8px 3px #f4d35e;
+    outline-offset: 3px;
+  }
+  .gallery button:hover:not([aria-pressed="true"]) {
+    border-color: #f4d35e;
+  }
+  .avatar-description {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #f4d35e;
+    min-height: 1.25rem;
+  }
+
+  /* Follow Button Section */
+  #follow-section {
+    margin-bottom: 2rem;
+  }
+  #follow-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f4d35e;
+  }
+  #follow-button {
+    background: linear-gradient(135deg, #f4d35e 0%, #f7d976 100%);
+    border: none;
+    border-radius: 8px;
+    color: #0b3d91;
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(244, 211, 94, 0.6);
+    min-width: 160px;
+    min-height: 44px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  #follow-button:hover,
+  #follow-button:focus-visible {
+    background: linear-gradient(135deg, #f7d976 0%, #f4d35e 100%);
+    box-shadow: 0 0 12px 4px #f4d35e;
+    outline-offset: 3px;
+  }
+  #follow-button[aria-pressed="true"] {
+    background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+    color: #fff;
+    box-shadow: 0 0 12px 4px #4caf50;
+  }
+  #follow-button[aria-pressed="true"]:hover,
+  #follow-button[aria-pressed="true"]:focus-visible {
+    background: linear-gradient(135deg, #81c784 0%, #4caf50 100%);
+    box-shadow: 0 0 16px 6px #4caf50;
+  }
+
+  /* Social Media Section */
+  #social-media {
+    margin-bottom: 2rem;
+  }
+  #social-media h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f4d35e;
+  }
+  .social-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4d35e;
+    color: #0b3d91;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(244, 211, 94, 0.6);
+    transition: background 0.3s ease, color 0.3s ease;
+    position: relative;
+  }
+  .social-links a:focus-visible,
+  .social-links a:hover {
+    background: #f7d976;
+    color: #0a2a63;
+    outline-offset: 3px;
+  }
+  .social-links a svg {
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+  }
+  .social-links a span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+  }
+
+  /* Footer */
+  footer {
+    background: #0b3d91;
+    color: #f4d35e;
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.875rem;
+    border-top: 3px solid #f4d35e;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    main {
+      padding: 1.5rem 1rem;
+    }
+    nav[aria-label="Primary"] ul {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+    .social-links {
+      justify-content: center;
+    }
+  }
+
+  /* Focus Outline Enhancement */
+  :focus-visible {
+    outline: 3px solid #f4d35e !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Line spacing and paragraph spacing */
+  p {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Avatar modal styles */
+  #avatar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(11, 61, 145, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #avatar-modal[aria-hidden="false"] {
+    display: flex;
+  }
+  #avatar-modal .modal-content {
+    background: #1456b4;
+    border-radius: 12px;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    max-width: 320px;
+    width: 90vw;
+    box-shadow: 0 0 20px 5px #f4d35e;
+    text-align: center;
+    color: #f4d35e;
+  }
+  #avatar-modal .modal-content img {
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 12px 4px #f4d35e;
+  }
+  #avatar-modal .modal-content h4 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  #avatar-modal .modal-content p {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  #avatar-modal .modal-close {
+    background: #f4d35e;
+    border: none;
+    border-radius: 8px;
+    color: #0b3d91;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(244, 211, 94, 0.6);
+    min-width: 96px;
+    min-height: 44px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  #avatar-modal .modal-close:hover,
+  #avatar-modal .modal-close:focus-visible {
+    background: #f7d976;
+    box-shadow: 0 0 12px 4px #f4d35e;
+    outline-offset: 3px;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+
+<header role="banner">
+  <h1>Jane Doe - Interactive User Profile</h1>
+</header>
+
+<nav aria-label="Primary" role="navigation">
+  <ul>
+    <li><a href="#bio" tabindex="0">Bio</a></li>
+    <li><a href="#avatar-gallery" tabindex="0">Avatar Gallery</a></li>
+    <li><a href="#follow-section" tabindex="0">Follow</a></li>
+    <li><a href="#social-media" tabindex="0">Social Media</a></li>
+  </ul>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section id="bio" aria-labelledby="bio-heading">
+    <h2 id="bio-heading">Personal Bio</h2>
+    <p lang="en" aria-describedby="bio-help">
+      Hello! I’m <strong>Jane Doe</strong>, a passionate web developer and accessibility advocate. I specialize in creating
+      inclusive digital experiences that everyone can enjoy. When I’m not coding, I love hiking, photography, and
+      exploring new cultures.
+    </p>
+    <p id="bio-help" class="sr-only">This paragraph describes Jane Doe's personal interests and professional focus.</p>
+  </section>
+
+  <section id="avatar-gallery" aria-labelledby="avatar-gallery-heading">
+    <h2 id="avatar-gallery-heading">Avatar Gallery</h2>
+    <p id="avatar-gallery-help" class="sr-only">Use arrow keys to navigate avatars. Press Enter or Space to view details.</p>
+    <div class="gallery" role="list" aria-describedby="avatar-gallery-help">
+      <button type="button" aria-pressed="true" aria-label="Avatar 1: Jane smiling in a blue shirt" role="listitem" tabindex="0">
+        <img src="https://i.pravatar.cc/96?img=5" alt="Jane Doe smiling, wearing a blue shirt" />
+      </button>
+      <button type="button" aria-pressed="false" aria-label="Avatar 2: Jane outdoors with sunglasses" role="listitem" tabindex="-1">
+        <img src="https://i.pravatar.cc/96?img=15" alt="Jane Doe outdoors wearing sunglasses" />
+      </button>
+      <button type="button" aria-pressed="false" aria-label="Avatar 3: Jane at a desk working on laptop" role="listitem" tabindex="-1">
+        <img src="https://i.pravatar.cc/96?img=25" alt="Jane Doe working on laptop at desk" />
+      </button>
+      <button type="button" aria-pressed="false" aria-label="Avatar 4: Jane with headphones, smiling" role="listitem" tabindex="-1">
+        <img src="https://i.pravatar.cc/96?img=35" alt="Jane Doe wearing headphones and smiling" />
+      </button>
+      <button type="button" aria-pressed="false" aria-label="Avatar 5: Jane in a garden with flowers" role="listitem" tabindex="-1">
+        <img src="https://i.pravatar.cc/96?img=45" alt="Jane Doe in a garden surrounded by flowers" />
+      </button>
+    </div>
+    <p class="avatar-description" aria-live="polite" aria-atomic="true" id="avatar-desc">
+      Selected avatar: Jane Doe smiling, wearing a blue shirt.
+    </p>
+  </section>
+
+  <section id="follow-section" aria-labelledby="follow-section-heading">
+    <h2 id="follow-section-heading">Follow Jane</h2>
+    <button id="follow-button" aria-pressed="false" aria-live="polite" aria-label="Follow Jane Doe" type="button">
+      Follow
+    </button>
+    <p id="follow-help" class="sr-only">
+      Press this button to follow or unfollow Jane Doe. Current state will be announced.
+    </p>
+  </section>
+
+  <section id="social-media" aria-labelledby="social-media-heading">
+    <h2 id="social-media-heading">Social Media Links</h2>
+    <nav aria-label="Social media profiles">
+      <ul class="social-links" role="list">
+        <li>
+          <a href="https://twitter.com/janedoe" target="_blank" rel="noopener noreferrer" aria-label="Twitter profile of Jane Doe">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
+              <title>Twitter icon</title>
+              <path d="M23.954 4.569a10 10 0 01-2.825.775 4.932 4.932 0 002.163-2.724 9.864 9.864 0 01-3.127 1.195 4.916 4.916 0 00-8.38 4.482A13.944 13.944 0 011.671 3.149a4.822 4.822 0 001.523 6.573 4.897 4.897 0 01-2.228-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.996 4.996 0 01-2.224.085 4.936 4.936 0 004.604 3.417A9.867 9.867 0 010 19.54a13.94 13.94 0 007.548 2.209c9.142 0 14.307-7.721 13.995-14.646a9.936 9.936 0 002.411-2.535z"/>
+            </svg>
+            <span>Twitter</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/janedoe" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile of Jane Doe">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
+              <title>LinkedIn icon</title>
+              <path d="M4.98 3.5a2.5 2.5 0 11-.002 5.001A2.5 2.5 0 014.98 3.5zM2 8.5h6v12H2v-12zm7.5 0h5.5v1.7h.1a6 6 0 015.4-3c5.8 0 6.9 3.8 6.9 8.7v9.6h-6v-8.5c0-2-.1-4.6-2.8-4.6-2.8 0-3.2 2.2-3.2 4.4v8.7h-6v-12z"/>
+            </svg>
+            <span>LinkedIn</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/janedoe" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile of Jane Doe">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
+              <title>GitHub icon</title>
+              <path d="M12 0a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1 1.5 1.6 1.5 1.6.9 1.5 2.3 1.1 2.9.9.1-.7.4-1.1.7-1.3-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.3 1.2a11.4 11.4 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 3 .1 3.3.8 1 1.2 2 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.7 1.1.7 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 0z"/>
+            </svg>
+            <span>GitHub</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+</main>
+
+<footer role="contentinfo">
+  <p>© 2024 Jane Doe. All rights reserved.</p>
+</footer>
+
+<!-- Avatar Modal -->
+<div id="avatar-modal" role="dialog" aria-modal="true" aria-labelledby="avatar-modal-title" aria-describedby="avatar-modal-desc" aria-hidden="true" tabindex="-1">
+  <div class="modal-content">
+    <img src="" alt="" id="modal-avatar-image" />
+    <h3 id="avatar-modal-title">Avatar Details</h3>
+    <p id="avatar-modal-desc"></p>
+    <button type="button" class="modal-close" aria-label="Close avatar details dialog">Close</button>
+  </div>
+</div>
+
+<script>
+  (() => {
+    'use strict';
+
+    // Utility for managing focus trap in modal
+    function trapFocus(element) {
+      const focusableElementsString = 'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+      const focusableElements = element.querySelectorAll(focusableElementsString);
+      const firstFocusableElement = focusableElements[0];
+      const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+      function handleFocus(event) {
+        if (event.key === 'Tab' || event.keyCode === 9) {
+          if (event.shiftKey) /* shift + tab */ {
+            if (document.activeElement === firstFocusableElement) {
+              event.preventDefault();
+              lastFocusableElement.focus();
+            }
+          } else /* tab */ {
+            if (document.activeElement === lastFocusableElement) {
+              event.preventDefault();
+              firstFocusableElement.focus();
+            }
+          }
+        }
+      }
+
+      element.addEventListener('keydown', handleFocus);
+      return () => element.removeEventListener('keydown', handleFocus);
+    }
+
+    // Avatar Gallery logic
+    const gallery = document.querySelector('.gallery');
+    const avatarButtons = Array.from(gallery.querySelectorAll('button'));
+    const avatarDesc = document.getElementById('avatar-desc');
+    const modal = document.getElementById('avatar-modal');
+    const modalImage = document.getElementById('modal-avatar-image');
+    const modalDesc = document.getElementById('avatar-modal-desc');
+    const modalClose = modal.querySelector('.modal-close');
+    let lastFocusedElement = null;
+    let removeTrapFocusListener = null;
+
+    // Avatar data for modal descriptions
+    const avatarData = [
+      {
+        alt: 'Jane Doe smiling, wearing a blue shirt',
+        desc: 'Jane Doe is smiling warmly, dressed in a bright blue shirt, conveying friendliness and approachability.'
+      },
+      {
+        alt: 'Jane Doe outdoors wearing sunglasses',
+        desc: 'Jane Doe is pictured outdoors wearing stylish sunglasses, enjoying a sunny day.'
+      },
+      {
+        alt: 'Jane Doe working on laptop at desk',
+        desc: 'Jane Doe is focused, working on her laptop at a neat desk, demonstrating professionalism.'
+      },
+      {
+        alt: 'Jane Doe wearing headphones and smiling',
+        desc: 'Jane Doe is smiling while wearing headphones, suggesting she enjoys music or podcasts.'
+      },
+      {
+        alt: 'Jane Doe in a garden surrounded by flowers',
+        desc: 'Jane Doe is surrounded by vibrant flowers in a garden, showcasing her love for nature.'
+      }
+    ];
+
+    // Update selected avatar state and description
+    function selectAvatar(index, focusButton = true) {
+      avatarButtons.forEach((btn, i) => {
+        const pressed = i === index;
+        btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        btn.tabIndex = pressed ? 0 : -1;
+      });
+      const selectedData = avatarData[index];
+      avatarDesc.textContent = `Selected avatar: ${selectedData.alt}.`;
+      if (focusButton) avatarButtons[index].focus();
+    }
+
+    // Open modal with avatar details
+    function openModal(index) {
+      lastFocusedElement = document.activeElement;
+      const data = avatarData[index];
+      modalImage.src = avatarButtons[index].querySelector('img').src;
+      modalImage.alt = data.alt;
+      modalDesc.textContent = data.desc;
+      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'flex';
+      modalClose.focus();
+      removeTrapFocusListener = trapFocus(modal);
+      // Prevent background scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close modal and restore focus
+    function closeModal() {
+      modal.setAttribute('aria-hidden', 'true');
+      modal.style.display = 'none';
+      if (removeTrapFocusListener) removeTrapFocusListener();
+      if (lastFocusedElement) lastFocusedElement.focus();
+      document.body.style.overflow = '';
+    }
+
+    // Keyboard navigation in gallery
+    function onGalleryKeydown(event) {
+      const currentIndex = avatarButtons.findIndex(btn => btn === document.activeElement);
+      if (currentIndex === -1) return;
+
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          event.preventDefault();
+          selectAvatar((currentIndex + 1) % avatarButtons.length);
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          event.preventDefault();
+          selectAvatar((currentIndex - 1 + avatarButtons.length) % avatarButtons.length);
+          break;
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          openModal(currentIndex);
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Attach event listeners to avatar buttons
+    avatarButtons.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        selectAvatar(index);
+        openModal(index);
+      });
+      btn.addEventListener('keydown', onGalleryKeydown);
+    });
+
+    // Modal close button
+    modalClose.addEventListener('click', closeModal);
+
+    // Close modal on Escape key
+    modal.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' || event.key === 'Esc') {
+        event.preventDefault();
+        closeModal();
+      }
+    });
+
+    // Close modal when clicking outside modal content
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Initialize first avatar as selected
+    selectAvatar(0, false);
+
+    // Follow button toggle logic
+    const followButton = document.getElementById('follow-button');
+    followButton.addEventListener('click', () => {
+      const isFollowing = followButton.getAttribute('aria-pressed') === 'true';
+      followButton.setAttribute('aria-pressed', String(!isFollowing));
+      if (!isFollowing) {
+        followButton.textContent = 'Following';
+        followButton.setAttribute('aria-label', 'Unfollow Jane Doe');
+      } else {
+        followButton.textContent = 'Follow';
+        followButton.setAttribute('aria-label', 'Follow Jane Doe');
+      }
+    });
+
+    // Keyboard support for follow button (Enter/Space)
+    followButton.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        followButton.click();
+      }
+    });
+
+    // Accessibility helper: add "sr-only" class for screen reader only text
+    const style = document.createElement('style');
+    style.textContent = `
+      .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script>
+</body>
+</html>

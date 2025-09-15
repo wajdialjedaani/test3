@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Accessible Event Countdown Timer with Real-Time Progress</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #f0f4f8;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    color: #f0f4f8;
+  }
+  a:focus, button:focus, input:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+  a {
+    color: #ffbf47;
+    text-decoration: underline;
+  }
+  a:hover,
+  a:focus-visible {
+    color: #ffd966;
+    text-decoration: none;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #ffbf47;
+    color: #1e3c72;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+  /* Layout */
+  header, footer {
+    background-color: #12355b;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #ffbf47;
+    text-shadow: 0 0 5px #ffbf47aa;
+  }
+  nav[aria-label="Primary"] {
+    margin-top: 0.5rem;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav[aria-label="Primary"] a {
+    color: #f0f4f8;
+    font-weight: 600;
+  }
+  nav[aria-label="Primary"] a[aria-current="page"] {
+    color: #ffd966;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  main {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 1rem 1.5rem;
+    background: rgba(255 255 255 / 0.07);
+    border-radius: 12px;
+    box-shadow: 0 0 15px 3px #2a5298aa;
+  }
+  main section {
+    margin-bottom: 2rem;
+  }
+  main h2 {
+    font-size: 1.75rem;
+    color: #ffd966;
+    border-bottom: 3px solid #ffbf47;
+    padding-bottom: 0.3rem;
+    margin-bottom: 1rem;
+  }
+  /* Countdown timer styles */
+  #countdown-timer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .time-segment {
+    background: linear-gradient(145deg, #2a5298, #1e3c72);
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px #0008;
+    width: 120px;
+    min-width: 120px;
+    padding: 1rem;
+    text-align: center;
+    color: #ffbf47;
+    box-shadow:
+      0 0 8px #ffbf47aa,
+      inset 0 0 8px #ffbf47cc;
+  }
+  .time-segment strong {
+    display: block;
+    font-size: 2.75rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #ffd966;
+    text-shadow: 0 0 5px #ffd966bb;
+  }
+  .time-segment span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ffbf47dd;
+  }
+  /* Progress bar container */
+  #progress-container {
+    background: #1e3c72;
+    border-radius: 12px;
+    box-shadow: inset 0 0 8px #0008;
+    height: 28px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+  }
+  /* Progress bar itself */
+  #progress-bar {
+    background: linear-gradient(90deg, #ffbf47, #ffd966);
+    height: 100%;
+    border-radius: 12px 0 0 12px;
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow:
+      0 0 8px #ffbf47cc,
+      inset 0 0 8px #ffd966cc;
+  }
+  /* Progress label */
+  #progress-label {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 0;
+    left: 0;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #12355b;
+    text-shadow: none;
+    user-select: none;
+  }
+  /* Form to select date */
+  form#date-form {
+    background: #12355b;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: inset 0 0 12px #000a;
+  }
+  fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+  legend {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffd966;
+    margin-bottom: 0.75rem;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #ffbf47;
+  }
+  input[type="datetime-local"] {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 2px solid #ffbf47;
+    background-color: #f0f4f8;
+    color: #12355b;
+    font-weight: 600;
+    transition: border-color 0.3s ease;
+  }
+  input[type="datetime-local"]:focus {
+    border-color: #ffd966;
+    outline: none;
+  }
+  .required-indicator {
+    color: #ff4c4c;
+    font-weight: 700;
+    margin-left: 0.25rem;
+  }
+  button#update-button {
+    margin-top: 1rem;
+    background: #ffbf47;
+    border: none;
+    color: #12355b;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow:
+      0 0 8px #ffbf47cc;
+    min-width: 140px;
+    min-height: 44px;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  button#update-button:hover,
+  button#update-button:focus-visible {
+    background: #ffd966;
+    outline-offset: 3px;
+  }
+  /* Error message styling */
+  .error-message {
+    margin-top: 0.5rem;
+    color: #ff4c4c;
+    font-weight: 700;
+  }
+  /* Help text styling */
+  .help-text {
+    font-size: 0.9rem;
+    color: #d0d7e3;
+    margin-top: 0.25rem;
+  }
+  /* Responsive */
+  @media (max-width: 480px) {
+    #countdown-timer {
+      justify-content: center;
+    }
+    .time-segment {
+      width: 100px;
+      min-width: 100px;
+      padding: 0.75rem;
+    }
+  }
+  /* Focus enhancements */
+  button:focus-visible,
+  input:focus-visible {
+    outline: 3px solid #ffbf47;
+    outline-offset: 3px;
+  }
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    #progress-bar {
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <h1 id="page-title">Event Countdown Timer</h1>
+  <nav aria-label="Primary">
+    <ul>
+      <li><a href="#countdown-section" aria-current="page">Countdown</a></li>
+      <li><a href="#progress-section">Progress</a></li>
+      <li><a href="#settings-section">Settings</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content" tabindex="-1" aria-labelledby="page-title">
+  <section id="countdown-section" aria-labelledby="countdown-heading">
+    <h2 id="countdown-heading">Time Remaining Until Event</h2>
+    <div id="countdown-timer" role="region" aria-live="polite" aria-atomic="true" aria-describedby="countdown-desc">
+      <article class="time-segment" role="group" aria-labelledby="days-label" tabindex="0">
+        <strong id="days" aria-live="off" aria-atomic="true" aria-relevant="text">0</strong>
+        <span id="days-label">Days</span>
+      </article>
+      <article class="time-segment" role="group" aria-labelledby="hours-label" tabindex="0">
+        <strong id="hours" aria-live="off" aria-atomic="true" aria-relevant="text">0</strong>
+        <span id="hours-label">Hours</span>
+      </article>
+      <article class="time-segment" role="group" aria-labelledby="minutes-label" tabindex="0">
+        <strong id="minutes" aria-live="off" aria-atomic="true" aria-relevant="text">0</strong>
+        <span id="minutes-label">Minutes</span>
+      </article>
+      <article class="time-segment" role="group" aria-labelledby="seconds-label" tabindex="0">
+        <strong id="seconds" aria-live="off" aria-atomic="true" aria-relevant="text">0</strong>
+        <span id="seconds-label">Seconds</span>
+      </article>
+    </div>
+    <p id="countdown-desc" class="help-text">
+      This section displays the number of days, hours, minutes, and seconds remaining until the selected event date and time.
+    </p>
+  </section>
+
+  <section id="progress-section" aria-labelledby="progress-heading">
+    <h2 id="progress-heading">Event Progress</h2>
+    <div id="progress-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-describedby="progress-desc">
+      <div id="progress-bar"></div>
+      <div id="progress-label">0% Complete</div>
+    </div>
+    <p id="progress-desc" class="help-text">
+      The progress bar shows how much time has elapsed from the countdown start date to the event date.
+    </p>
+  </section>
+
+  <section id="settings-section" aria-labelledby="settings-heading">
+    <h2 id="settings-heading">Set Your Event Date and Time</h2>
+    <form id="date-form" novalidate aria-describedby="form-help" aria-live="polite">
+      <fieldset>
+        <legend>Event Date and Time Selection</legend>
+        <label for="event-datetime">
+          Event Date and Time
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <input 
+          type="datetime-local" 
+          id="event-datetime" 
+          name="event-datetime" 
+          aria-required="true" 
+          required 
+          autocomplete="off" 
+          aria-describedby="date-error form-help"
+          min="" 
+          max="9999-12-31T23:59"
+          />
+        <div id="date-error" class="error-message" aria-live="assertive" role="alert" aria-atomic="true"></div>
+        <p id="form-help" class="help-text">
+          Choose a future date and time for your event. The countdown and progress bar will update automatically.
+        </p>
+      </fieldset>
+      <button type="submit" id="update-button" aria-label="Update countdown timer with selected date">Update Countdown</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p>© 2024 Accessible Countdown Timer. All rights reserved.</p>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // Elements
+  const daysEl = document.getElementById("days");
+  const hoursEl = document.getElementById("hours");
+  const minutesEl = document.getElementById("minutes");
+  const secondsEl = document.getElementById("seconds");
+  const progressBar = document.getElementById("progress-bar");
+  const progressLabel = document.getElementById("progress-label");
+  const progressContainer = document.getElementById("progress-container");
+  const dateInput = document.getElementById("event-datetime");
+  const form = document.getElementById("date-form");
+  const dateError = document.getElementById("date-error");
+
+  // Constants
+  const MS_IN_SECOND = 1000;
+  const MS_IN_MINUTE = MS_IN_SECOND * 60;
+  const MS_IN_HOUR = MS_IN_MINUTE * 60;
+  const MS_IN_DAY = MS_IN_HOUR * 24;
+
+  // State
+  let eventDate = null;
+  let countdownStartDate = null; // The date/time when countdown started (now or user set)
+  let timerId = null;
+
+  // Accessibility: Announce changes in countdown
+  // We'll update aria-live region by updating text content of daysEl, hoursEl, etc.
+  // The container #countdown-timer has aria-live="polite" for screen readers.
+
+  // Initialize min attribute for datetime-local input to current date/time (rounded to minutes)
+  function pad(num) {
+    return num.toString().padStart(2, "0");
+  }
+  function toDatetimeLocal(date) {
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+  function setMinDateTime() {
+    const now = new Date();
+    dateInput.min = toDatetimeLocal(now);
+  }
+
+  // Validate the input date/time
+  function validateDateInput(value) {
+    if (!value) {
+      return "Event date and time is required.";
+    }
+    const selected = new Date(value);
+    if (isNaN(selected.getTime())) {
+      return "Invalid date and time format.";
+    }
+    const now = new Date();
+    if (selected <= now) {
+      return "Please select a future date and time.";
+    }
+    return "";
+  }
+
+  // Update countdown display
+  function updateCountdown() {
+    if (!eventDate) return;
+
+    const now = new Date();
+    let diff = eventDate - now;
+
+    if (diff < 0) {
+      diff = 0;
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    const days = Math.floor(diff / MS_IN_DAY);
+    diff -= days * MS_IN_DAY;
+    const hours = Math.floor(diff / MS_IN_HOUR);
+    diff -= hours * MS_IN_HOUR;
+    const minutes = Math.floor(diff / MS_IN_MINUTE);
+    diff -= minutes * MS_IN_MINUTE;
+    const seconds = Math.floor(diff / MS_IN_SECOND);
+
+    // Update text content
+    daysEl.textContent = days.toLocaleString(undefined, {minimumIntegerDigits:1});
+    hoursEl.textContent = hours.toLocaleString(undefined, {minimumIntegerDigits:2});
+    minutesEl.textContent = minutes.toLocaleString(undefined, {minimumIntegerDigits:2});
+    secondsEl.textContent = seconds.toLocaleString(undefined, {minimumIntegerDigits:2});
+
+    // Update progress bar
+    updateProgressBar();
+  }
+
+  // Update progress bar based on elapsed time from countdownStartDate to eventDate
+  function updateProgressBar() {
+    if (!eventDate || !countdownStartDate) {
+      progressBar.style.width = "0%";
+      progressLabel.textContent = "0% Complete";
+      progressContainer.setAttribute("aria-valuenow", "0");
+      return;
+    }
+    const now = new Date();
+    const totalDuration = eventDate - countdownStartDate;
+    const elapsed = now - countdownStartDate;
+    let percent = 0;
+    if (totalDuration > 0) {
+      percent = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+    }
+    progressBar.style.width = percent.toFixed(2) + "%";
+    progressLabel.textContent = `${percent.toFixed(1)}% Complete`;
+    progressContainer.setAttribute("aria-valuenow", percent.toFixed(1));
+  }
+
+  // Start the countdown interval
+  function startTimer() {
+    if (timerId) {
+      clearInterval(timerId);
+    }
+    updateCountdown();
+    timerId = setInterval(updateCountdown, 1000);
+  }
+
+  // On form submit: validate and update event date
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    dateError.textContent = "";
+    dateInput.setAttribute("aria-invalid", "false");
+    const val = dateInput.value;
+    const validationMessage = validateDateInput(val);
+    if (validationMessage) {
+      dateError.textContent = validationMessage;
+      dateInput.setAttribute("aria-invalid", "true");
+      dateInput.focus();
+      return;
+    }
+    eventDate = new Date(val);
+    countdownStartDate = new Date();
+    startTimer();
+  });
+
+  // Initialize page
+  function init() {
+    setMinDateTime();
+
+    // Set default event date 7 days from now at 18:00 local time
+    const defaultDate = new Date();
+    defaultDate.setDate(defaultDate.getDate() + 7);
+    defaultDate.setHours(18, 0, 0, 0);
+    eventDate = defaultDate;
+    countdownStartDate = new Date();
+
+    // Set input default value
+    dateInput.value = toDatetimeLocal(defaultDate);
+
+    startTimer();
+  }
+
+  // Run init on DOM ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

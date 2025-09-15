@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <title>Accessible Personal Blog - View Posts, Comment & Search Articles</title>
+  <style>
+    /* Reset and base */
+    :root {
+      --color-bg: #ffffff;
+      --color-text: #1a1a1a;
+      --color-primary: #005a9c;
+      --color-primary-light: #007acc;
+      --color-primary-dark: #003f6b;
+      --color-accent: #d94f4f;
+      --color-accent-light: #f08080;
+      --color-border: #cccccc;
+      --color-focus-outline: #ffbf47;
+      --color-success: #2e7d32;
+      --color-error: #b00020;
+      --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      --font-size-base: 1rem;
+      --font-size-large: 1.25rem;
+      --font-size-small: 0.875rem;
+      --line-height: 1.6;
+      --spacing-unit: 1rem;
+      --border-radius: 6px;
+      --shadow-focus: 0 0 0 3px var(--color-focus-outline);
+      --max-content-width: 900px;
+      --transition-fast: 0.2s ease-in-out;
+    }
+
+    /* Respect prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    html {
+      font-size: 100%;
+      scroll-behavior: smooth;
+      background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+      color: var(--color-text);
+      font-family: var(--font-family);
+      line-height: var(--line-height);
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg);
+      max-width: var(--max-content-width);
+      margin-left: auto;
+      margin-right: auto;
+      padding: var(--spacing-unit);
+      user-select: text;
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      outline-offset: 3px;
+    }
+    a:focus,
+    a:hover {
+      color: var(--color-primary-dark);
+      outline: 2px solid var(--color-focus-outline);
+      outline-offset: 3px;
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--color-primary);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      z-index: 1000;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: top 0.3s ease-in-out;
+    }
+    .skip-link:focus {
+      top: 0;
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 0;
+    }
+
+    /* Header and nav */
+    header {
+      background: var(--color-primary);
+      color: #fff;
+      padding: var(--spacing-unit);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0, 90, 156, 0.4);
+      margin-bottom: var(--spacing-unit);
+    }
+
+    header h1 {
+      font-size: var(--font-size-large);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    nav[aria-label="Primary"] {
+      margin-top: var(--spacing-unit);
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: var(--spacing-unit);
+      flex-wrap: wrap;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav a,
+    nav button {
+      color: #fff;
+      background: transparent;
+      border: none;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--border-radius);
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      user-select: none;
+      transition: background-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    nav a:hover,
+    nav a:focus-visible,
+    nav button:hover,
+    nav button:focus-visible {
+      background-color: var(--color-primary-light);
+      color: #fff;
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    nav button[aria-expanded="true"] {
+      background-color: var(--color-primary-dark);
+    }
+
+    /* Dropdown menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--color-primary-dark);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      min-width: 180px;
+      padding: 0.5rem 0;
+      display: none;
+      z-index: 100;
+    }
+
+    .dropdown-menu[aria-hidden="false"] {
+      display: block;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      font-weight: 500;
+      text-decoration: none;
+      min-height: 44px;
+      line-height: 1.2;
+    }
+
+    .dropdown-menu a:hover,
+    .dropdown-menu a:focus-visible {
+      background-color: var(--color-primary-light);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: -3px;
+      color: #fff;
+    }
+
+    /* Breadcrumbs */
+    nav[aria-label="Breadcrumb"] {
+      margin: var(--spacing-unit) 0;
+      font-size: var(--font-size-small);
+    }
+
+    nav[aria-label="Breadcrumb"] ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    nav[aria-label="Breadcrumb"] li {
+      display: flex;
+      align-items: center;
+    }
+
+    nav[aria-label="Breadcrumb"] li + li::before {
+      content: "›";
+      margin: 0 0.5rem;
+      color: var(--color-primary-dark);
+    }
+
+    nav[aria-label="Breadcrumb"] a {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+    nav[aria-label="Breadcrumb"] a:hover,
+    nav[aria-label="Breadcrumb"] a:focus-visible {
+      color: var(--color-primary-dark);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    /* Main content layout */
+    main {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: var(--spacing-unit);
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Blog post list */
+    section#posts-list {
+      background: #f9f9f9;
+      border-radius: var(--border-radius);
+      padding: var(--spacing-unit);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 100%;
+    }
+
+    section#posts-list h2 {
+      font-size: var(--font-size-large);
+      margin-top: 0;
+      margin-bottom: var(--spacing-unit);
+      color: var(--color-primary-dark);
+    }
+
+    article.post-card {
+      background: #fff;
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-unit);
+      padding: var(--spacing-unit);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: border-color var(--transition-fast);
+      cursor: pointer;
+    }
+    article.post-card:focus-within,
+    article.post-card:hover {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-focus-outline);
+    }
+
+    article.post-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+      font-size: 1.125rem;
+      color: var(--color-primary);
+    }
+
+    article.post-card time {
+      font-size: var(--font-size-small);
+      color: #666666;
+      font-style: normal;
+    }
+
+    article.post-card p.summary {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      color: #333333;
+      max-height: 3.6em; /* approx 3 lines */
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    article.post-card button.read-more {
+      margin-top: 0.75rem;
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.5rem 1rem;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+    }
+    article.post-card button.read-more:hover,
+    article.post-card button.read-more:focus-visible {
+      background-color: var(--color-primary-dark);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    /* Sidebar */
+    aside#sidebar {
+      background: #f0f8ff;
+      border-radius: var(--border-radius);
+      padding: var(--spacing-unit);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-unit);
+    }
+
+    aside#sidebar h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: var(--font-size-large);
+      color: var(--color-primary-dark);
+    }
+
+    /* Search form */
+    form#search-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label[for="search-input"] {
+      font-weight: 700;
+      color: var(--color-primary-dark);
+    }
+
+    input#search-input {
+      font-size: var(--font-size-base);
+      padding: 0.5rem;
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      min-height: 44px;
+      transition: border-color var(--transition-fast);
+    }
+    input#search-input:focus {
+      border-color: var(--color-primary);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    button#search-button {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.5rem 1rem;
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+      align-self: flex-start;
+    }
+    button#search-button:hover,
+    button#search-button:focus-visible {
+      background-color: var(--color-primary-dark);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    /* Search results */
+    #search-results {
+      margin-top: var(--spacing-unit);
+      font-size: var(--font-size-small);
+      color: var(--color-primary-dark);
+    }
+
+    /* Post details modal */
+    #post-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(26, 26, 26, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-unit);
+      z-index: 2000;
+    }
+
+    #post-modal[aria-hidden="false"] {
+      display: flex;
+    }
+
+    #post-modal .modal-content {
+      background: #fff;
+      border-radius: var(--border-radius);
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: var(--spacing-unit);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      position: relative;
+      outline: none;
+    }
+
+    #post-modal h2 {
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+      color: var(--color-primary);
+      font-size: 1.5rem;
+    }
+
+    #post-modal time {
+      font-size: var(--font-size-small);
+      color: #666666;
+      font-style: normal;
+      margin-bottom: var(--spacing-unit);
+      display: block;
+    }
+
+    #post-modal .post-content {
+      margin-bottom: var(--spacing-unit);
+      line-height: 1.75;
+      color: var(--color-text);
+    }
+
+    /* Comments section */
+    #comments-section {
+      margin-top: var(--spacing-unit);
+      border-top: 2px solid var(--color-border);
+      padding-top: var(--spacing-unit);
+    }
+
+    #comments-section h3 {
+      margin-top: 0;
+      margin-bottom: var(--spacing-unit);
+      font-size: 1.25rem;
+      color: var(--color-primary-dark);
+    }
+
+    #comments-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--spacing-unit) 0;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: #fafafa;
+    }
+
+    #comments-list li {
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--color-border);
+      font-size: var(--font-size-small);
+    }
+
+    #comments-list li:last-child {
+      border-bottom: none;
+    }
+
+    #comments-list li strong {
+      color: var(--color-primary);
+    }
+
+    /* Comment form */
+    form#comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    legend {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-primary-dark);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--color-primary-dark);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      font-size: var(--font-size-base);
+      padding: 0.5rem;
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      resize: vertical;
+      min-height: 44px;
+      transition: border-color var(--transition-fast);
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      border-color: var(--color-primary);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    textarea {
+      min-height: 88px;
+      line-height: 1.5;
+    }
+
+    /* Required field indicator */
+    .required-indicator {
+      color: var(--color-accent);
+      font-weight: 700;
+      margin-left: 0.25rem;
+    }
+
+    /* Error messages */
+    .error-message {
+      color: var(--color-error);
+      font-size: var(--font-size-small);
+      margin-top: 0.25rem;
+    }
+
+    /* Submit button */
+    button#submit-comment {
+      background-color: var(--color-accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.75rem 1rem;
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 44px;
+      min-height: 44px;
+      user-select: none;
+      align-self: flex-start;
+      transition: background-color var(--transition-fast);
+    }
+    button#submit-comment:hover,
+    button#submit-comment:focus-visible {
+      background-color: var(--color-accent-light);
+      outline: 3px solid var(--color-focus-outline);
+      outline-offset: 2px;
+    }
+
+    /* Status message for form submission */
+    #comment-status {
+      margin-top: 0.5rem;
+      font-weight: 700;
+      font-size: var(--font-size-small);
+      color: var(--color-success);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      nav ul {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      main {
+        grid-template-columns: 1fr;
+      }
+      aside#sidebar {
+        max-width: 100%;
+      }
+    }
+
+    /* Focus outline enhancements */
+    :focus-visible {
+      outline-offset: 3px;
+      outline-width: 3px;
+      outline-style: solid;
+      outline-color: var(--color-focus-outline);
+    }
+
+    /* Scrollbar for comments and modal */
+    #comments-list::-webkit-scrollbar,
+    #post-modal .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    #comments-list::-webkit-scrollbar-thumb,
+    #post-modal .modal-content::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary-light);
+      border-radius: 4px;
+    }
+    #comments-list::-webkit-scrollbar-track,
+    #post-modal .modal-content::-webkit-scrollbar-track {
+      background-color: #f0f0f0;
+      border-radius: 4px;
+    }
+
+    /* Visually hidden for screen reader only text */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    /* Highlight required fields visually */
+    input[aria-required="true"],
+    textarea[aria-required="true"] {
+      border-left: 4px solid var(--color-accent);
+    }
+
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+  <header>
+    <h1 id="site-title">Accessible Personal Blog</h1>
+    <nav aria-label="Primary" role="navigation">
+      <ul>
+        <li><a href="#posts-list" id="nav-posts" tabindex="0">Posts</a></li>
+        <li><a href="#search-form" id="nav-search" tabindex="0">Search Articles</a></li>
+        <li><a href="#comment-form" id="nav-comment" tabindex="0">Leave a Comment</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <nav aria-label="Breadcrumb" role="navigation" aria-live="polite" aria-atomic="true" id="breadcrumb-nav">
+    <ol>
+      <li><a href="#" aria-current="page" id="breadcrumb-home">Home</a></li>
+    </ol>
+  </nav>
+
+  <main id="main-content" tabindex="-1">
+    <section id="posts-list" aria-labelledby="posts-list-heading">
+      <h2 id="posts-list-heading">Recent Blog Posts</h2>
+      <!-- Posts inserted by JS -->
+    </section>
+
+    <aside id="sidebar" aria-label="Sidebar">
+      <section id="search-section" aria-labelledby="search-label">
+        <h2 id="search-label">Search Articles</h2>
+        <form id="search-form" role="search" aria-describedby="search-help">
+          <label for="search-input">Search blog posts</label>
+          <input
+            type="search"
+            id="search-input"
+            name="search"
+            autocomplete="off"
+            aria-required="true"
+            aria-describedby="search-help search-error"
+            aria-invalid="false"
+            minlength="2"
+            placeholder="Enter keywords"
+            required
+          />
+          <div id="search-help" class="sr-only">Type at least 2 characters to search articles by title or content.</div>
+          <div id="search-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+          <button type="submit" id="search-button" aria-label="Submit search">Search</button>
+        </form>
+        <div id="search-results" aria-live="polite" aria-atomic="true" role="region" tabindex="0" aria-live="polite" aria-relevant="additions removals"></div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Post modal -->
+  <div id="post-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
+    <div class="modal-content" tabindex="0">
+      <button id="modal-close" aria-label="Close post details" type="button" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color: var(--color-primary-dark);">
+        &times;
+      </button>
+      <article aria-live="polite">
+        <h2 id="modal-title"></h2>
+        <time id="modal-date" datetime=""></time>
+        <div id="modal-desc" class="post-content"></div>
+        <section id="comments-section" aria-labelledby="comments-heading">
+          <h3 id="comments-heading">Comments</h3>
+          <ul id="comments-list" tabindex="0" aria-live="polite" aria-relevant="additions"></ul>
+          <form id="comment-form" aria-describedby="comment-help" novalidate>
+            <fieldset>
+              <legend>Leave a Comment</legend>
+              <p id="comment-help" class="sr-only">
+                All fields marked with an asterisk are required. Please enter your name, email, and comment below.
+              </p>
+              <label for="comment-name">Name<span class="required-indicator" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                id="comment-name"
+                name="name"
+                autocomplete="name"
+                aria-required="true"
+                aria-describedby="comment-name-error"
+                minlength="2"
+                maxlength="50"
+                required
+              />
+              <div id="comment-name-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+              <label for="comment-email">Email<span class="required-indicator" aria-hidden="true">*</span></label>
+              <input
+                type="email"
+                id="comment-email"
+                name="email"
+                autocomplete="email"
+                aria-required="true"
+                aria-describedby="comment-email-error"
+                required
+              />
+              <div id="comment-email-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+              <label for="comment-text">Comment<span class="required-indicator" aria-hidden="true">*</span></label>
+              <textarea
+                id="comment-text"
+                name="comment"
+                aria-required="true"
+                aria-describedby="comment-text-error"
+                minlength="5"
+                maxlength="500"
+                required
+              ></textarea>
+              <div id="comment-text-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+              <button type="submit" id="submit-comment" aria-label="Submit your comment">Submit Comment</button>
+              <div id="comment-status" role="status" aria-live="polite"></div>
+            </fieldset>
+          </form>
+        </section>
+      </article>
+    </div>
+  </div>
+
+  <footer role="contentinfo" style="margin-top: var(--spacing-unit); padding-top: var(--spacing-unit); border-top: 2px solid var(--color-border); color: #444;">
+    <p>© 2024 Accessible Personal Blog. All rights reserved.</p>
+    <p>
+      <a href="#site-title" aria-label="Back to top of page">Back to top</a>
+    </p>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      // Sample blog posts data
+      const posts = [
+        {
+          id: "post1",
+          title: "Understanding Web Accessibility",
+          date: "2024-06-01",
+          summary: "Learn the importance of web accessibility and how to implement it in your projects.",
+          content: `
+            <p>Web accessibility ensures that websites are usable by everyone, including people with disabilities. It covers various aspects such as keyboard navigation, screen reader support, and color contrast.</p>
+            <p>Implementing accessibility not only helps users but also improves SEO and overall user experience.</p>
+          `,
+          comments: [
+            { name: "Alice", email: "alice@example.com", text: "Great article! Very informative." },
+            { name: "Bob", email: "bob@example.com", text: "Thanks for raising awareness on accessibility." }
+          ]
+        },
+        {
+          id: "post2",
+          title: "CSS Grid for Responsive Layouts",
+          date: "2024-05-15",
+          summary: "A deep dive into CSS Grid and how it can be used to create flexible, responsive web layouts.",
+          content: `
+            <p>CSS Grid is a powerful layout system available in CSS. It allows developers to create complex, responsive designs with less code and more control.</p>
+            <p>This article covers the basics of grid containers, grid items, and how to use grid-template-areas for semantic layouts.</p>
+          `,
+          comments: [
+            { name: "Charlie", email: "charlie@example.com", text: "I love using CSS Grid! Thanks for the tips." }
+          ]
+        },
+        {
+          id: "post3",
+          title: "JavaScript ES6 Features You Should Know",
+          date: "2024-04-20",
+          summary: "Explore the most useful ES6 features that modern JavaScript developers should master.",
+          content: `
+            <p>ES6 introduced many new features like arrow functions, template literals, destructuring, and modules. These features make JavaScript more expressive and easier to write.</p>
+            <p>Understanding these features is essential for writing modern, maintainable JavaScript code.</p>
+          `,
+          comments: []
+        }
+      ];
+
+      // Elements
+      const postsListEl = document.getElementById("posts-list");
+      const postModal = document.getElementById("post-modal");
+      const modalTitle = document.getElementById("modal-title");
+      const modalDate = document.getElementById("modal-date");
+      const modalDesc = document.getElementById("modal-desc");
+      const commentsList = document.getElementById("comments-list");
+      const commentForm = document.getElementById("comment-form");
+      const commentStatus = document.getElementById("comment-status");
+      const modalCloseBtn = document.getElementById("modal-close");
+      const searchForm = document.getElementById("search-form");
+      const searchInput = document.getElementById("search-input");
+      const searchError = document.getElementById("search-error");
+      const searchResults = document.getElementById("search-results");
+      const breadcrumbNav = document.getElementById("breadcrumb-nav").querySelector("ol");
+
+      let currentPost = null;
+
+      // Utility: format date to readable string
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+
+      // Create post card element
+      function createPostCard(post) {
+        const article = document.createElement("article");
+        article.className = "post-card";
+        article.tabIndex = 0;
+        article.setAttribute("role", "article");
+        article.setAttribute("aria-labelledby", `post-title-${post.id}`);
+
+        const h3 = document.createElement("h3");
+        h3.id = `post-title-${post.id}`;
+        h3.textContent = post.title;
+        article.appendChild(h3);
+
+        const time = document.createElement("time");
+        time.dateTime = post.date;
+        time.textContent = formatDate(post.date);
+        article.appendChild(time);
+
+        const summary = document.createElement("p");
+        summary.className = "summary";
+        summary.textContent = post.summary;
+        article.appendChild(summary);
+
+        const readMoreBtn = document.createElement("button");
+        readMoreBtn.className = "read-more";
+        readMoreBtn.type = "button";
+        readMoreBtn.textContent = "Read More";
+        readMoreBtn.setAttribute("aria-label", `Read full article: ${post.title}`);
+        readMoreBtn.addEventListener("click", () => openPostModal(post.id));
+        article.appendChild(readMoreBtn);
+
+        // Keyboard accessibility: Enter or Space on article opens modal
+        article.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openPostModal(post.id);
+          }
+        });
+
+        return article;
+      }
+
+      // Render posts list
+      function renderPostsList(postsToRender) {
+        postsListEl.innerHTML = "";
+        if (postsToRender.length === 0) {
+          const noPostsMsg = document.createElement("p");
+          noPostsMsg.textContent = "No posts found.";
+          postsListEl.appendChild(noPostsMsg);
+          return;
+        }
+        postsToRender.forEach((post) => {
+          const postCard = createPostCard(post);
+          postsListEl.appendChild(postCard);
+        });
+      }
+
+      // Render comments list
+      function renderComments(post) {
+        commentsList.innerHTML = "";
+        if (!post.comments.length) {
+          const noCommentsMsg = document.createElement("li");
+          noCommentsMsg.textContent = "No comments yet. Be the first to comment!";
+          commentsList.appendChild(noCommentsMsg);
+          return;
+        }
+        post.comments.forEach(({ name, text }) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${escapeHtml(name)}:</strong> ${escapeHtml(text)}`;
+          commentsList.appendChild(li);
+        });
+      }
+
+      // Escape HTML to prevent injection
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Open post modal
+      function openPostModal(postId) {
+        const post = posts.find((p) => p.id === postId);
+        if (!post) return;
+
+        currentPost = post;
+
+        modalTitle.textContent = post.title;
+        modalDate.textContent = formatDate(post.date);
+        modalDate.dateTime = post.date;
+        modalDesc.innerHTML = post.content;
+
+        renderComments(post);
+
+        // Reset comment form and status
+        commentForm.reset();
+        clearErrors();
+        commentStatus.textContent = "";
+        commentStatus.style.color = "";
+
+        postModal.setAttribute("aria-hidden", "false");
+        postModal.style.display = "flex";
+
+        // Manage focus
+        modalCloseBtn.focus();
+
+        // Update breadcrumb
+        updateBreadcrumb(post.title);
+
+        // Trap focus inside modal
+        trapFocus(postModal);
+      }
+
+      // Close post modal
+      function closePostModal() {
+        postModal.setAttribute("aria-hidden", "true");
+        postModal.style.display = "none";
+        currentPost = null;
+
+        // Return focus to the last focused post card or nav
+        const lastFocusedPost = document.querySelector(".post-card:focus, .post-card:hover");
+        if (lastFocusedPost) {
+          lastFocusedPost.focus();
+        } else {
+          document.getElementById("nav-posts").focus();
+        }
+
+        // Reset breadcrumb
+        updateBreadcrumb("Home");
+        releaseFocusTrap();
+      }
+
+      // Update breadcrumb navigation
+      function updateBreadcrumb(currentPage) {
+        breadcrumbNav.innerHTML = "";
+        const homeLi = document.createElement("li");
+        const homeLink = document.createElement("a");
+        homeLink.href = "#";
+        homeLink.textContent = "Home";
+        homeLink.id = "breadcrumb-home";
+        homeLink.setAttribute("aria-current", currentPage === "Home" ? "page" : "false");
+        homeLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          closePostModal();
+          searchInput.value = "";
+          searchResults.textContent = "";
+          renderPostsList(posts);
+          searchError.hidden = true;
+          searchInput.setAttribute("aria-invalid", "false");
+          searchInput.focus();
+        });
+        homeLi.appendChild(homeLink);
+        breadcrumbNav.appendChild(homeLi);
+
+        if (currentPage !== "Home") {
+          const currentLi = document.createElement("li");
+          currentLi.textContent = currentPage;
+          currentLi.setAttribute("aria-current", "page");
+          breadcrumbNav.appendChild(currentLi);
+        }
+      }
+
+      // Form validation helpers
+      function showError(inputEl, message) {
+        const errorEl = document.getElementById(inputEl.id + "-error");
+        if (errorEl) {
+          errorEl.textContent = message;
+          errorEl.hidden = false;
+          inputEl.setAttribute("aria-invalid", "true");
+          inputEl.setAttribute("aria-describedby", inputEl.id + "-error");
+        }
+      }
+      function clearError(inputEl) {
+        const errorEl = document.getElementById(inputEl.id + "-error");
+        if (errorEl) {
+          errorEl.textContent = "";
+          errorEl.hidden = true;
+          inputEl.setAttribute("aria-invalid", "false");
+          inputEl.removeAttribute("aria-describedby");
+        }
+      }
+      function clearErrors() {
+        ["comment-name", "comment-email", "comment-text"].forEach((id) => {
+          const el = document.getElementById(id);
+          clearError(el);
+        });
+      }
+
+      // Validate comment form inputs
+      function validateCommentForm() {
+        let valid = true;
+
+        const nameInput = document.getElementById("comment-name");
+        const emailInput = document.getElementById("comment-email");
+        const commentInput = document.getElementById("comment-text");
+
+        clearErrors();
+
+        // Name: required, min 2 chars
+        if (!nameInput.value.trim()) {
+          showError(nameInput, "Name is required.");
+          valid = false;
+        } else if (nameInput.value.trim().length < 2) {
+          showError(nameInput, "Name must be at least 2 characters.");
+          valid = false;
+        }
+
+        // Email: required, valid email format
+        if (!emailInput.value.trim()) {
+          showError(emailInput, "Email is required.");
+          valid = false;
+        } else if (!validateEmail(emailInput.value.trim())) {
+          showError(emailInput, "Please enter a valid email address.");
+          valid = false;
+        }
+
+        // Comment: required, min 5 chars
+        if (!commentInput.value.trim()) {
+          showError(commentInput, "Comment is required.");
+          valid = false;
+        } else if (commentInput.value.trim().length < 5) {
+          showError(commentInput, "Comment must be at least 5 characters.");
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      // Email validation regex (simple)
+      function validateEmail(email) {
+        // RFC 5322 simplified regex
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email.toLowerCase());
+      }
+
+      // Add comment to current post
+      function addComment(post, name, email, text) {
+        post.comments.push({ name, email, text });
+      }
+
+      // Escape HTML for safe insertion
+      function safeInsertHTML(container, html) {
+        container.innerHTML = "";
+        const template = document.createElement("template");
+        template.innerHTML = html.trim();
+        container.appendChild(template.content.cloneNode(true));
+      }
+
+      // Search posts by keyword in title or content
+      function searchPosts(keyword) {
+        const lowerKeyword = keyword.toLowerCase();
+        return posts.filter((post) => {
+          return (
+            post.title.toLowerCase().includes(lowerKeyword) ||
+            post.content.toLowerCase().includes(lowerKeyword) ||
+            post.summary.toLowerCase().includes(lowerKeyword)
+          );
+        });
+      }
+
+      // Display search results summary
+      function displaySearchResults(results, keyword) {
+        if (!keyword) {
+          searchResults.textContent = "";
+          return;
+        }
+        if (results.length === 0) {
+          searchResults.textContent = `No articles found matching "${keyword}".`;
+        } else {
+          searchResults.textContent = `${results.length} article${results.length !== 1 ? "s" : ""} found matching "${keyword}". Use Tab to navigate results.`;
+        }
+      }
+
+      // Trap focus inside modal
+      let focusTrapElements = [];
+      let firstFocusable = null;
+      let lastFocusable = null;
+      function trapFocus(container) {
+        focusTrapElements = Array.from(
+          container.querySelectorAll(
+            'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable]'
+          )
+        ).filter((el) => el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement);
+
+        if (focusTrapElements.length === 0) return;
+
+        firstFocusable = focusTrapElements[0];
+        lastFocusable = focusTrapElements[focusTrapElements.length - 1];
+
+        container.addEventListener("keydown", handleTrapFocus);
+      }
+
+      function releaseFocusTrap() {
+        postModal.removeEventListener("keydown", handleTrapFocus);
+      }
+
+      function handleTrapFocus(e) {
+        if (e.key === "Tab") {
+          if (focusTrapElements.length === 0) return;
+          if (e.shiftKey) {
+            if (document.activeElement === firstFocusable) {
+              e.preventDefault();
+              lastFocusable.focus();
+            }
+          } else {
+            if (document.activeElement === lastFocusable) {
+              e.preventDefault();
+              firstFocusable.focus();
+            }
+          }
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closePostModal();
+        }
+      }
+
+      // Event listeners
+
+      // Close modal button
+      modalCloseBtn.addEventListener("click", closePostModal);
+
+      // Close modal on background click (but not modal content)
+      postModal.addEventListener("click", (e) => {
+        if (e.target === postModal) {
+          closePostModal();
+        }
+      });
+
+      // Comment form submit
+      commentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (!currentPost) {
+          commentStatus.textContent = "No post selected for commenting.";
+          commentStatus.style.color = "var(--color-error)";
+          return;
+        }
+
+        if (!validateCommentForm()) {
+          commentStatus.textContent = "Please fix errors before submitting.";
+          commentStatus.style.color = "var(--color-error)";
+          return;
+        }
+
+        // Collect data
+        const name = commentForm.elements["name"].value.trim();
+        const email = commentForm.elements["email"].value.trim();
+        const commentText = commentForm.elements["comment"].value.trim();
+
+        // Add comment to post
+        addComment(currentPost, name, email, commentText);
+
+        // Update comments list
+        renderComments(currentPost);
+
+        // Reset form and status
+        commentForm.reset();
+        commentStatus.textContent = "Comment submitted successfully!";
+        commentStatus.style.color = "var(--color-success)";
+
+        // Move focus to status message
+        commentStatus.focus();
+      });
+
+      // Search form submit
+      searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const keyword = searchInput.value.trim();
+
+        searchError.hidden = true;
+        searchInput.setAttribute("aria-invalid", "false");
+        searchResults.textContent = "";
+
+        if (keyword.length < 2) {
+          searchError.textContent = "Please enter at least 2 characters to search.";
+          searchError.hidden = false;
+          searchInput.setAttribute("aria-invalid", "true");
+          searchInput.focus();
+          return;
+        }
+
+        const results = searchPosts(keyword);
+        renderPostsList(results);
+        displaySearchResults(results, keyword);
+
+        // If only one result, open it automatically (optional)
+        // if (results.length === 1) openPostModal(results[0].id);
+      });
+
+      // Keyboard navigation for nav menu (basic)
+      const navLinks = document.querySelectorAll('nav[aria-label="Primary"] a, nav[aria-label="Primary"] button');
+      navLinks.forEach((link) => {
+        link.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            link.click();
+          }
+        });
+      });
+
+      // Initial render
+      renderPostsList(posts);
+      updateBreadcrumb("Home");
+
+      // Accessibility: announce page title on load for screen readers
+      window.addEventListener("load", () => {
+        const liveRegion = document.createElement("div");
+        liveRegion.setAttribute("aria-live", "polite");
+        liveRegion.setAttribute("aria-atomic", "true");
+        liveRegion.className = "sr-only";
+        liveRegion.textContent = `Page loaded: Accessible Personal Blog`;
+        document.body.appendChild(liveRegion);
+        setTimeout(() => document.body.removeChild(liveRegion), 5000);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Interactive Quiz with Immediate Feedback and Animations</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #0b3d91 0%, #1e90ff 100%);
+    color: #f0f8ff;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a {
+    color: #ffdd57;
+    text-decoration: underline;
+  }
+  a:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: 3px solid #ffdd57;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 1rem;
+    background: #ffdd57;
+    color: #0b3d91;
+    padding: 0.5rem 1rem;
+    z-index: 100;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: top 0.3s ease;
+  }
+  #skip-link:focus {
+    top: 1rem;
+  }
+  /* Layout */
+  header, nav, main, footer {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 1.5rem;
+  }
+  header {
+    background: #073763;
+    border-bottom: 3px solid #ffdd57;
+    border-radius: 0 0 0.5rem 0.5rem;
+  }
+  header h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #ffdd57;
+  }
+  nav {
+    background: #1a4fb7;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  nav li {
+    position: relative;
+  }
+  nav > ul > li {
+    flex: 1 1 auto;
+  }
+  nav a, nav button.menu-button {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #f0f8ff;
+    text-decoration: none;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  nav a:hover, nav a:focus, nav button.menu-button:hover, nav button.menu-button:focus {
+    background: #ffdd57;
+    color: #073763;
+    outline-offset: 0;
+  }
+  nav button.menu-button {
+    font-family: inherit;
+  }
+  /* Dropdown submenu */
+  nav li ul.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #0b3d91;
+    border-radius: 0 0 0.5rem 0.5rem;
+    min-width: 180px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 10;
+  }
+  nav li[aria-expanded="true"] > ul.submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  nav li ul.submenu li {
+    width: 100%;
+  }
+  nav li ul.submenu a {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+  }
+  nav li ul.submenu a:hover, nav li ul.submenu a:focus {
+    background: #ffdd57;
+    color: #073763;
+  }
+  /* Responsive nav */
+  @media (max-width: 600px) {
+    nav ul {
+      flex-direction: column;
+    }
+    nav li ul.submenu {
+      position: static;
+      transform: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      box-shadow: none;
+      border-radius: 0;
+      background: #1a4fb7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    nav li[aria-expanded="true"] > ul.submenu {
+      max-height: 1000px;
+      overflow: visible;
+    }
+  }
+
+  /* Main content */
+  main {
+    background: #073763cc;
+    border-radius: 0.5rem;
+    padding: 2rem 2rem 3rem 2rem;
+    box-shadow: 0 0 15px #000a;
+  }
+  main h2 {
+    font-size: 1.75rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #ffdd57;
+  }
+  /* Quiz container */
+  #quiz-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  /* Question card */
+  .question-card {
+    background: #0b3d91;
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: inset 0 0 10px #002466;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  .question-card[aria-live="polite"] {
+    outline: 3px solid #ffdd57;
+    outline-offset: 4px;
+  }
+  .question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #ffdd57;
+  }
+  /* Answers list */
+  .answers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .answers-list li {
+    position: relative;
+  }
+  /* Answer buttons */
+  .answer-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #1a4fb7;
+    border: 3px solid transparent;
+    border-radius: 0.5rem;
+    color: #f0f8ff;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    min-height: 44px;
+    font-size: 1rem;
+    user-select: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .answer-button:focus-visible {
+    outline: 3px solid #ffdd57;
+    outline-offset: 2px;
+  }
+  .answer-button:hover:not(:disabled),
+  .answer-button:focus-visible:not(:disabled) {
+    background: #ffdd57;
+    color: #073763;
+    border-color: #ffdd57;
+  }
+  .answer-button[aria-pressed="true"] {
+    border-color: #ffd633;
+    background: #ffd633cc;
+    color: #073763;
+    cursor: default;
+  }
+  .answer-button.correct {
+    border-color: #4caf50;
+    background: #4caf5080;
+    color: #073763;
+  }
+  .answer-button.incorrect {
+    border-color: #e53935;
+    background: #e5393580;
+    color: #f0f8ff;
+  }
+  .answer-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+  /* Feedback message */
+  #feedback-message {
+    margin-top: 1rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    min-height: 2.25rem;
+    color: #ffdd57;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeInSlide 0.5s ease forwards;
+  }
+  #feedback-message.correct {
+    color: #4caf50;
+  }
+  #feedback-message.incorrect {
+    color: #e53935;
+  }
+  /* Next button */
+  #next-question {
+    margin-top: 1.5rem;
+    align-self: flex-start;
+    background: #ffdd57;
+    color: #073763;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 120px;
+    min-height: 44px;
+    box-shadow: 0 0 10px #ffd633aa;
+    transition: background-color 0.3s ease;
+  }
+  #next-question:focus-visible {
+    outline: 3px solid #073763;
+    outline-offset: 3px;
+  }
+  #next-question:hover:not(:disabled),
+  #next-question:focus-visible:not(:disabled) {
+    background: #ffd633;
+  }
+  #next-question:disabled {
+    background: #666;
+    color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  /* Quiz summary */
+  #quiz-summary {
+    background: #0b3d91;
+    border-radius: 0.5rem;
+    padding: 1.5rem 2rem;
+    box-shadow: inset 0 0 10px #002466;
+    color: #ffdd57;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-align: center;
+  }
+  #restart-quiz {
+    margin-top: 1.5rem;
+    background: #ffdd57;
+    color: #073763;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 140px;
+    min-height: 44px;
+    box-shadow: 0 0 10px #ffd633aa;
+    transition: background-color 0.3s ease;
+  }
+  #restart-quiz:focus-visible {
+    outline: 3px solid #073763;
+    outline-offset: 3px;
+  }
+  #restart-quiz:hover,
+  #restart-quiz:focus-visible {
+    background: #ffd633;
+  }
+  /* Help text */
+  .help-text {
+    font-size: 0.875rem;
+    color: #d0e6ff;
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+  /* Animations */
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  @keyframes fadeInSlide {
+    from {opacity: 0; transform: translateX(-10px);}
+    to {opacity: 1; transform: translateX(0);}
+  }
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0s !important;
+      transition-duration: 0s !important;
+    }
+  }
+  /* Responsive text and spacing */
+  @media (max-width: 480px) {
+    html {
+      font-size: 16px;
+    }
+    main {
+      padding: 1rem 1rem 2rem 1rem;
+    }
+    nav ul {
+      flex-direction: column;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+<header role="banner">
+  <h1>Accessible Interactive Quiz</h1>
+</header>
+<nav aria-label="Primary navigation" role="navigation">
+  <ul>
+    <li><a href="#main-content">Quiz</a></li>
+    <li>
+      <button class="menu-button" aria-haspopup="true" aria-expanded="false" aria-controls="resources-submenu" id="resources-menu">
+        Resources
+      </button>
+      <ul class="submenu" id="resources-submenu" role="menu" aria-labelledby="resources-menu">
+        <li role="none"><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" role="menuitem" target="_blank" rel="noopener noreferrer">WCAG Guidelines</a></li>
+        <li role="none"><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility" role="menuitem" target="_blank" rel="noopener noreferrer">MDN Accessibility</a></li>
+        <li role="none"><a href="https://a11yproject.com/" role="menuitem" target="_blank" rel="noopener noreferrer">The A11Y Project</a></li>
+      </ul>
+    </li>
+    <li><a href="#quiz-summary" id="summary-link">Summary</a></li>
+  </ul>
+</nav>
+<main id="main-content" tabindex="-1" role="main" aria-labelledby="quiz-title">
+  <section aria-labelledby="quiz-title" class="quiz-section">
+    <h2 id="quiz-title">Test Your Knowledge: Interactive Quiz</h2>
+    <form id="quiz-form" aria-describedby="quiz-help" novalidate>
+      <p id="quiz-help" class="help-text">Select the best answer for each question. Immediate feedback will be provided after each selection.</p>
+      <div id="quiz-container" aria-live="polite" aria-atomic="true"></div>
+      <button type="button" id="next-question" disabled aria-disabled="true" aria-label="Go to next question">Next Question</button>
+    </form>
+    <section id="quiz-summary" aria-live="polite" aria-atomic="true" hidden>
+      <p>Your quiz results will appear here.</p>
+      <button id="restart-quiz" aria-label="Restart the quiz">Restart Quiz</button>
+    </section>
+  </section>
+</main>
+<footer role="contentinfo" aria-label="Page footer">
+  <p>© 2024 Accessible Quiz Inc. All rights reserved.</p>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // Quiz data: questions, choices, correct answer index, and optional descriptions for aria-describedby
+  const quizData = [
+    {
+      question: "What is the capital city of Australia?",
+      choices: [
+        "Sydney",
+        "Canberra",
+        "Melbourne",
+        "Brisbane"
+      ],
+      correctIndex: 1,
+      description: "Canberra is the capital city of Australia, not Sydney or Melbourne."
+    },
+    {
+      question: "Which element has the chemical symbol 'O'?",
+      choices: [
+        "Gold",
+        "Oxygen",
+        "Osmium",
+        "Silver"
+      ],
+      correctIndex: 1,
+      description: "Oxygen's chemical symbol is 'O'."
+    },
+    {
+      question: "What year did the first man land on the Moon?",
+      choices: [
+        "1965",
+        "1969",
+        "1971",
+        "1959"
+      ],
+      correctIndex: 1,
+      description: "Neil Armstrong landed on the Moon in 1969."
+    },
+    {
+      question: "Which language is primarily spoken in Brazil?",
+      choices: [
+        "Spanish",
+        "Portuguese",
+        "French",
+        "English"
+      ],
+      correctIndex: 1,
+      description: "Portuguese is the official language of Brazil."
+    },
+    {
+      question: "What is the largest planet in our Solar System?",
+      choices: [
+        "Earth",
+        "Saturn",
+        "Jupiter",
+        "Neptune"
+      ],
+      correctIndex: 2,
+      description: "Jupiter is the largest planet in the Solar System."
+    }
+  ];
+
+  // DOM references
+  const quizContainer = document.getElementById("quiz-container");
+  const nextButton = document.getElementById("next-question");
+  const quizForm = document.getElementById("quiz-form");
+  const quizSummary = document.getElementById("quiz-summary");
+  const restartButton = document.getElementById("restart-quiz");
+
+  // State variables
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let answered = false;
+
+  // SVG icons for correct and incorrect
+  const icons = {
+    correct: `<svg class="answer-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    incorrect: `<svg class="answer-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+  };
+
+  // Utility: sanitize text for insertion to prevent XSS
+  function sanitize(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Render a question
+  function renderQuestion(index) {
+    const q = quizData[index];
+    quizContainer.innerHTML = "";
+
+    // Question container with aria-live for polite updates
+    const questionCard = document.createElement("article");
+    questionCard.className = "question-card";
+    questionCard.setAttribute("aria-live", "polite");
+    questionCard.setAttribute("aria-atomic", "true");
+
+    // Question text with aria-describedby for detailed description
+    const questionText = document.createElement("h3");
+    questionText.className = "question-text";
+    questionText.id = "question-text";
+    questionText.textContent = q.question;
+    questionCard.appendChild(questionText);
+
+    // Hidden description for screen readers
+    const descId = "question-desc";
+    const questionDesc = document.createElement("p");
+    questionDesc.id = descId;
+    questionDesc.className = "sr-only";
+    questionDesc.textContent = q.description;
+    questionCard.appendChild(questionDesc);
+
+    // Answers list
+    const answersList = document.createElement("ul");
+    answersList.className = "answers-list";
+    answersList.setAttribute("role", "list");
+    answersList.setAttribute("aria-labelledby", "question-text");
+    questionCard.appendChild(answersList);
+
+    // Create each answer button inside a list item
+    q.choices.forEach((choice, i) => {
+      const li = document.createElement("li");
+      li.setAttribute("role", "none");
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "answer-button";
+      button.id = `answer-${i}`;
+      button.setAttribute("aria-describedby", descId);
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", `Answer option ${i + 1}: ${choice}`);
+      button.textContent = choice;
+      button.setAttribute("tabindex", "0");
+      button.style.minWidth = "44px";
+      button.style.minHeight = "44px";
+
+      // Keyboard and mouse event handlers
+      button.addEventListener("click", () => handleAnswer(i));
+      button.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          handleAnswer(i);
+        }
+      });
+
+      li.appendChild(button);
+      answersList.appendChild(li);
+    });
+
+    quizContainer.appendChild(questionCard);
+
+    // Reset state
+    answered = false;
+    nextButton.disabled = true;
+    nextButton.setAttribute("aria-disabled", "true");
+    nextButton.focus();
+
+    // Clear previous feedback message if any
+    updateFeedbackMessage("");
+  }
+
+  // Update feedback message with live region
+  function updateFeedbackMessage(message, isCorrect = null) {
+    let feedback = document.getElementById("feedback-message");
+    if (!feedback) {
+      feedback = document.createElement("p");
+      feedback.id = "feedback-message";
+      feedback.setAttribute("role", "status");
+      feedback.setAttribute("aria-live", "polite");
+      feedback.setAttribute("aria-atomic", "true");
+      quizContainer.appendChild(feedback);
+    }
+    feedback.textContent = message;
+    feedback.classList.remove("correct", "incorrect");
+    if (isCorrect === true) {
+      feedback.classList.add("correct");
+    } else if (isCorrect === false) {
+      feedback.classList.add("incorrect");
+    }
+  }
+
+  // Handle answer selection
+  function handleAnswer(selectedIndex) {
+    if (answered) return; // Prevent multiple answers
+
+    answered = true;
+    const q = quizData[currentQuestionIndex];
+    const buttons = quizContainer.querySelectorAll(".answer-button");
+
+    // Mark all buttons disabled and update aria-pressed
+    buttons.forEach((btn, idx) => {
+      btn.disabled = true;
+      btn.setAttribute("aria-pressed", idx === selectedIndex ? "true" : "false");
+      btn.tabIndex = -1;
+    });
+
+    // Provide feedback and style buttons accordingly
+    if (selectedIndex === q.correctIndex) {
+      buttons[selectedIndex].classList.add("correct");
+      updateFeedbackMessage("Correct! Well done.", true);
+      score++;
+    } else {
+      buttons[selectedIndex].classList.add("incorrect");
+      buttons[q.correctIndex].classList.add("correct");
+      updateFeedbackMessage(`Incorrect. The correct answer is: ${q.choices[q.correctIndex]}.`, false);
+    }
+
+    // Enable next button
+    nextButton.disabled = false;
+    nextButton.setAttribute("aria-disabled", "false");
+    nextButton.focus();
+  }
+
+  // Show quiz summary
+  function showSummary() {
+    quizForm.hidden = true;
+    quizSummary.hidden = false;
+    quizSummary.innerHTML = `
+      <p>You have completed the quiz!</p>
+      <p>Your score: <strong>${score} out of ${quizData.length}</strong> (${Math.round((score / quizData.length) * 100)}%)</p>
+      <button id="restart-quiz" aria-label="Restart the quiz" type="button">Restart Quiz</button>
+    `;
+    const restartBtn = quizSummary.querySelector("#restart-quiz");
+    restartBtn.addEventListener("click", restartQuiz);
+    restartBtn.focus();
+  }
+
+  // Restart quiz
+  function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    quizSummary.hidden = true;
+    quizForm.hidden = false;
+    renderQuestion(currentQuestionIndex);
+  }
+
+  // Next question handler
+  nextButton.addEventListener("click", () => {
+    if (currentQuestionIndex < quizData.length - 1) {
+      currentQuestionIndex++;
+      renderQuestion(currentQuestionIndex);
+    } else {
+      showSummary();
+    }
+  });
+
+  // Keyboard accessibility for nav menu dropdown
+  const menuButton = document.querySelector("button.menu-button");
+  const submenu = document.getElementById("resources-submenu");
+
+  function closeMenu() {
+    menuButton.setAttribute("aria-expanded", "false");
+    submenu.style.visibility = "hidden";
+    submenu.style.opacity = "0";
+    submenu.style.transform = "translateY(-10px)";
+    submenu.setAttribute("aria-hidden", "true");
+  }
+  function openMenu() {
+    menuButton.setAttribute("aria-expanded", "true");
+    submenu.style.visibility = "visible";
+    submenu.style.opacity = "1";
+    submenu.style.transform = "translateY(0)";
+    submenu.setAttribute("aria-hidden", "false");
+  }
+  menuButton.addEventListener("click", () => {
+    const expanded = menuButton.getAttribute("aria-expanded") === "true";
+    if (expanded) {
+      closeMenu();
+    } else {
+      openMenu();
+      // Focus first submenu item
+      const firstItem = submenu.querySelector('a[role="menuitem"]');
+      if (firstItem) firstItem.focus();
+    }
+  });
+  menuButton.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "Down") {
+      e.preventDefault();
+      openMenu();
+      const firstItem = submenu.querySelector('a[role="menuitem"]');
+      if (firstItem) firstItem.focus();
+    }
+    if (e.key === "Escape" || e.key === "Esc") {
+      closeMenu();
+      menuButton.focus();
+    }
+  });
+  submenu.addEventListener("keydown", e => {
+    const focusableItems = Array.from(submenu.querySelectorAll('a[role="menuitem"]'));
+    let index = focusableItems.indexOf(document.activeElement);
+    if (e.key === "ArrowDown" || e.key === "Down") {
+      e.preventDefault();
+      index = (index + 1) % focusableItems.length;
+      focusableItems[index].focus();
+    } else if (e.key === "ArrowUp" || e.key === "Up") {
+      e.preventDefault();
+      index = (index - 1 + focusableItems.length) % focusableItems.length;
+      focusableItems[index].focus();
+    } else if (e.key === "Escape" || e.key === "Esc") {
+      closeMenu();
+      menuButton.focus();
+    }
+  });
+  // Close menu on click outside
+  document.addEventListener("click", e => {
+    if (!menuButton.contains(e.target) && !submenu.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  // Screen reader only styles
+  const style = document.createElement("style");
+  style.textContent = `
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Initialize quiz
+  renderQuestion(currentQuestionIndex);
+
+  // Focus management: move focus to main on load for keyboard users
+  window.addEventListener("load", () => {
+    const main = document.getElementById("main-content");
+    if (main) {
+      main.setAttribute("tabindex", "-1");
+    }
+  });
+
+  // Accessibility: prevent keyboard trap on modal/dialog (no modal here, but good practice)
+  // Focus visible polyfill for better focus outlines handled by CSS :focus-visible
+
+  // Context-sensitive help: quiz help text already provided in #quiz-help
+
+  // Error prevention: disabling next button until answer selected
+
+  // Preserve data on page reload: not implemented (out of scope)
+
+  // No timing requirements or auto advance
+
+  // Animation respect prefers-reduced-motion done in CSS
+
+})();
+</script>
+</body>
+</html>

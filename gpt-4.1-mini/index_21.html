@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Interactive Accessible Space Exploration: Constellations & Planets Gallery</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0b0f1a;
+    color: #e0e6f0;
+    font-size: 18px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    min-width: 320px;
+  }
+  a {
+    color: #66ccff;
+    text-decoration: underline;
+  }
+  a:focus,
+  button:focus,
+  [tabindex]:focus {
+    outline: 3px solid #66ccff;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #003366;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+  }
+  #skip-link:focus {
+    top: 0;
+  }
+
+  /* Layout */
+  header, footer, main, nav, section, article {
+    display: block;
+  }
+  header, footer {
+    background: linear-gradient(135deg, #00111f 0%, #002244 100%);
+    color: #a3c9ff;
+    padding: 1rem 1.5rem;
+  }
+  header h1 {
+    font-size: 2rem;
+    margin: 0;
+  }
+  nav[aria-label="Primary Navigation"] {
+    background-color: #001a33;
+    border-top: 3px solid #3399ff;
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav a {
+    color: #a3c9ff;
+    font-weight: 600;
+  }
+  nav a[aria-current="page"] {
+    color: #66ccff;
+    font-weight: 700;
+    border-bottom: 3px solid #66ccff;
+  }
+  nav a:focus-visible {
+    outline-offset: 3px;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 1rem auto 3rem;
+    padding: 0 1rem;
+  }
+  main > section {
+    margin-bottom: 3rem;
+  }
+  main h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 3px solid #3399ff;
+    padding-bottom: 0.25rem;
+  }
+  main h3 {
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #99ccff;
+  }
+
+  /* Constellations Canvas Section */
+  #space-scene {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px #3399ff88;
+    background: radial-gradient(ellipse at center, #0b0f1a 0%, #000000 90%);
+  }
+  #constellation-info {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    max-width: 320px;
+    background-color: rgba(0, 34, 68, 0.85);
+    border: 2px solid #3399ff;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #cce6ff;
+    font-size: 1rem;
+    line-height: 1.4;
+    box-shadow: 0 0 10px #66ccffaa;
+  }
+  #constellation-info h3 {
+    margin-top: 0;
+    color: #99ccff;
+  }
+  #constellation-info button {
+    margin-top: 1rem;
+    background-color: #3399ff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  #constellation-info button:hover,
+  #constellation-info button:focus {
+    background-color: #66ccff;
+    outline: 3px solid #003366;
+  }
+
+  /* Planets Gallery */
+  #planets-gallery {
+    position: relative;
+  }
+  #gallery-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  #gallery-controls button {
+    background-color: #3399ff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  #gallery-controls button:hover,
+  #gallery-controls button:focus {
+    background-color: #66ccff;
+    outline: 3px solid #003366;
+  }
+  #gallery-controls button[disabled] {
+    background-color: #1a3355;
+    color: #6688bb;
+    cursor: default;
+  }
+
+  #planets-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+  #planets-list:focus {
+    outline: 3px solid #66ccff;
+    outline-offset: 2px;
+  }
+  .planet-card {
+    background-color: #001a33;
+    border: 2px solid #3399ff;
+    border-radius: 12px;
+    flex: 0 0 280px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 10px #3399ff88;
+    color: #cce6ff;
+  }
+  .planet-card:focus-within {
+    outline: 3px solid #66ccff;
+    outline-offset: 3px;
+  }
+  .planet-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    overflow: hidden;
+    border-bottom: 2px solid #3399ff;
+    border-radius: 12px 12px 0 0;
+    background: radial-gradient(circle at center, #001a33 0%, #000000 80%);
+  }
+  .planet-image-container img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 100%;
+    max-height: 100%;
+    transform: translate(-50%, -50%);
+    border-radius: 12px 12px 0 0;
+  }
+  .planet-info {
+    padding: 1rem;
+    flex-grow: 1;
+  }
+  .planet-info h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #99ccff;
+  }
+  .planet-info p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    #planets-list {
+      flex-wrap: nowrap;
+    }
+    .planet-card {
+      flex: 0 0 90vw;
+    }
+  }
+
+  /* Stars and Constellations - Canvas styling */
+  #space-scene canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+  }
+
+  /* Focus visible enhancements */
+  button:focus-visible,
+  a:focus-visible {
+    outline-offset: 3px;
+    outline: 3px solid #66ccff;
+  }
+
+  /* Tooltip style for constellation hover/focus */
+  .tooltip {
+    position: absolute;
+    background-color: #003366cc;
+    color: #ccddff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 20;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+
+<header role="banner">
+  <h1>Explore the Cosmos: Interactive Constellations & Planets Gallery</h1>
+</header>
+
+<nav aria-label="Primary Navigation">
+  <ul>
+    <li><a href="#constellations-section" id="nav-constellations" aria-current="page">Constellations</a></li>
+    <li><a href="#planets-section" id="nav-planets">Planets Gallery</a></li>
+    <li><a href="#about-section" id="nav-about">About This Site</a></li>
+  </ul>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section id="constellations-section" aria-labelledby="constellations-heading">
+    <h2 id="constellations-heading">Interactive Constellations</h2>
+    <p>Click or keyboard-select a constellation on the star map to learn about it.</p>
+    <div id="space-scene" aria-label="Star map with interactive constellations" role="region">
+      <canvas id="stars-canvas" width="1200" height="480" aria-describedby="constellation-info-desc"></canvas>
+      <aside id="constellation-info" aria-live="polite" aria-atomic="true" aria-relevant="additions removals" hidden>
+        <h3 id="constellation-info-title">Select a constellation</h3>
+        <p id="constellation-info-desc">Information about the selected constellation will appear here.</p>
+        <button type="button" id="close-constellation-info" aria-label="Close constellation information panel">Close</button>
+      </aside>
+    </div>
+  </section>
+
+  <section id="planets-section" aria-labelledby="planets-heading">
+    <h2 id="planets-heading">Scrolling Planets Gallery</h2>
+    <p>Explore planets of our solar system with images and fun facts. Use the controls to scroll through the gallery.</p>
+    <div id="planets-gallery" role="region" aria-label="Planets image gallery with fun facts">
+      <div id="gallery-controls">
+        <button type="button" id="scroll-left" aria-label="Scroll planets gallery left" disabled>◀ Previous</button>
+        <button type="button" id="scroll-right" aria-label="Scroll planets gallery right">Next ▶</button>
+      </div>
+      <div id="planets-list" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+        <!-- Planet cards inserted by JS -->
+      </div>
+    </div>
+  </section>
+
+  <section id="about-section" aria-labelledby="about-heading">
+    <h2 id="about-heading">About This Site</h2>
+    <article>
+      <p>This website is designed to provide an accessible and engaging experience exploring space. The star map features interactive constellations that reveal detailed information when selected. The planets gallery offers a scrollable collection of planets with images and interesting facts.</p>
+      <p>All interactive elements are keyboard accessible, with enhanced focus indicators and high contrast color schemes to meet WCAG 2.2 AAA standards. Motion is reduced respecting user preferences, and all images include descriptive alternative text.</p>
+      <p>We hope you enjoy your cosmic journey!</p>
+    </article>
+  </section>
+</main>
+
+<footer role="contentinfo">
+  <p>© 2024 Space Exploration Initiative. All rights reserved.</p>
+  <nav aria-label="Footer Navigation">
+    <ul>
+      <li><a href="#main-content">Back to top</a></li>
+      <li><a href="#about-section">About</a></li>
+      <li><a href="https://www.nasa.gov" target="_blank" rel="noopener noreferrer">NASA</a></li>
+      <li><a href="https://www.iau.org/public/themes/constellations/" target="_blank" rel="noopener noreferrer">IAU Constellations</a></li>
+    </ul>
+  </nav>
+</footer>
+
+<script>
+  'use strict';
+
+  // Data for constellations
+  const CONSTELLATIONS = [
+    {
+      id: 'orion',
+      name: 'Orion',
+      description: 'Orion is one of the most recognizable constellations in the night sky, named after a hunter in Greek mythology. It contains bright stars such as Betelgeuse and Rigel.',
+      stars: [
+        { x: 300, y: 120 },
+        { x: 350, y: 180 },
+        { x: 400, y: 140 },
+        { x: 450, y: 190 },
+        { x: 500, y: 150 },
+        { x: 520, y: 210 },
+        { x: 550, y: 170 }
+      ]
+    },
+    {
+      id: 'ursa-major',
+      name: 'Ursa Major',
+      description: 'Ursa Major, also known as the Great Bear, is famous for containing the Big Dipper asterism. It has been used for navigation for centuries.',
+      stars: [
+        { x: 800, y: 80 },
+        { x: 850, y: 120 },
+        { x: 900, y: 100 },
+        { x: 950, y: 140 },
+        { x: 1000, y: 110 },
+        { x: 1050, y: 160 },
+        { x: 1100, y: 130 }
+      ]
+    },
+    {
+      id: 'cassiopeia',
+      name: 'Cassiopeia',
+      description: 'Cassiopeia is a distinctive W-shaped constellation named after a queen in Greek mythology. It is easily visible in the northern sky.',
+      stars: [
+        { x: 600, y: 60 },
+        { x: 640, y: 100 },
+        { x: 680, y: 70 },
+        { x: 720, y: 110 },
+        { x: 760, y: 80 }
+      ]
+    }
+  ];
+
+  // Data for planets
+  const PLANETS = [
+    {
+      name: 'Mercury',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg',
+      alt: 'Image of planet Mercury showing a rocky surface with craters',
+      funFact: 'Mercury is the smallest planet in our solar system and closest to the Sun.'
+    },
+    {
+      name: 'Venus',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg',
+      alt: 'Image of planet Venus showing thick yellowish clouds',
+      funFact: 'Venus spins in the opposite direction to most planets and has a thick toxic atmosphere.'
+    },
+    {
+      name: 'Earth',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg',
+      alt: 'Image of planet Earth showing blue oceans and white clouds',
+      funFact: 'Earth is the only planet known to support life and has 71% of its surface covered by water.'
+    },
+    {
+      name: 'Mars',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg',
+      alt: 'Image of planet Mars showing reddish surface and polar ice caps',
+      funFact: 'Mars is known as the Red Planet due to iron oxide (rust) on its surface.'
+    },
+    {
+      name: 'Jupiter',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg',
+      alt: 'Image of planet Jupiter showing swirling clouds and Great Red Spot',
+      funFact: 'Jupiter is the largest planet and has a giant storm called the Great Red Spot.'
+    },
+    {
+      name: 'Saturn',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg',
+      alt: 'Image of planet Saturn showing its iconic rings',
+      funFact: 'Saturn is famous for its extensive ring system made of ice and rock particles.'
+    },
+    {
+      name: 'Uranus',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg',
+      alt: 'Image of planet Uranus showing a pale blue-green color',
+      funFact: 'Uranus rotates on its side, making its seasons very extreme.'
+    },
+    {
+      name: 'Neptune',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg',
+      alt: 'Image of planet Neptune showing deep blue color with clouds',
+      funFact: 'Neptune is the farthest planet from the Sun and has the strongest winds in the solar system.'
+    }
+  ];
+
+  // Canvas and constellation interaction
+  (function() {
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    const infoPanel = document.getElementById('constellation-info');
+    const infoTitle = document.getElementById('constellation-info-title');
+    const infoDesc = document.getElementById('constellation-info-desc');
+    const closeBtn = document.getElementById('close-constellation-info');
+
+    // Accessibility: Store last focused constellation button for returning focus
+    let lastFocusedConstellation = null;
+
+    // Star and constellation drawing parameters
+    const starRadius = 2.5;
+    const starColor = '#ccddee';
+    const constellationLineColor = '#66ccff';
+    const constellationLineWidth = 1.8;
+    const constellationHighlightColor = '#ffcc33';
+    const constellationHighlightWidth = 3;
+
+    // For keyboard navigation and hit testing
+    const constellationHitRadius = 18;
+
+    // Store constellation center points for hit detection and focus
+    const constellationCenters = CONSTELLATIONS.map(c => {
+      // Calculate approximate center as average of stars
+      const sum = c.stars.reduce((acc, s) => ({x: acc.x + s.x, y: acc.y + s.y}), {x:0, y:0});
+      return {
+        id: c.id,
+        x: sum.x / c.stars.length,
+        y: sum.y / c.stars.length,
+        name: c.name
+      };
+    });
+
+    // Draw stars
+    function drawStars() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw background stars randomly for ambiance
+      for (let i = 0; i < 200; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const radius = Math.random() * 1.2 + 0.3;
+        const alpha = Math.random() * 0.7 + 0.3;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(204, 221, 255, ${alpha.toFixed(2)})`;
+        ctx.fill();
+      }
+
+      // Draw constellation stars and lines
+      CONSTELLATIONS.forEach(constellation => {
+        // Draw lines connecting stars
+        ctx.strokeStyle = constellationLineColor;
+        ctx.lineWidth = constellationLineWidth;
+        ctx.beginPath();
+        constellation.stars.forEach((star, index) => {
+          if (index === 0) {
+            ctx.moveTo(star.x, star.y);
+          } else {
+            ctx.lineTo(star.x, star.y);
+          }
+        });
+        ctx.stroke();
+
+        // Draw stars
+        constellation.stars.forEach(star => {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, starRadius, 0, 2 * Math.PI);
+          ctx.fillStyle = starColor;
+          ctx.shadowColor = '#66ccff';
+          ctx.shadowBlur = 4;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+      });
+    }
+
+    // Draw highlight for selected constellation
+    function drawHighlight(constellationId) {
+      if (!constellationId) return;
+      const constellation = CONSTELLATIONS.find(c => c.id === constellationId);
+      if (!constellation) return;
+
+      ctx.strokeStyle = constellationHighlightColor;
+      ctx.lineWidth = constellationHighlightWidth;
+      ctx.beginPath();
+      constellation.stars.forEach((star, index) => {
+        if (index === 0) {
+          ctx.moveTo(star.x, star.y);
+        } else {
+          ctx.lineTo(star.x, star.y);
+        }
+      });
+      ctx.stroke();
+
+      // Draw stars bigger and glowing
+      constellation.stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, starRadius + 1.5, 0, 2 * Math.PI);
+        ctx.fillStyle = constellationHighlightColor;
+        ctx.shadowColor = '#ffcc33';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+    }
+
+    // Find constellation at position (x, y)
+    function findConstellationAt(x, y) {
+      for (const constellation of CONSTELLATIONS) {
+        for (const star of constellation.stars) {
+          const dx = star.x - x;
+          const dy = star.y - y;
+          if (dx * dx + dy * dy <= constellationHitRadius * constellationHitRadius) {
+            return constellation;
+          }
+        }
+      }
+      return null;
+    }
+
+    // Show constellation info panel
+    function showConstellationInfo(constellation) {
+      if (!constellation) return;
+      infoTitle.textContent = constellation.name;
+      infoDesc.textContent = constellation.description;
+      infoPanel.hidden = false;
+      infoPanel.focus();
+      drawStars();
+      drawHighlight(constellation.id);
+    }
+
+    // Hide constellation info panel
+    function hideConstellationInfo() {
+      infoPanel.hidden = true;
+      infoTitle.textContent = 'Select a constellation';
+      infoDesc.textContent = 'Information about the selected constellation will appear here.';
+      drawStars();
+      // Return focus to last focused constellation if any
+      if (lastFocusedConstellation) {
+        lastFocusedConstellation.focus();
+      }
+    }
+
+    // Initialize canvas with stars and event listeners
+    function initCanvas() {
+      drawStars();
+
+      // Tooltip for constellation names on hover/focus
+      let tooltip = null;
+      function createTooltip() {
+        tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.style.display = 'none';
+        document.body.appendChild(tooltip);
+      }
+      createTooltip();
+
+      function positionTooltip(x, y) {
+        const offset = 12;
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let left = x + offset;
+        let top = y + offset;
+        if (left + tooltipRect.width > window.innerWidth) {
+          left = x - tooltipRect.width - offset;
+        }
+        if (top + tooltipRect.height > window.innerHeight) {
+          top = y - tooltipRect.height - offset;
+        }
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      // Mouse move for tooltip display
+      canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const constellation = findConstellationAt(x, y);
+        if (constellation) {
+          tooltip.textContent = constellation.name;
+          tooltip.style.display = 'block';
+          positionTooltip(e.clientX, e.clientY);
+          canvas.style.cursor = 'pointer';
+        } else {
+          tooltip.style.display = 'none';
+          canvas.style.cursor = 'default';
+        }
+      });
+      canvas.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+        canvas.style.cursor = 'default';
+      });
+
+      // Click or keyboard select constellation
+      canvas.addEventListener('click', e => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const constellation = findConstellationAt(x, y);
+        if (constellation) {
+          lastFocusedConstellation = null;
+          showConstellationInfo(constellation);
+        }
+      });
+
+      // Keyboard navigation: create invisible buttons over constellation centers for accessibility
+      const container = canvas.parentElement;
+      constellationCenters.forEach(center => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'constellation-button';
+        btn.style.position = 'absolute';
+        btn.style.left = `${center.x - 20}px`;
+        btn.style.top = `${center.y - 20}px`;
+        btn.style.width = '40px';
+        btn.style.height = '40px';
+        btn.style.background = 'transparent';
+        btn.style.border = 'none';
+        btn.style.cursor = 'pointer';
+        btn.style.padding = '0';
+        btn.style.margin = '0';
+        btn.style.borderRadius = '50%';
+        btn.setAttribute('aria-label', `Show information about the constellation ${center.name}`);
+        btn.setAttribute('aria-haspopup', 'dialog');
+        btn.setAttribute('aria-controls', 'constellation-info');
+        btn.setAttribute('tabindex', '0');
+        btn.addEventListener('click', () => {
+          lastFocusedConstellation = btn;
+          const constellation = CONSTELLATIONS.find(c => c.id === center.id);
+          showConstellationInfo(constellation);
+        });
+        btn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            lastFocusedConstellation = btn;
+            const constellation = CONSTELLATIONS.find(c => c.id === center.id);
+            showConstellationInfo(constellation);
+          }
+        });
+        container.appendChild(btn);
+      });
+
+      // Close button event
+      closeBtn.addEventListener('click', () => {
+        hideConstellationInfo();
+      });
+      closeBtn.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          hideConstellationInfo();
+        }
+      });
+
+      // Close info panel on Escape key when focused inside
+      infoPanel.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          hideConstellationInfo();
+        }
+      });
+    }
+
+    // Initialize on DOM ready
+    window.addEventListener('load', () => {
+      initCanvas();
+    });
+  })();
+
+  // Planets gallery scrolling and keyboard accessibility
+  (function() {
+    const gallery = document.getElementById('planets-list');
+    const btnLeft = document.getElementById('scroll-left');
+    const btnRight = document.getElementById('scroll-right');
+
+    // Insert planet cards
+    function createPlanetCard(planet) {
+      const card = document.createElement('article');
+      card.className = 'planet-card';
+      card.setAttribute('tabindex', '-1');
+      card.setAttribute('role', 'group');
+      card.setAttribute('aria-label', `Planet ${planet.name}`);
+
+      const imageContainer = document.createElement('div');
+      imageContainer.className = 'planet-image-container';
+
+      const img = document.createElement('img');
+      img.src = planet.image;
+      img.alt = planet.alt;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.width = 280;
+      img.height = 158; // approximate 16:9 ratio
+      imageContainer.appendChild(img);
+
+      const info = document.createElement('div');
+      info.className = 'planet-info';
+
+      const title = document.createElement('h3');
+      title.textContent = planet.name;
+      info.appendChild(title);
+
+      const fact = document.createElement('p');
+      fact.textContent = planet.funFact;
+      info.appendChild(fact);
+
+      card.appendChild(imageContainer);
+      card.appendChild(info);
+
+      return card;
+    }
+
+    function populateGallery() {
+      PLANETS.forEach(planet => {
+        const card = createPlanetCard(planet);
+        gallery.appendChild(card);
+      });
+    }
+
+    // Scroll gallery by one card width
+    function scrollGallery(direction) {
+      const cardWidth = gallery.querySelector('.planet-card').offsetWidth + 16; // card width + gap
+      if (direction === 'left') {
+        gallery.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+      } else {
+        gallery.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      }
+    }
+
+    // Update buttons disabled state based on scroll position
+    function updateButtons() {
+      const maxScrollLeft = gallery.scrollWidth - gallery.clientWidth;
+      btnLeft.disabled = gallery.scrollLeft <= 0;
+      btnRight.disabled = gallery.scrollLeft >= maxScrollLeft - 1;
+    }
+
+    // Keyboard navigation for gallery container: left/right arrows scroll gallery
+    function galleryKeydownHandler(e) {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        scrollGallery('right');
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        scrollGallery('left');
+      }
+    }
+
+    // Focus management: when a card receives focus, scroll it into view
+    function cardFocusHandler(e) {
+      const card = e.target;
+      if (card.classList.contains('planet-card')) {
+        card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    }
+
+    // Initialize gallery
+    window.addEventListener('load', () => {
+      populateGallery();
+      updateButtons();
+
+      btnLeft.addEventListener('click', () => {
+        scrollGallery('left');
+      });
+      btnRight.addEventListener('click', () => {
+        scrollGallery('right');
+      });
+      gallery.addEventListener('scroll', updateButtons);
+      gallery.addEventListener('keydown', galleryKeydownHandler);
+
+      // Delegate focus event for cards
+      gallery.addEventListener('focusin', cardFocusHandler);
+
+      // Accessibility: allow tabbing into cards and keyboard users can read content
+      const cards = gallery.querySelectorAll('.planet-card');
+      cards.forEach(card => {
+        card.setAttribute('tabindex', '0');
+      });
+    });
+  })();
+
+</script>
+</body>
+</html>

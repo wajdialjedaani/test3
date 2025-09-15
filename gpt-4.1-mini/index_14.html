@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Digital Art Gallery – Explore, Filter & View Artworks</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-bg-light: #f9f9fb;
+    --color-bg-dark: #121212;
+    --color-text-light: #111111;
+    --color-text-dark: #e0e0e0;
+    --color-primary: #0a84ff;
+    --color-primary-dark: #3794ff;
+    --color-secondary: #ff6f61;
+    --color-secondary-dark: #ff8a7b;
+    --color-accent: #ffd60a;
+    --color-accent-dark: #ffde3c;
+    --color-border-light: #cccccc;
+    --color-border-dark: #444444;
+    --color-focus: #ffde3c;
+    --color-error: #e03c3c;
+    --color-error-bg: #fceaea;
+    --color-success: #2a9d8f;
+    --color-success-bg: #daf5f2;
+
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.6;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --shadow-focus: 0 0 0 3px var(--color-focus);
+    --min-target-size: 44px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    min-width: 320px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: text;
+  }
+
+  body.dark {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  a:focus,
+  a:hover {
+    outline: none;
+    color: var(--color-primary-dark);
+  }
+
+  /* Skip Link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 4px 4px;
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 4px 8px rgba(10, 132, 255, 0.3);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  header p {
+    margin: 0.25rem 0 0 0;
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+
+  /* Navigation */
+  nav[aria-label="Primary"] {
+    background-color: var(--color-bg-light);
+    border-bottom: 3px solid var(--color-primary);
+  }
+  body.dark nav[aria-label="Primary"] {
+    background-color: var(--color-bg-dark);
+    border-color: var(--color-primary-dark);
+  }
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Hamburger Menu */
+  .menu-toggle {
+    display: none;
+  }
+  .menu-toggle-label {
+    display: none;
+    cursor: pointer;
+    width: var(--min-target-size);
+    height: var(--min-target-size);
+    position: relative;
+  }
+  .menu-toggle-label span,
+  .menu-toggle-label span::before,
+  .menu-toggle-label span::after {
+    display: block;
+    background-color: var(--color-primary);
+    position: absolute;
+    height: 3px;
+    width: 24px;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+  }
+  .menu-toggle-label span {
+    top: 50%;
+    margin-top: -1.5px;
+  }
+  .menu-toggle-label span::before {
+    content: "";
+    top: -8px;
+  }
+  .menu-toggle-label span::after {
+    content: "";
+    top: 8px;
+  }
+  body.dark .menu-toggle-label span,
+  body.dark .menu-toggle-label span::before,
+  body.dark .menu-toggle-label span::after {
+    background-color: var(--color-primary-dark);
+  }
+  .menu-toggle:focus + .menu-toggle-label,
+  .menu-toggle-label:hover {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .menu-toggle:checked + .menu-toggle-label span {
+    background-color: transparent;
+  }
+  .menu-toggle:checked + .menu-toggle-label span::before {
+    transform: rotate(45deg);
+    top: 0;
+  }
+  .menu-toggle:checked + .menu-toggle-label span::after {
+    transform: rotate(-45deg);
+    top: 0;
+  }
+
+  /* Primary Menu */
+  .primary-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  .primary-menu li {
+    position: relative;
+  }
+  .primary-menu a,
+  .primary-menu button {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    min-width: var(--min-target-size);
+    min-height: var(--min-target-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .primary-menu a:focus,
+  .primary-menu button:focus,
+  .primary-menu a:hover,
+  .primary-menu button:hover {
+    outline: none;
+    color: var(--color-primary-dark);
+  }
+  body.dark .primary-menu a,
+  body.dark .primary-menu button {
+    color: var(--color-primary-dark);
+  }
+  body.dark .primary-menu a:focus,
+  body.dark .primary-menu button:focus,
+  body.dark .primary-menu a:hover,
+  body.dark .primary-menu button:hover {
+    color: var(--color-primary);
+  }
+
+  /* Responsive nav */
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: block;
+    }
+    .menu-toggle-label {
+      display: inline-block;
+    }
+    .primary-menu {
+      flex-direction: column;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background-color: var(--color-bg-light);
+      border-top: 1px solid var(--color-border-light);
+      margin-top: 0.5rem;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+    body.dark .primary-menu {
+      background-color: var(--color-bg-dark);
+      border-color: var(--color-border-dark);
+    }
+    .menu-toggle:checked ~ nav[aria-label="Primary"] .primary-menu {
+      max-height: 500px;
+    }
+    .primary-menu li {
+      padding: 0.25rem 1rem;
+    }
+  }
+
+  /* Main */
+  main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem 4rem 1rem;
+  }
+
+  /* Filter/Search Section */
+  #filter-search-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  #filter-search-section > * {
+    flex: 1 1 200px;
+    min-width: 200px;
+  }
+
+  /* Search Form */
+  #search-form {
+    display: flex;
+    align-items: center;
+  }
+  #search-form label {
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+  #search-input {
+    flex-grow: 1;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--border-radius);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    transition: border-color var(--transition-speed) ease;
+  }
+  #search-input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus);
+  }
+  body.dark #search-input {
+    background-color: var(--color-bg-dark);
+    border-color: var(--color-border-dark);
+    color: var(--color-text-dark);
+  }
+
+  /* Filter Fieldset */
+  #filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  #filter-form legend {
+    font-weight: 700;
+    margin-right: 1rem;
+    align-self: center;
+  }
+  #filter-form label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  #filter-form input[type="checkbox"] {
+    width: var(--min-target-size);
+    height: var(--min-target-size);
+    min-width: var(--min-target-size);
+    min-height: var(--min-target-size);
+    cursor: pointer;
+    border-radius: 4px;
+    border: 2px solid var(--color-border-light);
+    background-color: var(--color-bg-light);
+    transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+  }
+  #filter-form input[type="checkbox"]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  #filter-form input[type="checkbox"]:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  body.dark #filter-form input[type="checkbox"] {
+    background-color: var(--color-bg-dark);
+    border-color: var(--color-border-dark);
+  }
+  body.dark #filter-form input[type="checkbox"]:checked {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+
+  /* Dark Mode Toggle */
+  #dark-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  #dark-mode-toggle input[type="checkbox"] {
+    width: var(--min-target-size);
+    height: var(--min-target-size);
+    min-width: var(--min-target-size);
+    min-height: var(--min-target-size);
+    cursor: pointer;
+    border-radius: 4px;
+    border: 2px solid var(--color-border-light);
+    background-color: var(--color-bg-light);
+    transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+  }
+  #dark-mode-toggle input[type="checkbox"]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  #dark-mode-toggle input[type="checkbox"]:checked {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  body.dark #dark-mode-toggle input[type="checkbox"] {
+    background-color: var(--color-bg-dark);
+    border-color: var(--color-border-dark);
+  }
+  body.dark #dark-mode-toggle input[type="checkbox"]:checked {
+    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-dark);
+  }
+
+  /* Gallery Grid */
+  #gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Artwork Card */
+  .artwork-card {
+    background-color: var(--color-bg-light);
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  }
+  body.dark .artwork-card {
+    background-color: #1c1c1c;
+    border-color: var(--color-border-dark);
+    box-shadow: 0 2px 8px rgba(255 255 255 / 0.1);
+  }
+  .artwork-card:focus-within,
+  .artwork-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 12px var(--color-primary);
+  }
+  .artwork-card:focus-within {
+    outline: none;
+  }
+
+  /* Thumbnail container */
+  .thumbnail-container {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .thumbnail-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform var(--transition-speed) ease;
+  }
+  .artwork-card:hover .thumbnail-container img,
+  .artwork-card:focus-within .thumbnail-container img {
+    transform: scale(1.05);
+  }
+
+  /* Info overlay on hover/focus */
+  .info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.75));
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+    pointer-events: none;
+  }
+  .artwork-card:hover .info-overlay,
+  .artwork-card:focus-within .info-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .info-overlay h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .info-overlay p {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Artwork details */
+  .artwork-details {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .artwork-details p {
+    margin: 0.25rem 0 0 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-secondary);
+  }
+  body.dark .artwork-details p {
+    color: var(--color-secondary-dark);
+  }
+
+  /* View Button */
+  .view-button {
+    margin-top: 1rem;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: var(--min-target-size);
+    min-height: var(--min-target-size);
+    align-self: flex-start;
+    transition: background-color var(--transition-speed) ease;
+  }
+  .view-button:focus-visible,
+  .view-button:hover {
+    background-color: var(--color-primary-dark);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus);
+  }
+  body.dark .view-button {
+    background-color: var(--color-primary-dark);
+  }
+  body.dark .view-button:focus-visible,
+  body.dark .view-button:hover {
+    background-color: var(--color-primary);
+  }
+
+  /* Modal */
+  #modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+  #modal[aria-hidden="false"] {
+    display: flex;
+  }
+  #modal-content {
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 24px var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    outline: none;
+  }
+  body.dark #modal-content {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+    box-shadow: 0 0 24px var(--color-primary-dark);
+  }
+
+  /* Modal header */
+  #modal-header {
+    padding: 1rem 1.5rem 0.5rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    max-width: 80%;
+  }
+  #modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    cursor: pointer;
+    min-width: var(--min-target-size);
+    min-height: var(--min-target-size);
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #modal-close:focus-visible,
+  #modal-close:hover {
+    outline: none;
+    color: var(--color-primary-dark);
+    box-shadow: 0 0 0 3px var(--color-focus);
+  }
+  body.dark #modal-close {
+    color: var(--color-primary-dark);
+  }
+  body.dark #modal-close:focus-visible,
+  body.dark #modal-close:hover {
+    color: var(--color-primary);
+  }
+
+  /* Modal image container */
+  #modal-image-container {
+    flex-grow: 1;
+    overflow: auto;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem 1rem 1rem;
+  }
+  #modal-image {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 12px rgba(0,0,0,0.7);
+  }
+
+  /* Modal description */
+  #modal-description {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-text-light);
+  }
+  body.dark #modal-description {
+    color: var(--color-text-dark);
+  }
+
+  /* Status live region */
+  #status-message {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* Focus outline enhancements */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    header h1 {
+      font-size: 1.5rem;
+    }
+    header p {
+      font-size: 1rem;
+    }
+    #modal-header h2 {
+      font-size: 1.25rem;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+<header role="banner">
+  <h1>Accessible Digital Art Gallery</h1>
+  <p>Browse, filter, and view stunning artworks in an inclusive experience</p>
+</header>
+
+<nav aria-label="Primary" role="navigation">
+  <div class="nav-container">
+    <ul class="primary-menu" role="menubar" aria-label="Primary navigation">
+      <li role="none"><a role="menuitem" href="#gallery" tabindex="0">Gallery</a></li>
+      <li role="none"><a role="menuitem" href="#filter-search-section" tabindex="0">Filter & Search</a></li>
+      <li role="none"><a role="menuitem" href="#dark-mode-toggle" tabindex="0">Settings</a></li>
+      <li role="none"><a role="menuitem" href="#footer" tabindex="0">About</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section aria-labelledby="filter-search-heading" id="filter-search-section">
+    <h2 id="filter-search-heading">Filter and Search Artworks</h2>
+
+    <form id="search-form" role="search" aria-describedby="search-help" novalidate>
+      <label for="search-input">Search artworks by title or artist:</label>
+      <input
+        type="search"
+        id="search-input"
+        name="search"
+        autocomplete="off"
+        aria-required="false"
+        aria-describedby="search-help"
+        placeholder="Enter keywords"
+        aria-label="Search artworks by title or artist"
+      />
+      <span id="search-help" class="sr-only">Type to filter artworks by title or artist name.</span>
+    </form>
+
+    <form id="filter-form" aria-labelledby="filter-legend" novalidate>
+      <fieldset>
+        <legend id="filter-legend">Filter by category (multiple selection possible):</legend>
+        <label for="filter-painting">
+          <input type="checkbox" id="filter-painting" name="category" value="Painting" aria-checked="false" />
+          Painting
+        </label>
+        <label for="filter-photography">
+          <input type="checkbox" id="filter-photography" name="category" value="Photography" aria-checked="false" />
+          Photography
+        </label>
+        <label for="filter-sculpture">
+          <input type="checkbox" id="filter-sculpture" name="category" value="Sculpture" aria-checked="false" />
+          Sculpture
+        </label>
+        <label for="filter-digital">
+          <input type="checkbox" id="filter-digital" name="category" value="Digital" aria-checked="false" />
+          Digital Art
+        </label>
+        <label for="filter-mixedmedia">
+          <input type="checkbox" id="filter-mixedmedia" name="category" value="Mixed Media" aria-checked="false" />
+          Mixed Media
+        </label>
+      </fieldset>
+    </form>
+
+    <div id="dark-mode-toggle">
+      <label for="dark-mode-checkbox">Toggle dark mode:</label>
+      <input type="checkbox" id="dark-mode-checkbox" aria-checked="false" aria-label="Toggle dark mode" />
+    </div>
+  </section>
+
+  <section aria-labelledby="gallery-heading" id="gallery-section">
+    <h2 id="gallery-heading">Artworks Gallery</h2>
+    <p id="gallery-description">Browse through the collection below. Hover or focus on an artwork for details. Click "View" to see full screen.</p>
+    <div id="gallery" role="list" aria-live="polite" aria-atomic="true" aria-relevant="additions removals">
+      <!-- Artworks inserted by JS -->
+    </div>
+  </section>
+</main>
+
+<!-- Modal for full screen artwork -->
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description" aria-hidden="true" tabindex="-1">
+  <div id="modal-content" tabindex="0">
+    <header id="modal-header">
+      <h2 id="modal-title"></h2>
+      <button id="modal-close" aria-label="Close full screen artwork view" type="button">&times;</button>
+    </header>
+    <div id="modal-image-container">
+      <img id="modal-image" src="" alt="" />
+    </div>
+    <div id="modal-description"></div>
+  </div>
+</div>
+
+<footer id="footer" role="contentinfo" aria-label="Footer">
+  <section aria-labelledby="footer-about-heading">
+    <h2 id="footer-about-heading">About This Gallery</h2>
+    <p>
+      This digital art gallery is designed with full accessibility compliance (WCAG 2.2 AAA) to ensure an inclusive and enjoyable experience for all users.
+      Use the search and filter options to find artworks by your preferences. Toggle dark mode for comfortable viewing in any environment.
+    </p>
+    <p>
+      <strong>Contact:</strong> <a href="mailto:info@digitalartgallery.example" aria-label="Send email to info at digital art gallery example">info@digitalartgallery.example</a>
+    </p>
+  </section>
+</footer>
+
+<!-- Status live region for announcements -->
+<div id="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  // Data for artworks
+  const artworks = [
+    {
+      id: "art1",
+      title: "Starry Night",
+      artist: "Vincent van Gogh",
+      category: "Painting",
+      description: "A famous oil on canvas painting by Vincent van Gogh depicting a swirling night sky over a quiet town.",
+      thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/320px-Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+      fullImage: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Vincent_van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+      alt: "Starry Night painting by Vincent van Gogh showing a swirling starry sky over a village"
+    },
+    {
+      id: "art2",
+      title: "The Persistence of Memory",
+      artist: "Salvador Dalí",
+      category: "Painting",
+      description: "A surreal painting by Salvador Dalí featuring melting clocks in a dream-like landscape.",
+      thumbnail: "https://upload.wikimedia.org/wikipedia/en/thumb/d/dd/The_Persistence_of_Memory.jpg/320px-The_Persistence_of_Memory.jpg",
+      fullImage: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
+      alt: "The Persistence of Memory painting by Salvador Dalí with melting clocks on a barren landscape"
+    },
+    {
+      id: "art3",
+      title: "Migrant Mother",
+      artist: "Dorothea Lange",
+      category: "Photography",
+      description: "An iconic black and white photograph by Dorothea Lange showing a worried mother during the Great Depression.",
+      thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Migrant_Mother_-_NARA_-_519583.tif/lossy-page1-320px-Migrant_Mother_-_NARA_-_519583.tif.jpg",
+      fullImage: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Migrant_Mother_-_NARA_-_519583.tif",
+      alt: "Migrant Mother black and white photograph by Dorothea Lange showing a worried mother with children"
+    },
+    {
+      id: "art4",
+      title: "The Thinker",
+      artist: "Auguste Rodin",
+      category: "Sculpture",
+      description: "A bronze sculpture by Auguste Rodin depicting a man in deep contemplation.",
+      thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/The_Thinker%2C_Rodin.jpg/320px-The_Thinker%2C_Rodin.jpg",
+      fullImage: "https://upload.wikimedia.org/wikipedia/commons/7/7f/The_Thinker%2C_Rodin.jpg",
+      alt: "The Thinker bronze sculpture by Auguste Rodin showing a seated man with chin resting on hand"
+    },
+    {
+      id: "art5",
+      title: "Digital Sunrise",
+      artist: "Jane Doe",
+      category: "Digital",
+      description: "A vibrant digital artwork representing a sunrise with abstract geometric shapes and bright colors.",
+      thumbnail: "https://via.placeholder.com/320x240/ffde3c/111111?text=Digital+Sunrise",
+      fullImage: "https://via.placeholder.com/1200x900/ffde3c/111111?text=Digital+Sunrise",
+      alt: "Digital artwork titled Digital Sunrise with abstract shapes and bright yellow-orange colors"
+    },
+    {
+      id: "art6",
+      title: "Urban Layers",
+      artist: "John Smith",
+      category: "Mixed Media",
+      description: "An expressive mixed media piece combining photography and painting to depict urban life.",
+      thumbnail: "https://via.placeholder.com/320x240/3794ff/ffffff?text=Urban+Layers",
+      fullImage: "https://via.placeholder.com/1200x900/3794ff/ffffff?text=Urban+Layers",
+      alt: "Mixed media artwork titled Urban Layers with layered cityscape images and brush strokes"
+    },
+    {
+      id: "art7",
+      title: "Sunflowers",
+      artist: "Vincent van Gogh",
+      category: "Painting",
+      description: "A famous series of paintings by Vincent van Gogh featuring sunflowers in a vase.",
+      thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Vincent_Willem_van_Gogh_127.jpg/320px-Vincent_Willem_van_Gogh_127.jpg",
+      fullImage: "https://upload.wikimedia.org/wikipedia/commons/4/47/Vincent_Willem_van_Gogh_127.jpg",
+      alt: "Sunflowers painting by Vincent van Gogh showing bright yellow sunflowers in a vase"
+    },
+    {
+      id: "art8",
+      title: "Moonlight Sonata",
+      artist: "Emily White",
+      category: "Photography",
+      description: "A serene night-time photograph capturing moonlight reflecting on a lake.",
+      thumbnail: "https://via.placeholder.com/320x240/0a84ff/ffffff?text=Moonlight+Sonata",
+      fullImage: "https://via.placeholder.com/1200x900/0a84ff/ffffff?text=Moonlight+Sonata",
+      alt: "Night-time photograph titled Moonlight Sonata showing moonlight reflections on a lake"
+    }
+  ];
+
+  // DOM Elements
+  const galleryEl = document.getElementById("gallery");
+  const searchInput = document.getElementById("search-input");
+  const filterForm = document.getElementById("filter-form");
+  const darkModeToggle = document.getElementById("dark-mode-checkbox");
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modal-title");
+  const modalImage = document.getElementById("modal-image");
+  const modalDescription = document.getElementById("modal-description");
+  const modalCloseBtn = document.getElementById("modal-close");
+  const statusMessage = document.getElementById("status-message");
+  const mainContent = document.getElementById("main-content");
+
+  // State
+  let currentFilters = new Set();
+  let currentSearchTerm = "";
+  let lastFocusedElement = null;
+
+  // Utility: Create element with attributes and children
+  function createElement(tag, attrs = {}, children = []) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") {
+        el.className = v;
+      } else if (k === "dataset") {
+        for (const [dataKey, dataVal] of Object.entries(v)) {
+          el.dataset[dataKey] = dataVal;
+        }
+      } else if (k.startsWith("aria-")) {
+        el.setAttribute(k, v);
+      } else if (k === "role") {
+        el.setAttribute("role", v);
+      } else if (k === "tabindex") {
+        el.tabIndex = v;
+      } else if (k === "text") {
+        el.textContent = v;
+      } else if (k === "html") {
+        el.innerHTML = v;
+      } else {
+        el.setAttribute(k, v);
+      }
+    }
+    children.forEach(child => {
+      if (typeof child === "string") {
+        el.appendChild(document.createTextNode(child));
+      } else if (child instanceof Node) {
+        el.appendChild(child);
+      }
+    });
+    return el;
+  }
+
+  // Build and render gallery cards
+  function renderGallery() {
+    // Clear existing
+    galleryEl.innerHTML = "";
+
+    // Filter artworks by search and category
+    const filtered = artworks.filter(art => {
+      // Filter by category
+      if (currentFilters.size > 0 && !currentFilters.has(art.category)) {
+        return false;
+      }
+      // Filter by search term (title or artist)
+      if (currentSearchTerm.trim() !== "") {
+        const term = currentSearchTerm.trim().toLowerCase();
+        if (
+          !art.title.toLowerCase().includes(term) &&
+          !art.artist.toLowerCase().includes(term)
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      const noResult = createElement("p", {
+        text: "No artworks match your search and filter criteria.",
+        role: "alert",
+        style: "font-weight:700; font-size:1.25rem; color: var(--color-error);"
+      });
+      galleryEl.appendChild(noResult);
+      updateStatus("No artworks found matching current filters and search.");
+      return;
+    }
+
+    updateStatus(`${filtered.length} artworks displayed.`);
+
+    filtered.forEach(art => {
+      const card = createArtworkCard(art);
+      galleryEl.appendChild(card);
+    });
+  }
+
+  // Create individual artwork card element
+  function createArtworkCard(art) {
+    // Article container with role listitem
+    const article = createElement("article", {
+      class: "artwork-card",
+      role: "listitem",
+      tabIndex: 0,
+      "aria-labelledby": `${art.id}-title`,
+      "aria-describedby": `${art.id}-desc`
+    });
+
+    // Thumbnail container with image and overlay info
+    const thumbContainer = createElement("div", {
+      class: "thumbnail-container"
+    });
+
+    const img = createElement("img", {
+      src: art.thumbnail,
+      alt: art.alt,
+      loading: "lazy",
+      width: "320",
+      height: "240"
+    });
+
+    const infoOverlay = createElement("div", {
+      class: "info-overlay",
+      ariaHidden: "true"
+    }, [
+      createElement("h3", { id: `${art.id}-title`, text: art.title }),
+      createElement("p", { text: `by ${art.artist}` })
+    ]);
+
+    thumbContainer.appendChild(img);
+    thumbContainer.appendChild(infoOverlay);
+
+    // Details container
+    const details = createElement("div", { class: "artwork-details" }, [
+      createElement("p", { id: `${art.id}-desc`, text: `${art.category}` }),
+      createElement("button", {
+        class: "view-button",
+        type: "button",
+        "aria-label": `View full screen image of ${art.title} by ${art.artist}`,
+        tabindex: 0
+      }, ["View"])
+    ]);
+
+    // Append children
+    article.appendChild(thumbContainer);
+    article.appendChild(details);
+
+    // Event handlers
+    const viewBtn = details.querySelector(".view-button");
+    viewBtn.addEventListener("click", () => openModal(art, viewBtn));
+    viewBtn.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal(art, viewBtn);
+      }
+    });
+
+    // Keyboard focus styles for article
+    article.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal(art, article);
+      }
+    });
+
+    return article;
+  }
+
+  // Update status live region for screen readers
+  function updateStatus(message) {
+    statusMessage.textContent = "";
+    setTimeout(() => {
+      statusMessage.textContent = message;
+    }, 100);
+  }
+
+  // Open modal with artwork details
+  function openModal(art, triggerElement) {
+    lastFocusedElement = triggerElement;
+    modalTitle.textContent = art.title + " by " + art.artist;
+    modalImage.src = art.fullImage;
+    modalImage.alt = art.alt;
+    modalDescription.textContent = art.description;
+    modal.setAttribute("aria-hidden", "false");
+    modal.style.display = "flex";
+    modal.focus();
+
+    // Trap focus inside modal
+    trapFocus(modal);
+  }
+
+  // Close modal
+  function closeModal() {
+    modal.setAttribute("aria-hidden", "true");
+    modal.style.display = "none";
+    modalTitle.textContent = "";
+    modalImage.src = "";
+    modalImage.alt = "";
+    modalDescription.textContent = "";
+    releaseFocusTrap();
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
+  }
+
+  // Focus trap implementation for modal
+  let focusTrapElements = [];
+  let firstFocusable = null;
+  let lastFocusable = null;
+  let focusTrapActive = false;
+
+  function trapFocus(container) {
+    focusTrapElements = Array.from(
+      container.querySelectorAll(
+        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable]'
+      )
+    ).filter(el => el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement);
+
+    if (focusTrapElements.length === 0) {
+      // No focusable elements, focus container itself
+      container.tabIndex = 0;
+      container.focus();
+      firstFocusable = container;
+      lastFocusable = container;
+    } else {
+      firstFocusable = focusTrapElements[0];
+      lastFocusable = focusTrapElements[focusTrapElements.length - 1];
+      firstFocusable.focus();
+    }
+    focusTrapActive = true;
+  }
+
+  function releaseFocusTrap() {
+    focusTrapActive = false;
+  }
+
+  // Keyboard navigation for modal focus trap and close
+  document.addEventListener("keydown", e => {
+    if (focusTrapActive && modal.getAttribute("aria-hidden") === "false") {
+      if (e.key === "Tab") {
+        if (focusTrapElements.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        closeModal();
+      }
+    }
+  });
+
+  // Event listeners for modal close button
+  modalCloseBtn.addEventListener("click", closeModal);
+  modalCloseBtn.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      closeModal();
+    }
+  });
+
+  // Close modal on backdrop click (only if clicked outside modal content)
+  modal.addEventListener("click", e => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Filter form change handler
+  filterForm.addEventListener("change", e => {
+    if (e.target.name === "category") {
+      const checkboxes = filterForm.querySelectorAll('input[name="category"]');
+      currentFilters.clear();
+      checkboxes.forEach(cb => {
+        cb.setAttribute("aria-checked", cb.checked ? "true" : "false");
+        if (cb.checked) {
+          currentFilters.add(cb.value);
+        }
+      });
+      renderGallery();
+    }
+  });
+
+  // Search input handler with debouncing
+  let searchTimeout = null;
+  searchInput.addEventListener("input", () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentSearchTerm = searchInput.value;
+      renderGallery();
+    }, 300);
+  });
+
+  // Dark mode toggle handler
+  darkModeToggle.addEventListener("change", e => {
+    const isDark = e.target.checked;
+    document.body.classList.toggle("dark", isDark);
+    e.target.setAttribute("aria-checked", isDark ? "true" : "false");
+    updateStatus(isDark ? "Dark mode enabled." : "Light mode enabled.");
+  });
+
+  // Initialize page
+  function init() {
+    // Restore dark mode preference if stored
+    try {
+      const savedDarkMode = localStorage.getItem("darkModeEnabled");
+      if (savedDarkMode === "true") {
+        darkModeToggle.checked = true;
+        document.body.classList.add("dark");
+        darkModeToggle.setAttribute("aria-checked", "true");
+      }
+    } catch {}
+
+    renderGallery();
+  }
+
+  // Save dark mode preference
+  darkModeToggle.addEventListener("change", e => {
+    try {
+      localStorage.setItem("darkModeEnabled", e.target.checked ? "true" : "false");
+    } catch {}
+  });
+
+  // Accessibility: Focus main content on skip link click
+  const skipLink = document.querySelector(".skip-link");
+  skipLink.addEventListener("click", e => {
+    mainContent.focus();
+  });
+
+  // Initialize on DOM ready
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+
+<!-- Screen reader only class -->
+<style>
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+</style>
+</body>
+</html>

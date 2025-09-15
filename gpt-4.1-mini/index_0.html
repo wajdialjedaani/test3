@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Accessible Daily Task Manager with Rewards - Track and Organize Your Tasks</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-size: 100%;
+    line-height: 1.6;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+    color: #111;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #fefefe;
+    color: #111111;
+  }
+  a {
+    color: #004e89;
+    text-decoration: underline;
+  }
+  a:focus, button:focus, input:focus, select:focus, textarea:focus {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #004e89;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  header, footer, main, nav, section, article {
+    display: block;
+  }
+
+  header {
+    background: #004e89;
+    color: #f0f9ff;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  header p {
+    margin: 0.25rem 0 0 0;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #a7c7e7;
+  }
+
+  nav[aria-label="Primary"] {
+    background: #50e3c2;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+    box-shadow: inset 0 -3px 0 #2bb89a;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav[aria-label="Primary"] a, nav[aria-label="Primary"] button {
+    color: #004e89;
+    font-weight: 700;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  nav[aria-label="Primary"] a:hover,
+  nav[aria-label="Primary"] button:hover,
+  nav[aria-label="Primary"] a:focus,
+  nav[aria-label="Primary"] button:focus {
+    background-color: #2bb89a;
+    color: #f0f9ff;
+    outline-offset: 2px;
+  }
+  nav[aria-label="Primary"] button[aria-expanded="true"] {
+    background-color: #2bb89a;
+    color: #f0f9ff;
+  }
+
+  main {
+    flex-grow: 1;
+    max-width: 960px;
+    margin: 1.5rem auto 2rem;
+    padding: 0 1rem;
+  }
+  main > section {
+    margin-bottom: 2.5rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 3px solid #50e3c2;
+    padding-bottom: 0.25rem;
+    color: #004e89;
+  }
+  h3 {
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #007f6b;
+  }
+
+  /* Task input form */
+  form#task-form {
+    background: #e0f7f4;
+    border: 3px solid #50e3c2;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #004e89;
+  }
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  label {
+    flex: 1 0 8rem;
+    min-width: 8rem;
+    font-weight: 600;
+    color: #004e89;
+    align-self: center;
+  }
+  input[type="text"],
+  input[type="date"],
+  select,
+  textarea {
+    flex: 2 1 16rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #50e3c2;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #111111;
+    background-color: #ffffff;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #007f6b;
+    outline: none;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 4rem;
+  }
+  .required-indicator {
+    color: #d93025;
+    font-weight: 700;
+    margin-left: 0.25rem;
+  }
+  .help-text {
+    font-size: 0.875rem;
+    color: #007f6b;
+    margin-left: 8rem;
+    margin-top: -0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .error-message {
+    color: #d93025;
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-left: 8rem;
+    margin-top: -0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  button[type="submit"] {
+    background-color: #004e89;
+    color: #f0f9ff;
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    min-width: 120px;
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover,
+  button[type="submit"]:focus {
+    background-color: #003b66;
+    outline-offset: 2px;
+  }
+
+  /* Task list */
+  #tasks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #tasks-list li {
+    background: #e6f1f8;
+    border: 2px solid #50e3c2;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 1rem;
+    align-items: center;
+  }
+  #tasks-list li.completed {
+    background: #d6f5d6;
+    border-color: #34a853;
+    color: #2f5d27;
+  }
+  #tasks-list li:focus-within {
+    outline: 3px solid #ffbf47;
+    outline-offset: 3px;
+  }
+  #tasks-list li > input[type="checkbox"] {
+    grid-row: span 2;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    cursor: pointer;
+  }
+  #tasks-list li > label.task-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: inherit;
+    word-break: break-word;
+  }
+  #tasks-list li.completed > label.task-title {
+    text-decoration: line-through;
+    opacity: 0.75;
+  }
+  #tasks-list li > span.due-date {
+    font-size: 0.875rem;
+    color: #007f6b;
+  }
+  #tasks-list li.completed > span.due-date {
+    color: #2f5d27;
+  }
+  #tasks-list li > button.delete-task {
+    background: #d93025;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+  #tasks-list li > button.delete-task:hover,
+  #tasks-list li > button.delete-task:focus {
+    background: #a61c1c;
+    outline-offset: 2px;
+  }
+  #tasks-list li > button.delete-task svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+  #tasks-list li > span.reward {
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #007f6b;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  #tasks-list li.completed > span.reward {
+    color: #2f5d27;
+  }
+  #tasks-list li > span.reward svg {
+    width: 20px;
+    height: 20px;
+    fill: #f2b01e;
+  }
+
+  /* Sidebar for rewards and stats */
+  aside#sidebar {
+    background: #50e3c2;
+    border: 3px solid #004e89;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    max-width: 320px;
+    color: #004e89;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  aside#sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  #rewards-earned {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #003b66;
+  }
+  #rewards-earned svg {
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    fill: #f2b01e;
+    margin-right: 0.25rem;
+  }
+  #stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #stats-list li {
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+  #stats-list li span.value {
+    font-weight: 700;
+    color: #004e89;
+  }
+
+  /* Layout grid */
+  .app-container {
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 320px);
+    gap: 2rem;
+  }
+
+  /* Search and filter */
+  #search-filter {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  #search-filter label {
+    font-weight: 600;
+    color: #004e89;
+    min-width: 4.5rem;
+  }
+  #search-input {
+    flex: 1 1 220px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #50e3c2;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  #filter-select {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #50e3c2;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #111111;
+  }
+  #filter-select:focus, #search-input:focus {
+    border-color: #007f6b;
+    outline: none;
+  }
+
+  /* Modal styles */
+  #modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  #modal-overlay[aria-hidden="false"] {
+    display: flex;
+  }
+  #modal {
+    background: #fefefe;
+    border-radius: 12px;
+    max-width: 480px;
+    width: 90%;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  #modal h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #004e89;
+  }
+  #modal p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    color: #111111;
+  }
+  #modal button.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #d93025;
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #modal button.close-modal:hover,
+  #modal button.close-modal:focus {
+    background: #a61c1c;
+    outline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 767px) {
+    .app-container {
+      grid-template-columns: 1fr;
+    }
+    aside#sidebar {
+      max-width: 100%;
+      margin-top: 2rem;
+    }
+  }
+
+  /* Focus enhancements */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+  }
+
+  /* Color mode toggle (optional) */
+  #color-mode-toggle {
+    background: #004e89;
+    color: #f0f9ff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #color-mode-toggle:hover,
+  #color-mode-toggle:focus {
+    background: #003b66;
+    outline-offset: 2px;
+  }
+  #color-mode-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  /* Vibrant colors for task priorities */
+  .priority-low {
+    border-left: 6px solid #34a853; /* green */
+  }
+  .priority-medium {
+    border-left: 6px solid #f2b01e; /* gold */
+  }
+  .priority-high {
+    border-left: 6px solid #d93025; /* red */
+  }
+
+  /* Visually hidden class for screen reader only */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+<header role="banner">
+  <h1 id="page-title">Accessible Daily Task Manager with Rewards</h1>
+  <p id="page-subtitle">Create, organize, and track your daily tasks while earning rewards upon completion.</p>
+  <nav aria-label="Primary" role="navigation">
+    <ul>
+      <li><a href="#task-section" id="nav-tasks" tabindex="0">Tasks</a></li>
+      <li><a href="#sidebar" id="nav-rewards" tabindex="0">Rewards & Stats</a></li>
+      <li><button id="open-help" aria-haspopup="dialog" aria-controls="modal" aria-expanded="false" aria-label="Open help dialog" tabindex="0">Help ❔</button></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content" tabindex="-1" role="main" aria-labelledby="page-title">
+  <div class="app-container">
+    <section id="task-section" aria-labelledby="task-section-title">
+      <h2 id="task-section-title">Your Tasks</h2>
+
+      <form id="task-form" aria-describedby="form-help" novalidate>
+        <fieldset>
+          <legend>Create a New Task</legend>
+
+          <div class="form-row">
+            <label for="task-title">Task Title<span class="required-indicator" aria-hidden="true">*</span></label>
+            <input type="text" id="task-title" name="task-title" required aria-required="true" autocomplete="off" aria-describedby="task-title-help task-title-error" maxlength="100" />
+          </div>
+          <div id="task-title-help" class="help-text">Enter a brief title describing your task (max 100 characters).</div>
+          <div id="task-title-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+          <div class="form-row">
+            <label for="task-desc">Description</label>
+            <textarea id="task-desc" name="task-desc" rows="3" autocomplete="off" aria-describedby="task-desc-help" maxlength="300"></textarea>
+          </div>
+          <div id="task-desc-help" class="help-text">Optional: Provide additional details about your task (max 300 characters).</div>
+
+          <div class="form-row">
+            <label for="task-due">Due Date<span class="required-indicator" aria-hidden="true">*</span></label>
+            <input type="date" id="task-due" name="task-due" required aria-required="true" aria-describedby="task-due-help task-due-error" />
+          </div>
+          <div id="task-due-help" class="help-text">Select the date by which you want to complete this task.</div>
+          <div id="task-due-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+          <div class="form-row">
+            <label for="task-priority">Priority<span class="required-indicator" aria-hidden="true">*</span></label>
+            <select id="task-priority" name="task-priority" required aria-required="true" aria-describedby="task-priority-help task-priority-error">
+              <option value="" disabled selected>Select priority</option>
+              <option value="low">Low priority (🟢)</option>
+              <option value="medium">Medium priority (🟡)</option>
+              <option value="high">High priority (🔴)</option>
+            </select>
+          </div>
+          <div id="task-priority-help" class="help-text">Choose how important this task is to you.</div>
+          <div id="task-priority-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+          <div class="form-row" style="justify-content:flex-end;">
+            <button type="submit" aria-describedby="form-help" id="add-task-btn">Add Task</button>
+          </div>
+          <div id="form-help" class="help-text" aria-live="polite">All fields marked with <span aria-hidden="true">*</span> are required.</div>
+        </fieldset>
+      </form>
+
+      <section aria-labelledby="search-filter-label" id="search-filter" role="search">
+        <h3 id="search-filter-label" class="visually-hidden">Search and filter tasks</h3>
+        <label for="search-input">Search Tasks:</label>
+        <input type="search" id="search-input" aria-describedby="search-help" placeholder="Search by title or description" />
+        <div id="search-help" class="visually-hidden">Filter tasks by typing keywords in the search box.</div>
+
+        <label for="filter-select">Filter:</label>
+        <select id="filter-select" aria-describedby="filter-help" aria-label="Filter tasks by status">
+          <option value="all" selected>All Tasks</option>
+          <option value="active">Active Tasks</option>
+          <option value="completed">Completed Tasks</option>
+          <option value="overdue">Overdue Tasks</option>
+        </select>
+        <div id="filter-help" class="visually-hidden">Select to filter tasks by their completion status or overdue status.</div>
+      </section>
+
+      <ul id="tasks-list" aria-live="polite" aria-relevant="additions removals" aria-label="List of tasks">
+        <!-- Tasks dynamically inserted here -->
+      </ul>
+    </section>
+
+    <aside id="sidebar" aria-labelledby="sidebar-title" tabindex="0">
+      <h2 id="sidebar-title">Rewards & Statistics</h2>
+      <p id="rewards-earned" aria-live="polite" role="status" aria-atomic="true">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+        </svg>
+        Rewards Earned: <span id="reward-points">0</span>
+      </p>
+      <ul id="stats-list">
+        <li>Total Tasks: <span class="value" id="stat-total">0</span></li>
+        <li>Completed Tasks: <span class="value" id="stat-completed">0</span></li>
+        <li>Active Tasks: <span class="value" id="stat-active">0</span></li>
+        <li>Overdue Tasks: <span class="value" id="stat-overdue">0</span></li>
+      </ul>
+    </aside>
+  </div>
+</main>
+
+<footer role="contentinfo" aria-label="Page footer">
+  <p>© 2024 Accessible Daily Task Manager. All rights reserved.</p>
+</footer>
+
+<!-- Modal dialog for Help -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
+  <div id="modal" tabindex="-1">
+    <h2 id="modal-title">Help & Instructions</h2>
+    <p id="modal-desc">
+      Welcome to your accessible task manager! Use the form to add new tasks with a title, optional description, due date, and priority level.
+      You can mark tasks as completed by checking their box. Completed tasks earn you reward points.
+      Use the search box and filter dropdown to find and organize your tasks easily.
+      All interactive elements are fully keyboard accessible with visible focus indicators.
+      For assistance, press Escape or click the close button to exit this help dialog.
+    </p>
+    <button class="close-modal" aria-label="Close help dialog" title="Close help dialog">&times;</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+
+    // Utility for generating unique IDs for tasks
+    function generateId() {
+      return 'task-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // DOM Elements
+    const taskForm = document.getElementById('task-form');
+    const tasksList = document.getElementById('tasks-list');
+    const rewardPointsEl = document.getElementById('reward-points');
+    const statTotal = document.getElementById('stat-total');
+    const statCompleted = document.getElementById('stat-completed');
+    const statActive = document.getElementById('stat-active');
+    const statOverdue = document.getElementById('stat-overdue');
+    const searchInput = document.getElementById('search-input');
+    const filterSelect = document.getElementById('filter-select');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const openHelpBtn = document.getElementById('open-help');
+    const closeModalBtn = modalOverlay.querySelector('.close-modal');
+
+    // Form fields and error elements
+    const taskTitleInput = document.getElementById('task-title');
+    const taskTitleError = document.getElementById('task-title-error');
+    const taskDescInput = document.getElementById('task-desc');
+    const taskDueInput = document.getElementById('task-due');
+    const taskDueError = document.getElementById('task-due-error');
+    const taskPrioritySelect = document.getElementById('task-priority');
+    const taskPriorityError = document.getElementById('task-priority-error');
+
+    // ARIA expanded state for help button
+    function setHelpExpanded(value) {
+      openHelpBtn.setAttribute('aria-expanded', value ? 'true' : 'false');
+    }
+
+    // Task data store in localStorage key
+    const STORAGE_KEY = 'accessibleTaskManagerTasks';
+    const REWARD_KEY = 'accessibleTaskManagerRewards';
+
+    // Rewards calculation: points per priority
+    const REWARD_POINTS = {
+      low: 5,
+      medium: 10,
+      high: 20
+    };
+
+    // Load tasks from localStorage or empty array
+    let tasks = [];
+    let rewardPoints = 0;
+
+    function loadTasks() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        tasks = stored ? JSON.parse(stored) : [];
+      } catch {
+        tasks = [];
+      }
+    }
+    function loadRewards() {
+      try {
+        const stored = localStorage.getItem(REWARD_KEY);
+        rewardPoints = stored ? parseInt(stored, 10) : 0;
+      } catch {
+        rewardPoints = 0;
+      }
+    }
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+    function saveRewards() {
+      localStorage.setItem(REWARD_KEY, rewardPoints.toString());
+    }
+
+    // Date helpers
+    function isDateValid(dateStr) {
+      const d = new Date(dateStr);
+      return d instanceof Date && !isNaN(d);
+    }
+    function isDatePast(dateStr) {
+      if (!isDateValid(dateStr)) return false;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const d = new Date(dateStr);
+      return d < today;
+    }
+    function formatDate(dateStr) {
+      if (!isDateValid(dateStr)) return '';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // Accessibility: focus trap inside modal
+    function trapFocus(element) {
+      const focusableSelectors = [
+        'a[href]',
+        'area[href]',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        'iframe',
+        '[tabindex]:not([tabindex="-1"])',
+        '[contenteditable]'
+      ];
+      const focusableElements = element.querySelectorAll(focusableSelectors.join(','));
+      if (focusableElements.length === 0) return;
+
+      const firstEl = focusableElements[0];
+      const lastEl = focusableElements[focusableElements.length - 1];
+
+      function keyListener(e) {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === firstEl) {
+              e.preventDefault();
+              lastEl.focus();
+            }
+          } else {
+            if (document.activeElement === lastEl) {
+              e.preventDefault();
+              firstEl.focus();
+            }
+          }
+        } else if (e.key === 'Escape') {
+          closeModal();
+        }
+      }
+      element.addEventListener('keydown', keyListener);
+      return () => element.removeEventListener('keydown', keyListener);
+    }
+
+    // Modal open/close functions
+    let removeTrapFocusListener = null;
+    function openModal() {
+      modalOverlay.setAttribute('aria-hidden', 'false');
+      setHelpExpanded(true);
+      modalOverlay.style.display = 'flex';
+      modalOverlay.querySelector('#modal').focus();
+      removeTrapFocusListener = trapFocus(modalOverlay);
+    }
+    function closeModal() {
+      modalOverlay.setAttribute('aria-hidden', 'true');
+      setHelpExpanded(false);
+      modalOverlay.style.display = 'none';
+      openHelpBtn.focus();
+      if (removeTrapFocusListener) {
+        removeTrapFocusListener();
+        removeTrapFocusListener = null;
+      }
+    }
+
+    // Clear error messages
+    function clearErrors() {
+      taskTitleError.hidden = true;
+      taskTitleInput.removeAttribute('aria-invalid');
+      taskTitleError.textContent = '';
+
+      taskDueError.hidden = true;
+      taskDueInput.removeAttribute('aria-invalid');
+      taskDueError.textContent = '';
+
+      taskPriorityError.hidden = true;
+      taskPrioritySelect.removeAttribute('aria-invalid');
+      taskPriorityError.textContent = '';
+    }
+
+    // Validate form fields with error messages
+    function validateForm() {
+      clearErrors();
+      let valid = true;
+
+      // Title validation
+      const title = taskTitleInput.value.trim();
+      if (!title) {
+        taskTitleError.textContent = 'Task title is required.';
+        taskTitleError.hidden = false;
+        taskTitleInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      } else if (title.length > 100) {
+        taskTitleError.textContent = 'Task title must be 100 characters or less.';
+        taskTitleError.hidden = false;
+        taskTitleInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      // Due date validation
+      const dueDate = taskDueInput.value;
+      if (!dueDate) {
+        taskDueError.textContent = 'Due date is required.';
+        taskDueError.hidden = false;
+        taskDueInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      } else if (!isDateValid(dueDate)) {
+        taskDueError.textContent = 'Please enter a valid date.';
+        taskDueError.hidden = false;
+        taskDueInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      // Priority validation
+      const priority = taskPrioritySelect.value;
+      if (!priority) {
+        taskPriorityError.textContent = 'Please select a priority level.';
+        taskPriorityError.hidden = false;
+        taskPrioritySelect.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      return valid;
+    }
+
+    // Create task DOM element
+    function createTaskElement(task) {
+      const li = document.createElement('li');
+      li.setAttribute('tabindex', '-1');
+      li.id = task.id;
+      li.className = task.completed ? 'completed' : '';
+      li.classList.add(`priority-${task.priority}`);
+
+      // Checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `chk-${task.id}`;
+      checkbox.checked = task.completed;
+      checkbox.setAttribute('aria-label', `Mark task "${task.title}" as completed`);
+      checkbox.tabIndex = 0;
+
+      // Title label
+      const label = document.createElement('label');
+      label.htmlFor = checkbox.id;
+      label.className = 'task-title';
+      label.textContent = task.title;
+
+      // Due date
+      const dueDateSpan = document.createElement('span');
+      dueDateSpan.className = 'due-date';
+      dueDateSpan.textContent = `Due: ${formatDate(task.dueDate)}`;
+
+      // Reward info
+      const rewardSpan = document.createElement('span');
+      rewardSpan.className = 'reward';
+      rewardSpan.setAttribute('aria-label', `Reward points for this task: ${REWARD_POINTS[task.priority]}`);
+      rewardSpan.innerHTML = `
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+        </svg>
+        ${REWARD_POINTS[task.priority]} pts
+      `;
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-task';
+      deleteBtn.setAttribute('aria-label', `Delete task "${task.title}"`);
+      deleteBtn.title = `Delete task "${task.title}"`;
+      deleteBtn.tabIndex = 0;
+      deleteBtn.innerHTML = `
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" >
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `;
+
+      // Append elements to li
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(dueDateSpan);
+      li.appendChild(deleteBtn);
+      li.appendChild(rewardSpan);
+
+      // Accessibility: associate label and checkbox
+      label.setAttribute('aria-describedby', `due-desc-${task.id}`);
+      dueDateSpan.id = `due-desc-${task.id}`;
+
+      // Keyboard accessible: allow checkbox toggle by keyboard
+      checkbox.addEventListener('keydown', e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          checkbox.checked = !checkbox.checked;
+          checkbox.dispatchEvent(new Event('change'));
+        }
+      });
+
+      // Checkbox change handler
+      checkbox.addEventListener('change', () => {
+        toggleTaskCompletion(task.id, checkbox.checked);
+      });
+
+      // Delete button click handler
+      deleteBtn.addEventListener('click', () => {
+        deleteTask(task.id);
+      });
+      deleteBtn.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          deleteTask(task.id);
+        }
+      });
+
+      return li;
+    }
+
+    // Render tasks list with filtering and searching
+    function renderTasks() {
+      // Clear list
+      tasksList.innerHTML = '';
+
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filter = filterSelect.value;
+
+      // Filter and search tasks
+      const filteredTasks = tasks.filter(task => {
+        // Search filter
+        const matchesSearch =
+          task.title.toLowerCase().includes(searchTerm) ||
+          (task.description && task.description.toLowerCase().includes(searchTerm));
+
+        if (!matchesSearch) return false;
+
+        // Status filter
+        if (filter === 'active') return !task.completed;
+        if (filter === 'completed') return task.completed;
+        if (filter === 'overdue') {
+          if (task.completed) return false;
+          return isDatePast(task.dueDate);
+        }
+        return true; // all
+      });
+
+      if (filteredTasks.length === 0) {
+        const noTasksMsg = document.createElement('p');
+        noTasksMsg.textContent = 'No tasks match your search and filter criteria.';
+        noTasksMsg.style.fontStyle = 'italic';
+        tasksList.appendChild(noTasksMsg);
+        return;
+      }
+
+      filteredTasks.forEach(task => {
+        const taskEl = createTaskElement(task);
+        tasksList.appendChild(taskEl);
+      });
+    }
+
+    // Update stats and rewards display
+    function updateStats() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      const active = tasks.filter(t => !t.completed).length;
+      const overdue = tasks.filter(t => !t.completed && isDatePast(t.dueDate)).length;
+
+      statTotal.textContent = total.toString();
+      statCompleted.textContent = completed.toString();
+      statActive.textContent = active.toString();
+      statOverdue.textContent = overdue.toString();
+
+      rewardPointsEl.textContent = rewardPoints.toString();
+    }
+
+    // Add new task
+    function addTask(task) {
+      tasks.push(task);
+      saveTasks();
+      renderTasks();
+      updateStats();
+    }
+
+    // Delete task
+    function deleteTask(id) {
+      const index = tasks.findIndex(t => t.id === id);
+      if (index === -1) return;
+      if (tasks[index].completed) {
+        // Deduct reward points for deleted completed task
+        rewardPoints -= REWARD_POINTS[tasks[index].priority];
+        if (rewardPoints < 0) rewardPoints = 0;
+        saveRewards();
+      }
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+      updateStats();
+    }
+
+    // Toggle task completion and update rewards
+    function toggleTaskCompletion(id, completed) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (task.completed === completed) return; // no change
+
+      task.completed = completed;
+
+      if (completed) {
+        rewardPoints += REWARD_POINTS[task.priority];
+      } else {
+        rewardPoints -= REWARD_POINTS[task.priority];
+        if (rewardPoints < 0) rewardPoints = 0;
+      }
+      saveTasks();
+      saveRewards();
+      renderTasks();
+      updateStats();
+    }
+
+    // Form submission handler
+    taskForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      if (!validateForm()) {
+        // Focus first invalid input
+        if (taskTitleInput.getAttribute('aria-invalid') === 'true') {
+          taskTitleInput.focus();
+        } else if (taskDueInput.getAttribute('aria-invalid') === 'true') {
+          taskDueInput.focus();
+        } else if (taskPrioritySelect.getAttribute('aria-invalid') === 'true') {
+          taskPrioritySelect.focus();
+        }
+        return;
+      }
+
+      const newTask = {
+        id: generateId(),
+        title: taskTitleInput.value.trim(),
+        description: taskDescInput.value.trim(),
+        dueDate: taskDueInput.value,
+        priority: taskPrioritySelect.value,
+        completed: false,
+        createdAt: new Date().toISOString()
+      };
+
+      addTask(newTask);
+
+      // Reset form and focus title input
+      taskForm.reset();
+      clearErrors();
+      taskTitleInput.focus();
+    });
+
+    // Search and filter handlers
+    searchInput.addEventListener('input', () => {
+      renderTasks();
+    });
+    filterSelect.addEventListener('change', () => {
+      renderTasks();
+    });
+
+    // Keyboard navigation for nav links (focus and enter/space)
+    document.querySelectorAll('nav[aria-label="Primary"] a, nav[aria-label="Primary"] button').forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+
+    // Help modal open/close
+    openHelpBtn.addEventListener('click', () => {
+      openModal();
+    });
+    openHelpBtn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal();
+      }
+    });
+    closeModalBtn.addEventListener('click', () => {
+      closeModal();
+    });
+    closeModalBtn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        closeModal();
+      }
+    });
+    modalOverlay.addEventListener('click', e => {
+      if (e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modalOverlay.getAttribute('aria-hidden') === 'false') {
+        closeModal();
+      }
+    });
+
+    // Initialize app
+    function init() {
+      loadTasks();
+      loadRewards();
+      renderTasks();
+      updateStats();
+
+      // Set minimum date for due date input to today
+      const todayStr = new Date().toISOString().split('T')[0];
+      taskDueInput.setAttribute('min', todayStr);
+    }
+
+    // Respect prefers-reduced-motion for animations (none used here but for future)
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (prefersReducedMotion.matches) {
+      // No animations to disable currently
+    }
+
+    // Run init
+    init();
+
+  })();
+</script>
+</body>
+</html>

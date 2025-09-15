@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Interactive Webpage with Smooth Animations and Click Effects</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-primary: #004d99; /* Dark Blue */
+    --color-primary-light: #2673cc;
+    --color-primary-dark: #003366;
+    --color-secondary: #e63946; /* Strong Red */
+    --color-secondary-light: #f0807a;
+    --color-secondary-dark: #a32a31;
+    --color-accent: #2a9d8f; /* Teal */
+    --color-accent-light: #57b9aa;
+    --color-accent-dark: #1f6f66;
+    --color-bg: #f9f9f9;
+    --color-text: #111111;
+    --color-text-light: #333333;
+    --color-focus-outline: #ffbf47; /* Bright gold for focus */
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --transition-duration: 0.3s;
+    --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --min-touch-size: 44px;
+  }
+  html {
+    font-size: 18px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-family);
+  }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-secondary);
+    color: white;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-focus-outline);
+    outline-offset: 2px;
+  }
+
+  /* Layout */
+  header, nav, main, footer, section, article {
+    display: block;
+  }
+  header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2rem;
+    max-width: 80ch;
+  }
+
+  nav[aria-label="Primary Navigation"] {
+    background-color: var(--color-primary-light);
+    box-shadow: inset 0 -3px 0 var(--color-secondary);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+  nav li {
+    position: relative;
+  }
+  nav a, nav button {
+    color: white;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+    transition:
+      background-color var(--transition-duration) var(--transition-ease),
+      color var(--transition-duration) var(--transition-ease),
+      transform var(--transition-duration) var(--transition-ease);
+  }
+  nav a:focus-visible,
+  nav button:focus-visible {
+    outline: 3px solid var(--color-focus-outline);
+    outline-offset: 3px;
+  }
+  nav a:hover,
+  nav button:hover,
+  nav a:focus-visible,
+  nav button:focus-visible {
+    background-color: var(--color-secondary);
+    color: white;
+    transform: translateY(-3px);
+  }
+  nav button[aria-expanded="true"] {
+    background-color: var(--color-secondary-dark);
+  }
+
+  /* Dropdown menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--color-primary-dark);
+    border-radius: 6px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition:
+      opacity var(--transition-duration) var(--transition-ease),
+      transform var(--transition-duration) var(--transition-ease),
+      visibility 0s linear var(--transition-duration);
+    z-index: 10;
+  }
+  .dropdown-menu[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  .dropdown-menu li {
+    border-bottom: 1px solid var(--color-primary);
+  }
+  .dropdown-menu li:last-child {
+    border-bottom: none;
+  }
+  .dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: white;
+    font-weight: 500;
+    min-height: var(--min-touch-size);
+    min-width: 100%;
+    text-decoration: none;
+    transition:
+      background-color var(--transition-duration) var(--transition-ease),
+      color var(--transition-duration) var(--transition-ease);
+  }
+  .dropdown-menu a:hover,
+  .dropdown-menu a:focus-visible {
+    background-color: var(--color-secondary);
+    color: white;
+    outline: none;
+  }
+
+  /* Main content */
+  main {
+    max-width: 90ch;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  main > section {
+    margin-bottom: 3rem;
+  }
+  main h2 {
+    font-size: 1.75rem;
+    color: var(--color-primary-dark);
+    border-bottom: 3px solid var(--color-secondary);
+    padding-bottom: 0.25rem;
+    margin-bottom: 1rem;
+    max-width: 80ch;
+  }
+  main p {
+    font-size: 1.125rem;
+    color: var(--color-text-light);
+    max-width: 80ch;
+  }
+
+  /* Interactive buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+    user-select: none;
+    transition:
+      background-color var(--transition-duration) var(--transition-ease),
+      box-shadow var(--transition-duration) var(--transition-ease),
+      transform var(--transition-duration) var(--transition-ease);
+    box-shadow: 0 4px 0 var(--color-accent-dark);
+  }
+  .btn:hover,
+  .btn:focus-visible {
+    background-color: var(--color-accent-dark);
+    box-shadow: 0 6px 0 var(--color-accent-dark);
+    transform: translateY(-2px);
+    outline: 3px solid var(--color-focus-outline);
+    outline-offset: 3px;
+  }
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 var(--color-accent-dark);
+  }
+
+  /* Card container */
+  .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    transition:
+      box-shadow var(--transition-duration) var(--transition-ease),
+      transform var(--transition-duration) var(--transition-ease);
+    cursor: default;
+    user-select: none;
+  }
+  .card:focus-within,
+  .card:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: translateY(-6px);
+  }
+  .card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--color-text-light);
+  }
+
+  /* Accessible focus ring for all interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--color-focus-outline);
+    outline-offset: 3px;
+  }
+
+  /* Form styles */
+  form {
+    max-width: 40rem;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+  fieldset {
+    border: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary-dark);
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--color-primary);
+  }
+  input, select, textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--color-primary-light);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition:
+      border-color var(--transition-duration) var(--transition-ease),
+      box-shadow var(--transition-duration) var(--transition-ease);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 6px var(--color-secondary-light);
+    outline: none;
+  }
+  input[aria-invalid="true"],
+  select[aria-invalid="true"],
+  textarea[aria-invalid="true"] {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 6px var(--color-secondary);
+  }
+  .required-indicator {
+    color: var(--color-secondary);
+    margin-left: 0.25rem;
+  }
+  .help-text {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin-top: 0.25rem;
+  }
+  .error-message {
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Responsive typography */
+  @media (max-width: 600px) {
+    html {
+      font-size: 16px;
+    }
+    nav ul {
+      flex-direction: column;
+      padding: 0 1rem;
+    }
+    nav li {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  /* Motion & Animation */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001s !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Focus visible enhancement for keyboard users */
+  .focus-visible {
+    outline: 3px solid var(--color-focus-outline);
+    outline-offset: 3px;
+  }
+
+  /* Tooltip style for abbreviation */
+  abbr[title] {
+    border-bottom: 1px dotted var(--color-primary-dark);
+    cursor: help;
+  }
+
+  /* Color scheme switcher */
+  #color-scheme-switcher {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background-color var(--transition-duration) var(--transition-ease),
+      transform var(--transition-duration) var(--transition-ease);
+  }
+  #color-scheme-switcher:hover,
+  #color-scheme-switcher:focus-visible {
+    background-color: var(--color-secondary);
+    outline-offset: 3px;
+    transform: rotate(20deg);
+  }
+
+  /* Alternate color scheme (dark mode) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #121212;
+      --color-text: #e0e0e0;
+      --color-text-light: #cfcfcf;
+      --color-primary: #4dabf7;
+      --color-primary-light: #82c7ff;
+      --color-primary-dark: #1c64f2;
+      --color-secondary: #f07178;
+      --color-secondary-light: #f79a9f;
+      --color-secondary-dark: #b23a3f;
+      --color-accent: #80cbc4;
+      --color-accent-light: #a7d8d1;
+      --color-accent-dark: #4f8c87;
+      --color-focus-outline: #ffbf47;
+    }
+    header {
+      box-shadow: 0 4px 8px rgba(255 255 255 / 0.15);
+    }
+    nav[aria-label="Primary Navigation"] {
+      box-shadow: inset 0 -3px 0 var(--color-secondary);
+    }
+    nav a, nav button {
+      color: var(--color-text);
+    }
+    nav a:hover,
+    nav button:hover,
+    nav a:focus-visible,
+    nav button:focus-visible {
+      background-color: var(--color-secondary);
+      color: white;
+    }
+    .card {
+      background: #1e1e1e;
+      box-shadow: 0 6px 18px rgba(0 0 0 / 0.8);
+    }
+    form {
+      background: #1e1e1e;
+      box-shadow: 0 6px 18px rgba(0 0 0 / 0.8);
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+<header>
+  <h1>Accessible Interactive Webpage with Smooth Animations and Click Effects</h1>
+</header>
+
+<nav aria-label="Primary Navigation">
+  <ul role="menubar" aria-live="polite">
+    <li role="none">
+      <a href="#intro" role="menuitem" tabindex="0">Introduction</a>
+    </li>
+    <li role="none">
+      <button aria-haspopup="true" aria-expanded="false" aria-controls="features-menu" role="menuitem" tabindex="0" id="features-menu-button">
+        Features <span aria-hidden="true">▾</span>
+      </button>
+      <ul class="dropdown-menu" id="features-menu" role="menu" aria-labelledby="features-menu-button" aria-hidden="true">
+        <li role="none"><a href="#animations" role="menuitem" tabindex="-1">Animations</a></li>
+        <li role="none"><a href="#forms" role="menuitem" tabindex="-1">Forms</a></li>
+        <li role="none"><a href="#buttons" role="menuitem" tabindex="-1">Buttons</a></li>
+      </ul>
+    </li>
+    <li role="none">
+      <a href="#contact" role="menuitem" tabindex="0">Contact</a>
+    </li>
+    <li role="none">
+      <a href="#help" role="menuitem" tabindex="0">Help</a>
+    </li>
+  </ul>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section id="intro" tabindex="-1">
+    <h2>Introduction</h2>
+    <p>
+      Welcome to this <strong>accessible interactive webpage</strong> designed with <em>smooth hover effects</em>, transitions, and dynamic element movements on hover.
+      All interactive components include click effects and are fully keyboard accessible. This page strictly adheres to the <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.2 AAA standards.
+    </p>
+  </section>
+
+  <section id="animations" tabindex="-1">
+    <h2>Animations and Hover Effects</h2>
+    <article>
+      <h3>Card Hover Effects</h3>
+      <p>Hover or focus on the cards below to see smooth animations and subtle movement.</p>
+      <div class="card-container" aria-label="Interactive cards demonstrating hover animations">
+        <article class="card" tabindex="0" role="region" aria-labelledby="card1-title" aria-describedby="card1-desc">
+          <h3 id="card1-title">Smooth Elevation</h3>
+          <p id="card1-desc">The card lifts up and casts a deeper shadow on hover or keyboard focus.</p>
+        </article>
+        <article class="card" tabindex="0" role="region" aria-labelledby="card2-title" aria-describedby="card2-desc">
+          <h3 id="card2-title">Color Accent</h3>
+          <p id="card2-desc">The accent color brightens and the card moves slightly upward.</p>
+        </article>
+        <article class="card" tabindex="0" role="region" aria-labelledby="card3-title" aria-describedby="card3-desc">
+          <h3 id="card3-title">Interactive Feedback</h3>
+          <p id="card3-desc">Keyboard and mouse users receive consistent visual feedback.</p>
+        </article>
+      </div>
+    </article>
+
+    <article>
+      <h3>Buttons with Click Effects</h3>
+      <p>Try clicking or pressing the buttons below to experience smooth click animations and accessible feedback.</p>
+      <button class="btn" type="button" aria-pressed="false" id="btn-animate" aria-describedby="btn-animate-desc">
+        Click Me
+      </button>
+      <p id="btn-animate-desc" class="help-text">Press Enter or Space to activate the button. The button toggles its pressed state with animation.</p>
+    </article>
+  </section>
+
+  <section id="forms" tabindex="-1">
+    <h2>Accessible Form with Validation and Help</h2>
+    <form novalidate aria-describedby="form-desc" aria-live="polite" id="contact-form">
+      <p id="form-desc" class="help-text">Please fill out the form below. Required fields are marked with an asterisk <span aria-hidden="true">*</span>.</p>
+      <fieldset>
+        <legend>Contact Information</legend>
+
+        <label for="name">
+          Full Name
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <input type="text" id="name" name="name" autocomplete="name" required aria-required="true" aria-describedby="name-help name-error" aria-invalid="false" minlength="2" maxlength="50" />
+        <div id="name-help" class="help-text">Enter your full name (2 to 50 characters).</div>
+        <div id="name-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+        <label for="email">
+          Email Address
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <input type="email" id="email" name="email" autocomplete="email" required aria-required="true" aria-describedby="email-help email-error" aria-invalid="false" />
+        <div id="email-help" class="help-text">Enter a valid email address (e.g., user@example.com).</div>
+        <div id="email-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+        <label for="phone">
+          Phone Number
+        </label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel" aria-describedby="phone-help phone-error" aria-invalid="false" pattern="^\+?[0-9\s\-().]{7,20}$" />
+        <div id="phone-help" class="help-text">Optional. Include country code if applicable (e.g., +1 555 555 5555).</div>
+        <div id="phone-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+
+        <label for="contact-method">
+          Preferred Contact Method
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <select id="contact-method" name="contact-method" required aria-required="true" aria-describedby="contact-method-help contact-method-error" aria-invalid="false">
+          <option value="" disabled selected>Select a method</option>
+          <option value="email">Email</option>
+          <option value="phone">Phone</option>
+          <option value="none">No Contact</option>
+        </select>
+        <div id="contact-method-help" class="help-text">Choose how you prefer to be contacted.</div>
+        <div id="contact-method-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Message</legend>
+        <label for="message">
+          Your Message
+          <span class="required-indicator" aria-hidden="true">*</span>
+        </label>
+        <textarea id="message" name="message" rows="5" required aria-required="true" aria-describedby="message-help message-error" aria-invalid="false" minlength="10" maxlength="1000"></textarea>
+        <div id="message-help" class="help-text">Write your message here (10 to 1000 characters).</div>
+        <div id="message-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+      </fieldset>
+
+      <button type="submit" class="btn" aria-describedby="form-submit-desc">Send Message</button>
+      <p id="form-submit-desc" class="help-text" aria-live="polite" role="status"></p>
+    </form>
+  </section>
+
+  <section id="buttons" tabindex="-1">
+    <h2>Interactive Buttons Showcase</h2>
+    <p>Below are several buttons demonstrating smooth hover, focus, and click animations with accessible feedback.</p>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <button class="btn" type="button" aria-label="Primary action button" id="primary-btn">Primary Action</button>
+      <button class="btn" type="button" aria-label="Secondary action button" id="secondary-btn" style="background-color: var(--color-secondary); box-shadow: 0 4px 0 var(--color-secondary-dark);">
+        Secondary Action
+      </button>
+      <button class="btn" type="button" aria-label="Accent action button" id="accent-btn" style="background-color: var(--color-accent-dark); box-shadow: 0 4px 0 var(--color-accent);">
+        Accent Action
+      </button>
+    </div>
+  </section>
+
+  <section id="contact" tabindex="-1">
+    <h2>Contact Information</h2>
+    <address>
+      <p>
+        You can reach us via email at
+        <a href="mailto:support@example.com" aria-label="Send email to support@example.com">support@example.com</a>
+        or call us at
+        <a href="tel:+15555555555" aria-label="Call phone number +1 555 555 5555">+1 555 555 5555</a>.
+      </p>
+      <p>
+        Our office is located at:
+        <br />
+        123 Accessibility Ave.<br />
+        Suite 100<br />
+        Inclusive City, AC 12345
+      </p>
+    </address>
+  </section>
+
+  <section id="help" tabindex="-1">
+    <h2>Help and Support</h2>
+    <p>
+      This page provides extensive <strong>context-sensitive help</strong> for all interactive elements.
+      If you need assistance, please use the <a href="#contact" aria-label="Go to contact information section">contact information</a> above or reach out through the form.
+    </p>
+    <p>
+      <strong>Keyboard Navigation Tips:</strong>
+      Use <kbd>Tab</kbd> to move forward through interactive elements and <kbd>Shift + Tab</kbd> to move backward.
+      Use <kbd>Enter</kbd> or <kbd>Space</kbd> to activate buttons and open menus.
+      Press <kbd>Esc</kbd> to close open dropdown menus.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <nav aria-label="Breadcrumb" style="padding: 1rem 2rem; background-color: var(--color-primary-light); color: white;">
+    <ol style="list-style: none; margin: 0; padding: 0; display: flex; gap: 0.5rem; font-size: 0.9rem;">
+      <li><a href="#main-content" style="color: white; text-decoration: underline;">Home</a> ›</li>
+      <li><a href="#intro" style="color: white; text-decoration: underline;">Introduction</a> ›</li>
+      <li aria-current="page" style="color: #ffdb99;">Interactive Page</li>
+    </ol>
+  </nav>
+  <p style="text-align:center; padding: 1rem 2rem; font-size: 0.9rem; color: var(--color-text-light); max-width: 90ch; margin: auto;">
+    &copy; 2024 Accessible Web Solutions. All rights reserved.
+  </p>
+</footer>
+
+<button id="color-scheme-switcher" aria-label="Toggle color scheme" title="Toggle color scheme (light/dark)" type="button">🌓</button>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Utility: Detect reduced motion preference
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Dropdown menu functionality with keyboard support
+    const menuButton = document.getElementById("features-menu-button");
+    const dropdownMenu = document.getElementById("features-menu");
+
+    let dropdownOpen = false;
+
+    function openDropdown() {
+      dropdownMenu.setAttribute("aria-hidden", "false");
+      menuButton.setAttribute("aria-expanded", "true");
+      dropdownOpen = true;
+      // Focus first menu item
+      const firstItem = dropdownMenu.querySelector('a[role="menuitem"]');
+      if (firstItem) firstItem.focus();
+    }
+    function closeDropdown() {
+      dropdownMenu.setAttribute("aria-hidden", "true");
+      menuButton.setAttribute("aria-expanded", "false");
+      dropdownOpen = false;
+      menuButton.focus();
+    }
+    function toggleDropdown() {
+      if (dropdownOpen) closeDropdown();
+      else openDropdown();
+    }
+
+    menuButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      toggleDropdown();
+    });
+
+    menuButton.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "Enter":
+        case " ":
+        case "ArrowDown":
+          e.preventDefault();
+          openDropdown();
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          openDropdown();
+          // Focus last item
+          const items = dropdownMenu.querySelectorAll('a[role="menuitem"]');
+          if (items.length) items[items.length - 1].focus();
+          break;
+        case "Escape":
+          if (dropdownOpen) {
+            e.preventDefault();
+            closeDropdown();
+          }
+          break;
+      }
+    });
+
+    dropdownMenu.addEventListener("keydown", (e) => {
+      const items = Array.from(dropdownMenu.querySelectorAll('a[role="menuitem"]'));
+      let index = items.indexOf(document.activeElement);
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          index = (index + 1) % items.length;
+          items[index].focus();
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          index = (index - 1 + items.length) % items.length;
+          items[index].focus();
+          break;
+        case "Home":
+          e.preventDefault();
+          items[0].focus();
+          break;
+        case "End":
+          e.preventDefault();
+          items[items.length - 1].focus();
+          break;
+        case "Escape":
+          e.preventDefault();
+          closeDropdown();
+          break;
+        case "Tab":
+          closeDropdown();
+          break;
+      }
+    });
+
+    // Close dropdown if click outside or focus moves outside
+    document.addEventListener("click", (e) => {
+      if (dropdownOpen && !dropdownMenu.contains(e.target) && e.target !== menuButton) {
+        closeDropdown();
+      }
+    });
+
+    document.addEventListener("focusin", (e) => {
+      if (dropdownOpen && !dropdownMenu.contains(e.target) && e.target !== menuButton) {
+        closeDropdown();
+      }
+    });
+
+    // Button with toggle pressed state and click animation
+    const toggleBtn = document.getElementById("btn-animate");
+    toggleBtn.addEventListener("click", () => {
+      const pressed = toggleBtn.getAttribute("aria-pressed") === "true";
+      toggleBtn.setAttribute("aria-pressed", String(!pressed));
+      toggleBtn.textContent = !pressed ? "Clicked!" : "Click Me";
+      // Animate scale on click
+      toggleBtn.style.transition = "transform 0.15s ease";
+      toggleBtn.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        toggleBtn.style.transform = "scale(1)";
+      }, 150);
+    });
+    toggleBtn.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        toggleBtn.click();
+      }
+    });
+
+    // Form validation and error handling
+    const form = document.getElementById("contact-form");
+    const formStatus = form.querySelector("#form-submit-desc");
+
+    function showError(input, message) {
+      const errorId = input.getAttribute("aria-describedby").split(" ").find(id => id.endsWith("-error"));
+      if (!errorId) return;
+      const errorElem = document.getElementById(errorId);
+      errorElem.textContent = message;
+      errorElem.hidden = false;
+      input.setAttribute("aria-invalid", "true");
+    }
+    function clearError(input) {
+      const errorId = input.getAttribute("aria-describedby").split(" ").find(id => id.endsWith("-error"));
+      if (!errorId) return;
+      const errorElem = document.getElementById(errorId);
+      errorElem.textContent = "";
+      errorElem.hidden = true;
+      input.setAttribute("aria-invalid", "false");
+    }
+    function validateInput(input) {
+      clearError(input);
+      const val = input.value.trim();
+      if (input.hasAttribute("required") && val === "") {
+        showError(input, "This field is required.");
+        return false;
+      }
+      if (input.type === "email" && val !== "") {
+        // Simple email regex validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(val)) {
+          showError(input, "Please enter a valid email address.");
+          return false;
+        }
+      }
+      if (input.type === "tel" && val !== "") {
+        // Phone pattern from pattern attribute or fallback
+        const pattern = input.getAttribute("pattern");
+        if (pattern) {
+          const regex = new RegExp(pattern);
+          if (!regex.test(val)) {
+            showError(input, "Please enter a valid phone number.");
+            return false;
+          }
+        }
+      }
+      if (input.tagName.toLowerCase() === "textarea" || input.type === "text") {
+        const min = input.getAttribute("minlength");
+        const max = input.getAttribute("maxlength");
+        if (min && val.length < Number(min)) {
+          showError(input, `Please enter at least ${min} characters.`);
+          return false;
+        }
+        if (max && val.length > Number(max)) {
+          showError(input, `Please enter no more than ${max} characters.`);
+          return false;
+        }
+      }
+      if (input.tagName.toLowerCase() === "select") {
+        if (input.hasAttribute("required") && (val === "" || val === null)) {
+          showError(input, "Please select an option.");
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Validate all inputs on submit
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let valid = true;
+      const inputs = form.querySelectorAll("input, select, textarea");
+      inputs.forEach(input => {
+        if (!validateInput(input)) {
+          valid = false;
+        }
+      });
+      if (valid) {
+        formStatus.textContent = "Form submitted successfully. Thank you!";
+        form.reset();
+        // Reset aria-invalid and error messages
+        inputs.forEach(input => {
+          clearError(input);
+        });
+      } else {
+        formStatus.textContent = "Please fix the errors above and try again.";
+      }
+    });
+
+    // Real-time validation on blur and input
+    const inputs = form.querySelectorAll("input, select, textarea");
+    inputs.forEach(input => {
+      input.addEventListener("blur", () => validateInput(input));
+      input.addEventListener("input", () => {
+        if (input.getAttribute("aria-invalid") === "true") {
+          validateInput(input);
+        }
+      });
+    });
+
+    // Keyboard accessible focus visible management for dropdown menu items
+    const menuLinks = dropdownMenu.querySelectorAll('a[role="menuitem"]');
+    menuLinks.forEach(link => {
+      link.addEventListener("keydown", (e) => {
+        if (e.key === " " || e.key === "Enter") {
+          e.preventDefault();
+          link.click();
+          closeDropdown();
+        }
+      });
+    });
+
+    // Color scheme toggle (light/dark)
+    const colorSchemeBtn = document.getElementById("color-scheme-switcher");
+    let darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    function applyColorScheme() {
+      if (darkMode) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        colorSchemeBtn.textContent = "☀️";
+        colorSchemeBtn.setAttribute("aria-label", "Switch to light color scheme");
+        colorSchemeBtn.title = "Switch to light color scheme";
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        colorSchemeBtn.textContent = "🌓";
+        colorSchemeBtn.setAttribute("aria-label", "Switch to dark color scheme");
+        colorSchemeBtn.title = "Switch to dark color scheme";
+      }
+    }
+    applyColorScheme();
+
+    colorSchemeBtn.addEventListener("click", () => {
+      darkMode = !darkMode;
+      applyColorScheme();
+    });
+    colorSchemeBtn.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        colorSchemeBtn.click();
+      }
+    });
+
+    // Manage focus visibility for keyboard users
+    // Add class 'focus-visible' on keyboard focus
+    function handleFirstTab(e) {
+      if (e.key === "Tab") {
+        document.body.classList.add("user-is-tabbing");
+        window.removeEventListener("keydown", handleFirstTab);
+        window.addEventListener("mousedown", handleMouseDownOnce);
+      }
+    }
+    function handleMouseDownOnce() {
+      document.body.classList.remove("user-is-tabbing");
+      window.removeEventListener("mousedown", handleMouseDownOnce);
+      window.addEventListener("keydown", handleFirstTab);
+    }
+    window.addEventListener("keydown", handleFirstTab);
+
+    // Add focus-visible polyfill style for browsers that don't support :focus-visible
+    // But since we use focus-visible in CSS, this is just a safety net
+
+  })();
+</script>
+</body>
+</html>

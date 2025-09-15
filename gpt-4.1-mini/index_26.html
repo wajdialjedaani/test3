@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Accessible Meditation Timer with Soothing Sounds and Progress Tracking</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-bg: #e0f2f1;
+    --color-bg-alt: #b2dfdb;
+    --color-primary: #00695c;
+    --color-primary-light: #439889;
+    --color-primary-dark: #003d33;
+    --color-accent: #ff7043;
+    --color-accent-dark: #bf360c;
+    --color-text: #003d33;
+    --color-text-light: #004d40;
+    --color-error: #b00020;
+    --color-focus: #ffab40;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-base: 1rem;
+    --font-size-large: 1.25rem;
+    --line-height: 1.6;
+    --border-radius: 0.5rem;
+    --transition-time: 0.3s;
+    --shadow-focus: 0 0 0 3px var(--color-focus);
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+    color: var(--color-text);
+    background: linear-gradient(135deg, var(--color-bg), var(--color-bg-alt));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+  a:focus,
+  a:hover {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0.5rem 0.5rem 0;
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-focus);
+  }
+
+  header {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    margin: 0;
+    font-size: var(--font-size-large);
+    font-weight: 700;
+  }
+
+  nav[aria-label="Main navigation"] {
+    background-color: var(--color-primary-light);
+    padding: 0.5rem 1.5rem;
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav li {
+    position: relative;
+  }
+  nav a,
+  nav button {
+    color: white;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 0.25rem;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  nav a:focus,
+  nav button:focus,
+  nav a:hover,
+  nav button:hover {
+    background-color: var(--color-accent);
+    outline: none;
+    color: var(--color-primary-dark);
+  }
+  nav button[aria-expanded="true"] {
+    background-color: var(--color-accent-dark);
+    color: white;
+  }
+
+  /* Dropdown menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--color-primary-light);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    min-width: 12rem;
+    padding: 0.5rem 0;
+    display: none;
+    z-index: 1000;
+  }
+  .dropdown-menu[aria-hidden="false"] {
+    display: block;
+  }
+  .dropdown-menu li {
+    padding: 0;
+  }
+  .dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-weight: 500;
+  }
+  .dropdown-menu a:focus,
+  .dropdown-menu a:hover {
+    background-color: var(--color-accent);
+    color: var(--color-primary-dark);
+    outline: none;
+  }
+
+  main {
+    flex-grow: 1;
+    padding: 2rem 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-primary-dark);
+  }
+
+  /* Timer form */
+  form {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem 2rem;
+  }
+  fieldset {
+    border: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--color-text-light);
+  }
+
+  input[type="number"] {
+    width: 6rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid var(--color-primary-light);
+    border-radius: var(--border-radius);
+    transition: border-color var(--transition-time);
+  }
+  input[type="number"]:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+  input[type="number"][aria-invalid="true"] {
+    border-color: var(--color-error);
+  }
+
+  .required-indicator {
+    color: var(--color-error);
+    font-weight: 700;
+    margin-left: 0.25rem;
+  }
+
+  .help-text {
+    font-size: 0.875rem;
+    color: var(--color-primary-dark);
+    margin-top: 0.25rem;
+  }
+
+  .error-message {
+    color: var(--color-error);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Buttons */
+  button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    transition: background-color var(--transition-time);
+  }
+  button:focus {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+  }
+  button:disabled,
+  button[aria-disabled="true"] {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+    color: #4a4a4a;
+  }
+
+  /* Timer display */
+  #timer-display {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    text-align: center;
+    margin: 1rem 0 0.5rem 0;
+  }
+
+  /* Progress bar */
+  .progress-container {
+    background-color: var(--color-bg-alt);
+    border-radius: var(--border-radius);
+    height: 24px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, var(--color-accent-dark), var(--color-accent));
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Audio controls */
+  #audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  #sound-select {
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid var(--color-primary-light);
+    border-radius: var(--border-radius);
+    transition: border-color var(--transition-time);
+  }
+  #sound-select:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+
+  #audio-play-toggle {
+    background-color: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    min-width: 44px;
+    min-height: 44px;
+  }
+  #audio-play-toggle:focus {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  #audio-play-toggle:hover:not(:disabled) {
+    background-color: var(--color-accent-dark);
+    color: white;
+  }
+
+  /* Transcript area */
+  #transcript-container {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1rem 1.5rem;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 1rem;
+    color: var(--color-primary-dark);
+  }
+  #transcript-container h3 {
+    margin-top: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    main {
+      padding: 1rem 1rem;
+    }
+    form {
+      padding: 1rem 1rem;
+    }
+  }
+
+  /* Focus outline enhancement for AAA */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+<a href="#maincontent" class="skip-link" id="skip-link">Skip to main content</a>
+<header>
+  <h1>Accessible Meditation Timer</h1>
+</header>
+<nav aria-label="Main navigation">
+  <ul role="menubar" aria-labelledby="main-nav-label">
+    <li role="none">
+      <a href="#timer-section" role="menuitem" tabindex="0">Timer</a>
+    </li>
+    <li role="none">
+      <a href="#sounds-section" role="menuitem" tabindex="0">Soothing Sounds</a>
+    </li>
+    <li role="none">
+      <a href="#progress-section" role="menuitem" tabindex="0">Progress</a>
+    </li>
+    <li role="none">
+      <button aria-haspopup="true" aria-expanded="false" aria-controls="menu-help" id="help-menu-button" role="menuitem" tabindex="0">
+        Help
+      </button>
+      <ul class="dropdown-menu" id="menu-help" role="menu" aria-label="Help submenu" aria-hidden="true">
+        <li role="none"><a href="#help-timer" role="menuitem" tabindex="-1">Using the Timer</a></li>
+        <li role="none"><a href="#help-sounds" role="menuitem" tabindex="-1">Soothing Sounds Info</a></li>
+        <li role="none"><a href="#help-progress" role="menuitem" tabindex="-1">Tracking Progress</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<main id="maincontent" tabindex="-1">
+  <section id="timer-section" aria-labelledby="timer-heading">
+    <h2 id="timer-heading">Set Your Meditation Session</h2>
+    <form id="timer-form" novalidate aria-describedby="timer-help">
+      <fieldset>
+        <legend>Session Length</legend>
+        <label for="minutes-input">Minutes <span aria-hidden="true" class="required-indicator">*</span></label>
+        <input
+          type="number"
+          id="minutes-input"
+          name="minutes"
+          min="1"
+          max="180"
+          step="1"
+          autocomplete="off"
+          required
+          aria-required="true"
+          aria-describedby="minutes-help minutes-error"
+          aria-invalid="false"
+          inputmode="numeric"
+        />
+        <div id="minutes-help" class="help-text">Enter meditation time between 1 and 180 minutes.</div>
+        <div id="minutes-error" class="error-message" aria-live="assertive" role="alert" hidden></div>
+      </fieldset>
+      <button type="submit" id="start-button" aria-label="Start meditation timer">Start Session</button>
+      <button type="button" id="pause-button" aria-label="Pause meditation timer" disabled aria-disabled="true">Pause</button>
+      <button type="button" id="reset-button" aria-label="Reset meditation timer" disabled aria-disabled="true">Reset</button>
+    </form>
+    <div id="timer-display" aria-live="polite" aria-atomic="true" aria-relevant="text" role="timer" aria-label="Meditation timer display">00:00</div>
+    <div class="progress-container" aria-label="Meditation session progress">
+      <div class="progress-bar" id="progress-bar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar"></div>
+    </div>
+  </section>
+
+  <section id="sounds-section" aria-labelledby="sounds-heading">
+    <h2 id="sounds-heading">Soothing Sounds</h2>
+    <p>Choose a calming sound to accompany your meditation session. You can play or pause the sound at any time.</p>
+    <label for="sound-select">Select Sound</label>
+    <select id="sound-select" aria-describedby="sound-help" aria-label="Select soothing sound to play">
+      <option value="none">None</option>
+      <option value="rain">Gentle Rain</option>
+      <option value="forest">Forest Ambience</option>
+      <option value="ocean">Ocean Waves</option>
+      <option value="wind">Soft Wind Chimes</option>
+    </select>
+    <div id="sound-help" class="help-text">Select a sound and toggle play/pause using the button.</div>
+    <div id="audio-controls">
+      <button id="audio-play-toggle" aria-pressed="false" aria-label="Play soothing sound" disabled>Play</button>
+      <audio id="audio-player" preload="none" aria-describedby="transcript-container" tabindex="-1">
+        <track kind="transcript" src="" srclang="en" label="Audio transcript" default />
+      </audio>
+    </div>
+    <section id="transcript-container" aria-live="polite" aria-atomic="true" tabindex="0" aria-label="Transcript of the soothing sound">
+      <h3>Audio Transcript</h3>
+      <p id="audio-transcript">No sound selected.</p>
+    </section>
+  </section>
+
+  <section id="progress-section" aria-labelledby="progress-heading">
+    <h2 id="progress-heading">Your Meditation Progress</h2>
+    <p>Track your past meditation sessions and see your consistency over time.</p>
+    <button id="clear-progress" aria-label="Clear all meditation progress data">Clear Progress</button>
+    <table id="progress-table" role="grid" aria-describedby="progress-desc" tabindex="0" summary="List of past meditation sessions including date, duration, and completion status.">
+      <caption id="progress-desc">Meditation session history with date, duration in minutes, and completion status.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Duration (minutes)</th>
+          <th scope="col">Completed</th>
+        </tr>
+      </thead>
+      <tbody id="progress-tbody">
+        <tr><td colspan="3">No sessions recorded yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="help-timer" aria-labelledby="help-timer-heading" hidden>
+    <h2 id="help-timer-heading">Using the Timer</h2>
+    <p>The meditation timer allows you to set a custom session length between 1 and 180 minutes. After setting your desired time, press <strong>Start Session</strong> to begin. You can pause or reset the timer anytime. The progress bar visually indicates how much time has elapsed.</p>
+  </section>
+
+  <section id="help-sounds" aria-labelledby="help-sounds-heading" hidden>
+    <h2 id="help-sounds-heading">Soothing Sounds Info</h2>
+    <p>Select from a variety of calming ambient sounds to accompany your meditation. Sounds include gentle rain, forest ambience, ocean waves, and soft wind chimes. Audio transcripts describe the soundscape for users who are deaf or hard of hearing.</p>
+  </section>
+
+  <section id="help-progress" aria-labelledby="help-progress-heading" hidden>
+    <h2 id="help-progress-heading">Tracking Progress</h2>
+    <p>Your meditation sessions are logged here, showing the date, duration, and whether the session was completed. This helps you monitor your meditation habits and stay motivated.</p>
+  </section>
+</main>
+
+<footer>
+  <p style="text-align:center; padding:1rem; background-color: var(--color-primary-light); color: white; font-weight: 600;">
+    &copy; 2024 Mindful Web Solutions. All rights reserved.
+  </p>
+</footer>
+
+<script>
+  (() => {
+    'use strict';
+
+    // Utility for time formatting MM:SS
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    // Elements
+    const timerForm = document.getElementById('timer-form');
+    const minutesInput = document.getElementById('minutes-input');
+    const minutesError = document.getElementById('minutes-error');
+    const timerDisplay = document.getElementById('timer-display');
+    const progressBar = document.getElementById('progress-bar');
+    const startButton = document.getElementById('start-button');
+    const pauseButton = document.getElementById('pause-button');
+    const resetButton = document.getElementById('reset-button');
+
+    const soundSelect = document.getElementById('sound-select');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioPlayToggle = document.getElementById('audio-play-toggle');
+    const audioTranscript = document.getElementById('audio-transcript');
+
+    const progressTableBody = document.getElementById('progress-tbody');
+    const clearProgressBtn = document.getElementById('clear-progress');
+
+    // Help menu elements
+    const helpMenuButton = document.getElementById('help-menu-button');
+    const helpMenu = document.getElementById('menu-help');
+
+    // State
+    let timerSecondsTotal = 0;
+    let timerSecondsRemaining = 0;
+    let timerInterval = null;
+    let timerRunning = false;
+
+    // Meditation progress storage key
+    const STORAGE_KEY = 'meditationProgress';
+
+    // Audio transcripts data (transcripts for soothing sounds)
+    const audioTranscripts = {
+      none: 'No sound selected.',
+      rain: 'Sound of gentle rain falling steadily on leaves and rooftops, creating a peaceful and calming atmosphere.',
+      forest: 'Ambient forest sounds including birds chirping softly, leaves rustling, and distant flowing water.',
+      ocean: 'Relaxing ocean waves gently crashing onto the shore with occasional seagull calls.',
+      wind: 'Soft wind chimes tinkling gently in a light breeze, evoking a serene environment.'
+    };
+
+    // Audio sources (short looping ambient sounds, public domain or CC0)
+    const audioSources = {
+      none: '',
+      rain: 'https://cdn.pixabay.com/download/audio/2021/09/23/audio_5c3c70a6a7.mp3?filename=rain-ambient-11266.mp3',
+      forest: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_8f0a9605a9.mp3?filename=forest-ambience-11053.mp3',
+      ocean: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_7b1d7d3a1e.mp3?filename=ocean-waves-11051.mp3',
+      wind: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_0a2f0e2f6d.mp3?filename=wind-chimes-11054.mp3'
+    };
+
+    // Accessibility: Manage ARIA-expanded for dropdown menu
+    function toggleHelpMenu(open) {
+      const expanded = open === undefined ? helpMenuButton.getAttribute('aria-expanded') === 'true' : open;
+      if (expanded) {
+        helpMenuButton.setAttribute('aria-expanded', 'false');
+        helpMenu.setAttribute('aria-hidden', 'true');
+        // Hide submenu items from tab order
+        Array.from(helpMenu.querySelectorAll('a')).forEach(link => link.tabIndex = -1);
+      } else {
+        helpMenuButton.setAttribute('aria-expanded', 'true');
+        helpMenu.setAttribute('aria-hidden', 'false');
+        Array.from(helpMenu.querySelectorAll('a')).forEach(link => link.tabIndex = 0);
+        // Focus first submenu item
+        helpMenu.querySelector('a').focus();
+      }
+    }
+
+    // Close help menu
+    function closeHelpMenu() {
+      toggleHelpMenu(false);
+      helpMenuButton.focus();
+    }
+
+    // Keyboard navigation for help menu
+    function handleHelpMenuKeydown(e) {
+      const items = Array.from(helpMenu.querySelectorAll('a'));
+      const currentIndex = items.indexOf(document.activeElement);
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          const nextIndex = (currentIndex + 1) % items.length;
+          items[nextIndex].focus();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          const prevIndex = (currentIndex - 1 + items.length) % items.length;
+          items[prevIndex].focus();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          closeHelpMenu();
+          break;
+        case 'Tab':
+          // Allow tab to close menu if focus leaves menu
+          if (!e.shiftKey && currentIndex === items.length - 1) {
+            closeHelpMenu();
+          } else if (e.shiftKey && currentIndex === 0) {
+            closeHelpMenu();
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    helpMenuButton.addEventListener('click', () => {
+      const expanded = helpMenuButton.getAttribute('aria-expanded') === 'true';
+      toggleHelpMenu(!expanded);
+    });
+    helpMenuButton.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleHelpMenu(true);
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeHelpMenu();
+      }
+    });
+    helpMenu.addEventListener('keydown', handleHelpMenuKeydown);
+
+    // Close help menu if clicking outside
+    document.addEventListener('click', (e) => {
+      if (!helpMenu.contains(e.target) && e.target !== helpMenuButton) {
+        closeHelpMenu();
+      }
+    });
+
+    // Timer validation and error handling
+    function validateMinutesInput() {
+      const val = minutesInput.value.trim();
+      const num = Number(val);
+      let valid = true;
+      let errorMsg = '';
+      if (val === '') {
+        valid = false;
+        errorMsg = 'Please enter the session length in minutes.';
+      } else if (!Number.isInteger(num) || num < 1 || num > 180) {
+        valid = false;
+        errorMsg = 'Session length must be a whole number between 1 and 180.';
+      }
+      if (!valid) {
+        minutesInput.setAttribute('aria-invalid', 'true');
+        minutesError.textContent = errorMsg;
+        minutesError.hidden = false;
+      } else {
+        minutesInput.setAttribute('aria-invalid', 'false');
+        minutesError.textContent = '';
+        minutesError.hidden = true;
+      }
+      return valid;
+    }
+
+    minutesInput.addEventListener('input', () => {
+      validateMinutesInput();
+    });
+
+    // Timer functions
+    function updateTimerDisplay() {
+      timerDisplay.textContent = formatTime(timerSecondsRemaining);
+      const progressPercent = ((timerSecondsTotal - timerSecondsRemaining) / timerSecondsTotal) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      progressBar.setAttribute('aria-valuenow', Math.round(progressPercent));
+    }
+
+    function timerTick() {
+      if (timerSecondsRemaining > 0) {
+        timerSecondsRemaining--;
+        updateTimerDisplay();
+      } else {
+        stopTimer(true);
+      }
+    }
+
+    function startTimer() {
+      if (timerRunning) return;
+      if (!validateMinutesInput()) {
+        minutesInput.focus();
+        return;
+      }
+      if (timerSecondsRemaining === 0) {
+        timerSecondsTotal = Number(minutesInput.value) * 60;
+        timerSecondsRemaining = timerSecondsTotal;
+        updateTimerDisplay();
+      }
+      timerInterval = setInterval(timerTick, 1000);
+      timerRunning = true;
+      startButton.disabled = true;
+      pauseButton.disabled = false;
+      pauseButton.setAttribute('aria-disabled', 'false');
+      resetButton.disabled = false;
+      resetButton.setAttribute('aria-disabled', 'false');
+      minutesInput.disabled = true;
+      startButton.setAttribute('aria-disabled', 'true');
+      pauseButton.focus();
+      announceStatus('Meditation session started.');
+    }
+
+    function pauseTimer() {
+      if (!timerRunning) return;
+      clearInterval(timerInterval);
+      timerRunning = false;
+      startButton.disabled = false;
+      startButton.setAttribute('aria-disabled', 'false');
+      pauseButton.disabled = true;
+      pauseButton.setAttribute('aria-disabled', 'true');
+      startButton.focus();
+      announceStatus('Meditation session paused.');
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSecondsRemaining = 0;
+      timerSecondsTotal = 0;
+      updateTimerDisplay();
+      startButton.disabled = false;
+      startButton.setAttribute('aria-disabled', 'false');
+      pauseButton.disabled = true;
+      pauseButton.setAttribute('aria-disabled', 'true');
+      resetButton.disabled = true;
+      resetButton.setAttribute('aria-disabled', 'true');
+      minutesInput.disabled = false;
+      minutesInput.focus();
+      announceStatus('Meditation session reset.');
+    }
+
+    function stopTimer(completed = false) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      startButton.disabled = false;
+      startButton.setAttribute('aria-disabled', 'false');
+      pauseButton.disabled = true;
+      pauseButton.setAttribute('aria-disabled', 'true');
+      resetButton.disabled = false;
+      resetButton.setAttribute('aria-disabled', 'false');
+      minutesInput.disabled = false;
+      if (completed) {
+        announceStatus('Meditation session complete.');
+        saveProgress(timerSecondsTotal / 60, true);
+      }
+    }
+
+    timerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (timerRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    });
+
+    pauseButton.addEventListener('click', () => {
+      pauseTimer();
+    });
+
+    resetButton.addEventListener('click', () => {
+      resetTimer();
+    });
+
+    // Announce status messages for screen readers
+    function announceStatus(message) {
+      const liveRegionId = 'aria-status-region';
+      let liveRegion = document.getElementById(liveRegionId);
+      if (!liveRegion) {
+        liveRegion = document.createElement('div');
+        liveRegion.id = liveRegionId;
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.margin = '-1px';
+        liveRegion.style.border = '0';
+        liveRegion.style.padding = '0';
+        liveRegion.style.overflow = 'hidden';
+        liveRegion.style.clip = 'rect(0 0 0 0)';
+        liveRegion.style.clipPath = 'inset(50%)';
+        document.body.appendChild(liveRegion);
+      }
+      liveRegion.textContent = '';
+      setTimeout(() => {
+        liveRegion.textContent = message;
+      }, 100);
+    }
+
+    // Audio controls
+    function loadAudioSource(key) {
+      if (!audioSources[key]) {
+        audioPlayer.src = '';
+        audioPlayToggle.disabled = true;
+        audioPlayToggle.setAttribute('aria-pressed', 'false');
+        audioPlayToggle.textContent = 'Play';
+        audioTranscript.textContent = audioTranscripts.none;
+        return;
+      }
+      if (key === 'none') {
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        audioPlayToggle.disabled = true;
+        audioPlayToggle.setAttribute('aria-pressed', 'false');
+        audioPlayToggle.textContent = 'Play';
+        audioTranscript.textContent = audioTranscripts.none;
+        return;
+      }
+      audioPlayer.src = audioSources[key];
+      audioPlayer.loop = true;
+      audioPlayToggle.disabled = false;
+      audioPlayToggle.setAttribute('aria-pressed', 'false');
+      audioPlayToggle.textContent = 'Play';
+      audioTranscript.textContent = audioTranscripts[key];
+    }
+
+    soundSelect.addEventListener('change', () => {
+      loadAudioSource(soundSelect.value);
+    });
+
+    audioPlayToggle.addEventListener('click', () => {
+      if (audioPlayer.paused) {
+        audioPlayer.play().then(() => {
+          audioPlayToggle.setAttribute('aria-pressed', 'true');
+          audioPlayToggle.textContent = 'Pause';
+          announceStatus('Soothing sound playing.');
+        }).catch(() => {
+          // Play failed (autoplay restrictions)
+          announceStatus('Unable to play audio automatically. Please interact with the page.');
+        });
+      } else {
+        audioPlayer.pause();
+        audioPlayToggle.setAttribute('aria-pressed', 'false');
+        audioPlayToggle.textContent = 'Play';
+        announceStatus('Soothing sound paused.');
+      }
+    });
+
+    // Meditation progress tracking
+    function loadProgress() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (!data) {
+        progressTableBody.innerHTML = '<tr><td colspan="3">No sessions recorded yet.</td></tr>';
+        return [];
+      }
+      try {
+        const sessions = JSON.parse(data);
+        if (!Array.isArray(sessions)) throw new Error('Invalid progress data');
+        if (sessions.length === 0) {
+          progressTableBody.innerHTML = '<tr><td colspan="3">No sessions recorded yet.</td></tr>';
+          return [];
+        }
+        renderProgressTable(sessions);
+        return sessions;
+      } catch {
+        progressTableBody.innerHTML = '<tr><td colspan="3">No sessions recorded yet.</td></tr>';
+        return [];
+      }
+    }
+
+    function saveProgress(duration, completed) {
+      const sessions = loadProgress();
+      const now = new Date();
+      sessions.push({
+        date: now.toISOString(),
+        duration: duration,
+        completed: completed
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+      renderProgressTable(sessions);
+    }
+
+    function renderProgressTable(sessions) {
+      if (!sessions.length) {
+        progressTableBody.innerHTML = '<tr><td colspan="3">No sessions recorded yet.</td></tr>';
+        return;
+      }
+      const rows = sessions.slice(-20).reverse().map(session => {
+        const date = new Date(session.date);
+        const dateStr = date.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+        const durationStr = session.duration.toString();
+        const completedStr = session.completed ? '✔️' : '❌';
+        return `<tr>
+          <td>${dateStr}</td>
+          <td>${durationStr}</td>
+          <td aria-label="${session.completed ? 'Completed' : 'Not completed'}">${completedStr}</td>
+        </tr>`;
+      }).join('');
+      progressTableBody.innerHTML = rows;
+    }
+
+    clearProgressBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all meditation progress data? This action cannot be undone.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderProgressTable([]);
+        announceStatus('Meditation progress cleared.');
+      }
+    });
+
+    // Initialize page
+    function init() {
+      updateTimerDisplay();
+      loadAudioSource('none');
+      loadProgress();
+
+      // Accessibility: Ensure no tabindex on disabled controls
+      pauseButton.disabled = true;
+      pauseButton.setAttribute('aria-disabled', 'true');
+      resetButton.disabled = true;
+      resetButton.setAttribute('aria-disabled', 'true');
+
+      // Set tabindex for help menu items to -1 initially
+      Array.from(helpMenu.querySelectorAll('a')).forEach(link => link.tabIndex = -1);
+    }
+
+    // Keyboard accessibility for timer buttons
+    [startButton, pauseButton, resetButton, audioPlayToggle, clearProgressBtn].forEach(button => {
+      button.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          button.click();
+        }
+      });
+    });
+
+    // Keyboard navigation for nav menu links (simple)
+    const navLinks = document.querySelectorAll('nav[aria-label="Main navigation"] a, nav[aria-label="Main navigation"] button');
+    navLinks.forEach(link => {
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          let next = e.target.parentElement.nextElementSibling;
+          while (next && !next.querySelector('a,button')) {
+            next = next.nextElementSibling;
+          }
+          if (next) {
+            const nextLink = next.querySelector('a,button');
+            if (nextLink) nextLink.focus();
+          }
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          let prev = e.target.parentElement.previousElementSibling;
+          while (prev && !prev.querySelector('a,button')) {
+            prev = prev.previousElementSibling;
+          }
+          if (prev) {
+            const prevLink = prev.querySelector('a,button');
+            if (prevLink) prevLink.focus();
+          }
+        }
+      });
+    });
+
+    // Prevent keyboard trap in modal-like help menu by allowing Escape to close
+    // Already handled in help menu keydown
+
+    // Load initial
+    window.addEventListener('load', init);
+
+  })();
+</script>
+</body>
+</html>

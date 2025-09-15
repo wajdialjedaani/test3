@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+<title>BrightPath - Empower Your Journey with Our Features & Sign-Up</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-bg-light: #ffffff;
+    --color-text-light: #111111;
+    --color-bg-dark: #121212;
+    --color-text-dark: #e6e6e6;
+
+    --color-primary-light: #004aad;
+    --color-primary-dark: #66aaff;
+
+    --color-accent-light: #d35400;
+    --color-accent-dark: #f39c12;
+
+    --color-focus-light: #ffbf47;
+    --color-focus-dark: #ffbf47;
+
+    --color-error: #b00020;
+    --color-error-bg: #fbeaea;
+
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+    --transition-speed: 0.3s;
+
+    --min-touch-size: 44px;
+  }
+
+  /* Dark theme variables */
+  html[data-theme="dark"] {
+    --color-bg: var(--color-bg-dark);
+    --color-text: var(--color-text-dark);
+    --color-primary: var(--color-primary-dark);
+    --color-accent: var(--color-accent-dark);
+    --color-focus: var(--color-focus-dark);
+  }
+
+  /* Light theme variables */
+  html[data-theme="light"] {
+    --color-bg: var(--color-bg-light);
+    --color-text: var(--color-text-light);
+    --color-primary: var(--color-primary-light);
+    --color-accent: var(--color-accent-light);
+    --color-focus: var(--color-focus-light);
+  }
+
+  html {
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    font-size: 18px;
+    line-height: 1.6;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  a:focus,
+  a:hover {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    text-decoration: none;
+  }
+
+  button, input[type="submit"] {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.4;
+    cursor: pointer;
+    border-radius: 0.3rem;
+    border: none;
+    padding: 0.75em 1.25em;
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+  }
+  button:focus-visible,
+  input[type="submit"]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button:hover,
+  button:focus-visible,
+  input[type="submit"]:hover,
+  input[type="submit"]:focus-visible {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    padding: 0.75em 1em;
+    z-index: 1000;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0 0.3rem 0.3rem;
+  }
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Layout */
+  header, footer, main, nav, section, article {
+    display: block;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: var(--color-bg);
+    padding: 1.5rem 1rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    max-width: 800px;
+    line-height: 1.2;
+  }
+  header .theme-toggle {
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .theme-toggle label {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    user-select: none;
+  }
+  .theme-toggle input[type="checkbox"] {
+    margin-right: 0.5rem;
+    width: 2.2rem;
+    height: 1.2rem;
+    position: relative;
+    appearance: none;
+    background: var(--color-bg);
+    border-radius: 1rem;
+    outline: none;
+    transition: background-color 0.3s ease;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .theme-toggle input[type="checkbox"]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .theme-toggle input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1rem;
+    height: 1rem;
+    background: var(--color-primary);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+  }
+  .theme-toggle input[type="checkbox"]:checked {
+    background: var(--color-accent);
+  }
+  .theme-toggle input[type="checkbox"]:checked::before {
+    transform: translateX(1.1rem);
+  }
+
+  nav[aria-label="Primary"] {
+    margin-top: 1rem;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav[aria-label="Primary"] a {
+    color: var(--color-bg);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.25em 0.5em;
+    border-radius: 0.3rem;
+    display: inline-block;
+  }
+  nav[aria-label="Primary"] a:focus-visible,
+  nav[aria-label="Primary"] a:hover {
+    background-color: var(--color-accent);
+    outline: none;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  /* Hero Section */
+  #hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 1rem 4rem 1rem;
+    background: linear-gradient(120deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    color: var(--color-bg);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgb(0 0 0 / 0.3);
+  }
+  #hero h2 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    max-width: 700px;
+    line-height: 1.1;
+  }
+  #hero p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 0 2rem 0;
+    font-weight: 500;
+  }
+  #hero .cta-button {
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-bg);
+    color: var(--color-primary);
+    border: 3px solid var(--color-bg);
+    box-shadow:
+      0 0 0 0 var(--color-bg);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease;
+    min-width: 160px;
+    min-height: 48px;
+  }
+  #hero .cta-button:focus-visible,
+  #hero .cta-button:hover {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow:
+      0 0 10px 3px var(--color-accent);
+    outline: none;
+  }
+
+  /* Features Section */
+  #features {
+    margin-top: 4rem;
+  }
+  #features h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--color-primary);
+  }
+  #features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  #features li {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: box-shadow 0.3s ease;
+  }
+  #features li:focus-within,
+  #features li:hover {
+    box-shadow: 0 0 15px var(--color-primary);
+  }
+  #features li svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    fill: var(--color-primary);
+    flex-shrink: 0;
+  }
+  #features li h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-primary);
+  }
+  #features li p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Form Section */
+  #signup {
+    margin-top: 4rem;
+    background: var(--color-bg);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 0 20px rgb(0 0 0 / 0.1);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #signup h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+    text-align: center;
+  }
+  #signup p.description {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--color-text);
+  }
+  form fieldset {
+    border: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+  }
+  form legend {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--color-text);
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"] {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 2px solid var(--color-primary);
+    border-radius: 0.4rem;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="tel"]:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 5px var(--color-accent);
+  }
+  input[aria-invalid="true"] {
+    border-color: var(--color-error);
+    background-color: var(--color-error-bg);
+  }
+  .error-message {
+    color: var(--color-error);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  .required-indicator {
+    color: var(--color-error);
+    margin-left: 0.25rem;
+  }
+  #signup button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+    transition: background-color 0.3s ease;
+  }
+  #signup button[type="submit"]:hover,
+  #signup button[type="submit"]:focus-visible {
+    background-color: var(--color-accent);
+    outline: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header h1 {
+      font-size: 1.8rem;
+    }
+    #hero h2 {
+      font-size: 2rem;
+    }
+    #hero p {
+      font-size: 1rem;
+    }
+  }
+
+  /* Focus outline enhancements */
+  :focus-visible {
+    outline-offset: 3px;
+    outline-width: 3px;
+    outline-style: solid;
+  }
+
+  /* Animation and reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Animations */
+  #hero h2,
+  #hero p,
+  #hero .cta-button {
+    opacity: 0;
+    transform: translateY(20px);
+    animation-fill-mode: forwards;
+  }
+  #hero h2 {
+    animation: fadeSlideIn 0.6s ease forwards 0.2s;
+  }
+  #hero p {
+    animation: fadeSlideIn 0.6s ease forwards 0.5s;
+  }
+  #hero .cta-button {
+    animation: fadeSlideIn 0.6s ease forwards 0.8s;
+  }
+  @keyframes fadeSlideIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+  <a href="#maincontent" class="skip-link" role="link" aria-label="Skip to main content">Skip to main content</a>
+
+  <header role="banner">
+    <h1 id="site-title">BrightPath - Empower Your Journey</h1>
+    <div class="theme-toggle" role="region" aria-label="Toggle between dark and light theme">
+      <input type="checkbox" id="theme-toggle" aria-checked="false" aria-controls="theme-description" />
+      <label for="theme-toggle" id="theme-description">Toggle dark and light theme</label>
+    </div>
+    <nav aria-label="Primary" role="navigation">
+      <ul>
+        <li><a href="#hero" role="link">Home</a></li>
+        <li><a href="#features" role="link">Features</a></li>
+        <li><a href="#signup" role="link">Sign Up</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="maincontent" tabindex="-1" role="main" aria-labelledby="hero-heading">
+    <section id="hero" aria-labelledby="hero-heading" role="region">
+      <h2 id="hero-heading">Unlock Your Potential with BrightPath</h2>
+      <p>Join thousands who are enhancing their productivity and creativity with our innovative platform.</p>
+      <a href="#signup" class="cta-button" role="button" aria-describedby="cta-desc">Get Started Today</a>
+      <p id="cta-desc" class="sr-only">Call to action button to sign up for BrightPath platform</p>
+    </section>
+
+    <section id="features" aria-labelledby="features-heading" role="region">
+      <h2 id="features-heading">Key Features & Benefits</h2>
+      <ul>
+        <li tabindex="0">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" aria-label="Speedometer icon">
+            <path d="M12 3a9 9 0 1 0 9 9h-2a7 7 0 1 1-7-7V3z"></path>
+            <path d="M12 12l4 4"></path>
+          </svg>
+          <h3>Lightning Fast Performance</h3>
+          <p>Experience unmatched speed that keeps you productive and efficient throughout your day.</p>
+        </li>
+        <li tabindex="0">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" aria-label="Shield icon">
+            <path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4z"></path>
+          </svg>
+          <h3>Top-Tier Security</h3>
+          <p>Your data is protected with industry-leading encryption and privacy standards.</p>
+        </li>
+        <li tabindex="0">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" aria-label="User group icon">
+            <path d="M17 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M7 21v-2a4 4 0 0 1 3-3.87"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <h3>Collaborative Tools</h3>
+          <p>Work seamlessly with your team using built-in communication and sharing features.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="signup" aria-labelledby="signup-heading" role="region">
+      <h2 id="signup-heading">Sign Up for BrightPath</h2>
+      <p class="description">Fill out the form below to create your free account and start your journey.</p>
+      <form id="signup-form" novalidate aria-describedby="form-help" autocomplete="on" aria-live="polite" role="form">
+        <fieldset>
+          <legend>Personal Information</legend>
+
+          <label for="name">Full Name <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            autocomplete="name" 
+            required 
+            aria-required="true" 
+            aria-describedby="name-error name-help" 
+            aria-invalid="false" 
+            minlength="2" 
+            maxlength="100" 
+            pattern="^[a-zA-ZÀ-ÿ ,.'-]+$" 
+            inputmode="text"
+            />
+          <div id="name-error" class="error-message" aria-live="assertive" role="alert"></div>
+          <div id="name-help" class="sr-only">Enter your full name using letters, spaces, and common name punctuation.</div>
+
+          <label for="email">Email Address <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            autocomplete="email" 
+            required 
+            aria-required="true" 
+            aria-describedby="email-error email-help" 
+            aria-invalid="false" 
+            inputmode="email"
+            />
+          <div id="email-error" class="error-message" aria-live="assertive" role="alert"></div>
+          <div id="email-help" class="sr-only">Enter a valid email address in the format user@example.com.</div>
+
+          <label for="phone">Phone Number (optional)</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            autocomplete="tel" 
+            aria-describedby="phone-error phone-help" 
+            aria-invalid="false" 
+            pattern="^\+?[\d\s\-\(\)]{7,20}$" 
+            inputmode="tel"
+            />
+          <div id="phone-error" class="error-message" aria-live="assertive" role="alert"></div>
+          <div id="phone-help" class="sr-only">Enter your phone number including country code, digits, spaces, dashes, or parentheses.</div>
+        </fieldset>
+
+        <button type="submit" aria-describedby="submit-desc">Create Account</button>
+        <p id="submit-desc" class="sr-only">Button to submit the sign-up form</p>
+        <div id="form-status" role="status" aria-live="polite" style="margin-top:1rem; font-weight:700;"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer role="contentinfo" aria-label="Footer">
+    <p style="text-align:center; padding:1rem 1rem 2rem 1rem; font-size:0.875rem; color: var(--color-text);">
+      &copy; 2024 BrightPath. All rights reserved. <a href="#site-title">Back to top</a>
+    </p>
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // Elements
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlEl = document.documentElement;
+      const form = document.getElementById('signup-form');
+      const formStatus = document.getElementById('form-status');
+
+      // Accessibility helper for error display
+      function setError(input, message) {
+        const errorId = input.id + '-error';
+        const errorEl = document.getElementById(errorId);
+        if (message) {
+          input.setAttribute('aria-invalid', 'true');
+          errorEl.textContent = message;
+        } else {
+          input.setAttribute('aria-invalid', 'false');
+          errorEl.textContent = '';
+        }
+      }
+
+      // Validate individual fields
+      function validateName() {
+        const input = form.name;
+        const val = input.value.trim();
+        if (!val) {
+          setError(input, 'Full name is required.');
+          return false;
+        }
+        if (val.length < 2) {
+          setError(input, 'Full name must be at least 2 characters.');
+          return false;
+        }
+        if (!/^[a-zA-ZÀ-ÿ ,.'-]+$/.test(val)) {
+          setError(input, 'Full name contains invalid characters.');
+          return false;
+        }
+        setError(input, '');
+        return true;
+      }
+
+      function validateEmail() {
+        const input = form.email;
+        const val = input.value.trim();
+        if (!val) {
+          setError(input, 'Email address is required.');
+          return false;
+        }
+        // Simple email regex per HTML5 spec
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(val)) {
+          setError(input, 'Please enter a valid email address.');
+          return false;
+        }
+        setError(input, '');
+        return true;
+      }
+
+      function validatePhone() {
+        const input = form.phone;
+        const val = input.value.trim();
+        if (!val) {
+          setError(input, '');
+          return true; // optional field
+        }
+        // Allow +, digits, spaces, dashes, parentheses; length 7-20
+        const phonePattern = /^\+?[\d\s\-\(\)]{7,20}$/;
+        if (!phonePattern.test(val)) {
+          setError(input, 'Please enter a valid phone number.');
+          return false;
+        }
+        setError(input, '');
+        return true;
+      }
+
+      // Validate all fields
+      function validateForm() {
+        const validName = validateName();
+        const validEmail = validateEmail();
+        const validPhone = validatePhone();
+        return validName && validEmail && validPhone;
+      }
+
+      // Event listeners for live validation
+      form.name.addEventListener('input', validateName);
+      form.email.addEventListener('input', validateEmail);
+      form.phone.addEventListener('input', validatePhone);
+
+      // Form submit handler
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        formStatus.textContent = '';
+        if (validateForm()) {
+          // Simulate async submission
+          formStatus.textContent = 'Submitting your information...';
+          formStatus.style.color = 'var(--color-primary)';
+          setTimeout(() => {
+            formStatus.textContent = 'Thank you for signing up! We have sent a confirmation email.';
+            formStatus.style.color = 'var(--color-accent)';
+            form.reset();
+            // Reset aria-invalid
+            ['name', 'email', 'phone'].forEach(id => {
+              const input = form[id];
+              input.setAttribute('aria-invalid', 'false');
+              const errorEl = document.getElementById(id + '-error');
+              errorEl.textContent = '';
+            });
+          }, 1500);
+        } else {
+          formStatus.textContent = 'Please correct the errors above and try again.';
+          formStatus.style.color = 'var(--color-error)';
+          // Focus first invalid input
+          const firstInvalid = form.querySelector('[aria-invalid="true"]');
+          if (firstInvalid) {
+            firstInvalid.focus();
+          }
+        }
+      });
+
+      // Theme toggle logic
+      function applyTheme(theme) {
+        htmlEl.setAttribute('data-theme', theme);
+        themeToggle.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
+      }
+
+      // Load theme preference from localStorage or system
+      function loadTheme() {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || stored === 'light') {
+          applyTheme(stored);
+          themeToggle.checked = stored === 'dark';
+        } else {
+          // Use system preference
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          applyTheme(prefersDark ? 'dark' : 'light');
+          themeToggle.checked = prefersDark;
+        }
+      }
+
+      themeToggle.addEventListener('change', () => {
+        const newTheme = themeToggle.checked ? 'dark' : 'light';
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+
+      // Initialize theme on page load
+      loadTheme();
+
+      // Keyboard accessibility enhancements for CTA button (anchor styled as button)
+      const ctaButton = document.querySelector('#hero .cta-button');
+      ctaButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          ctaButton.click();
+        }
+      });
+
+      // Ensure logical focus order and focus visible on skip link target
+      const mainContent = document.getElementById('maincontent');
+      document.querySelector('.skip-link').addEventListener('click', (e) => {
+        mainContent.focus();
+      });
+    })();
+  </script>
+
+  <style>
+    /* Screen reader only helper */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>Accessible Interactive Fitness Tracker – Log Workouts & Track Progress</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-size: 18px;
+    line-height: 1.6;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a2540 0%, #092b52 100%);
+    color: #e6f0ff;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #0a2540;
+  }
+  a {
+    color: #ffd369;
+    text-decoration: underline;
+  }
+  a:focus,
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 3px solid #ffd369;
+    outline-offset: 2px;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #ffd369;
+    color: #0a2540;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0 0.25rem 0.25rem 0;
+    transition: top 0.3s ease;
+  }
+  #skip-link:focus {
+    top: 0;
+  }
+  /* Layout */
+  header, nav, main, footer {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem 1.5rem;
+  }
+  header {
+    background: #083060;
+    border-bottom: 4px solid #ffd369;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.6);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.25rem;
+    color: #ffd369;
+    text-shadow: 0 0 5px #ffd369aa;
+  }
+  nav {
+    background: #0f3b72;
+    border-bottom: 3px solid #ffd369;
+    box-shadow: inset 0 -2px 4px rgb(0 0 0 / 0.3);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  nav li {
+    position: relative;
+  }
+  nav > ul > li {
+    margin-right: 1.5rem;
+  }
+  nav a,
+  nav button {
+    color: #ffd369;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.75rem 0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  nav a:hover,
+  nav button:hover,
+  nav a:focus,
+  nav button:focus {
+    color: #fff8c4;
+    outline-offset: 3px;
+  }
+  nav button[aria-expanded="true"]::after {
+    content: "▲";
+    font-size: 0.6rem;
+    margin-left: 0.3rem;
+  }
+  nav button[aria-expanded="false"]::after {
+    content: "▼";
+    font-size: 0.6rem;
+    margin-left: 0.3rem;
+  }
+  /* Dropdown menu */
+  .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #0f3b72;
+    border: 2px solid #ffd369;
+    border-radius: 0.25rem;
+    min-width: 180px;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.7);
+    display: none;
+    z-index: 1000;
+  }
+  .submenu[aria-hidden="false"] {
+    display: block;
+  }
+  .submenu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: #ffd369;
+  }
+  .submenu a:hover,
+  .submenu a:focus {
+    background: #ffd369;
+    color: #0a2540;
+    outline-offset: 2px;
+  }
+  /* Main */
+  main {
+    flex-grow: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+    background: #0a2540;
+  }
+  /* Sections */
+  section {
+    margin-bottom: 2.5rem;
+  }
+  section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #ffd369;
+    border-bottom: 3px solid #ffd369;
+    padding-bottom: 0.3rem;
+  }
+  /* Form styling */
+  form {
+    background: #083060;
+    padding: 1.5rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 15px #ffd369aa;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+  }
+  fieldset {
+    border: none;
+    margin: 0 0 1.25rem 0;
+    padding: 0;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #ffd369;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #ffd369;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 2px solid #ffd369;
+    background-color: #0a2540;
+    color: #e6f0ff;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    border-color: #fff8c4;
+    outline: none;
+  }
+  .required-indicator {
+    color: #ff6f61;
+    font-weight: 700;
+    margin-left: 0.25rem;
+  }
+  .help-text {
+    font-size: 0.875rem;
+    color: #fff8c4;
+    margin-top: 0.2rem;
+  }
+  .error-message {
+    color: #ff6f61;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  button[type="submit"] {
+    background: linear-gradient(45deg, #ffd369, #ffb347);
+    border: none;
+    border-radius: 0.4rem;
+    color: #0a2540;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    box-shadow: 0 4px 10px #ffb347cc;
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover,
+  button[type="submit"]:focus {
+    background: linear-gradient(45deg, #fff8c4, #ffd369);
+    outline-offset: 3px;
+  }
+  /* Workout log table */
+  .workout-log {
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 0 12px #ffd369aa;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  .workout-log caption {
+    caption-side: top;
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+    color: #ffd369;
+    text-align: center;
+  }
+  .workout-log thead {
+    background: #0f3b72;
+  }
+  .workout-log th,
+  .workout-log td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ffd369;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .workout-log th {
+    font-weight: 700;
+    color: #ffd369;
+  }
+  .workout-log tbody tr:nth-child(even) {
+    background: #092b52;
+  }
+  .workout-log tbody tr:hover,
+  .workout-log tbody tr:focus-within {
+    background: #ffd369;
+    color: #0a2540;
+    outline: 3px solid #ffb347;
+    outline-offset: -3px;
+  }
+  /* Chart container */
+  #chart-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #083060;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 15px #ffd369aa;
+  }
+  #progress-chart {
+    width: 100%;
+    height: 300px;
+  }
+  /* Responsive & accessibility */
+  @media (max-width: 700px) {
+    nav ul {
+      flex-direction: column;
+    }
+    nav > ul > li {
+      margin-right: 0;
+      margin-bottom: 0.5rem;
+    }
+    form {
+      padding: 1rem 1rem;
+    }
+  }
+  /* Focus ring enhancements for AAA */
+  :focus-visible {
+    outline: 3px solid #ffd369 !important;
+    outline-offset: 2px !important;
+  }
+  /* Vibrant color-coded badges for exercise types */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    color: #0a2540;
+    min-width: 64px;
+    justify-content: center;
+    user-select: none;
+  }
+  .badge-cardio {
+    background: #ffb347;
+    box-shadow: 0 0 5px #ffb347aa;
+  }
+  .badge-strength {
+    background: #ffd369;
+    box-shadow: 0 0 5px #ffd369aa;
+  }
+  .badge-flexibility {
+    background: #a6e3e9;
+    color: #083060;
+    box-shadow: 0 0 5px #a6e3e9aa;
+  }
+  .badge-balance {
+    background: #ff6f61;
+    box-shadow: 0 0 5px #ff6f61aa;
+  }
+  /* Color legend for exercise types */
+  #exercise-legend {
+    max-width: 600px;
+    margin: 1rem auto 2rem auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+  #exercise-legend div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #ffd369;
+  }
+  #exercise-legend .legend-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 0.25rem;
+  }
+  #legend-cardio {
+    background: #ffb347;
+    box-shadow: 0 0 5px #ffb347aa;
+  }
+  #legend-strength {
+    background: #ffd369;
+    box-shadow: 0 0 5px #ffd369aa;
+  }
+  #legend-flexibility {
+    background: #a6e3e9;
+    box-shadow: 0 0 5px #a6e3e9aa;
+  }
+  #legend-balance {
+    background: #ff6f61;
+    box-shadow: 0 0 5px #ff6f61aa;
+  }
+  /* Loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid #ffd369;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  /* Alert and status messages */
+  #form-status {
+    margin-top: 1rem;
+    font-weight: 700;
+    color: #ffd369;
+  }
+  #form-status.error {
+    color: #ff6f61;
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+
+<header role="banner">
+  <h1>Accessible Interactive Fitness Tracker</h1>
+</header>
+
+<nav aria-label="Primary navigation">
+  <ul role="menubar">
+    <li role="none">
+      <a href="#log-workout" role="menuitem" tabindex="0">Log Workout</a>
+    </li>
+    <li role="none">
+      <a href="#workout-log" role="menuitem" tabindex="0">Workout Log</a>
+    </li>
+    <li role="none">
+      <button aria-haspopup="true" aria-expanded="false" aria-controls="submenu-help" role="menuitem" id="help-menu-button" tabindex="0">
+        Help
+      </button>
+      <ul class="submenu" id="submenu-help" role="menu" aria-label="Help submenu" aria-hidden="true">
+        <li role="none"><a href="#form-help" role="menuitem" tabindex="-1">Form Instructions</a></li>
+        <li role="none"><a href="#chart-help" role="menuitem" tabindex="-1">Progress Chart Explanation</a></li>
+        <li role="none"><a href="#accessibility-info" role="menuitem" tabindex="-1">Accessibility Info</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section id="log-workout" aria-labelledby="log-workout-heading">
+    <h2 id="log-workout-heading">Log Your Daily Workout</h2>
+    <form id="workout-form" novalidate aria-describedby="form-help" aria-live="polite" aria-atomic="true">
+      <fieldset>
+        <legend>Workout Details</legend>
+
+        <label for="exercise-type">Exercise Type <span class="required-indicator" aria-label="required">*</span></label>
+        <select id="exercise-type" name="exerciseType" required aria-required="true" aria-describedby="exercise-type-help exercise-type-error" autocomplete="off">
+          <option value="" disabled selected>Select exercise type</option>
+          <option value="cardio">Cardio</option>
+          <option value="strength">Strength</option>
+          <option value="flexibility">Flexibility</option>
+          <option value="balance">Balance</option>
+        </select>
+        <div id="exercise-type-help" class="help-text">Choose the category that best fits your exercise.</div>
+        <div id="exercise-type-error" class="error-message" aria-live="assertive"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Duration and Calories</legend>
+
+        <label for="duration">Duration (minutes) <span class="required-indicator" aria-label="required">*</span></label>
+        <input type="number" id="duration" name="duration" min="1" max="1440" required aria-required="true" aria-describedby="duration-help duration-error" autocomplete="off" inputmode="numeric" />
+        <div id="duration-help" class="help-text">Enter the duration of your workout in minutes (1–1440).</div>
+        <div id="duration-error" class="error-message" aria-live="assertive"></div>
+
+        <label for="calories">Calories Burned <span class="required-indicator" aria-label="required">*</span></label>
+        <input type="number" id="calories" name="calories" min="1" max="20000" required aria-required="true" aria-describedby="calories-help calories-error" autocomplete="off" inputmode="numeric" />
+        <div id="calories-help" class="help-text">Enter the estimated calories burned during the workout.</div>
+        <div id="calories-error" class="error-message" aria-live="assertive"></div>
+      </fieldset>
+
+      <button type="submit" aria-label="Submit workout log entry">Add Workout</button>
+      <div id="form-status" role="status" aria-live="polite" aria-atomic="true"></div>
+    </form>
+    <section id="form-help" aria-label="Form instructions" hidden>
+      <h3>Form Instructions</h3>
+      <p>Fill out all required fields marked with <strong>*</strong>. Use the dropdown to select your exercise type, enter the duration in minutes, and the calories burned. After submitting, your workout will appear in the log below and update the progress chart.</p>
+    </section>
+  </section>
+
+  <section id="workout-log" aria-labelledby="workout-log-heading">
+    <h2 id="workout-log-heading">Workout Log</h2>
+    <table class="workout-log" aria-describedby="workout-log-desc" role="grid" tabindex="0">
+      <caption id="workout-log-desc">Table listing your logged workouts including exercise type, duration, and calories burned.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Date &amp; Time</th>
+          <th scope="col">Exercise Type</th>
+          <th scope="col">Duration (minutes)</th>
+          <th scope="col">Calories Burned</th>
+        </tr>
+      </thead>
+      <tbody id="workout-log-body">
+        <tr><td colspan="4" style="text-align:center; color:#ffd369;">No workouts logged yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="progress" aria-labelledby="progress-heading">
+    <h2 id="progress-heading">Progress Chart</h2>
+    <div id="chart-container" aria-describedby="chart-desc">
+      <canvas id="progress-chart" width="900" height="300" role="img" aria-label="Bar chart showing total calories burned per exercise type" aria-describedby="chart-desc"></canvas>
+      <p id="chart-desc" class="visually-hidden">
+        This bar chart displays the total calories burned for each exercise type logged. Cardio is shown in orange, Strength in yellow, Flexibility in light blue, and Balance in coral red. The height of each bar represents the total calories burned for that exercise type.
+      </p>
+    </div>
+    <div id="exercise-legend" aria-label="Exercise type color legend">
+      <div><span class="legend-box" id="legend-cardio"></span>Cardio</div>
+      <div><span class="legend-box" id="legend-strength"></span>Strength</div>
+      <div><span class="legend-box" id="legend-flexibility"></span>Flexibility</div>
+      <div><span class="legend-box" id="legend-balance"></span>Balance</div>
+    </div>
+    <section id="chart-help" aria-label="Chart explanation" hidden>
+      <h3>Progress Chart Explanation</h3>
+      <p>The chart visually summarizes your total calories burned by exercise type. Each colored bar corresponds to an exercise category. Use this to monitor which types of workouts you are doing most frequently and where you might want to focus more effort.</p>
+    </section>
+  </section>
+
+  <section id="accessibility-info" aria-labelledby="accessibility-info-heading" hidden>
+    <h2 id="accessibility-info-heading">Accessibility Information</h2>
+    <p>This fitness tracker is designed to meet WCAG 2.2 AAA standards, ensuring full accessibility for all users. Features include:</p>
+    <ul>
+      <li>Keyboard navigable menus and forms with enhanced focus indicators</li>
+      <li>Clear and descriptive labels, instructions, and error messages</li>
+      <li>High contrast color scheme with multiple visual indicators</li>
+      <li>ARIA roles and live regions for dynamic content updates</li>
+      <li>Responsive design that works at 200% zoom without horizontal scrolling</li>
+      <li>Respect for reduced motion preferences and pause controls where applicable</li>
+    </ul>
+  </section>
+</main>
+
+<footer role="contentinfo" aria-label="Page footer">
+  <p>© 2024 Accessible Fitness Tracker. All rights reserved.</p>
+  <p><a href="#main-content">Back to top</a></p>
+</footer>
+
+<script>
+  'use strict';
+
+  // Utility: Select elements with error handling
+  function $(selector, scope = document) {
+    const el = scope.querySelector(selector);
+    if (!el) throw new Error('Element not found: ' + selector);
+    return el;
+  }
+  function $all(selector, scope = document) {
+    return Array.from(scope.querySelectorAll(selector));
+  }
+
+  // Keyboard accessible dropdown menu
+  (function() {
+    const menuButton = $('#help-menu-button');
+    const submenu = $('#submenu-help');
+    const submenuLinks = $all('a', submenu);
+
+    function openMenu() {
+      menuButton.setAttribute('aria-expanded', 'true');
+      submenu.setAttribute('aria-hidden', 'false');
+      submenuLinks.forEach(link => link.setAttribute('tabindex', '0'));
+      submenuLinks[0].focus();
+    }
+    function closeMenu() {
+      menuButton.setAttribute('aria-expanded', 'false');
+      submenu.setAttribute('aria-hidden', 'true');
+      submenuLinks.forEach(link => link.setAttribute('tabindex', '-1'));
+      menuButton.focus();
+    }
+
+    menuButton.addEventListener('click', () => {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    menuButton.addEventListener('keydown', e => {
+      switch(e.key) {
+        case 'ArrowDown':
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          openMenu();
+          break;
+        case 'Escape':
+          if (menuButton.getAttribute('aria-expanded') === 'true') {
+            e.preventDefault();
+            closeMenu();
+          }
+          break;
+      }
+    });
+
+    submenu.addEventListener('keydown', e => {
+      const currentIndex = submenuLinks.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextIndex = (currentIndex + 1) % submenuLinks.length;
+        submenuLinks[nextIndex].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevIndex = (currentIndex - 1 + submenuLinks.length) % submenuLinks.length;
+        submenuLinks[prevIndex].focus();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMenu();
+      } else if (e.key === 'Tab') {
+        // Allow tab to close menu if focus moves out
+        if (e.shiftKey && currentIndex === 0) {
+          closeMenu();
+        } else if (!e.shiftKey && currentIndex === submenuLinks.length - 1) {
+          closeMenu();
+        }
+      }
+    });
+
+    // Close menu if click outside
+    document.addEventListener('click', e => {
+      if (!menuButton.contains(e.target) && !submenu.contains(e.target)) {
+        if (menuButton.getAttribute('aria-expanded') === 'true') {
+          closeMenu();
+        }
+      }
+    });
+
+    // Initialize submenu links tabindex
+    submenuLinks.forEach(link => link.setAttribute('tabindex', '-1'));
+  })();
+
+  // Workout tracker app
+  (function() {
+    const form = $('#workout-form');
+    const exerciseTypeInput = $('#exercise-type');
+    const durationInput = $('#duration');
+    const caloriesInput = $('#calories');
+    const formStatus = $('#form-status');
+
+    const errorExerciseType = $('#exercise-type-error');
+    const errorDuration = $('#duration-error');
+    const errorCalories = $('#calories-error');
+
+    const workoutLogBody = $('#workout-log-body');
+    const progressChartCanvas = $('#progress-chart');
+    const ctx = progressChartCanvas.getContext('2d');
+
+    // Data model: Array of workout entries
+    // Each entry: { id, date, exerciseType, duration, calories }
+    let workouts = [];
+
+    // Constants for exercise types and colors
+    const EXERCISE_TYPES = {
+      cardio: { label: 'Cardio', color: '#ffb347', badgeClass: 'badge-cardio' },
+      strength: { label: 'Strength', color: '#ffd369', badgeClass: 'badge-strength' },
+      flexibility: { label: 'Flexibility', color: '#a6e3e9', badgeClass: 'badge-flexibility' },
+      balance: { label: 'Balance', color: '#ff6f61', badgeClass: 'badge-balance' }
+    };
+
+    // Accessibility helper: set error state and message
+    function setError(input, errorEl, message) {
+      if (message) {
+        input.setAttribute('aria-invalid', 'true');
+        errorEl.textContent = message;
+      } else {
+        input.removeAttribute('aria-invalid');
+        errorEl.textContent = '';
+      }
+    }
+
+    // Validate inputs, return true if valid
+    function validateForm() {
+      let valid = true;
+
+      // Exercise Type
+      if (!exerciseTypeInput.value) {
+        setError(exerciseTypeInput, errorExerciseType, 'Please select an exercise type.');
+        valid = false;
+      } else {
+        setError(exerciseTypeInput, errorExerciseType, '');
+      }
+
+      // Duration
+      const durationVal = Number(durationInput.value);
+      if (!durationInput.value) {
+        setError(durationInput, errorDuration, 'Duration is required.');
+        valid = false;
+      } else if (isNaN(durationVal) || durationVal < 1 || durationVal > 1440) {
+        setError(durationInput, errorDuration, 'Enter a valid duration between 1 and 1440 minutes.');
+        valid = false;
+      } else {
+        setError(durationInput, errorDuration, '');
+      }
+
+      // Calories
+      const caloriesVal = Number(caloriesInput.value);
+      if (!caloriesInput.value) {
+        setError(caloriesInput, errorCalories, 'Calories burned is required.');
+        valid = false;
+      } else if (isNaN(caloriesVal) || caloriesVal < 1 || caloriesVal > 20000) {
+        setError(caloriesInput, errorCalories, 'Enter a valid calorie amount between 1 and 20,000.');
+        valid = false;
+      } else {
+        setError(caloriesInput, errorCalories, '');
+      }
+
+      return valid;
+    }
+
+    // Format date/time for display (local)
+    function formatDateTime(date) {
+      return date.toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+    }
+
+    // Create badge element for exercise type
+    function createBadge(typeKey) {
+      const span = document.createElement('span');
+      span.className = 'badge ' + EXERCISE_TYPES[typeKey].badgeClass;
+      span.textContent = EXERCISE_TYPES[typeKey].label;
+      span.setAttribute('aria-label', EXERCISE_TYPES[typeKey].label + ' exercise type');
+      return span;
+    }
+
+    // Render workout log table rows
+    function renderWorkoutLog() {
+      // Clear existing rows
+      workoutLogBody.innerHTML = '';
+
+      if (workouts.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.textAlign = 'center';
+        td.style.color = '#ffd369';
+        td.textContent = 'No workouts logged yet.';
+        tr.appendChild(td);
+        workoutLogBody.appendChild(tr);
+        return;
+      }
+
+      workouts.forEach(entry => {
+        const tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'row');
+
+        // Date & Time
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDateTime(new Date(entry.date));
+        tdDate.setAttribute('role', 'gridcell');
+        tr.appendChild(tdDate);
+
+        // Exercise Type with badge
+        const tdType = document.createElement('td');
+        tdType.setAttribute('role', 'gridcell');
+        const badge = createBadge(entry.exerciseType);
+        tdType.appendChild(badge);
+        tr.appendChild(tdType);
+
+        // Duration
+        const tdDuration = document.createElement('td');
+        tdDuration.textContent = entry.duration.toString();
+        tdDuration.setAttribute('role', 'gridcell');
+        tr.appendChild(tdDuration);
+
+        // Calories
+        const tdCalories = document.createElement('td');
+        tdCalories.textContent = entry.calories.toString();
+        tdCalories.setAttribute('role', 'gridcell');
+        tr.appendChild(tdCalories);
+
+        workoutLogBody.appendChild(tr);
+      });
+    }
+
+    // Draw bar chart with accessibility descriptions
+    function drawChart() {
+      const width = progressChartCanvas.width;
+      const height = progressChartCanvas.height;
+      const padding = 60;
+      const barWidth = 80;
+      const barGap = 40;
+      const maxBarHeight = height - padding * 1.5;
+
+      // Calculate total calories per exercise type
+      const totals = {};
+      Object.keys(EXERCISE_TYPES).forEach(key => totals[key] = 0);
+      workouts.forEach(w => {
+        if (totals[w.exerciseType] !== undefined) {
+          totals[w.exerciseType] += w.calories;
+        }
+      });
+
+      // Find max calories for scaling
+      const maxCalories = Math.max(...Object.values(totals), 100);
+
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+
+      // Background gradient
+      const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+      bgGradient.addColorStop(0, '#0a2540');
+      bgGradient.addColorStop(1, '#092b52');
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw axes
+      ctx.strokeStyle = '#ffd369';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      // y-axis
+      ctx.moveTo(padding, padding / 2);
+      ctx.lineTo(padding, height - padding);
+      // x-axis
+      ctx.lineTo(width - padding / 2, height - padding);
+      ctx.stroke();
+
+      // Y-axis labels and grid lines
+      ctx.fillStyle = '#ffd369';
+      ctx.font = '14px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      const yStepCount = 5;
+      for (let i = 0; i <= yStepCount; i++) {
+        const y = padding / 2 + (maxBarHeight / yStepCount) * i;
+        const value = Math.round(maxCalories - (maxCalories / yStepCount) * i);
+        ctx.fillText(value.toString(), padding - 10, y);
+        // grid line
+        ctx.strokeStyle = '#ffd36955';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding / 2, y);
+        ctx.stroke();
+      }
+
+      // Draw bars
+      const keys = Object.keys(EXERCISE_TYPES);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.font = '16px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+
+      keys.forEach((key, i) => {
+        const x = padding + barGap + i * (barWidth + barGap);
+        const barHeight = (totals[key] / maxCalories) * maxBarHeight;
+        const y = height - padding - barHeight;
+
+        // Bar with gradient fill
+        const grad = ctx.createLinearGradient(x, y, x, y + barHeight);
+        grad.addColorStop(0, EXERCISE_TYPES[key].color);
+        grad.addColorStop(1, '#000000aa');
+        ctx.fillStyle = grad;
+        ctx.shadowColor = EXERCISE_TYPES[key].color + 'bb';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(x, y, barWidth, barHeight);
+        ctx.shadowBlur = 0;
+
+        // Bar border
+        ctx.strokeStyle = '#ffd369';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, barWidth, barHeight);
+
+        // Label below bar
+        ctx.fillStyle = '#ffd369';
+        ctx.fillText(EXERCISE_TYPES[key].label, x + barWidth / 2, height - padding + 8);
+
+        // Calories value above bar
+        ctx.fillStyle = '#ffd369';
+        ctx.font = 'bold 14px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+        ctx.fillText(totals[key].toString(), x + barWidth / 2, y - 20);
+        ctx.font = '16px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+      });
+    }
+
+    // Update form status message with optional error class
+    function updateFormStatus(message, isError = false) {
+      formStatus.textContent = message;
+      if (isError) {
+        formStatus.classList.add('error');
+      } else {
+        formStatus.classList.remove('error');
+      }
+    }
+
+    // Clear form inputs and errors
+    function clearForm() {
+      form.reset();
+      setError(exerciseTypeInput, errorExerciseType, '');
+      setError(durationInput, errorDuration, '');
+      setError(caloriesInput, errorCalories, '');
+      updateFormStatus('');
+    }
+
+    // Load workouts from localStorage (persist data)
+    function loadWorkouts() {
+      try {
+        const data = localStorage.getItem('accessibleFitnessWorkouts');
+        if (data) {
+          const parsed = JSON.parse(data);
+          if (Array.isArray(parsed)) {
+            workouts = parsed.map(w => ({
+              id: w.id,
+              date: w.date,
+              exerciseType: w.exerciseType,
+              duration: w.duration,
+              calories: w.calories
+            }));
+          }
+        }
+      } catch {
+        workouts = [];
+      }
+    }
+
+    // Save workouts to localStorage
+    function saveWorkouts() {
+      try {
+        localStorage.setItem('accessibleFitnessWorkouts', JSON.stringify(workouts));
+      } catch {
+        // LocalStorage quota exceeded or disabled
+      }
+    }
+
+    // Add workout entry
+    function addWorkout(exerciseType, duration, calories) {
+      const entry = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2),
+        date: new Date().toISOString(),
+        exerciseType,
+        duration,
+        calories
+      };
+      workouts.push(entry);
+      saveWorkouts();
+      renderWorkoutLog();
+      drawChart();
+    }
+
+    // Event handler for form submission
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      updateFormStatus('');
+      if (!validateForm()) {
+        updateFormStatus('Please fix errors before submitting.', true);
+        return;
+      }
+
+      // Parse values
+      const exerciseType = exerciseTypeInput.value;
+      const duration = Number(durationInput.value);
+      const calories = Number(caloriesInput.value);
+
+      // Confirmation prompt for high calories (error prevention)
+      if (calories > 10000) {
+        if (!confirm('You entered a very high calories burned value. Are you sure this is correct?')) {
+          updateFormStatus('Submission cancelled by user.', true);
+          return;
+        }
+      }
+
+      // Add workout entry
+      addWorkout(exerciseType, duration, calories);
+      updateFormStatus('Workout added successfully.');
+      clearForm();
+      exerciseTypeInput.focus();
+    });
+
+    // Initialize page
+    function init() {
+      loadWorkouts();
+      renderWorkoutLog();
+      drawChart();
+    }
+
+    // Reduced motion preference respects no animation except essential
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      // Disable any non-essential animations (none here except spinner)
+    }
+
+    // Visually hidden class for aria-describedby elements
+    const style = document.createElement('style');
+    style.textContent = '.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; border: 0 !important; }';
+    document.head.appendChild(style);
+
+    init();
+  })();
+</script>
+</body>
+</html>

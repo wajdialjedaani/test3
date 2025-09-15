@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+<title>Eco-Friendly Products Showcase – Filter & Sort Sustainable Goods</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1b2e13; /* Dark green text */
+    background-color: #f0faf4; /* Very light green background */
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  a {
+    color: #2a7a2a; /* Medium green */
+    text-decoration: underline;
+  }
+  a:focus,
+  button:focus,
+  input:focus,
+  select:focus {
+    outline: 3px solid #3a9d23; /* Strong green focus ring */
+    outline-offset: 2px;
+  }
+  a:hover,
+  a:focus-visible {
+    color: #1f5e1f;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #2a7a2a;
+    color: #f0faf4;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    font-weight: 700;
+    border-radius: 0 0 4px 0;
+    transition: top 0.3s ease;
+  }
+  #skip-link:focus {
+    top: 0;
+  }
+
+  /* Layout */
+  header, nav, main, footer, section, article {
+    display: block;
+  }
+  header {
+    background: linear-gradient(90deg, #2a7a2a 0%, #4caf50 100%);
+    color: #f0faf4;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(42,122,42,0.5);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    max-width: 80ch;
+  }
+  nav[aria-label="Primary"] {
+    background-color: #1f5e1f;
+    padding: 0.5rem 2rem;
+  }
+  nav[aria-label="Primary"] ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  nav[aria-label="Primary"] a {
+    color: #e6f2d7;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.5rem 0.25rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  nav[aria-label="Primary"] a[aria-current="page"] {
+    background-color: #4caf50;
+    color: #0b290b;
+    font-weight: 700;
+  }
+  nav[aria-label="Primary"] a:hover,
+  nav[aria-label="Primary"] a:focus-visible {
+    background-color: #3a8a2a;
+    color: #e6f2d7;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  /* Breadcrumbs */
+  nav[aria-label="Breadcrumb"] {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  nav[aria-label="Breadcrumb"] ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.25rem;
+  }
+  nav[aria-label="Breadcrumb"] li::after {
+    content: "›";
+    margin-left: 0.25rem;
+    color: #4caf50;
+  }
+  nav[aria-label="Breadcrumb"] li:last-child::after {
+    content: "";
+  }
+  nav[aria-label="Breadcrumb"] a {
+    color: #2a7a2a;
+    text-decoration: none;
+  }
+  nav[aria-label="Breadcrumb"] a:hover,
+  nav[aria-label="Breadcrumb"] a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* Filters & Sorting Form */
+  #filters-form {
+    background-color: #e6f2d7;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  #filters-form fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  #filters-form legend {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: #1b2e13;
+  }
+  #filters-form label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #1b2e13;
+  }
+  #filters-form select,
+  #filters-form input[type="checkbox"] {
+    cursor: pointer;
+  }
+  #filters-form select {
+    min-width: 12rem;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    border: 2px solid #4caf50;
+    border-radius: 4px;
+    background-color: #f0faf4;
+    color: #1b2e13;
+  }
+  #filters-form select:focus {
+    border-color: #3a9d23;
+    outline: none;
+  }
+  #filters-form .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  #filters-form .checkbox-group label {
+    font-weight: 500;
+  }
+  #filters-form .checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: 2px solid #4caf50;
+    border-radius: 4px;
+    background-color: #f0faf4;
+  }
+  #filters-form .checkbox-group input[type="checkbox"]:focus-visible {
+    outline-offset: 2px;
+    outline: 3px solid #3a9d23;
+  }
+  #filters-form button[type="reset"] {
+    background-color: #4caf50;
+    color: #f0faf4;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    align-self: flex-end;
+    min-width: 88px;
+    min-height: 44px;
+    transition: background-color 0.3s ease;
+  }
+  #filters-form button[type="reset"]:hover,
+  #filters-form button[type="reset"]:focus-visible {
+    background-color: #3a8a2a;
+  }
+
+  /* Products Grid */
+  #products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  article.product-card {
+    background-color: #ffffff;
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(42,122,42,0.15);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    position: relative;
+  }
+  article.product-card:focus-within,
+  article.product-card:hover {
+    transform: translateY(-6px);
+    border-color: #3a9d23;
+    box-shadow: 0 8px 16px rgba(58,157,35,0.4);
+  }
+
+  article.product-card img {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    object-fit: cover;
+  }
+  article.product-card .product-info {
+    padding: 1rem 1.25rem 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  article.product-card h3 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+    color: #1b2e13;
+    max-width: 80ch;
+  }
+  article.product-card .price {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #2a7a2a;
+    margin-bottom: 0.5rem;
+  }
+  article.product-card .popularity {
+    font-size: 0.875rem;
+    color: #4caf50;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  article.product-card .popularity svg {
+    fill: #4caf50;
+  }
+  article.product-card button.quick-view-btn {
+    background-color: #4caf50;
+    border: none;
+    color: #f0faf4;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    min-width: 88px;
+    min-height: 44px;
+    align-self: flex-start;
+    transition: background-color 0.3s ease;
+  }
+  article.product-card button.quick-view-btn:hover,
+  article.product-card button.quick-view-btn:focus-visible {
+    background-color: #3a8a2a;
+  }
+  article.product-card button.quick-view-btn:focus-visible {
+    outline-offset: 3px;
+  }
+
+  /* Additional details on hover/focus */
+  article.product-card .additional-details {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(42,122,42,0.85) 0%, rgba(42,122,42,0.95) 100%);
+    color: #e6f2d7;
+    padding: 1rem;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  article.product-card:hover .additional-details,
+  article.product-card:focus-within .additional-details {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  article.product-card .additional-details p {
+    margin: 0;
+  }
+
+  /* Modal styles */
+  #modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(27,46,19,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+  }
+  #modal[aria-hidden="false"] {
+    display: flex;
+  }
+  #modal .modal-content {
+    background-color: #f0faf4;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(42,122,42,0.8);
+    padding: 1.5rem 2rem;
+    position: relative;
+  }
+  #modal .modal-content:focus {
+    outline: none;
+  }
+  #modal header {
+    margin-bottom: 1rem;
+  }
+  #modal header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1b2e13;
+  }
+  #modal .modal-body {
+    font-size: 1rem;
+    color: #1b2e13;
+    line-height: 1.5;
+  }
+  #modal .modal-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  #modal button.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: transparent;
+    border: none;
+    color: #2a7a2a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+  }
+  #modal button.close-modal:hover,
+  #modal button.close-modal:focus-visible {
+    color: #1b2e13;
+    outline-offset: 2px;
+    outline: 3px solid #3a9d23;
+  }
+
+  /* Responsive text size for headings */
+  @media (min-width: 600px) {
+    header h1 {
+      font-size: 2.25rem;
+    }
+    #modal header h2 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Vibrant color-coded category badges */
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    color: #f0faf4;
+    user-select: none;
+  }
+  .category-badge.leaf {
+    background: linear-gradient(135deg, #2a7a2a 0%, #4caf50 100%);
+    box-shadow: 0 0 6px #4caf50aa;
+  }
+  .category-badge.solar {
+    background: linear-gradient(135deg, #b27d00 0%, #f5c518 100%);
+    box-shadow: 0 0 6px #f5c518aa;
+  }
+  .category-badge.recycled {
+    background: linear-gradient(135deg, #007a6b 0%, #00b38a 100%);
+    box-shadow: 0 0 6px #00b38aaa;
+  }
+  .category-badge.organic {
+    background: linear-gradient(135deg, #5a4a00 0%, #a59e00 100%);
+    box-shadow: 0 0 6px #a59e00aa;
+  }
+
+  /* Accessibility: enhanced focus for interactive elements */
+  button.quick-view-btn,
+  #filters-form select,
+  #filters-form input[type="checkbox"],
+  #filters-form button[type="reset"],
+  nav[aria-label="Primary"] a {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+
+<header>
+  <h1>Eco-Friendly Products Showcase</h1>
+</header>
+
+<nav aria-label="Primary">
+  <ul role="menubar" aria-label="Primary navigation menu">
+    <li role="none"><a href="#filters" role="menuitem" aria-current="page">Products</a></li>
+    <li role="none"><a href="#about" role="menuitem">About Us</a></li>
+    <li role="none"><a href="#contact" role="menuitem">Contact</a></li>
+  </ul>
+</nav>
+
+<nav aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/" aria-current="page">Home</a></li>
+    <li><a href="#products">Products</a></li>
+    <li aria-current="location">Eco-Friendly Products Showcase</li>
+  </ol>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section aria-labelledby="filters-heading">
+    <h2 id="filters-heading">Filter and Sort Products</h2>
+    <form id="filters-form" aria-describedby="filters-help" novalidate>
+      <p id="filters-help" class="sr-only">
+        Use the controls below to filter products by category and sort them by price or popularity. All controls are keyboard accessible.
+      </p>
+      <fieldset>
+        <legend>Filter by Category</legend>
+        <div class="checkbox-group" role="group" aria-label="Product categories filter">
+          <label for="cat-leaf">
+            <input type="checkbox" id="cat-leaf" name="category" value="leaf" aria-checked="false" />
+            <span class="category-badge leaf" aria-hidden="true">Leaf</span>
+            Leaf Products
+          </label>
+          <label for="cat-solar">
+            <input type="checkbox" id="cat-solar" name="category" value="solar" aria-checked="false" />
+            <span class="category-badge solar" aria-hidden="true">Solar</span>
+            Solar Products
+          </label>
+          <label for="cat-recycled">
+            <input type="checkbox" id="cat-recycled" name="category" value="recycled" aria-checked="false" />
+            <span class="category-badge recycled" aria-hidden="true">Recycled</span>
+            Recycled Products
+          </label>
+          <label for="cat-organic">
+            <input type="checkbox" id="cat-organic" name="category" value="organic" aria-checked="false" />
+            <span class="category-badge organic" aria-hidden="true">Organic</span>
+            Organic Products
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sort Products</legend>
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select" name="sort" aria-describedby="sort-help">
+          <option value="popularity" selected>Popularity (High to Low)</option>
+          <option value="price-asc">Price (Low to High)</option>
+          <option value="price-desc">Price (High to Low)</option>
+        </select>
+        <p id="sort-help" class="sr-only">Select sorting order for products.</p>
+      </fieldset>
+
+      <button type="reset" aria-label="Reset all filters and sorting">Reset Filters</button>
+    </form>
+  </section>
+
+  <section aria-labelledby="products-heading">
+    <h2 id="products-heading">Available Eco-Friendly Products</h2>
+    <div id="products-grid" role="list" aria-live="polite" aria-relevant="additions removals">
+      <!-- Products dynamically inserted here -->
+    </div>
+  </section>
+
+  <section id="about" aria-labelledby="about-heading" tabindex="-1">
+    <h2 id="about-heading">About Our Eco-Friendly Products</h2>
+    <p>
+      We are dedicated to providing sustainable and environmentally responsible products that help reduce your carbon footprint. Our curated selection includes items made from recycled materials, solar-powered devices, organic goods, and more.
+    </p>
+    <p>
+      Each product is carefully vetted for quality and environmental impact. Learn more about how you can contribute to a greener planet by choosing eco-friendly products.
+    </p>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-heading" tabindex="-1">
+    <h2 id="contact-heading">Contact Us</h2>
+    <p>
+      Have questions or want to suggest a product? Reach out to our support team.
+    </p>
+    <form id="contact-form" aria-describedby="contact-help" novalidate>
+      <p id="contact-help" class="sr-only">
+        Contact form with required fields for name and email. Please fill all required fields before submitting.
+      </p>
+      <fieldset>
+        <legend>Contact Information</legend>
+        <label for="name-input">Name <span aria-hidden="true" style="color:#d32f2f;">*</span></label>
+        <input type="text" id="name-input" name="name" autocomplete="name" required aria-required="true" aria-describedby="name-error" />
+        <span id="name-error" class="error-message" aria-live="assertive"></span>
+
+        <label for="email-input">Email <span aria-hidden="true" style="color:#d32f2f;">*</span></label>
+        <input type="email" id="email-input" name="email" autocomplete="email" required aria-required="true" aria-describedby="email-error" />
+        <span id="email-error" class="error-message" aria-live="assertive"></span>
+
+        <label for="message-input">Message</label>
+        <textarea id="message-input" name="message" rows="4" autocomplete="off" aria-describedby="message-help"></textarea>
+        <span id="message-help" class="sr-only">Optional message to contact support.</span>
+      </fieldset>
+
+      <button type="submit" aria-label="Send contact message">Send Message</button>
+      <div id="form-status" role="status" aria-live="polite" aria-atomic="true" style="margin-top:1rem;"></div>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <section aria-label="Footer information" style="background-color:#2a7a2a; color:#e6f2d7; padding:1rem 2rem; text-align:center;">
+    <p>© 2024 Eco-Friendly Products Showcase. All rights reserved.</p>
+    <p>
+      <a href="#main-content" style="color:#d0f0c0; text-decoration: underline;">Back to top</a>
+    </p>
+  </section>
+</footer>
+
+<!-- Modal for Quick View -->
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
+  <div class="modal-content" tabindex="0">
+    <button class="close-modal" aria-label="Close product quick view">&times;</button>
+    <header>
+      <h2 id="modal-title"></h2>
+    </header>
+    <section id="modal-desc" class="modal-body"></section>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // Product data
+    const products = [
+      {
+        id: "p1",
+        name: "Solar Lantern",
+        category: "solar",
+        price: 29.99,
+        popularity: 95,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
+        alt: "Solar lantern glowing in a garden at dusk",
+        description: "A durable solar lantern providing up to 8 hours of light. Perfect for outdoor use and energy saving.",
+        details: "This lantern features a rechargeable battery charged by solar panels, waterproof design, and adjustable brightness levels."
+      },
+      {
+        id: "p2",
+        name: "Recycled Paper Notebook",
+        category: "recycled",
+        price: 7.5,
+        popularity: 80,
+        image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=400&q=80",
+        alt: "Notebook made from recycled paper with a green cover",
+        description: "Eco-friendly notebook made entirely from recycled paper, perfect for journaling or note-taking.",
+        details: "Contains 120 pages, acid-free recycled paper, and a sturdy cardboard cover printed with soy-based inks."
+      },
+      {
+        id: "p3",
+        name: "Organic Cotton Tote Bag",
+        category: "organic",
+        price: 15.0,
+        popularity: 88,
+        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=400&q=80",
+        alt: "Organic cotton tote bag with green leaf print",
+        description: "Reusable tote bag made from 100% organic cotton, strong and stylish for daily shopping.",
+        details: "Machine washable, ethically sourced, and printed with eco-friendly dyes. Dimensions: 15\" x 16\"."
+      },
+      {
+        id: "p4",
+        name: "Leaf-Shaped Bamboo Cutlery Set",
+        category: "leaf",
+        price: 12.99,
+        popularity: 75,
+        image: "https://images.unsplash.com/photo-1504203705371-7d2e0b25b8d3?auto=format&fit=crop&w=400&q=80",
+        alt: "Bamboo cutlery set shaped like leaves, arranged on a wooden table",
+        description: "Portable bamboo cutlery set with leaf-shaped handles, biodegradable and sustainable.",
+        details: "Includes fork, spoon, knife, and chopsticks in a cotton pouch. Perfect for picnics and travel."
+      },
+      {
+        id: "p5",
+        name: "Solar Phone Charger",
+        category: "solar",
+        price: 45.0,
+        popularity: 92,
+        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80",
+        alt: "Compact solar phone charger with a smartphone connected",
+        description: "Compact and efficient solar phone charger with USB output for on-the-go charging.",
+        details: "Compatible with most smartphones, includes a built-in battery for charging without sunlight."
+      },
+      {
+        id: "p6",
+        name: "Recycled Plastic Water Bottle",
+        category: "recycled",
+        price: 18.99,
+        popularity: 85,
+        image: "https://images.unsplash.com/photo-1526403224744-1b0c5d2a4c8b?auto=format&fit=crop&w=400&q=80",
+        alt: "Reusable water bottle made from recycled plastic with green accents",
+        description: "Durable water bottle made from 100% recycled plastic, BPA-free and dishwasher safe.",
+        details: "Holds 750ml, leak-proof cap, and designed for active lifestyles."
+      },
+      {
+        id: "p7",
+        name: "Organic Herbal Tea Set",
+        category: "organic",
+        price: 22.5,
+        popularity: 78,
+        image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80",
+        alt: "Assorted organic herbal tea bags in a wooden box",
+        description: "Selection of organic herbal teas including chamomile, peppermint, and lemongrass.",
+        details: "Certified organic, ethically sourced, and packaged in recyclable materials."
+      },
+      {
+        id: "p8",
+        name: "Leaf Patterned Eco-Friendly Yoga Mat",
+        category: "leaf",
+        price: 55.0,
+        popularity: 83,
+        image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80",
+        alt: "Yoga mat with leaf patterns rolled out on grass",
+        description: "Eco-friendly yoga mat made from natural rubber with a leaf pattern for grip and style.",
+        details: "Non-toxic, biodegradable, and durable with extra cushioning for joint support."
+      }
+    ];
+
+    // Cache DOM elements
+    const productsGrid = document.getElementById("products-grid");
+    const filtersForm = document.getElementById("filters-form");
+    const categoryCheckboxes = filtersForm.querySelectorAll('input[name="category"]');
+    const sortSelect = document.getElementById("sort-select");
+    const resetButton = filtersForm.querySelector('button[type="reset"]');
+    const modal = document.getElementById("modal");
+    const modalTitle = modal.querySelector("#modal-title");
+    const modalDesc = modal.querySelector("#modal-desc");
+    const modalCloseBtn = modal.querySelector(".close-modal");
+    const contactForm = document.getElementById("contact-form");
+    const formStatus = document.getElementById("form-status");
+    const nameInput = document.getElementById("name-input");
+    const emailInput = document.getElementById("email-input");
+    const messageInput = document.getElementById("message-input");
+    const nameError = document.getElementById("name-error");
+    const emailError = document.getElementById("email-error");
+
+    // Utility: Sanitize text for accessibility
+    function sanitizeText(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Render products based on filters and sorting
+    function renderProducts() {
+      // Get selected categories
+      const selectedCategories = Array.from(categoryCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      // Filter products
+      let filteredProducts = products.filter(p => {
+        if (selectedCategories.length === 0) return true;
+        return selectedCategories.includes(p.category);
+      });
+
+      // Sort products
+      const sortValue = sortSelect.value;
+      filteredProducts.sort((a, b) => {
+        if (sortValue === "popularity") {
+          return b.popularity - a.popularity;
+        } else if (sortValue === "price-asc") {
+          return a.price - b.price;
+        } else if (sortValue === "price-desc") {
+          return b.price - a.price;
+        }
+        return 0;
+      });
+
+      // Clear grid
+      productsGrid.innerHTML = "";
+
+      if (filteredProducts.length === 0) {
+        const noResult = document.createElement("p");
+        noResult.textContent = "No products match the selected filters.";
+        noResult.style.color = "#1b2e13";
+        noResult.style.fontWeight = "700";
+        productsGrid.appendChild(noResult);
+        return;
+      }
+
+      // Create product cards
+      filteredProducts.forEach(product => {
+        const article = document.createElement("article");
+        article.className = "product-card";
+        article.setAttribute("role", "listitem");
+        article.tabIndex = 0;
+        article.setAttribute("aria-labelledby", `${product.id}-name`);
+        article.setAttribute("aria-describedby", `${product.id}-desc`);
+
+        // Image
+        const img = document.createElement("img");
+        img.src = product.image;
+        img.alt = product.alt;
+        img.loading = "lazy";
+        img.width = 400;
+        img.height = 300;
+        article.appendChild(img);
+
+        // Product info container
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "product-info";
+
+        // Name
+        const name = document.createElement("h3");
+        name.id = `${product.id}-name`;
+        name.textContent = product.name;
+        infoDiv.appendChild(name);
+
+        // Category badge
+        const categoryBadge = document.createElement("span");
+        categoryBadge.className = "category-badge " + product.category;
+        categoryBadge.setAttribute("aria-label", `Category: ${capitalize(product.category)}`);
+        categoryBadge.setAttribute("role", "img");
+        categoryBadge.textContent = capitalize(product.category);
+        infoDiv.appendChild(categoryBadge);
+
+        // Price
+        const price = document.createElement("p");
+        price.className = "price";
+        price.textContent = product.price.toLocaleString("en-US", {style:"currency", currency:"USD"});
+        infoDiv.appendChild(price);
+
+        // Popularity with icon
+        const popularity = document.createElement("p");
+        popularity.className = "popularity";
+        popularity.setAttribute("aria-label", `Popularity rating: ${product.popularity} out of 100`);
+        popularity.innerHTML = `
+          <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="#4caf50" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg> ${product.popularity}
+        `;
+        infoDiv.appendChild(popularity);
+
+        // Quick view button
+        const quickViewBtn = document.createElement("button");
+        quickViewBtn.className = "quick-view-btn";
+        quickViewBtn.type = "button";
+        quickViewBtn.textContent = "Quick View";
+        quickViewBtn.setAttribute("aria-describedby", `${product.id}-desc`);
+        quickViewBtn.setAttribute("aria-label", `Quick view details for ${product.name}`);
+        quickViewBtn.addEventListener("click", () => openModal(product));
+        infoDiv.appendChild(quickViewBtn);
+
+        // Additional details on hover/focus (hidden by default)
+        const additionalDetails = document.createElement("div");
+        additionalDetails.className = "additional-details";
+        additionalDetails.id = `${product.id}-desc`;
+        additionalDetails.setAttribute("aria-hidden", "true");
+        additionalDetails.innerHTML = `<p>${sanitizeText(product.description)}</p>`;
+
+        article.appendChild(infoDiv);
+        article.appendChild(additionalDetails);
+
+        // Accessibility: Show additional details on keyboard focus of card or quick view button
+        article.addEventListener("focusin", () => {
+          additionalDetails.setAttribute("aria-hidden", "false");
+        });
+        article.addEventListener("focusout", () => {
+          additionalDetails.setAttribute("aria-hidden", "true");
+        });
+
+        productsGrid.appendChild(article);
+      });
+    }
+
+    // Capitalize first letter helper
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Open modal with product details
+    function openModal(product) {
+      modalTitle.textContent = product.name;
+      modalDesc.innerHTML = `
+        <img src="${product.image}" alt="${sanitizeText(product.alt)}" />
+        <p><strong>Price:</strong> ${product.price.toLocaleString("en-US", {style:"currency", currency:"USD"})}</p>
+        <p><strong>Description:</strong> ${sanitizeText(product.description)}</p>
+        <p><strong>Details:</strong> ${sanitizeText(product.details)}</p>
+      `;
+      modal.setAttribute("aria-hidden", "false");
+      modal.style.display = "flex";
+      // Trap focus inside modal
+      trapFocus(modal);
+      modal.querySelector(".modal-content").focus();
+    }
+
+    // Close modal
+    function closeModal() {
+      modal.setAttribute("aria-hidden", "true");
+      modal.style.display = "none";
+      // Return focus to last focused quick view button
+      if (lastFocusedQuickViewBtn) {
+        lastFocusedQuickViewBtn.focus();
+      }
+    }
+
+    // Focus trap implementation
+    let lastFocusedQuickViewBtn = null;
+    function trapFocus(element) {
+      const focusableSelectors = [
+        'a[href]',
+        'area[href]',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        'button:not([disabled])',
+        'iframe',
+        'object',
+        'embed',
+        '[contenteditable]',
+        '[tabindex]:not([tabindex="-1"])'
+      ];
+      const focusableElements = element.querySelectorAll(focusableSelectors.join(','));
+      if (focusableElements.length === 0) return;
+
+      const firstEl = focusableElements[0];
+      const lastEl = focusableElements[focusableElements.length -1];
+
+      function handleTrap(e) {
+        if (e.key === "Tab") {
+          if (e.shiftKey) {
+            if (document.activeElement === firstEl) {
+              e.preventDefault();
+              lastEl.focus();
+            }
+          } else {
+            if (document.activeElement === lastEl) {
+              e.preventDefault();
+              firstEl.focus();
+            }
+          }
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          closeModal();
+        }
+      }
+      element.addEventListener("keydown", handleTrap);
+      // Remove listener on modal close
+      function cleanup() {
+        element.removeEventListener("keydown", handleTrap);
+        element.removeEventListener("transitionend", cleanup);
+      }
+      element.addEventListener("transitionend", cleanup);
+    }
+
+    // Event listeners for filters and sorting
+    filtersForm.addEventListener("change", e => {
+      if (e.target.name === "category") {
+        e.target.setAttribute("aria-checked", e.target.checked.toString());
+      }
+      renderProducts();
+    });
+    sortSelect.addEventListener("change", renderProducts);
+
+    // Reset filters
+    resetButton.addEventListener("click", e => {
+      categoryCheckboxes.forEach(cb => {
+        cb.checked = false;
+        cb.setAttribute("aria-checked", "false");
+      });
+      sortSelect.value = "popularity";
+      renderProducts();
+      resetButton.focus();
+    });
+
+    // Modal close button
+    modalCloseBtn.addEventListener("click", closeModal);
+
+    // Close modal on click outside modal content
+    modal.addEventListener("click", e => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal on Escape key handled in trapFocus
+
+    // Store last focused quick view button for returning focus
+    productsGrid.addEventListener("click", e => {
+      if (e.target.classList.contains("quick-view-btn")) {
+        lastFocusedQuickViewBtn = e.target;
+      }
+    });
+
+    // Contact form validation and submission
+    contactForm.addEventListener("submit", e => {
+      e.preventDefault();
+      clearErrors();
+
+      let valid = true;
+
+      if (!nameInput.value.trim()) {
+        showError(nameInput, nameError, "Name is required.");
+        valid = false;
+      }
+      if (!emailInput.value.trim()) {
+        showError(emailInput, emailError, "Email is required.");
+        valid = false;
+      } else if (!validateEmail(emailInput.value.trim())) {
+        showError(emailInput, emailError, "Please enter a valid email address.");
+        valid = false;
+      }
+
+      if (!valid) {
+        formStatus.textContent = "Please fix the errors above and try again.";
+        formStatus.style.color = "#d32f2f";
+        return;
+      }
+
+      // Simulate submission success
+      formStatus.textContent = "Sending message...";
+      formStatus.style.color = "#1b5e20";
+
+      setTimeout(() => {
+        formStatus.textContent = "Thank you! Your message has been sent successfully.";
+        formStatus.style.color = "#1b5e20";
+        contactForm.reset();
+        nameInput.focus();
+      }, 1500);
+    });
+
+    function clearErrors() {
+      [nameError, emailError].forEach(span => {
+        span.textContent = "";
+      });
+      [nameInput, emailInput].forEach(input => {
+        input.removeAttribute("aria-invalid");
+        input.removeAttribute("aria-describedby");
+      });
+      formStatus.textContent = "";
+    }
+
+    function showError(input, errorSpan, message) {
+      input.setAttribute("aria-invalid", "true");
+      errorSpan.textContent = message;
+      input.setAttribute("aria-describedby", errorSpan.id);
+    }
+
+    function validateEmail(email) {
+      // Simple email regex for demonstration; in production use more robust validation
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email.toLowerCase());
+    }
+
+    // Initialize
+    renderProducts();
+
+    // Accessibility: Focus main content on page load for screen readers
+    window.addEventListener("load", () => {
+      const mainContent = document.getElementById("main-content");
+      if (mainContent) {
+        mainContent.setAttribute("tabindex", "-1");
+      }
+    });
+
+  })();
+</script>
+
+<!-- Screen reader only styles -->
+<style>
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .error-message {
+    color: #d32f2f;
+    font-size: 0.875rem;
+    margin-top: 0.125rem;
+    display: block;
+    min-height: 1.2em;
+  }
+</style>
+</body>
+</html>

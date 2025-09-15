@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Interactive Product Cards Showcase</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+    color: #1a1a1a;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4ff;
+    color: #1a1a1a;
+  }
+  a {
+    color: #004aad;
+    text-decoration: underline;
+  }
+  a:focus,
+  button:focus,
+  .card:focus-within {
+    outline: 3px solid #ffbf47;
+    outline-offset: 3px;
+  }
+  a:hover,
+  a:focus-visible {
+    color: #002f6c;
+  }
+  h1, h2, h3 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    color: #003366;
+  }
+  h1 {
+    font-size: 2.25rem;
+    line-height: 1.2;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  p {
+    margin-top: 0;
+    margin-bottom: 1.25em;
+  }
+  ul {
+    padding-left: 1.5em;
+    margin-top: 0;
+    margin-bottom: 1.25em;
+  }
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    background-color: #004aad;
+    color: #ffffff;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    min-width: 44px;
+    min-height: 44px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover,
+  button:focus-visible {
+    background-color: #002f6c;
+  }
+  button[aria-pressed="true"] {
+    background-color: #ffbf47;
+    color: #1a1a1a;
+  }
+  button[aria-pressed="true"]:hover,
+  button[aria-pressed="true"]:focus-visible {
+    background-color: #cc9e30;
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #ffbf47;
+    color: #1a1a1a;
+    padding: 0.75em 1em;
+    z-index: 100;
+    font-weight: 700;
+    border-radius: 0 0 6px 0;
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* Layout */
+  header, nav, main, footer {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  header {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 3px solid #004aad;
+  }
+  footer {
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+    border-top: 3px solid #004aad;
+    font-size: 0.9rem;
+    color: #333333;
+  }
+
+  /* Navigation */
+  nav[aria-label="Primary"] {
+    margin-top: 1em;
+    margin-bottom: 2em;
+  }
+  nav ul {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    gap: 1.5em;
+  }
+  nav a {
+    font-weight: 600;
+    color: #004aad;
+    text-decoration: none;
+    padding: 0.5em 0.25em;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  nav a:hover,
+  nav a:focus-visible {
+    background-color: #ffbf47;
+    color: #1a1a1a;
+    outline-offset: 2px;
+  }
+  nav a[aria-current="page"] {
+    font-weight: 700;
+    border-bottom: 3px solid #ffbf47;
+    color: #002f6c;
+  }
+
+  /* Main content grid */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2em;
+    margin-bottom: 3em;
+  }
+  @media (max-width: 900px) {
+    main {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Sidebar */
+  aside[aria-label="Sidebar"] {
+    background-color: #dbe9ff;
+    border: 3px solid #004aad;
+    border-radius: 8px;
+    padding: 1em;
+  }
+  aside h2 {
+    color: #002f6c;
+  }
+  aside p {
+    font-size: 1rem;
+    color: #003366;
+  }
+
+  /* Cards container */
+  section[aria-label="Product showcase"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5em;
+  }
+
+  /* Product card */
+  article.card {
+    background: linear-gradient(145deg, #ffffff, #dbe9ff);
+    border: 3px solid #004aad;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    cursor: pointer;
+    min-height: 400px;
+    outline-offset: 4px;
+  }
+  article.card:focus-within,
+  article.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgb(0 0 0 / 0.2);
+    border-color: #ffbf47;
+  }
+  article.card:focus-within {
+    outline: 3px solid #ffbf47;
+  }
+
+  /* Card image */
+  .card__image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    overflow: hidden;
+    border-bottom: 3px solid #004aad;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+  }
+  .card__image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Card content */
+  .card__content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 1em 1.25em 1.5em 1.25em;
+  }
+  .card__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5em 0;
+    color: #002f6c;
+  }
+  .card__desc {
+    flex-grow: 1;
+    font-size: 1rem;
+    color: #003366;
+    margin-bottom: 1em;
+  }
+  .card__features {
+    list-style: none;
+    padding-left: 1.25em;
+    margin: 0 0 1em 0;
+    color: #004aad;
+  }
+  .card__features li {
+    position: relative;
+    margin-bottom: 0.5em;
+    padding-left: 1.5em;
+  }
+  .card__features li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #ffbf47;
+    font-weight: 700;
+  }
+
+  /* Card action */
+  .card__actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1em;
+  }
+  .card__actions button {
+    flex: 1 1 auto;
+  }
+
+  /* Focus visible enhancement */
+  :focus-visible {
+    outline-offset: 3px;
+  }
+
+  /* Responsive text sizing */
+  @media (max-width: 600px) {
+    html {
+      font-size: 16px;
+    }
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#maincontent" class="skip-link">Skip to main content</a>
+
+<header>
+  <h1>Explore Our Accessible Interactive Product Cards</h1>
+  <nav aria-label="Primary">
+    <ul>
+      <li><a href="#maincontent" accesskey="m">Main Content</a></li>
+      <li><a href="#products" aria-current="page">Products</a></li>
+      <li><a href="#sidebar">About</a></li>
+      <li><a href="#footer">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="maincontent" tabindex="-1">
+  <section aria-label="Product showcase" id="products">
+    <article class="card" tabindex="0" role="group" aria-labelledby="product1-title" aria-describedby="product1-desc product1-features">
+      <div class="card__image-wrapper">
+        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=600&q=80" alt="Sleek wireless headphones with cushioned ear cups and black finish" />
+      </div>
+      <div class="card__content">
+        <h2 id="product1-title" class="card__title">Wireless Noise-Cancelling Headphones</h2>
+        <p id="product1-desc" class="card__desc">Experience immersive sound with our premium wireless headphones, designed for comfort and clarity in any environment.</p>
+        <ul id="product1-features" class="card__features">
+          <li>Active noise cancellation technology</li>
+          <li>Up to 30 hours battery life</li>
+          <li>Bluetooth 5.2 connectivity</li>
+        </ul>
+        <div class="card__actions">
+          <button type="button" aria-pressed="false" aria-label="Add Wireless Noise-Cancelling Headphones to cart" class="add-to-cart-btn">Add to Cart</button>
+          <button type="button" aria-label="Learn more about Wireless Noise-Cancelling Headphones" class="learn-more-btn">Learn More</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card" tabindex="0" role="group" aria-labelledby="product2-title" aria-describedby="product2-desc product2-features">
+      <div class="card__image-wrapper">
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80" alt="Modern ergonomic office chair with black mesh back and adjustable armrests" />
+      </div>
+      <div class="card__content">
+        <h2 id="product2-title" class="card__title">Ergonomic Office Chair</h2>
+        <p id="product2-desc" class="card__desc">Stay comfortable during long workdays with our adjustable ergonomic chair, crafted to support posture and reduce fatigue.</p>
+        <ul id="product2-features" class="card__features">
+          <li>Adjustable lumbar support</li>
+          <li>Breathable mesh backrest</li>
+          <li>Swivel and tilt mechanisms</li>
+        </ul>
+        <div class="card__actions">
+          <button type="button" aria-pressed="false" aria-label="Add Ergonomic Office Chair to cart" class="add-to-cart-btn">Add to Cart</button>
+          <button type="button" aria-label="Learn more about Ergonomic Office Chair" class="learn-more-btn">Learn More</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card" tabindex="0" role="group" aria-labelledby="product3-title" aria-describedby="product3-desc product3-features">
+      <div class="card__image-wrapper">
+        <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80" alt="Smart home assistant device with voice control and sleek white design" />
+      </div>
+      <div class="card__content">
+        <h2 id="product3-title" class="card__title">Smart Home Assistant</h2>
+        <p id="product3-desc" class="card__desc">Control your home with voice commands using our smart assistant, featuring seamless integration with your devices.</p>
+        <ul id="product3-features" class="card__features">
+          <li>Voice recognition and control</li>
+          <li>Compatible with multiple smart devices</li>
+          <li>Privacy-focused design with mute option</li>
+        </ul>
+        <div class="card__actions">
+          <button type="button" aria-pressed="false" aria-label="Add Smart Home Assistant to cart" class="add-to-cart-btn">Add to Cart</button>
+          <button type="button" aria-label="Learn more about Smart Home Assistant" class="learn-more-btn">Learn More</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card" tabindex="0" role="group" aria-labelledby="product4-title" aria-describedby="product4-desc product4-features">
+      <div class="card__image-wrapper">
+        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=600&q=80" alt="Portable solar charger with foldable panels and compact design" />
+      </div>
+      <div class="card__content">
+        <h2 id="product4-title" class="card__title">Portable Solar Charger</h2>
+        <p id="product4-desc" class="card__desc">Charge your devices sustainably on the go with our compact solar charger, perfect for outdoor adventures.</p>
+        <ul id="product4-features" class="card__features">
+          <li>Foldable and lightweight design</li>
+          <li>High-efficiency solar panels</li>
+          <li>Multiple USB ports for simultaneous charging</li>
+        </ul>
+        <div class="card__actions">
+          <button type="button" aria-pressed="false" aria-label="Add Portable Solar Charger to cart" class="add-to-cart-btn">Add to Cart</button>
+          <button type="button" aria-label="Learn more about Portable Solar Charger" class="learn-more-btn">Learn More</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <aside aria-label="Sidebar" id="sidebar" tabindex="0">
+    <h2>Why Choose Our Products?</h2>
+    <p>We prioritize accessibility, quality, and innovation in every product we offer. Our interactive cards allow you to explore features easily and add items to your cart with confidence.</p>
+    <h3>Helpful Tips</h3>
+    <ul>
+      <li>Use keyboard navigation: Tab to move forward, Shift+Tab to move backward.</li>
+      <li>Press Enter or Space to activate buttons.</li>
+      <li>Hover or focus on cards to see smooth scaling animations.</li>
+      <li>All images have descriptive alternative text for screen readers.</li>
+    </ul>
+  </aside>
+</main>
+
+<footer id="footer" role="contentinfo">
+  <p>© 2024 Accessible Products Inc. All rights reserved.</p>
+  <nav aria-label="Footer navigation">
+    <ul>
+      <li><a href="#maincontent">Back to top</a></li>
+      <li><a href="mailto:support@accessibleproducts.example" aria-label="Email support at Accessible Products">Contact Support</a></li>
+      <li><a href="#sidebar">About Us</a></li>
+      <li><a href="#products">Product Showcase</a></li>
+    </ul>
+  </nav>
+</footer>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Helper: Update aria-pressed state for Add to Cart buttons
+    const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+    addToCartButtons.forEach(button => {
+      button.addEventListener("click", (event) => {
+        const btn = event.currentTarget;
+        const pressed = btn.getAttribute("aria-pressed") === "true";
+        btn.setAttribute("aria-pressed", String(!pressed));
+        btn.textContent = pressed ? "Add to Cart" : "Remove from Cart";
+        btn.setAttribute("aria-label", (pressed ? "Add" : "Remove") + " " + btn.closest("article.card").querySelector(".card__title").textContent + (pressed ? " to cart" : " from cart"));
+        // Announce status change for screen readers
+        const statusMsg = document.getElementById("cart-status");
+        if (statusMsg) {
+          statusMsg.textContent = btn.textContent + " for " + btn.closest("article.card").querySelector(".card__title").textContent + ".";
+        }
+      });
+
+      // Keyboard accessibility: space and enter keys toggle button
+      button.addEventListener("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          button.click();
+        }
+      });
+    });
+
+    // Add a live region for cart status updates
+    const liveRegion = document.createElement("div");
+    liveRegion.id = "cart-status";
+    liveRegion.setAttribute("aria-live", "polite");
+    liveRegion.setAttribute("aria-atomic", "true");
+    liveRegion.style.position = "absolute";
+    liveRegion.style.width = "1px";
+    liveRegion.style.height = "1px";
+    liveRegion.style.margin = "-1px";
+    liveRegion.style.border = "0";
+    liveRegion.style.padding = "0";
+    liveRegion.style.overflow = "hidden";
+    liveRegion.style.clip = "rect(0 0 0 0)";
+    liveRegion.style.clipPath = "inset(50%)";
+    liveRegion.style.whiteSpace = "nowrap";
+    document.body.appendChild(liveRegion);
+
+    // Ensure cards are focusable and keyboard accessible
+    const cards = document.querySelectorAll("article.card");
+    cards.forEach(card => {
+      // Keyboard: Enter or Space triggers Learn More button
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          const learnMoreBtn = card.querySelector(".learn-more-btn");
+          if (learnMoreBtn) {
+            learnMoreBtn.focus();
+            learnMoreBtn.click();
+          }
+        }
+      });
+    });
+
+    // Learn More buttons alert with more info (simulate modal or navigation)
+    const learnMoreButtons = document.querySelectorAll(".learn-more-btn");
+    learnMoreButtons.forEach(button => {
+      button.addEventListener("click", (event) => {
+        const productTitle = button.closest("article.card").querySelector(".card__title").textContent;
+        alert(`More information about ${productTitle} is coming soon. Thank you for your interest!`);
+      });
+      button.addEventListener("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          button.click();
+        }
+      });
+    });
+
+  })();
+</script>
+</body>
+</html>

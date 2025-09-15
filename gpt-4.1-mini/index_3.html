@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Calorie Tracker: Log Meals, Exercise & Track Fitness Goals</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 100%;
+    line-height: 1.6;
+    background: linear-gradient(135deg, #004d40 0%, #00695c 100%);
+    color: #e0f2f1;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a, button {
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  /* Skip link */
+  #skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #004d40;
+    color: #e0f2f1;
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    border: 2px solid #80cbc4;
+    border-radius: 0 0 4px 4px;
+    text-decoration: none;
+  }
+  #skip-link:focus {
+    top: 0;
+    outline: 3px solid #80cbc4;
+    outline-offset: 2px;
+  }
+  /* Layout */
+  header, footer {
+    background-color: #00796b;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: #a7ffeb;
+    text-shadow: 0 0 5px #004d40;
+  }
+  nav[aria-label="Main Navigation"] {
+    margin-top: 0.5rem;
+  }
+  nav ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+  }
+  nav a {
+    color: #b2dfdb;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    display: inline-block;
+  }
+  nav a:hover,
+  nav a:focus {
+    background-color: #004d40;
+    border-color: #80cbc4;
+    outline: none;
+  }
+  nav a[aria-current="page"] {
+    background-color: #80cbc4;
+    color: #004d40;
+    font-weight: 700;
+    border-color: #004d40;
+  }
+  main {
+    flex-grow: 1;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #004d40cc;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #00796baa;
+  }
+  main > section {
+    margin-bottom: 2.5rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #a7ffeb;
+    border-bottom: 3px solid #80cbc4;
+    padding-bottom: 0.25rem;
+  }
+  /* Forms */
+  fieldset {
+    border: 2px solid #80cbc4;
+    border-radius: 8px;
+    padding: 1rem 1.5rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #00695ccc;
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #b2dfdb;
+    padding: 0 0.5rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: #b2dfdb;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="time"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 2px solid #80cbc4;
+    border-radius: 6px;
+    background-color: #004d40cc;
+    color: #e0f2f1;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="time"]:focus,
+  input[type="date"]:focus,
+  select:focus {
+    border-color: #a7ffeb;
+    outline: none;
+    box-shadow: 0 0 8px #80cbc4aa;
+  }
+  .required-indicator {
+    color: #ff8a80;
+    margin-left: 0.25rem;
+  }
+  .help-text {
+    font-size: 0.875rem;
+    color: #b2dfdb;
+    margin-top: 0.2rem;
+  }
+  .error-message {
+    color: #ff8a80;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  /* Buttons */
+  button {
+    background: linear-gradient(135deg, #26a69a 0%, #004d40 100%);
+    color: #e0f2f1;
+    border: 2px solid #80cbc4;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  button:hover,
+  button:focus {
+    background: linear-gradient(135deg, #80cbc4 0%, #004d40 100%);
+    outline: none;
+    border-color: #a7ffeb;
+    box-shadow: 0 0 10px #80cbc4aa;
+  }
+  button:disabled,
+  button[aria-disabled="true"] {
+    background: #004d40cc;
+    border-color: #004d40cc;
+    color: #4f7a75;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  /* Data display */
+  .totals {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .card {
+    background-color: #00695ccc;
+    border: 2px solid #80cbc4;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    flex: 1 1 250px;
+    box-shadow: 0 0 10px #004d40aa;
+  }
+  .card h3 {
+    margin-top: 0;
+    color: #a7ffeb;
+    font-size: 1.25rem;
+  }
+  .card p {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #e0f2f1;
+    margin: 0.5rem 0 0;
+  }
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #004d40cc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  caption {
+    caption-side: top;
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 0.5rem 0;
+    color: #a7ffeb;
+  }
+  th, td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #80cbc4;
+    color: #e0f2f1;
+    text-align: left;
+  }
+  th {
+    background-color: #00695c;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  /* Scroll for table on small */
+  .table-container {
+    overflow-x: auto;
+    border: 2px solid #80cbc4;
+    border-radius: 8px;
+  }
+  /* Accordion */
+  .accordion {
+    border: 2px solid #80cbc4;
+    border-radius: 8px;
+    background-color: #00695ccc;
+  }
+  .accordion button.accordion-trigger {
+    background: none;
+    border: none;
+    color: #a7ffeb;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding: 1rem 1.5rem;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #80cbc4;
+  }
+  .accordion button.accordion-trigger:focus {
+    outline: 3px solid #80cbc4;
+    outline-offset: 2px;
+  }
+  .accordion button.accordion-trigger[aria-expanded="true"] {
+    background-color: #004d40;
+  }
+  .accordion-content {
+    padding: 1rem 1.5rem;
+    color: #e0f2f1;
+    display: none;
+  }
+  .accordion-content[hidden] {
+    display: none;
+  }
+  .accordion-content:not([hidden]) {
+    display: block;
+  }
+  /* Focus outlines */
+  :focus-visible {
+    outline: 3px solid #80cbc4;
+    outline-offset: 2px;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    main {
+      padding: 1rem;
+      margin: 0 1rem;
+    }
+    nav ul {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .totals {
+      flex-direction: column;
+    }
+  }
+  /* Color and contrast helpers */
+  .icon {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.3em;
+    vertical-align: middle;
+    fill: #80cbc4;
+  }
+  /* Vibrant accent colors for categories */
+  .category-protein {
+    color: #ffab91;
+  }
+  .category-carb {
+    color: #ffd180;
+  }
+  .category-fat {
+    color: #f48fb1;
+  }
+  .category-cardio {
+    color: #81d4fa;
+  }
+  .category-strength {
+    color: #ce93d8;
+  }
+  /* Help text container */
+  .help-container {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #b2dfdb;
+  }
+  /* Visually hidden for screen reader only */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" id="skip-link">Skip to main content</a>
+<header>
+  <h1 id="page-title">Accessible Calorie Tracker</h1>
+  <nav aria-label="Main Navigation" role="navigation">
+    <ul>
+      <li><a href="#meals-section" id="nav-meals" aria-current="page">Meals</a></li>
+      <li><a href="#exercises-section" id="nav-exercises">Exercises</a></li>
+      <li><a href="#goals-section" id="nav-goals">Fitness Goals</a></li>
+      <li><a href="#summary-section" id="nav-summary">Summary</a></li>
+      <li><a href="#help-section" id="nav-help">Help</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main-content" tabindex="-1" aria-labelledby="page-title">
+  <section id="meals-section" aria-labelledby="meals-heading">
+    <h2 id="meals-heading">Log Your Meals</h2>
+    <form id="meal-form" aria-describedby="meal-form-help" novalidate>
+      <fieldset>
+        <legend>Meal Entry</legend>
+        <div>
+          <label for="meal-name">Food Item <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="text" id="meal-name" name="meal-name" autocomplete="off" required aria-required="true" aria-describedby="meal-name-help meal-name-error" />
+          <div id="meal-name-help" class="help-text">Enter the name of the food item you ate.</div>
+          <div id="meal-name-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="meal-calories">Calories (kcal) <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="number" id="meal-calories" name="meal-calories" min="1" max="20000" required aria-required="true" aria-describedby="meal-calories-help meal-calories-error" inputmode="numeric" />
+          <div id="meal-calories-help" class="help-text">Enter the calorie amount consumed (e.g., 250).</div>
+          <div id="meal-calories-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="meal-time">Time Eaten <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="time" id="meal-time" name="meal-time" required aria-required="true" aria-describedby="meal-time-help meal-time-error" />
+          <div id="meal-time-help" class="help-text">Select the time you ate this meal.</div>
+          <div id="meal-time-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <button type="submit" aria-label="Add meal entry">Add Meal</button>
+      </fieldset>
+    </form>
+    <section aria-labelledby="meals-list-heading" class="table-container" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+      <h3 id="meals-list-heading">Meals Logged Today</h3>
+      <table id="meals-table" aria-describedby="meals-table-desc">
+        <caption id="meals-table-desc">List of food items logged with calories and time eaten</caption>
+        <thead>
+          <tr>
+            <th scope="col">Food Item</th>
+            <th scope="col">Calories (kcal)</th>
+            <th scope="col">Time Eaten</th>
+            <th scope="col">Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" style="color:#b2dfdb; text-align:center;">No meals logged yet.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+
+  <section id="exercises-section" aria-labelledby="exercises-heading">
+    <h2 id="exercises-heading">Log Your Physical Activities</h2>
+    <form id="exercise-form" aria-describedby="exercise-form-help" novalidate>
+      <fieldset>
+        <legend>Exercise Entry</legend>
+        <div>
+          <label for="exercise-name">Activity Name <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="text" id="exercise-name" name="exercise-name" autocomplete="off" required aria-required="true" aria-describedby="exercise-name-help exercise-name-error" />
+          <div id="exercise-name-help" class="help-text">Enter the name of the physical activity.</div>
+          <div id="exercise-name-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="exercise-calories">Calories Burned (kcal) <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="number" id="exercise-calories" name="exercise-calories" min="1" max="20000" required aria-required="true" aria-describedby="exercise-calories-help exercise-calories-error" inputmode="numeric" />
+          <div id="exercise-calories-help" class="help-text">Enter the calories burned during this activity.</div>
+          <div id="exercise-calories-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="exercise-duration">Duration (minutes) <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="number" id="exercise-duration" name="exercise-duration" min="1" max="1440" required aria-required="true" aria-describedby="exercise-duration-help exercise-duration-error" inputmode="numeric" />
+          <div id="exercise-duration-help" class="help-text">Enter how long you performed the activity.</div>
+          <div id="exercise-duration-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="exercise-time">Time Performed <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="time" id="exercise-time" name="exercise-time" required aria-required="true" aria-describedby="exercise-time-help exercise-time-error" />
+          <div id="exercise-time-help" class="help-text">Select the time you performed this activity.</div>
+          <div id="exercise-time-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <button type="submit" aria-label="Add exercise entry">Add Exercise</button>
+      </fieldset>
+    </form>
+    <section aria-labelledby="exercises-list-heading" class="table-container" tabindex="0" aria-live="polite" aria-relevant="additions removals">
+      <h3 id="exercises-list-heading">Exercises Logged Today</h3>
+      <table id="exercises-table" aria-describedby="exercises-table-desc">
+        <caption id="exercises-table-desc">List of physical activities logged with calories burned, duration, and time</caption>
+        <thead>
+          <tr>
+            <th scope="col">Activity Name</th>
+            <th scope="col">Calories Burned (kcal)</th>
+            <th scope="col">Duration (min)</th>
+            <th scope="col">Time Performed</th>
+            <th scope="col">Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" style="color:#b2dfdb; text-align:center;">No exercises logged yet.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+
+  <section id="goals-section" aria-labelledby="goals-heading">
+    <h2 id="goals-heading">Set and Track Your Fitness Goals</h2>
+    <form id="goals-form" aria-describedby="goals-form-help" novalidate>
+      <fieldset>
+        <legend>Daily Fitness Goals</legend>
+        <div>
+          <label for="goal-calories-consumed">Target Calories Consumed (kcal) <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="number" id="goal-calories-consumed" name="goal-calories-consumed" min="1" max="20000" required aria-required="true" aria-describedby="goal-calories-consumed-help goal-calories-consumed-error" inputmode="numeric" />
+          <div id="goal-calories-consumed-help" class="help-text">Set your daily calorie intake goal.</div>
+          <div id="goal-calories-consumed-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <div>
+          <label for="goal-calories-burned">Target Calories Burned (kcal) <span aria-hidden="true" class="required-indicator">*</span></label>
+          <input type="number" id="goal-calories-burned" name="goal-calories-burned" min="0" max="20000" required aria-required="true" aria-describedby="goal-calories-burned-help goal-calories-burned-error" inputmode="numeric" />
+          <div id="goal-calories-burned-help" class="help-text">Set your daily calorie burn goal through exercise.</div>
+          <div id="goal-calories-burned-error" class="error-message" aria-live="assertive" role="alert"></div>
+        </div>
+        <button type="submit" aria-label="Set fitness goals">Set Goals</button>
+      </fieldset>
+    </form>
+    <section aria-live="polite" aria-atomic="true" id="goals-status" role="status" style="margin-top:1rem; font-weight:700; color:#a7ffeb;"></section>
+  </section>
+
+  <section id="summary-section" aria-labelledby="summary-heading">
+    <h2 id="summary-heading">Today's Summary</h2>
+    <div class="totals" aria-live="polite" aria-atomic="true" role="region" aria-label="Daily calorie summary">
+      <article class="card" aria-labelledby="total-consumed-label" tabindex="0">
+        <h3 id="total-consumed-label">Total Calories Consumed</h3>
+        <p id="total-consumed" aria-live="polite" aria-atomic="true" role="status">0 kcal</p>
+      </article>
+      <article class="card" aria-labelledby="total-burned-label" tabindex="0">
+        <h3 id="total-burned-label">Total Calories Burned</h3>
+        <p id="total-burned" aria-live="polite" aria-atomic="true" role="status">0 kcal</p>
+      </article>
+      <article class="card" aria-labelledby="net-calories-label" tabindex="0">
+        <h3 id="net-calories-label">Net Calories</h3>
+        <p id="net-calories" aria-live="polite" aria-atomic="true" role="status">0 kcal</p>
+      </article>
+      <article class="card" aria-labelledby="goal-progress-label" tabindex="0">
+        <h3 id="goal-progress-label">Goal Progress</h3>
+        <p id="goal-progress" aria-live="polite" aria-atomic="true" role="status">No goals set</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="help-section" aria-labelledby="help-heading">
+    <h2 id="help-heading">Help & Instructions</h2>
+    <article>
+      <h3>How to Log Meals</h3>
+      <p>Use the <strong>Log Your Meals</strong> form to add food items you have eaten today. Enter the name, calories, and time eaten. All fields marked with <span aria-hidden="true" class="required-indicator">*</span> are required.</p>
+    </article>
+    <article>
+      <h3>How to Log Exercises</h3>
+      <p>Use the <strong>Log Your Physical Activities</strong> form to add exercises performed. Enter the activity name, calories burned, duration in minutes, and time performed. All fields marked with <span aria-hidden="true" class="required-indicator">*</span> are required.</p>
+    </article>
+    <article>
+      <h3>Setting Fitness Goals</h3>
+      <p>Set your daily calorie consumption and burn goals in the <strong>Set and Track Your Fitness Goals</strong> section. This helps you track your progress throughout the day.</p>
+    </article>
+    <article>
+      <h3>Keyboard Navigation</h3>
+      <p>All interactive elements are accessible via keyboard. Use <kbd>Tab</kbd> to move forward, <kbd>Shift + Tab</kbd> to move backward, <kbd>Enter</kbd> or <kbd>Space</kbd> to activate buttons and links. Use the skip link at the top to jump directly to main content.</p>
+    </article>
+    <article>
+      <h3>Accessibility Features</h3>
+      <p>This application follows the highest WCAG 2.2 AAA standards for accessibility, including enhanced contrast, ARIA roles, keyboard support, error prevention, and context-sensitive help.</p>
+    </article>
+  </section>
+</main>
+
+<footer>
+  <p>© 2024 Accessible Calorie Tracker. All rights reserved.</p>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // Utility: Selectors
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
+
+  // State
+  let meals = [];
+  let exercises = [];
+  let goals = { caloriesConsumed: null, caloriesBurned: null };
+
+  // Elements
+  const mealForm = $('#meal-form');
+  const exerciseForm = $('#exercise-form');
+  const goalsForm = $('#goals-form');
+
+  const mealsTableBody = $('#meals-table tbody');
+  const exercisesTableBody = $('#exercises-table tbody');
+
+  const totalConsumedEl = $('#total-consumed');
+  const totalBurnedEl = $('#total-burned');
+  const netCaloriesEl = $('#net-calories');
+  const goalProgressEl = $('#goal-progress');
+  const goalsStatusEl = $('#goals-status');
+
+  // Error message helpers
+  function setError(input, message) {
+    const errorEl = $('#' + input.id + '-error');
+    if (message) {
+      input.setAttribute('aria-invalid', 'true');
+      errorEl.textContent = message;
+    } else {
+      input.removeAttribute('aria-invalid');
+      errorEl.textContent = '';
+    }
+  }
+
+  function clearFormErrors(form) {
+    const inputs = $$('input, select, textarea', form);
+    inputs.forEach(input => setError(input, ''));
+  }
+
+  // Validation helpers
+  function validateMealForm(data) {
+    let valid = true;
+    clearFormErrors(mealForm);
+
+    if (!data.name.trim()) {
+      setError($('#meal-name'), 'Food item name is required.');
+      valid = false;
+    }
+    if (!data.calories || isNaN(data.calories) || data.calories < 1 || data.calories > 20000) {
+      setError($('#meal-calories'), 'Please enter a valid calorie amount between 1 and 20,000.');
+      valid = false;
+    }
+    if (!data.time) {
+      setError($('#meal-time'), 'Time eaten is required.');
+      valid = false;
+    }
+    return valid;
+  }
+
+  function validateExerciseForm(data) {
+    let valid = true;
+    clearFormErrors(exerciseForm);
+
+    if (!data.name.trim()) {
+      setError($('#exercise-name'), 'Activity name is required.');
+      valid = false;
+    }
+    if (!data.calories || isNaN(data.calories) || data.calories < 1 || data.calories > 20000) {
+      setError($('#exercise-calories'), 'Please enter a valid calorie burn amount between 1 and 20,000.');
+      valid = false;
+    }
+    if (!data.duration || isNaN(data.duration) || data.duration < 1 || data.duration > 1440) {
+      setError($('#exercise-duration'), 'Please enter a valid duration between 1 and 1440 minutes.');
+      valid = false;
+    }
+    if (!data.time) {
+      setError($('#exercise-time'), 'Time performed is required.');
+      valid = false;
+    }
+    return valid;
+  }
+
+  function validateGoalsForm(data) {
+    let valid = true;
+    clearFormErrors(goalsForm);
+
+    if (!data.caloriesConsumed || isNaN(data.caloriesConsumed) || data.caloriesConsumed < 1 || data.caloriesConsumed > 20000) {
+      setError($('#goal-calories-consumed'), 'Please enter a valid calorie intake goal between 1 and 20,000.');
+      valid = false;
+    }
+    if (data.caloriesBurned === '' || data.caloriesBurned === null || isNaN(data.caloriesBurned) || data.caloriesBurned < 0 || data.caloriesBurned > 20000) {
+      setError($('#goal-calories-burned'), 'Please enter a valid calorie burn goal between 0 and 20,000.');
+      valid = false;
+    }
+    return valid;
+  }
+
+  // Render functions
+  function renderMeals() {
+    mealsTableBody.innerHTML = '';
+    if (meals.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.style.textAlign = 'center';
+      td.style.color = '#b2dfdb';
+      td.textContent = 'No meals logged yet.';
+      tr.appendChild(td);
+      mealsTableBody.appendChild(tr);
+      return;
+    }
+    meals.forEach((meal, index) => {
+      const tr = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = meal.name;
+      tdName.className = 'category-protein';
+      tdName.setAttribute('title', `Food item: ${meal.name}`);
+      tr.appendChild(tdName);
+
+      const tdCalories = document.createElement('td');
+      tdCalories.textContent = meal.calories.toLocaleString() + ' kcal';
+      tdCalories.className = 'category-carb';
+      tdCalories.setAttribute('title', `Calories consumed: ${meal.calories}`);
+      tr.appendChild(tdCalories);
+
+      const tdTime = document.createElement('td');
+      tdTime.textContent = meal.time;
+      tdTime.className = 'category-fat';
+      tdTime.setAttribute('title', `Time eaten: ${meal.time}`);
+      tr.appendChild(tdTime);
+
+      const tdRemove = document.createElement('td');
+      const btnRemove = document.createElement('button');
+      btnRemove.type = 'button';
+      btnRemove.textContent = 'Remove meal';
+      btnRemove.setAttribute('aria-label', `Remove meal entry: ${meal.name} at ${meal.time}`);
+      btnRemove.style.minWidth = '44px';
+      btnRemove.style.minHeight = '44px';
+      btnRemove.addEventListener('click', () => {
+        meals.splice(index, 1);
+        renderMeals();
+        updateSummary();
+      });
+      tdRemove.appendChild(btnRemove);
+      tr.appendChild(tdRemove);
+
+      mealsTableBody.appendChild(tr);
+    });
+  }
+
+  function renderExercises() {
+    exercisesTableBody.innerHTML = '';
+    if (exercises.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      td.style.textAlign = 'center';
+      td.style.color = '#b2dfdb';
+      td.textContent = 'No exercises logged yet.';
+      tr.appendChild(td);
+      exercisesTableBody.appendChild(tr);
+      return;
+    }
+    exercises.forEach((exercise, index) => {
+      const tr = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = exercise.name;
+      tdName.className = 'category-cardio';
+      tdName.setAttribute('title', `Activity name: ${exercise.name}`);
+      tr.appendChild(tdName);
+
+      const tdCalories = document.createElement('td');
+      tdCalories.textContent = exercise.calories.toLocaleString() + ' kcal';
+      tdCalories.className = 'category-strength';
+      tdCalories.setAttribute('title', `Calories burned: ${exercise.calories}`);
+      tr.appendChild(tdCalories);
+
+      const tdDuration = document.createElement('td');
+      tdDuration.textContent = exercise.duration + ' min';
+      tdDuration.setAttribute('title', `Duration: ${exercise.duration} minutes`);
+      tr.appendChild(tdDuration);
+
+      const tdTime = document.createElement('td');
+      tdTime.textContent = exercise.time;
+      tdTime.setAttribute('title', `Time performed: ${exercise.time}`);
+      tr.appendChild(tdTime);
+
+      const tdRemove = document.createElement('td');
+      const btnRemove = document.createElement('button');
+      btnRemove.type = 'button';
+      btnRemove.textContent = 'Remove exercise';
+      btnRemove.setAttribute('aria-label', `Remove exercise entry: ${exercise.name} at ${exercise.time}`);
+      btnRemove.style.minWidth = '44px';
+      btnRemove.style.minHeight = '44px';
+      btnRemove.addEventListener('click', () => {
+        exercises.splice(index, 1);
+        renderExercises();
+        updateSummary();
+      });
+      tdRemove.appendChild(btnRemove);
+      tr.appendChild(tdRemove);
+
+      exercisesTableBody.appendChild(tr);
+    });
+  }
+
+  function updateSummary() {
+    const totalConsumed = meals.reduce((acc, m) => acc + m.calories, 0);
+    const totalBurned = exercises.reduce((acc, e) => acc + e.calories, 0);
+    const netCalories = totalConsumed - totalBurned;
+
+    totalConsumedEl.textContent = totalConsumed.toLocaleString() + ' kcal';
+    totalBurnedEl.textContent = totalBurned.toLocaleString() + ' kcal';
+    netCaloriesEl.textContent = netCalories.toLocaleString() + ' kcal';
+
+    if (goals.caloriesConsumed !== null && goals.caloriesBurned !== null) {
+      const consumedPercent = Math.min(100, (totalConsumed / goals.caloriesConsumed) * 100);
+      const burnedPercent = Math.min(100, (totalBurned / goals.caloriesBurned) * 100);
+
+      let progressText = `Calories Consumed: ${consumedPercent.toFixed(1)}% of goal, Calories Burned: ${burnedPercent.toFixed(1)}% of goal. `;
+
+      if (totalConsumed > goals.caloriesConsumed) {
+        progressText += 'You have exceeded your calorie intake goal. ';
+      } else {
+        progressText += 'You are within your calorie intake goal. ';
+      }
+      if (totalBurned < goals.caloriesBurned) {
+        progressText += 'Try to burn more calories to reach your goal.';
+      } else {
+        progressText += 'Great job meeting or exceeding your calorie burn goal!';
+      }
+      goalProgressEl.textContent = progressText;
+    } else {
+      goalProgressEl.textContent = 'No goals set';
+    }
+  }
+
+  // Form handlers
+  mealForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = {
+      name: $('#meal-name').value.trim(),
+      calories: Number($('#meal-calories').value),
+      time: $('#meal-time').value
+    };
+    if (!validateMealForm(formData)) {
+      return;
+    }
+    meals.push(formData);
+    renderMeals();
+    updateSummary();
+    mealForm.reset();
+    $('#meal-name').focus();
+  });
+
+  exerciseForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = {
+      name: $('#exercise-name').value.trim(),
+      calories: Number($('#exercise-calories').value),
+      duration: Number($('#exercise-duration').value),
+      time: $('#exercise-time').value
+    };
+    if (!validateExerciseForm(formData)) {
+      return;
+    }
+    exercises.push(formData);
+    renderExercises();
+    updateSummary();
+    exerciseForm.reset();
+    $('#exercise-name').focus();
+  });
+
+  goalsForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const formData = {
+      caloriesConsumed: Number($('#goal-calories-consumed').value),
+      caloriesBurned: Number($('#goal-calories-burned').value)
+    };
+    if (!validateGoalsForm(formData)) {
+      goalsStatusEl.textContent = '';
+      return;
+    }
+    goals = formData;
+    goalsStatusEl.textContent = `Goals set: Consume up to ${goals.caloriesConsumed.toLocaleString()} kcal, Burn at least ${goals.caloriesBurned.toLocaleString()} kcal daily.`;
+    updateSummary();
+    goalsForm.reset();
+    $('#goal-calories-consumed').focus();
+  });
+
+  // Keyboard navigation enhancement for nav menu
+  const navLinks = $$('nav[aria-label="Main Navigation"] a');
+  navLinks.forEach(link => {
+    link.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const idx = navLinks.indexOf(e.currentTarget);
+        const nextIdx = (idx + 1) % navLinks.length;
+        navLinks[nextIdx].focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const idx = navLinks.indexOf(e.currentTarget);
+        const prevIdx = (idx - 1 + navLinks.length) % navLinks.length;
+        navLinks[prevIdx].focus();
+      }
+    });
+  });
+
+  // Focus management for skip link
+  $('#skip-link').addEventListener('click', e => {
+    const main = $('#main-content');
+    main.focus();
+  });
+
+  // Initialize
+  renderMeals();
+  renderExercises();
+  updateSummary();
+
+  // Respect prefers-reduced-motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (prefersReducedMotion.matches) {
+    // Disable any non-essential animations if added in future
+  }
+
+  // Ensure all buttons have minimum 44x44px target size (already styled in CSS)
+
+  // No timing requirements or interruptions implemented per AAA
+
+  // Context-sensitive help is embedded as help-text under each input
+
+  // ARIA live regions used for error messages and dynamic summary updates
+
+})();
+</script>
+</body>
+</html>

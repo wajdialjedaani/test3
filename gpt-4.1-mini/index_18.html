@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Accessible Interactive Travel Map - Share Your Travel Experiences</title>
+<style>
+  /* Reset and base */
+  :root {
+    --color-bg: #fefefe;
+    --color-primary: #004d99;
+    --color-primary-hover: #003366;
+    --color-secondary: #e65c00;
+    --color-secondary-hover: #b34700;
+    --color-accent: #009933;
+    --color-error: #cc0000;
+    --color-focus: #ffbf47;
+    --color-text: #111111;
+    --color-muted: #555555;
+    --color-border: #cccccc;
+    --color-shadow: rgba(0,0,0,0.1);
+    --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-base: 1rem;
+    --font-size-large: 1.25rem;
+    --line-height: 1.6;
+    --spacing: 1rem;
+    --border-radius: 0.3rem;
+    --transition: 0.3s ease;
+    --min-touch-size: 44px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  html {
+    font-size: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+    color: var(--color-text);
+    background: var(--color-bg);
+    max-width: 80ch;
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--spacing);
+  }
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  a:focus,
+  a:hover {
+    color: var(--color-primary-hover);
+    outline-offset: 3px;
+  }
+  a:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  h1, h2, h3, h4 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  p {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+  }
+  strong {
+    font-weight: 700;
+  }
+  em {
+    font-style: italic;
+  }
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    padding: 0.75rem 1rem;
+    z-index: 100;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    transition: top 0.3s ease;
+  }
+  .skip-link:focus,
+  .skip-link:active {
+    top: 0;
+  }
+  /* Layout */
+  header, footer, nav, main, section, article {
+    display: block;
+  }
+  header, footer {
+    background: linear-gradient(45deg, #004d99, #009933);
+    color: var(--color-bg);
+    padding: var(--spacing);
+    box-shadow: 0 2px 5px var(--color-shadow);
+    border-radius: var(--border-radius);
+  }
+  header h1 {
+    margin: 0;
+  }
+  footer {
+    font-size: 0.875rem;
+    text-align: center;
+  }
+  nav[aria-label="Main navigation"] {
+    margin-top: var(--spacing);
+    margin-bottom: var(--spacing);
+    background-color: #e6f0ff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 5px var(--color-shadow);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+  }
+  nav li {
+    position: relative;
+  }
+  nav a, nav button {
+    display: inline-block;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+    line-height: 1.2;
+    text-align: center;
+  }
+  nav a:hover,
+  nav a:focus-visible,
+  nav button:hover,
+  nav button:focus-visible {
+    background-color: var(--color-primary-hover);
+    color: var(--color-bg);
+    outline: none;
+  }
+  nav button[aria-expanded="true"] {
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+  }
+  /* Dropdown menu */
+  .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #e6f0ff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--color-shadow);
+    padding: 0.5rem 0;
+    min-width: 12rem;
+    display: none;
+    z-index: 1000;
+  }
+  .submenu[aria-hidden="false"] {
+    display: block;
+  }
+  .submenu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--color-primary);
+  }
+  .submenu a:hover,
+  .submenu a:focus-visible {
+    background-color: var(--color-primary-hover);
+    color: var(--color-bg);
+  }
+  /* Breadcrumb */
+  nav[aria-label="Breadcrumb"] {
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing);
+  }
+  nav[aria-label="Breadcrumb"] ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.25rem;
+  }
+  nav[aria-label="Breadcrumb"] li::after {
+    content: "›";
+    margin-left: 0.25rem;
+    color: var(--color-muted);
+  }
+  nav[aria-label="Breadcrumb"] li:last-child::after {
+    content: "";
+  }
+  nav[aria-label="Breadcrumb"] a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  nav[aria-label="Breadcrumb"] a:hover,
+  nav[aria-label="Breadcrumb"] a:focus-visible {
+    text-decoration: underline;
+  }
+  /* Main content grid */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--spacing);
+  }
+  @media (max-width: 900px) {
+    main {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* Map container */
+  #map-container {
+    position: relative;
+    background: linear-gradient(135deg, #a0d8ef 0%, #0077b6 100%);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px var(--color-shadow);
+    min-height: 480px;
+    overflow: hidden;
+  }
+  #map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Pins */
+  .pin-button {
+    position: absolute;
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-bg);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--color-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-bg);
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .pin-button:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .pin-button:hover,
+  .pin-button:focus {
+    background-color: var(--color-secondary-hover);
+  }
+  /* Sidebar */
+  aside#sidebar {
+    background-color: #e6f0ff;
+    border-radius: var(--border-radius);
+    padding: var(--spacing);
+    box-shadow: 0 4px 10px var(--color-shadow);
+    display: flex;
+    flex-direction: column;
+    max-height: 480px;
+  }
+  aside#sidebar h2 {
+    margin-top: 0;
+    margin-bottom: var(--spacing);
+    color: var(--color-primary);
+  }
+  /* Form */
+  form#pin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  fieldset {
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    background-color: #ffffff;
+  }
+  fieldset:focus-within {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 5px var(--color-secondary);
+  }
+  legend {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-secondary);
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--color-primary);
+  }
+  input[type="text"],
+  input[type="url"],
+  input[type="date"],
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: var(--font-size-base);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    font-family: var(--font-family);
+    line-height: var(--line-height);
+    resize: vertical;
+  }
+  input[type="text"]:focus,
+  input[type="url"]:focus,
+  input[type="date"]:focus,
+  textarea:focus {
+    border-color: var(--color-secondary);
+    outline: none;
+    box-shadow: 0 0 5px var(--color-secondary);
+  }
+  textarea {
+    min-height: 80px;
+  }
+  /* Required field indicator */
+  .required-indicator {
+    color: var(--color-error);
+    font-weight: 700;
+    margin-left: 0.15rem;
+  }
+  /* Error messages */
+  .error-message {
+    color: var(--color-error);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  /* Button */
+  button[type="submit"],
+  button#reset-map {
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    border: none;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    min-width: var(--min-touch-size);
+    min-height: var(--min-touch-size);
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+  button[type="submit"]:hover,
+  button[type="submit"]:focus-visible,
+  button#reset-map:hover,
+  button#reset-map:focus-visible {
+    background-color: var(--color-secondary-hover);
+    outline: none;
+  }
+  button[type="submit"]:focus-visible,
+  button#reset-map:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  /* Experiences list */
+  #experiences {
+    margin-top: var(--spacing);
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+  #experiences h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+  }
+  .experience-card {
+    background-color: #ffffff;
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: var(--spacing);
+    box-shadow: 0 2px 5px var(--color-shadow);
+  }
+  .experience-card h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: var(--color-secondary);
+  }
+  .experience-card time {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+  .experience-card p {
+    margin-top: 0.5rem;
+    white-space: pre-wrap;
+  }
+  /* Status messages */
+  #status-message {
+    margin-top: var(--spacing);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+  }
+  #status-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+  }
+  #status-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+  }
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    #map-container {
+      min-height: 320px;
+    }
+    aside#sidebar {
+      max-height: none;
+      margin-top: var(--spacing);
+    }
+    main {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
+
+<header role="banner">
+  <h1>Accessible Interactive Travel Map</h1>
+  <p>Share your travel experiences by adding pins to the map with location details.</p>
+</header>
+
+<nav aria-label="Main navigation">
+  <ul>
+    <li><a href="#map-container" id="nav-map" tabindex="0">Travel Map</a></li>
+    <li><a href="#pin-form" id="nav-add-pin" tabindex="0">Add a Pin</a></li>
+    <li><a href="#experiences" id="nav-experiences" tabindex="0">Experiences</a></li>
+  </ul>
+</nav>
+
+<nav aria-label="Breadcrumb">
+  <ol>
+    <li><a href="#" aria-current="page">Home</a></li>
+  </ol>
+</nav>
+
+<main id="main-content" tabindex="-1">
+  <section aria-labelledby="map-heading" id="map-section">
+    <h2 id="map-heading">Travel Map</h2>
+    <div id="map-container" role="region" aria-label="Interactive travel map showing pinned locations" tabindex="0">
+      <!-- Map SVG -->
+      <svg id="map-svg" aria-hidden="true" focusable="false" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-describedby="map-desc">
+        <desc id="map-desc">A stylized world map background in blue shades for placing travel pins.</desc>
+        <rect width="800" height="480" fill="url(#bgGradient)"/>
+        <defs>
+          <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#a0d8ef"/>
+            <stop offset="100%" stop-color="#0077b6"/>
+          </linearGradient>
+        </defs>
+        <!-- Simplified continents shapes -->
+        <path fill="#005f73" d="M200 150 L300 140 L350 190 L300 230 L200 210 Z" />
+        <path fill="#0a9396" d="M400 100 L480 120 L520 170 L470 210 L400 190 Z" />
+        <path fill="#94d2bd" d="M600 300 L700 280 L740 340 L680 380 L600 360 Z" />
+        <!-- Additional shapes could be added for more detail -->
+      </svg>
+      <!-- Pins container -->
+      <div id="pins-container" aria-live="polite" aria-atomic="true" aria-relevant="additions" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
+    </div>
+  </section>
+
+  <aside id="sidebar" aria-labelledby="sidebar-heading">
+    <h2 id="sidebar-heading">Add a Travel Pin</h2>
+    <form id="pin-form" aria-describedby="form-help" novalidate>
+      <fieldset>
+        <legend>Location Details</legend>
+
+        <label for="location-name">Location Name<span class="required-indicator" aria-hidden="true">*</span></label>
+        <input type="text" id="location-name" name="locationName" autocomplete="off" required aria-required="true" aria-describedby="location-name-desc location-name-error" minlength="2" maxlength="100" />
+        <div id="location-name-desc" class="sr-only">Enter the name of the location you visited. Minimum 2 characters.</div>
+        <div id="location-name-error" class="error-message" aria-live="assertive"></div>
+
+        <label for="location-url">More Info URL</label>
+        <input type="url" id="location-url" name="locationUrl" autocomplete="off" placeholder="https://example.com" aria-describedby="location-url-desc location-url-error" />
+        <div id="location-url-desc" class="sr-only">Optional. Provide a URL with more information about the location.</div>
+        <div id="location-url-error" class="error-message" aria-live="assertive"></div>
+
+        <label for="visit-date">Date of Visit<span class="required-indicator" aria-hidden="true">*</span></label>
+        <input type="date" id="visit-date" name="visitDate" required aria-required="true" aria-describedby="visit-date-desc visit-date-error" max="" />
+        <div id="visit-date-desc" class="sr-only">Select the date when you visited this location. Cannot be a future date.</div>
+        <div id="visit-date-error" class="error-message" aria-live="assertive"></div>
+
+        <label for="experience-text">Your Experience<span class="required-indicator" aria-hidden="true">*</span></label>
+        <textarea id="experience-text" name="experienceText" rows="4" required aria-required="true" aria-describedby="experience-text-desc experience-text-error" minlength="10" maxlength="1000"></textarea>
+        <div id="experience-text-desc" class="sr-only">Share your travel experience at this location. Minimum 10 characters.</div>
+        <div id="experience-text-error" class="error-message" aria-live="assertive"></div>
+
+        <fieldset>
+          <legend>Pin Location on Map<span class="required-indicator" aria-hidden="true">*</span></legend>
+          <p id="pin-location-instruction">Click on the map above to place your pin.</p>
+          <div id="pin-location-error" class="error-message" aria-live="assertive"></div>
+        </fieldset>
+
+      </fieldset>
+
+      <button type="submit" id="submit-pin" aria-label="Submit travel pin with location details">Add Pin</button>
+      <button type="button" id="reset-map" aria-label="Reset map and clear all pins">Reset Map</button>
+      <div id="form-status" role="status" aria-live="polite" style="margin-top:0.5rem;"></div>
+    </form>
+
+    <section aria-labelledby="experiences-heading" id="experiences">
+      <h3 id="experiences-heading">Travel Experiences</h3>
+      <p id="no-experiences" class="sr-only">No travel experiences have been added yet.</p>
+      <div id="experiences-list" aria-live="polite" aria-relevant="additions"></div>
+    </section>
+  </aside>
+</main>
+
+<footer role="contentinfo">
+  <p>© 2024 Accessible Travel Map. All rights reserved.</p>
+  <p>Contact: <a href="mailto:accessibility@example.com">accessibility@example.com</a></p>
+</footer>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Utility for accessible live region updates
+    const liveRegion = (element, message, type = "polite") => {
+      element.setAttribute("aria-live", type);
+      element.textContent = message;
+      setTimeout(() => {
+        element.textContent = "";
+      }, 4000);
+    };
+
+    // Elements
+    const mapContainer = document.getElementById("map-container");
+    const pinsContainer = document.getElementById("pins-container");
+    const pinForm = document.getElementById("pin-form");
+    const experiencesList = document.getElementById("experiences-list");
+    const noExperiencesText = document.getElementById("no-experiences");
+    const formStatus = document.getElementById("form-status");
+    const resetMapBtn = document.getElementById("reset-map");
+
+    // Form fields and error containers
+    const locationNameInput = document.getElementById("location-name");
+    const locationNameError = document.getElementById("location-name-error");
+    const locationUrlInput = document.getElementById("location-url");
+    const locationUrlError = document.getElementById("location-url-error");
+    const visitDateInput = document.getElementById("visit-date");
+    const visitDateError = document.getElementById("visit-date-error");
+    const experienceTextInput = document.getElementById("experience-text");
+    const experienceTextError = document.getElementById("experience-text-error");
+    const pinLocationError = document.getElementById("pin-location-error");
+
+    // Store pins data
+    let pins = [];
+    let currentPinPosition = null; // {x, y} relative to map container
+
+    // Accessibility: Focus management helpers
+    function trapFocus(element) {
+      const focusableElements = element.querySelectorAll(
+        'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]'
+      );
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+      element.addEventListener("keydown", function trap(e) {
+        if (e.key === "Tab") {
+          if (e.shiftKey) {
+            if (document.activeElement === firstFocusable) {
+              e.preventDefault();
+              lastFocusable.focus();
+            }
+          } else {
+            if (document.activeElement === lastFocusable) {
+              e.preventDefault();
+              firstFocusable.focus();
+            }
+          }
+        }
+      });
+    }
+
+    // Set max date for visit date input to today
+    const todayISO = new Date().toISOString().split("T")[0];
+    visitDateInput.setAttribute("max", todayISO);
+
+    // Reset form errors
+    function resetErrors() {
+      [locationNameError, locationUrlError, visitDateError, experienceTextError, pinLocationError].forEach(
+        (el) => {
+          el.textContent = "";
+          const input = document.getElementById(el.id.replace("-error", ""));
+          if (input) {
+            input.removeAttribute("aria-invalid");
+          }
+        }
+      );
+      formStatus.textContent = "";
+      formStatus.className = "";
+    }
+
+    // Validate URL (simple)
+    function isValidUrl(url) {
+      try {
+        if (!url) return true; // optional field
+        const parsed = new URL(url);
+        return parsed.protocol === "http:" || parsed.protocol === "https:";
+      } catch {
+        return false;
+      }
+    }
+
+    // Validate form inputs
+    function validateForm() {
+      let valid = true;
+      resetErrors();
+
+      // Location Name
+      const locName = locationNameInput.value.trim();
+      if (!locName) {
+        locationNameError.textContent = "Location name is required.";
+        locationNameInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      } else if (locName.length < 2) {
+        locationNameError.textContent = "Location name must be at least 2 characters.";
+        locationNameInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      } else if (locName.length > 100) {
+        locationNameError.textContent = "Location name cannot exceed 100 characters.";
+        locationNameInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+
+      // Location URL
+      const locUrl = locationUrlInput.value.trim();
+      if (locUrl && !isValidUrl(locUrl)) {
+        locationUrlError.textContent = "Please enter a valid URL starting with http:// or https://";
+        locationUrlInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+
+      // Visit Date
+      const visitDate = visitDateInput.value;
+      if (!visitDate) {
+        visitDateError.textContent = "Date of visit is required.";
+        visitDateInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      } else if (visitDate > todayISO) {
+        visitDateError.textContent = "Date of visit cannot be in the future.";
+        visitDateInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+
+      // Experience Text
+      const experienceText = experienceTextInput.value.trim();
+      if (!experienceText) {
+        experienceTextError.textContent = "Experience description is required.";
+        experienceTextInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      } else if (experienceText.length < 10) {
+        experienceTextError.textContent = "Experience description must be at least 10 characters.";
+        experienceTextInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      } else if (experienceText.length > 1000) {
+        experienceTextError.textContent = "Experience description cannot exceed 1000 characters.";
+        experienceTextInput.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+
+      // Pin Location
+      if (!currentPinPosition) {
+        pinLocationError.textContent = "Please click on the map to place your pin.";
+        valid = false;
+      }
+
+      return valid;
+    }
+
+    // Clear pin selection on map
+    function clearCurrentPin() {
+      currentPinPosition = null;
+      // Remove temporary pin if any
+      const tempPin = document.getElementById("temp-pin");
+      if (tempPin) {
+        pinsContainer.removeChild(tempPin);
+      }
+    }
+
+    // Create a pin button element on the map
+    function createPinElement(pin, index) {
+      const pinBtn = document.createElement("button");
+      pinBtn.type = "button";
+      pinBtn.className = "pin-button";
+      pinBtn.style.left = `calc(${pin.x * 100}% - 14px)`; // center by 14px (half width)
+      pinBtn.style.top = `calc(${pin.y * 100}% - 14px)`;
+      pinBtn.setAttribute("aria-label", `Pin ${index + 1}: ${pin.locationName}, visited on ${pin.visitDate}`);
+      pinBtn.setAttribute("data-pin-index", index);
+      pinBtn.tabIndex = 0;
+      pinBtn.title = `Pin ${index + 1}: ${pin.locationName}`;
+      pinBtn.textContent = index + 1;
+
+      // Keyboard and mouse event handlers to show experience details
+      pinBtn.addEventListener("click", () => {
+        showExperienceDetails(index);
+      });
+      pinBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          showExperienceDetails(index);
+        }
+      });
+      return pinBtn;
+    }
+
+    // Show experience details in sidebar focusable region
+    function showExperienceDetails(index) {
+      const pin = pins[index];
+      if (!pin) return;
+      // Focus the experience card for this pin
+      const card = document.getElementById(`experience-card-${index}`);
+      if (card) {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.focus();
+      }
+    }
+
+    // Render all pins on the map
+    function renderPins() {
+      pinsContainer.innerHTML = "";
+      pins.forEach((pin, index) => {
+        const pinEl = createPinElement(pin, index);
+        pinsContainer.appendChild(pinEl);
+      });
+    }
+
+    // Render experiences list
+    function renderExperiences() {
+      experiencesList.innerHTML = "";
+      if (pins.length === 0) {
+        noExperiencesText.classList.remove("sr-only");
+        return;
+      }
+      noExperiencesText.classList.add("sr-only");
+      pins.forEach((pin, index) => {
+        const article = document.createElement("article");
+        article.className = "experience-card";
+        article.id = `experience-card-${index}`;
+        article.tabIndex = -1;
+        article.setAttribute("aria-label", `Travel experience at ${pin.locationName}`);
+
+        const heading = document.createElement("h4");
+        heading.textContent = `${pin.locationName}`;
+        article.appendChild(heading);
+
+        const timeElem = document.createElement("time");
+        timeElem.dateTime = pin.visitDate;
+        timeElem.textContent = new Date(pin.visitDate).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        article.appendChild(timeElem);
+
+        if (pin.locationUrl) {
+          const link = document.createElement("a");
+          link.href = pin.locationUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "More info";
+          link.style.display = "inline-block";
+          link.style.marginTop = "0.25rem";
+          link.setAttribute("aria-label", `More information about ${pin.locationName}`);
+          article.appendChild(link);
+        }
+
+        const para = document.createElement("p");
+        para.textContent = pin.experienceText;
+        article.appendChild(para);
+
+        experiencesList.appendChild(article);
+      });
+    }
+
+    // Add a temporary pin on the map where user clicked
+    function addTemporaryPin(xRatio, yRatio) {
+      clearCurrentPin();
+      currentPinPosition = { x: xRatio, y: yRatio };
+      const tempPin = document.createElement("button");
+      tempPin.type = "button";
+      tempPin.id = "temp-pin";
+      tempPin.className = "pin-button";
+      tempPin.style.left = `calc(${xRatio * 100}% - 14px)`;
+      tempPin.style.top = `calc(${yRatio * 100}% - 14px)`;
+      tempPin.setAttribute("aria-label", "Temporary pin location for new travel experience");
+      tempPin.setAttribute("aria-describedby", "pin-location-instruction");
+      tempPin.tabIndex = 0;
+      tempPin.textContent = "+";
+      pinsContainer.appendChild(tempPin);
+      tempPin.focus();
+    }
+
+    // Convert mouse or keyboard event coordinates to map relative ratios
+    function getMapCoordinates(event) {
+      const rect = mapContainer.getBoundingClientRect();
+      let clientX, clientY;
+      if ("touches" in event && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+      let x = clientX - rect.left;
+      let y = clientY - rect.top;
+      // Clamp values inside map
+      x = Math.min(Math.max(0, x), rect.width);
+      y = Math.min(Math.max(0, y), rect.height);
+      return { xRatio: x / rect.width, yRatio: y / rect.height };
+    }
+
+    // Handle map click to add pin location
+    function onMapClick(event) {
+      event.preventDefault();
+      const { xRatio, yRatio } = getMapCoordinates(event);
+      addTemporaryPin(xRatio, yRatio);
+      pinLocationError.textContent = "";
+    }
+
+    // Keyboard support for map container: Enter or Space to add pin at center
+    function onMapKeyDown(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        // Place pin at center if no current pin
+        if (!currentPinPosition) {
+          addTemporaryPin(0.5, 0.5);
+          pinLocationError.textContent = "";
+        }
+      }
+    }
+
+    // Clear all pins and reset
+    function resetMap() {
+      pins = [];
+      currentPinPosition = null;
+      pinsContainer.innerHTML = "";
+      experiencesList.innerHTML = "";
+      noExperiencesText.classList.remove("sr-only");
+      formStatus.textContent = "";
+      formStatus.className = "";
+      pinForm.reset();
+      resetErrors();
+      locationNameInput.focus();
+    }
+
+    // Form submission handler
+    pinForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!validateForm()) {
+        formStatus.textContent = "Please fix the errors above and try again.";
+        formStatus.className = "error";
+        formStatus.setAttribute("role", "alert");
+        formStatus.setAttribute("aria-live", "assertive");
+        return;
+      }
+      if (!currentPinPosition) {
+        pinLocationError.textContent = "Please click on the map to place your pin.";
+        formStatus.textContent = "Please fix the errors above and try again.";
+        formStatus.className = "error";
+        formStatus.setAttribute("role", "alert");
+        formStatus.setAttribute("aria-live", "assertive");
+        return;
+      }
+
+      // Add new pin data
+      const newPin = {
+        locationName: locationNameInput.value.trim(),
+        locationUrl: locationUrlInput.value.trim() || null,
+        visitDate: visitDateInput.value,
+        experienceText: experienceTextInput.value.trim(),
+        x: currentPinPosition.x,
+        y: currentPinPosition.y,
+      };
+      pins.push(newPin);
+
+      // Clear form and pin
+      pinForm.reset();
+      clearCurrentPin();
+
+      // Re-render pins and experiences
+      renderPins();
+      renderExperiences();
+
+      // Announce success
+      formStatus.textContent = `Travel pin for ${newPin.locationName} added successfully.`;
+      formStatus.className = "success";
+      formStatus.setAttribute("role", "status");
+      formStatus.setAttribute("aria-live", "polite");
+
+      // Move focus to experiences list heading for screen reader users
+      const experiencesHeading = document.getElementById("experiences-heading");
+      experiencesHeading.focus();
+    });
+
+    // Reset map button handler
+    resetMapBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to reset the map and clear all pins? This action cannot be undone.")) {
+        resetMap();
+      }
+    });
+
+    // Map click event listener
+    mapContainer.addEventListener("click", onMapClick);
+    mapContainer.addEventListener("keydown", onMapKeyDown);
+
+    // Keyboard navigation for main nav dropdowns if any (none here but structure ready)
+    // Focus visible polyfill and enhanced focus indicators are handled by CSS
+
+    // Initialize
+    resetMap();
+
+    // Accessibility: Add screen reader only class style
+    const style = document.createElement("style");
+    style.textContent = `
+      .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script>
+</body>
+</html>
