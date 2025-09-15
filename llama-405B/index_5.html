@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Portfolio Website</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    /* Header Styles */
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Navigation Styles */
+    .nav {
+      background-color: #444;
+      padding: 10px;
+      text-align: center;
+    }
+    .nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    .nav a {
+      color: #fff;
+      text-decoration: none;
+    }
+    /* Main Content Styles */
+    .main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .project {
+      background-color: #f7f7f7;
+      margin: 20px;
+      padding: 20px;
+      width: calc(33.33% - 20px);
+    }
+    .project img {
+      width: 100%;
+    }
+    /* Modal Styles */
+    .modal {
+      background-color: rgba(0, 0, 0, 0.5);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    /* Focus Styles */
+    .focus {
+      outline: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1>Interactive Portfolio Website</h1>
+  </header>
+  <nav class="nav" role="navigation">
+    <ul>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <main class="main" role="main">
+    <section class="container">
+      <h2 id="projects">Projects</h2>
+      <ul class="projects">
+        <li class="project">
+          <img src="project1.jpg" alt="Project 1">
+          <h3>Project 1</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <button class="btn" aria-label="View Project 1">View</button>
+        </li>
+        <li class="project">
+          <img src="project2.jpg" alt="Project 2">
+          <h3>Project 2</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <button class="btn" aria-label="View Project 2">View</button>
+        </li>
+        <li class="project">
+          <img src="project3.jpg" alt="Project 3">
+          <h3>Project 3</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <button class="btn" aria-label="View Project 3">View</button>
+        </li>
+      </ul>
+    </section>
+  </main>
+  <div class="modal" id="modal" role="dialog" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <div class="modal-content">
+      <h2 id="modal-title">Project Details</h2>
+      <p id="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <button class="btn" aria-label="Close Modal">Close</button>
+    </div>
+  </div>
+  <script>
+    // Get all buttons with class 'btn'
+    const buttons = document.querySelectorAll('.btn');
+    
+    // Add event listener to each button
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Get the modal element
+        const modal = document.getElementById('modal');
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+        // Get the modal content element
+        const modalContent = modal.querySelector('.modal-content');
+        
+        // Set the modal title and description
+        modalContent.querySelector('#modal-title').textContent = 'Project Details';
+        modalContent.querySelector('#modal-description').textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+        
+        // Add event listener to the close button
+        modalContent.querySelector('.btn').addEventListener('click', () => {
+          // Hide the modal
+          modal.style.display = 'none';
+        });
+      });
+    });
+    
+    // Add event listener to the document for keyboard navigation
+    document.addEventListener('keydown', event => {
+      // Check if the event is a tab key press
+      if (event.key === 'Tab') {
+        // Get the currently focused element
+        const focusedElement = document.activeElement;
+        
+        // Check if the focused element is a button
+        if (focusedElement.tagName === 'BUTTON') {
+          // Add the 'focus' class to the focused element
+          focusedElement.classList.add('focus');
+        } else {
+          // Remove the 'focus' class from all elements
+          document.querySelectorAll('.focus').forEach(element => element.classList.remove('focus'));
+        }
+      }
+    });
+  </script>
+</body>
+</html>

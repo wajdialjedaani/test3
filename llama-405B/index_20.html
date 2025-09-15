@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        
+        /* Navigation Styles */
+        .nav {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        
+        .nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        /* Main Content Styles */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        
+        /* Form Styles */
+        .form {
+            background-color: #fff;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .form input[type="text"], .form input[type="number"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .form button[type="submit"] {
+            width: 100%;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Chart Styles */
+        .chart {
+            width: 100%;
+            height: 400px;
+            background-color: #fff;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Table Styles */
+        .table {
+            width: 100%;
+            background-color: #fff;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+            clear: both;
+        }
+        
+        /* Accessibility Styles */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .sr-only-focusable:active, .sr-only-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
+    </style>
+</head>
+<body>
+    <header class="header" role="banner">
+        <h1>Fitness Tracker</h1>
+    </header>
+    <nav class="nav" role="navigation">
+        <ul>
+            <li><a href="#main">Skip to main content</a></li>
+            <li><a href="#form">Log Workout</a></li>
+            <li><a href="#chart">View Progress</a></li>
+            <li><a href="#table">Workout History</a></li>
+        </ul>
+    </nav>
+    <main class="main" id="main" role="main">
+        <section class="form" id="form" role="region" aria-labelledby="form-heading">
+            <h2 id="form-heading">Log Workout</h2>
+            <form>
+                <label for="exercise-type">Exercise Type:</label>
+                <input type="text" id="exercise-type" name="exercise-type" required aria-required="true">
+                <label for="duration">Duration (minutes):</label>
+                <input type="number" id="duration" name="duration" required aria-required="true">
+                <label for="calories-burned">Calories Burned:</label>
+                <input type="number" id="calories-burned" name="calories-burned" required aria-required="true">
+                <button type="submit">Log Workout</button>
+            </form>
+        </section>
+        <section class="chart" id="chart" role="region" aria-labelledby="chart-heading">
+            <h2 id="chart-heading">View Progress</h2>
+            <canvas id="progress-chart" width="400" height="400" role="img" aria-label="Progress chart showing workout history"></canvas>
+        </section>
+        <section class="table" id="table" role="region" aria-labelledby="table-heading">
+            <h2 id="table-heading">Workout History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Exercise Type</th>
+                        <th>Duration (minutes)</th>
+                        <th>Calories Burned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table data will be populated here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer class="footer" role="contentinfo">
+        <p>&copy; 2023 Fitness Tracker</p>
+    </footer>
+    <script>
+        // JavaScript code will be added here
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendation System</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+        }
+        
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .main h2 {
+            margin-top: 0;
+        }
+        
+        .form {
+            margin-top: 20px;
+        }
+        
+        .form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .form input[type="text"], .form input[type="email"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .form button[type="submit"] {
+            width: 100%;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .form button[type="submit"]:hover {
+            background-color: #444;
+        }
+        
+        .book-list {
+            margin-top: 20px;
+        }
+        
+        .book-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .book-list li {
+            margin-bottom: 20px;
+        }
+        
+        .book-list img {
+            width: 100px;
+            height: 150px;
+            margin-right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .book-list h3 {
+            margin-top: 0;
+        }
+        
+        /* Accessibility Styles */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .sr-only-focusable:active, .sr-only-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Book Recommendation System</h1>
+        </header>
+        <main class="main">
+            <h2>Find your next favorite book!</h2>
+            <form class="form" id="book-form">
+                <label for="genre">Genre:</label>
+                <input type="text" id="genre" name="genre" required>
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" required>
+                <button type="submit">Get Recommendations</button>
+            </form>
+            <div class="book-list" id="book-list">
+                <ul>
+                    <!-- Book list will be populated here -->
+                </ul>
+            </div>
+        </main>
+    </div>
+    <script>
+        // Get the form and book list elements
+        const form = document.getElementById('book-form');
+        const bookList = document.getElementById('book-list');
+        
+        // Add event listener to the form
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const genre = document.getElementById('genre').value;
+            const author = document.getElementById('author').value;
+            
+            // Fetch book recommendations from API
+            fetch(`https://example.com/api/books?genre=${genre}&author=${author}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    // Populate the book list
+                    const bookListHtml = data.map((book) => {
+                        return `
+                            <li>
+                                <img src="${book.cover}" alt="${book.title}">
+                                <h3>${book.title}</h3>
+                                <p>${book.description}</p>
+                            </li>
+                        `;
+                    }).join('');
+                    bookList.innerHTML = bookListHtml;
+                })
+                .catch((error) => console.error(error));
+        });
+    </script>
+</body>
+</html>

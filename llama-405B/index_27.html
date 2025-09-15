@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessible To-Do List App</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .todo-item {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    
+    .todo-item:last-child {
+      border-bottom: none;
+    }
+    
+    .todo-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    
+    .todo-item input[type="text"] {
+      width: 80%;
+      height: 30px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+    }
+    
+    .todo-item button {
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .todo-item button:hover {
+      background-color: #3e8e41;
+    }
+    
+    /* Accessibility Styles */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    .sr-only.focusable:active,
+    .sr-only.focusable:focus {
+      clip: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      position: static;
+      white-space: normal;
+      width: auto;
+      white-space: normal;
+    }
+    
+    [aria-hidden="true"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#main-content">Skip to main content</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main-content" class="container">
+    <h1>Accessible To-Do List App</h1>
+    <form>
+      <label for="new-todo">Add new task:</label>
+      <input type="text" id="new-todo" aria-label="New task input">
+      <button type="submit" aria-label="Add task button">Add Task</button>
+    </form>
+    <ul class="todo-list" aria-label="To-Do List">
+      <!-- Todo items will be generated here -->
+    </ul>
+  </main>
+  <script>
+    // Get the todo list element
+    const todoList = document.querySelector('.todo-list');
+    
+    // Get the new todo input and button elements
+    const newTodoInput = document.querySelector('#new-todo');
+    const addTodoButton = document.querySelector('button[type="submit"]');
+    
+    // Initialize an empty array to store todo items
+    let todoItems = [];
+    
+    // Function to add a new todo item
+    function addTodoItem() {
+      const newTodoText = newTodoInput.value.trim();
+      if (newTodoText) {
+        const todoItem = {
+          text: newTodoText,
+          completed: false
+        };
+        todoItems.push(todoItem);
+        renderTodoList();
+        newTodoInput.value = '';
+      }
+    }
+    
+    // Function to render the todo list
+    function renderTodoList() {
+      todoList.innerHTML = '';
+      todoItems.forEach((todoItem, index) => {
+        const todoItemElement = document.createElement('li');
+        todoItemElement.classList.add('todo-item');
+        
+        const checkboxElement = document.createElement('input');
+        checkboxElement.type = 'checkbox';
+        checkboxElement.checked = todoItem.completed;
+        checkboxElement.addEventListener('change', () => {
+          todoItem.completed = checkboxElement.checked;
+        });
+        
+        const textElement = document.createElement('input');
+        textElement.type = 'text';
+        textElement.value = todoItem.text;
+        textElement.addEventListener('input', () => {
+          todoItem.text = textElement.value;
+        });
+        
+        const deleteButtonElement = document.createElement('button');
+        deleteButtonElement.textContent = 'Delete';
+        deleteButtonElement.addEventListener('click', () => {
+          todoItems.splice(index, 1);
+          renderTodoList();
+        });
+        
+        todoItemElement.appendChild(checkboxElement);
+        todoItemElement.appendChild(textElement);
+        todoItemElement.appendChild(deleteButtonElement);
+        todoList.appendChild(todoItemElement);
+      });
+    }
+    
+    // Add event listener to the add todo button
+    addTodoButton.addEventListener('click', addTodoItem);
+    
+    // Initialize the todo list
+    renderTodoList();
+  </script>
+</body>
+</html>

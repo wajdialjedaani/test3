@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Showcase</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .pet-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+      background-color: #fff;
+    }
+    .pet-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .pet-card h2 {
+      margin-top: 0;
+    }
+    /* Accessibility-focused styles */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .sr-only.focusable:active,
+    .sr-only.focusable:focus {
+      clip: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      position: static;
+      white-space: normal;
+      width: auto;
+      white-space: normal;
+    }
+    /* High contrast mode */
+    @media (prefers-contrast: high) {
+      body {
+        background-color: #000;
+        color: #fff;
+      }
+      .container {
+        background-color: #333;
+        color: #fff;
+      }
+      .pet-card {
+        background-color: #444;
+        color: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#main">Skip to main content</a></li>
+        <li><a href="#pets">Pets</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1">
+    <div class="container">
+      <h1>Pet Showcase</h1>
+      <section id="pets" aria-labelledby="pets-heading">
+        <h2 id="pets-heading">Our Furry Friends</h2>
+        <div class="pet-card">
+          <img src="cat.jpg" alt="A photo of a cat" />
+          <h2>Whiskers</h2>
+          <p>Breed: Siamese</p>
+          <p>Age: 3 years</p>
+          <p>Fun fact: Whiskers loves to chase laser pointers!</p>
+        </div>
+        <div class="pet-card">
+          <img src="dog.jpg" alt="A photo of a dog" />
+          <h2>Buddy</h2>
+          <p>Breed: Golden Retriever</p>
+          <p>Age: 5 years</p>
+          <p>Fun fact: Buddy loves to play fetch!</p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+    // Add event listener to nav links for keyboard navigation
+    document.querySelectorAll('nav a').forEach((link) => {
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          link.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco-Friendly Products</title>
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    /* Navigation Styles */
+    nav {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    nav li {
+      margin-right: 20px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+    }
+    /* Product Grid Styles */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 20px;
+    }
+    .product {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .product h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .product p {
+      font-size: 14px;
+      color: #666;
+    }
+    /* Filter and Sort Styles */
+    .filter-sort {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .filter-sort select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    /* Quick View Styles */
+    .quick-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+    }
+    .quick-view-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .quick-view-content img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .quick-view-content h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .quick-view-content p {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    <h1>Eco-Friendly Products</h1>
+    <div class="filter-sort">
+      <select id="filter" aria-label="Filter by Category">
+        <option value="all">All</option>
+        <option value="clothing">Clothing</option>
+        <option value="home-goods">Home Goods</option>
+        <option value="electronics">Electronics</option>
+      </select>
+      <select id="sort" aria-label="Sort by Price or Popularity">
+        <option value="price">Price</option>
+        <option value="popularity">Popularity</option>
+      </select>
+    </div>
+    <div class="product-grid" aria-live="polite">
+      <!-- Product 1 -->
+      <div class="product">
+        <img src="product1.jpg" alt="Product 1 Image">
+        <h2>Product 1</h2>
+        <p>Price: $19.99</p>
+        <button class="quick-view-button" aria-label="Quick View Product 1">Quick View</button>
+      </div>
+      <!-- Product 2 -->
+      <div class="product">
+        <img src="product2.jpg" alt="Product 2 Image">
+        <h2>Product 2</h2>
+        <p>Price: $29.99</p>
+        <button class="quick-view-button" aria-label="Quick View Product 2">Quick View</button>
+      </div>
+      <!-- Product 3 -->
+      <div class="product">
+        <img src="product3.jpg" alt="Product 3 Image">
+        <h2>Product 3</h2>
+        <p>Price: $39.99</p>
+        <button class="quick-view-button" aria-label="Quick View Product 3">Quick View</button>
+      </div>
+    </div>
+    <div class="quick-view" aria-hidden="true">
+      <div class="quick-view-content" aria-labelledby="quick-view-title">
+        <h2 id="quick-view-title">Product Quick View</h2>
+        <img src="" alt="">
+        <p></p>
+        <button aria-label="Close Quick View">Close</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Filter and Sort Functionality
+    const filterSelect = document.getElementById('filter');
+    const sortSelect = document.getElementById('sort');
+    const productGrid = document.querySelector('.product-grid');
+    filterSelect.addEventListener('change', () => {
+      const filterValue = filterSelect.value;
+      const products = productGrid.children;
+      for (const product of products) {
+        if (filterValue === 'all' || product.dataset.category === filterValue) {
+          product.style.display = 'block';
+        } else {
+          product.style.display = 'none';
+        }
+      }
+    });
+    sortSelect.addEventListener('change', () => {
+      const sortValue = sortSelect.value;
+      const products = productGrid.children;
+      if (sortValue === 'price') {
+        Array.from(products).sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+      } else if (sortValue === 'popularity') {
+        Array.from(products).sort((a, b) => parseFloat(a.dataset.popularity) - parseFloat(b.dataset.popularity));
+      }
+      productGrid.innerHTML = '';
+      productGrid.append(...products);
+    });
+    // Quick View Functionality
+    const quickViewButtons = document.querySelectorAll('.quick-view-button');
+    const quickView = document.querySelector('.quick-view');
+    const quickViewContent = document.querySelector('.quick-view-content');
+    quickViewButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const product = button.closest('.product');
+        const image = product.querySelector('img');
+        const title = product.querySelector('h2');
+        const price = product.querySelector('p');
+        quickViewContent.querySelector('img').src = image.src;
+        quickViewContent.querySelector('h2').textContent = title.textContent;
+        quickViewContent.querySelector('p').textContent = price.textContent;
+        quickView.setAttribute('aria-hidden', 'false');
+        quickView.style.display = 'block';
+      });
+    });
+    quickViewContent.querySelector('button').addEventListener('click', () => {
+      quickView.setAttribute('aria-hidden', 'true');
+      quickView.style.display = 'none';
+    });
+  </script>
+</body>
+</html>

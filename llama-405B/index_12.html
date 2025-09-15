@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessible Quiz Webpage</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0; /* Light gray background */
+      color: #333; /* Dark gray text */
+    }
+    
+    /* Header Styles */
+    header {
+      background-color: #333; /* Dark gray background */
+      color: #fff; /* White text */
+      padding: 1em;
+      text-align: center;
+    }
+    
+    /* Navigation Styles */
+    nav {
+      background-color: #444; /* Darker gray background */
+      padding: 1em;
+    }
+    
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    nav li {
+      margin-right: 20px;
+    }
+    
+    nav a {
+      color: #fff; /* White text */
+      text-decoration: none;
+    }
+    
+    /* Main Content Styles */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em;
+    }
+    
+    /* Quiz Styles */
+    .quiz {
+      background-color: #fff; /* White background */
+      padding: 2em;
+      border: 1px solid #ddd; /* Light gray border */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+    
+    .quiz-question {
+      margin-bottom: 1em;
+    }
+    
+    .quiz-options {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .quiz-option {
+      margin-bottom: 10px;
+    }
+    
+    /* Button Styles */
+    button {
+      background-color: #333; /* Dark gray background */
+      color: #fff; /* White text */
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #444; /* Darker gray background */
+    }
+    
+    /* Focus Styles */
+    :focus {
+      outline: 2px solid #333; /* Dark gray outline */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Accessible Quiz Webpage</h1>
+  </header>
+  <nav aria-label="Main Navigation">
+    <ul>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#results">Results</a></li>
+    </ul>
+  </nav>
+  <main>
+    <section class="quiz" aria-labelledby="quiz-heading">
+      <h2 id="quiz-heading">Quiz</h2>
+      <form>
+        <div class="quiz-question">
+          <p>What is the capital of France?</p>
+          <ul class="quiz-options">
+            <li class="quiz-option">
+              <input type="radio" id="option-1" name="question-1" value="Paris">
+              <label for="option-1">Paris</label>
+            </li>
+            <li class="quiz-option">
+              <input type="radio" id="option-2" name="question-1" value="London">
+              <label for="option-2">London</label>
+            </li>
+            <li class="quiz-option">
+              <input type="radio" id="option-3" name="question-1" value="Berlin">
+              <label for="option-3">Berlin</label>
+            </li>
+          </ul>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+    <section id="results" aria-labelledby="results-heading">
+      <h2 id="results-heading">Results</h2>
+      <p>Your score will be displayed here.</p>
+    </section>
+  </main>
+  <script>
+    // JavaScript code for quiz functionality
+    const quizForm = document.querySelector('form');
+    const resultsSection = document.querySelector('#results');
+    
+    quizForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const userAnswer = document.querySelector('input[name="question-1"]:checked').value;
+      const correctAnswer = 'Paris';
+      const score = userAnswer === correctAnswer ? 1 : 0;
+      resultsSection.innerHTML = `Your score is ${score} out of 1.`;
+    });
+  </script>
+</body>
+</html>

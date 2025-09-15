@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Blog</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    p {
+      margin-bottom: 1em;
+    }
+    a {
+      text-decoration: none;
+      color: #337ab7;
+    }
+    a:hover {
+      color: #23527c;
+    }
+    /* Navigation Styles */
+    nav {
+      background-color: #333;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    nav li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    nav a {
+      color: #fff;
+    }
+    /* Main Content Styles */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em;
+    }
+    .post {
+      background-color: #f7f7f7;
+      padding: 2em;
+      margin-bottom: 2em;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .post h2 {
+      margin-top: 0;
+    }
+    /* Comment Form Styles */
+    .comment-form {
+      margin-top: 2em;
+    }
+    .comment-form label {
+      display: block;
+      margin-bottom: 0.5em;
+    }
+    .comment-form input, .comment-form textarea {
+      width: 100%;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+    }
+    .comment-form button[type="submit"] {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 0.5em 1em;
+      border: none;
+      border-radius: 0.25em;
+      cursor: pointer;
+    }
+    /* Search Form Styles */
+    .search-form {
+      margin-top: 2em;
+    }
+    .search-form input[type="search"] {
+      width: 100%;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+    }
+    .search-form button[type="submit"] {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 0.5em 1em;
+      border: none;
+      border-radius: 0.25em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#posts">Posts</a></li>
+        <li><a href="#comments">Comments</a></li>
+        <li><a href="#search">Search</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="posts">
+      <h2>Posts</h2>
+      <ul>
+        <li>
+          <article class="post">
+            <h2>Post 1</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
+          </article>
+        </li>
+        <li>
+          <article class="post">
+            <h2>Post 2</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex.</p>
+          </article>
+        </li>
+      </ul>
+    </section>
+    <section id="comments">
+      <h2>Comments</h2>
+      <form class="comment-form" aria-label="Comment Form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+    <section id="search">
+      <h2>Search</h2>
+      <form class="search-form" aria-label="Search Form">
+        <input type="search" id="search-input" name="search-input" required>
+        <button type="submit">Search</button>
+      </form>
+    </section>
+  </main>
+  <script>
+    // Add event listener to comment form submit button
+    document.querySelector('.comment-form button[type="submit"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Get form data
+      const formData = new FormData(document.querySelector('.comment-form'));
+      // Send form data to server
+      fetch('/comments', {
+        method: 'POST',
+        body: formData,
+      })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+    });
+    // Add event listener to search form submit button
+    document.querySelector('.search-form button[type="submit"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Get search input value
+      const searchInput = document.querySelector('#search-input').value;
+      // Send search query to server
+      fetch(`/search?q=${searchInput}`, {
+        method: 'GET',
+      })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+    });
+  </script>
+</body>
+</html>

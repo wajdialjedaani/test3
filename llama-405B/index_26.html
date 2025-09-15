@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditation Timer</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Form Styles */
+        form {
+            margin-top: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            height: 40px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+        
+        /* Timer Styles */
+        #timer {
+            font-size: 48px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* Audio Player Styles */
+        audio {
+            width: 100%;
+            height: 40px;
+            margin-top: 20px;
+        }
+        
+        /* Accessibility Styles */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .sr-only.focusable:active,
+        .sr-only.focusable:focus {
+            clip: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            position: static;
+            white-space: normal;
+            width: auto;
+            white-space: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Meditation Timer</h1>
+        <form id="meditation-form">
+            <label for="session-length">Session Length (minutes):</label>
+            <input type="number" id="session-length" name="session-length" value="10" min="1" max="60">
+            <button type="submit">Start Meditation</button>
+        </form>
+        <div id="timer">00:00</div>
+        <audio id="meditation-audio" src="meditation.mp3" controls></audio>
+        <button id="play-pause-button">Play/Pause</button>
+        <button id="stop-button">Stop</button>
+    </div>
+    <script>
+        // Get elements
+        const form = document.getElementById('meditation-form');
+        const sessionLengthInput = document.getElementById('session-length');
+        const timerElement = document.getElementById('timer');
+        const audioElement = document.getElementById('meditation-audio');
+        const playPauseButton = document.getElementById('play-pause-button');
+        const stopButton = document.getElementById('stop-button');
+        
+        // Set up event listeners
+        form.addEventListener('submit', startMeditation);
+        playPauseButton.addEventListener('click', playPauseAudio);
+        stopButton.addEventListener('click', stopAudio);
+        
+        // Function to start meditation
+        function startMeditation(event) {
+            event.preventDefault();
+            const sessionLength = parseInt(sessionLengthInput.value);
+            startTimer(sessionLength);
+            playAudio();
+        }
+        
+        // Function to start timer
+        function startTimer(sessionLength) {
+            let minutes = sessionLength;
+            let seconds = 0;
+            const intervalId = setInterval(() => {
+                if (minutes === 0 && seconds === 0) {
+                    clearInterval(intervalId);
+                } else {
+                    if (seconds === 0) {
+                        minutes--;
+                        seconds = 59;
+                    } else {
+                        seconds--;
+                    }
+                    updateTimer(minutes, seconds);
+                }
+            }, 1000);
+        }
+        
+        // Function to update timer display
+        function updateTimer(minutes, seconds) {
+            const timerText = `${padZero(minutes)}:${padZero(seconds)}`;
+            timerElement.textContent = timerText;
+        }
+        
+        // Function to pad numbers with leading zero
+        function padZero(number) {
+            return (number < 10 ? '0' : '') + number;
+        }
+        
+        // Function to play/pause audio
+        function playPauseAudio() {
+            if (audioElement.paused) {
+                playAudio();
+            } else {
+                pauseAudio();
+            }
+        }
+        
+        // Function to play audio
+        function playAudio() {
+            audioElement.play();
+            playPauseButton.textContent = 'Pause';
+        }
+        
+        // Function to pause audio
+        function pauseAudio() {
+            audioElement.pause();
+            playPauseButton.textContent = 'Play';
+        }
+        
+        // Function to stop audio
+        function stopAudio() {
+            audioElement.currentTime = 0;
+            pauseAudio();
+        }
+    </script>
+</body>
+</html>

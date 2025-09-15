@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing Webpage</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        
+        /* Navigation Styles */
+        nav {
+            background-color: #444;
+            padding: 1em;
+        }
+        
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        /* Main Content Styles */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        
+        /* Recipe Card Styles */
+        .recipe-card {
+            background-color: #f7f7f7;
+            padding: 1em;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Form Styles */
+        form {
+            padding: 1em;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        
+        /* Focus Styles */
+        :focus {
+            outline: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Recipe Sharing Webpage</h1>
+    </header>
+    <nav aria-label="Main Navigation">
+        <ul>
+            <li><a href="#search">Search Recipes</a></li>
+            <li><a href="#submit">Submit a Recipe</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="search">
+            <h2>Search Recipes</h2>
+            <form>
+                <label for="search-input">Search by ingredient:</label>
+                <input type="text" id="search-input" aria-label="Search input">
+                <button type="submit">Search</button>
+            </form>
+            <div id="search-results"></div>
+        </section>
+        <section id="submit">
+            <h2>Submit a Recipe</h2>
+            <form>
+                <label for="recipe-name">Recipe Name:</label>
+                <input type="text" id="recipe-name" aria-label="Recipe name">
+                <label for="recipe-description">Recipe Description:</label>
+                <textarea id="recipe-description" aria-label="Recipe description"></textarea>
+                <label for="recipe-ingredients">Ingredients:</label>
+                <textarea id="recipe-ingredients" aria-label="Recipe ingredients"></textarea>
+                <label for="recipe-instructions">Instructions:</label>
+                <textarea id="recipe-instructions" aria-label="Recipe instructions"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+        <div id="recipe-cards"></div>
+    </main>
+    <script>
+        // Script to handle search and submission
+        const searchForm = document.querySelector('#search form');
+        const submitForm = document.querySelector('#submit form');
+        const searchResults = document.querySelector('#search-results');
+        const recipeCards = document.querySelector('#recipe-cards');
+        
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const searchInput = document.querySelector('#search-input').value;
+            // Call API to search recipes by ingredient
+            fetch(`https://api.example.com/recipes?ingredient=${searchInput}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    searchResults.innerHTML = '';
+                    data.forEach((recipe) => {
+                        const recipeCard = document.createElement('div');
+                        recipeCard.classList.add('recipe-card');
+                        recipeCard.innerHTML = `
+                            <h3>${recipe.name}</h3>
+                            <p>${recipe.description}</p>
+                            <ul>
+                                ${recipe.ingredients.map((ingredient) => `<li>${ingredient}</li>`).join('')}
+                            </ul>
+                            <p>${recipe.instructions}</p>
+                        `;
+                        searchResults.appendChild(recipeCard);
+                    });
+                });
+        });
+        
+        submitForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const recipeName = document.querySelector('#recipe-name').value;
+            const recipeDescription = document.querySelector('#recipe-description').value;
+            const recipeIngredients = document.querySelector('#recipe-ingredients').value;
+            const recipeInstructions = document.querySelector('#recipe-instructions').value;
+            // Call API to submit new recipe
+            fetch('https://api.example.com/recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: recipeName,
+                    description: recipeDescription,
+                    ingredients: recipeIngredients.split(','),
+                    instructions: recipeInstructions
+                })
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const recipeCard = document.createElement('div');
+                    recipeCard.classList.add('recipe-card');
+                    recipeCard.innerHTML = `
+                        <h3>${data.name}</h3>
+                        <p>${data.description}</p>
+                        <ul>
+                            ${data.ingredients.map((ingredient) => `<li>${ingredient}</li>`).join('')}
+                        </ul>
+                        <p>${data.instructions}</p>
+                    `;
+                    recipeCards.appendChild(recipeCard);
+                });
+        });
+        
+        // Modal functionality
+        const modal = document.createElement('div');
+        modal.classList.add('modal');
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        // Function to open modal
+        function openModal(content) {
+            modalContent.innerHTML = content;
+            modal.style.display = 'block';
+        }
+        
+        // Function to close modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        
+        // Add event listener to close modal
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Add event listener to open modal
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('open-modal')) {
+                openModal(e.target.dataset.content);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Calculator</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .budget-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .budget-form label {
+            margin-bottom: 10px;
+        }
+        
+        .budget-form input[type="number"] {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 18px;
+        }
+        
+        .budget-form button[type="submit"] {
+            width: 100%;
+            height: 40px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .budget-form button[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+        
+        .budget-breakdown {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .budget-breakdown h2 {
+            margin-bottom: 20px;
+        }
+        
+        .budget-breakdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .budget-breakdown li {
+            margin-bottom: 20px;
+        }
+        
+        .budget-breakdown li span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav aria-label="Main Navigation">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <h1>Budget Calculator</h1>
+        <form class="budget-form" aria-label="Budget Calculator Form">
+            <label for="income">Monthly Income:</label>
+            <input type="number" id="income" required aria-required="true">
+            <label for="fixed-expenses">Fixed Expenses:</label>
+            <input type="number" id="fixed-expenses" required aria-required="true">
+            <label for="variable-expenses">Variable Expenses:</label>
+            <input type="number" id="variable-expenses" required aria-required="true">
+            <button type="submit">Calculate Budget</button>
+        </form>
+        <div class="budget-breakdown" aria-label="Budget Breakdown">
+            <h2>Budget Breakdown:</h2>
+            <ul id="budget-breakdown-list">
+                <!-- Budget breakdown list will be populated here -->
+            </ul>
+        </div>
+    </main>
+    <script>
+        // Get the form and budget breakdown elements
+        const budgetForm = document.querySelector('.budget-form');
+        const budgetBreakdownList = document.querySelector('#budget-breakdown-list');
+        
+        // Add event listener to the form submission
+        budgetForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get the input values
+            const income = parseFloat(document.querySelector('#income').value);
+            const fixedExpenses = parseFloat(document.querySelector('#fixed-expenses').value);
+            const variableExpenses = parseFloat(document.querySelector('#variable-expenses').value);
+            
+            // Calculate the budget breakdown
+            const totalExpenses = fixedExpenses + variableExpenses;
+            const disposableIncome = income - totalExpenses;
+            
+            // Create the budget breakdown list items
+            const budgetBreakdownItems = [
+                `Total Expenses: $${totalExpenses.toFixed(2)}`,
+                `Disposable Income: $${disposableIncome.toFixed(2)}`,
+            ];
+            
+            // Populate the budget breakdown list
+            budgetBreakdownList.innerHTML = '';
+            budgetBreakdownItems.forEach((item) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<span>${item}</span>`;
+                budgetBreakdownList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>

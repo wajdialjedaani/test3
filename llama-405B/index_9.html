@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Space-Themed Website</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2f4f7f; /* Dark blue background */
+      color: #fff; /* White text */
+    }
+    
+    /* Constellation Styles */
+    .constellation {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      background-image: url('constellation.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .constellation-info {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+    }
+    
+    .constellation:hover .constellation-info {
+      display: block;
+    }
+    
+    /* Planet Gallery Styles */
+    .planet-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .planet {
+      margin: 20px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+    }
+    
+    .planet-info {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .planet:hover .planet-info {
+      display: block;
+    }
+    
+    /* Accessibility Styles */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background-color: #fff;
+      color: #000;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    
+    .skip-link:focus {
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#constellations">Constellations</a></li>
+        <li><a href="#planets">Planets</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main">
+    <section id="constellations">
+      <h2>Constellations</h2>
+      <div class="constellation">
+        <img src="constellation.jpg" alt="Constellation image">
+        <div class="constellation-info" aria-hidden="true">
+          <h3>Constellation Name</h3>
+          <p>Constellation description</p>
+        </div>
+      </div>
+    </section>
+    <section id="planets">
+      <h2>Planets</h2>
+      <div class="planet-gallery">
+        <div class="planet" style="background-image: url('planet1.jpg');">
+          <div class="planet-info" aria-hidden="true">
+            <h3>Planet 1 Name</h3>
+            <p>Planet 1 description</p>
+          </div>
+        </div>
+        <div class="planet" style="background-image: url('planet2.jpg');">
+          <div class="planet-info" aria-hidden="true">
+            <h3>Planet 2 Name</h3>
+            <p>Planet 2 description</p>
+          </div>
+        </div>
+        <!-- Add more planets here -->
+      </div>
+    </section>
+  </main>
+  <script>
+    // Add event listeners to constellation and planet elements
+    const constellationElements = document.querySelectorAll('.constellation');
+    const planetElements = document.querySelectorAll('.planet');
+    
+    constellationElements.forEach((element) => {
+      element.addEventListener('click', () => {
+        const infoElement = element.querySelector('.constellation-info');
+        infoElement.setAttribute('aria-hidden', 'false');
+      });
+    });
+    
+    planetElements.forEach((element) => {
+      element.addEventListener('click', () => {
+        const infoElement = element.querySelector('.planet-info');
+        infoElement.setAttribute('aria-hidden', 'false');
+      });
+    });
+  </script>
+</body>
+</html>

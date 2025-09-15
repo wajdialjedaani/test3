@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gardening Community</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        
+        /* Navigation Styles */
+        .nav {
+            background-color: #444;
+            padding: 1em;
+            text-align: center;
+        }
+        
+        .nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        /* Main Content Styles */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        
+        /* Form Styles */
+        .form {
+            background-color: #fff;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .form input[type="text"], .form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        .form button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        /* Image Gallery Styles */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .gallery img {
+            width: 200px;
+            height: 150px;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Comment Section Styles */
+        .comments {
+            padding: 1em;
+        }
+        
+        .comment {
+            background-color: #fff;
+            padding: 1em;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .comment img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+        }
+        
+        /* Accessibility Styles */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .sr-only-focusable:active, .sr-only-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .gallery img {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header" role="banner">
+        <h1>Gardening Community</h1>
+        <nav class="nav" role="navigation">
+            <ul>
+                <li><a href="#main">Skip to main content</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="main" id="main" role="main">
+        <section class="form" role="region" aria-labelledby="form-heading">
+            <h2 id="form-heading">Share Your Gardening Experience</h2>
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required aria-required="true">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required aria-required="true">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required aria-required="true"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+        <section class="gallery" role="region" aria-labelledby="gallery-heading">
+            <h2 id="gallery-heading">Gardening Gallery</h2>
+            <img src="image1.jpg" alt="Gardening Image 1" aria-describedby="image1-description">
+            <img src="image2.jpg" alt="Gardening Image 2" aria-describedby="image2-description">
+            <img src="image3.jpg" alt="Gardening Image 3" aria-describedby="image3-description">
+            <div id="image1-description" class="sr-only">This is a description of image 1.</div>
+            <div id="image2-description" class="sr-only">This is a description of image 2.</div>
+            <div id="image3-description" class="sr-only">This is a description of image 3.</div>
+        </section>
+        <section class="comments" role="region" aria-labelledby="comments-heading">
+            <h2 id="comments-heading">Comments</h2>
+            <article class="comment" role="article" aria-labelledby="comment1-heading">
+                <h3 id="comment1-heading">Comment 1</h3>
+                <img src="avatar1.jpg" alt="Avatar 1" aria-describedby="avatar1-description">
+                <p>This is a comment.</p>
+                <div id="avatar1-description" class="sr-only">This is a description of avatar 1.</div>
+            </article>
+            <article class="comment" role="article" aria-labelledby="comment2-heading">
+                <h3 id="comment2-heading">Comment 2</h3>
+                <img src="avatar2.jpg" alt="Avatar 2" aria-describedby="avatar2-description">
+                <p>This is another comment.</p>
+                <div id="avatar2-description" class="sr-only">This is a description of avatar 2.</div>
+            </article>
+        </section>
+    </main>
+    <script>
+        // Add event listener to form submission
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Handle form submission
+        });
+        
+        // Add event listener to image gallery
+        document.querySelector('.gallery').addEventListener('click', function(event) {
+            if (event.target.tagName === 'IMG') {
+                // Handle image click
+            }
+        });
+        
+        // Add event listener to comment section
+        document.querySelector('.comments').addEventListener('click', function(event) {
+            if (event.target.tagName === 'ARTICLE') {
+                // Handle comment click
+            }
+        });
+    </script>
+</body>
+</html>

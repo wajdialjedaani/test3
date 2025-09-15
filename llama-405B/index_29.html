@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Product Cards</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .card-content {
+      padding: 20px;
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .card-description {
+      font-size: 14px;
+      color: #666;
+    }
+    .card-actions {
+      margin-top: 20px;
+    }
+    .card-actions button {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .card-actions button:hover {
+      background-color: #3e8e41;
+    }
+    /* Accessibility Styles */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .sr-only-focusable:active, .sr-only-focusable:focus {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      white-space: normal;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Interactive Product Cards</h1>
+    <div class="card-grid">
+      <div class="card">
+        <img src="product1.jpg" alt="Product 1 Image">
+        <div class="card-content">
+          <h2 class="card-title">Product 1</h2>
+          <p class="card-description">This is a description of Product 1.</p>
+          <div class="card-actions">
+            <button>Learn More</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="product2.jpg" alt="Product 2 Image">
+        <div class="card-content">
+          <h2 class="card-title">Product 2</h2>
+          <p class="card-description">This is a description of Product 2.</p>
+          <div class="card-actions">
+            <button>Learn More</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="product3.jpg" alt="Product 3 Image">
+        <div class="card-content">
+          <h2 class="card-title">Product 3</h2>
+          <p class="card-description">This is a description of Product 3.</p>
+          <div class="card-actions">
+            <button>Learn More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Add event listeners to buttons for accessibility
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        alert('Button clicked!');
+      });
+    });
+  </script>
+</body>
+</html>

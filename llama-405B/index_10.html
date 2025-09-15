@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Task Tracker with Rewards</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    /* Header Styles */
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+    
+    /* Navigation Styles */
+    .nav {
+      background-color: #444;
+      padding: 1em;
+      text-align: center;
+    }
+    
+    .nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .nav li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    
+    .nav a {
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    /* Main Content Styles */
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2em;
+    }
+    
+    /* Task List Styles */
+    .task-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .task-list li {
+      background-color: #fff;
+      padding: 1em;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .task-list li:last-child {
+      border-bottom: none;
+    }
+    
+    /* Form Styles */
+    .form {
+      padding: 1em;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .form input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+    
+    .form button[type="submit"] {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    /* Rewards Styles */
+    .rewards {
+      padding: 1em;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .rewards ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .rewards li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .rewards li:last-child {
+      border-bottom: none;
+    }
+    
+    /* Accessibility Styles */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    .sr-only.focusable:active,
+    .sr-only.focusable:focus {
+      clip: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      position: static;
+      white-space: normal;
+      width: auto;
+      white-space: normal;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Daily Task Tracker with Rewards</h1>
+  </header>
+  <nav class="nav" aria-label="Main Navigation">
+    <ul>
+      <li><a href="#tasks">Tasks</a></li>
+      <li><a href="#rewards">Rewards</a></li>
+    </ul>
+  </nav>
+  <main class="main">
+    <section id="tasks" aria-labelledby="tasks-heading">
+      <h2 id="tasks-heading">Tasks</h2>
+      <ul class="task-list" aria-label="Task List">
+        <!-- Task list items will be generated dynamically -->
+      </ul>
+      <form class="form" aria-label="Add Task Form">
+        <label for="task-input">Add Task:</label>
+        <input type="text" id="task-input" aria-label="Task Input">
+        <button type="submit" aria-label="Add Task Button">Add Task</button>
+      </form>
+    </section>
+    <section id="rewards" aria-labelledby="rewards-heading">
+      <h2 id="rewards-heading">Rewards</h2>
+      <ul class="rewards" aria-label="Rewards List">
+        <!-- Rewards list items will be generated dynamically -->
+      </ul>
+    </section>
+  </main>
+  <script>
+    // JavaScript code to generate task list and rewards list dynamically
+    // and to handle form submission and task completion logic
+    const taskList = document.querySelector('.task-list');
+    const rewardsList = document.querySelector('.rewards');
+    const taskInput = document.querySelector('#task-input');
+    const addTaskButton = document.querySelector('button[type="submit"]');
+    
+    // Function to generate task list items
+    function generateTaskListItem(task) {
+      const taskListItem = document.createElement('li');
+      taskListItem.textContent = task;
+      taskListItem.addEventListener('click', () => {
+        // Logic to mark task as completed and update rewards list
+      });
+      return taskListItem;
+    }
+    
+    // Function to generate rewards list items
+    function generateRewardsListItem(reward) {
+      const rewardsListItem = document.createElement('li');
+      rewardsListItem.textContent = reward;
+      return rewardsListItem;
+    }
+    
+    // Event listener for form submission
+    addTaskButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const task = taskInput.value.trim();
+      if (task) {
+        const taskListItem = generateTaskListItem(task);
+        taskList.appendChild(taskListItem);
+        taskInput.value = '';
+      }
+    });
+    
+    // Initialize task list and rewards list with sample data
+    const sampleTasks = ['Task 1', 'Task 2', 'Task 3'];
+    const sampleRewards = ['Reward 1', 'Reward 2', 'Reward 3'];
+    
+    sampleTasks.forEach((task) => {
+      const taskListItem = generateTaskListItem(task);
+      taskList.appendChild(taskListItem);
+    });
+    
+    sampleRewards.forEach((reward) => {
+      const rewardsListItem = generateRewardsListItem(reward);
+      rewardsList.appendChild(rewardsListItem);
+    });
+  </script>
+</body>
+</html>
